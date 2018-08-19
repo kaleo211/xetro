@@ -9,6 +9,7 @@ coverage
 # production
 build
 target
+src/main/resources/static/built/*
 
 # misc
 .DS_Store

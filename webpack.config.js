@@ -1,23 +1,31 @@
 var path = require('path');
+var webpack = require('webpack')
 
 module.exports = {
     entry: './src/main/javascript/app.js',
-    devtool: 'sourcemaps',
+    mode: 'development',
     cache: true,
-    debug: true,
     output: {
         path: __dirname,
         filename: './src/main/resources/static/built/bundle.js'
     },
     module: {
-        loaders: [{
-            test: path.join(__dirname, '.'),
+        rules: [{
             exclude: /(node_modules)/,
-            loader: 'babel',
-            query: {
-                cacheDirectory: true,
-                presets: ['es2015', 'react']
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: ['babel-preset-es2015', 'react']
+                }
             }
+        }, {
+            test: /\.css$/,
+            use: ['style-loader', 'css-loader']
         }]
-    }
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            "React": "react"
+        })
+    ]
 };
