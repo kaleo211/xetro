@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
     entry: './src/main/javascript/app.js',
@@ -22,6 +23,9 @@ module.exports = {
     plugins: [
         new webpack.ProvidePlugin({
             "React": "react"
+        }),
+        new HtmlWebpackPlugin({
+            template: 'src/main/javascript/public/index.html'
         })
     ]
 };

@@ -12,6 +12,10 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
 
 const drawerWidth = 240;
 
@@ -80,6 +84,13 @@ const styles = theme => ({
 });
 
 class MemberList extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
+    this.handleDrawerClose = this.handleDrawerClose.bind(this);
+  }
+
   state = {
     open: false,
   };
@@ -124,13 +135,20 @@ class MemberList extends React.Component {
         >
           <div className={classes.toolbar}>
             <IconButton onClick={this.handleDrawerClose}>
-              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              {<ChevronRightIcon />}
             </IconButton>
           </div>
           <Divider />
-          <List></List>
-          <Divider />
-          <List></List>
+          <List>
+            <div>
+              <ListItem button>
+                <ListItemIcon>
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Inbox" />
+              </ListItem>
+            </div>
+          </List>
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
