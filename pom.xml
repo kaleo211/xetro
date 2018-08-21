@@ -117,7 +117,7 @@
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>install</arguments>
+                            <arguments>install --loglevel=error</arguments>
                         </configuration>
                     </execution>
                     <execution>

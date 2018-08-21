@@ -1,22 +1,18 @@
-var path = require('path');
-var webpack = require('webpack')
+var webpack = require('webpack');
 
 module.exports = {
     entry: './src/main/javascript/app.js',
     mode: 'development',
-    cache: true,
     output: {
         path: __dirname,
         filename: './src/main/resources/static/built/bundle.js'
     },
     module: {
         rules: [{
+            test: /\.js$/,
             exclude: /(node_modules)/,
             use: {
-                loader: 'babel-loader',
-                options: {
-                    presets: ['babel-preset-es2015', 'react']
-                }
+                loader: 'babel-loader'
             }
         }, {
             test: /\.css$/,

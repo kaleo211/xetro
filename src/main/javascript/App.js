@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import logo from './logo.svg';
 import './App.css';
+import MemberList from './components/MemberList';
 
 class App extends React.Component {
   constructor(props) {
@@ -15,6 +16,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App" >
+        <MemberList />
         <header className="App-header" >
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title" > Welcome to React </h1>
