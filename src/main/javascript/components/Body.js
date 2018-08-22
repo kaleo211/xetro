@@ -6,6 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Members from './Members';
+import Columns from './Columns';
 
 const drawerWidth = 75;
 
@@ -20,6 +21,9 @@ const styles = theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
+  column: {
+    height: '100%',
+  },
   drawerPaper: {
     position: 'relative',
     width: drawerWidth,
@@ -28,10 +32,12 @@ const styles = theme => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
-    minWidth: 0, // So the Typography noWrap works
+    minWidth: 0,
   },
   toolbar: theme.mixins.toolbar,
 });
+
+
 
 class Body extends React.Component {
   constructor(props) {
@@ -56,7 +62,7 @@ class Body extends React.Component {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Typography noWrap>{'You think water moves fast? You should see ice.'}</Typography>
+          <Columns />
         </main>
       </div>
     );

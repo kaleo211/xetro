@@ -9,12 +9,14 @@ import lombok.Data;
 @Data
 @Entity
 public class Board {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+
+    public Board() {
+    }
 
     public Board(String name) {
         this.name = name;

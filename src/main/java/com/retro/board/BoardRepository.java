@@ -1,8 +1,8 @@
 package com.retro.board;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@EnableJpaRepositories(basePackages = "com.retro.board", entityManagerFactoryRef = "emf")
-public interface BoardRepository extends CrudRepository<Board, Long> {
+@RepositoryRestResource(collectionResourceRel = "board", path = "board")
+public interface BoardRepository extends PagingAndSortingRepository<Board, Long> {
 }
