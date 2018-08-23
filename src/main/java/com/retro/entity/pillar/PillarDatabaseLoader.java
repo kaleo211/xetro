@@ -1,4 +1,4 @@
-package com.retro.pillar;
+package com.retro.entity.pillar;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

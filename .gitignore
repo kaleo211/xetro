@@ -11,6 +11,8 @@ coverage
 build
 target
 src/main/resources/static/built/*
+.classpath
+.project
 
 # misc
 .DS_Store

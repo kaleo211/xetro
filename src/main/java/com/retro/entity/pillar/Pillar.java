@@ -1,14 +1,17 @@
-package com.retro.pillar;
+package com.retro.entity.pillar;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.GenerationType;
 import lombok.Data;
+import java.util.List;
 
-import com.retro.board.Board;
+import com.retro.entity.board.Board;
+import com.retro.entity.item.Item;
 
 @Data
 @Entity
@@ -22,6 +25,9 @@ public class Pillar {
   @ManyToOne
   @JoinColumn(name = "board_id")
   private Board board;
+
+  @OneToMany(mappedBy = "pillar")
+  private List<Item> items;
 
   public Pillar() {
   }

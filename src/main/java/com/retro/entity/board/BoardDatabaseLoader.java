@@ -1,4 +1,4 @@
-package com.retro.board;
+package com.retro.entity.board;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

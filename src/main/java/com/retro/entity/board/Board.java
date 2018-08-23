@@ -1,4 +1,4 @@
-package com.retro.board;
+package com.retro.entity.board;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +9,7 @@ import javax.persistence.GenerationType;
 import lombok.Data;
 import java.util.List;
 
-import com.retro.pillar.Pillar;;
+import com.retro.entity.pillar.Pillar;
 
 @Data
 @Entity
