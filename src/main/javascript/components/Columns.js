@@ -6,15 +6,18 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
   root: {
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 1,
   },
-  paper: {
+  item: {
     paddingTop: theme.spacing.unit * 0,
+    paddingBottom: theme.spacing.unit * 2,
+  },
+  newItem: {
     paddingBottom: theme.spacing.unit * 2,
   }
 });
@@ -79,29 +82,35 @@ class Columns extends React.Component {
                   titleTypographyProps={{ align: 'center' }}
                   subheaderTypographyProps={{ align: 'center' }}
                   action={null}
-                  className={classes.cardHeader}
                 />
                 <CardContent>
-                  <div className={classes.paper}>
-                    <Paper className={classes.root} elevation={1}>
+                  <TextField
+                    id="createNewItem"
+                    label="New item"
+                    type="search"
+                    fullWidth={true}
+                    className={classes.newItem}
+                  />
+                  <div className={classes.item}>
+                    <Card className={classes.root} elevation={1}>
                       <Typography variant="headline" component="h3">
-                        This is a sheet of paper.
+                        This is a sheet of item.
                     </Typography>
-                    </Paper>
+                    </Card>
                   </div>
-                  <div className={classes.paper}>
-                    <Paper className={classes.root} elevation={1}>
+                  <div className={classes.item}>
+                    <Card className={classes.root} elevation={1}>
                       <Typography variant="headline" component="h3">
-                        This is a sheet of paper.
+                        This is a sheet of item.
                     </Typography>
-                    </Paper>
+                    </Card>
                   </div>
-                  <div className={classes.paper}>
-                    <Paper className={classes.root} elevation={1}>
+                  <div className={classes.item}>
+                    <Card className={classes.root} elevation={1}>
                       <Typography variant="headline" component="h3">
-                        This is a sheet of paper.
+                        This is a sheet of item.
                     </Typography>
-                    </Paper>
+                    </Card>
                   </div>
                 </CardContent>
               </Card>
