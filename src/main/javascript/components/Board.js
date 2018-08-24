@@ -45,6 +45,7 @@ class Board extends React.Component {
       boards: null,
       currentBoard: null,
       pillars: [],
+      members: [],
     };
   }
 
@@ -70,6 +71,12 @@ class Board extends React.Component {
           }
         }
       });
+
+    fetch("http://localhost:8080/api/member")
+      .then(resp => resp.json())
+      .then(data => {
+        this.setState({ members: data._embedded.member })
+      });
   }
 
   render() {
@@ -86,7 +93,7 @@ class Board extends React.Component {
         </AppBar>
         <Drawer variant="permanent" classes={{ paper: classes.drawerPaper, }}>
           <div className={classes.toolbar} />
-          <Members />
+          <Members members={this.state.members} />
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
