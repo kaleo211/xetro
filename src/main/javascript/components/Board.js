@@ -43,7 +43,8 @@ class Board extends React.Component {
 
     this.state = {
       boards: null,
-      currentBoard: "null",
+      currentBoard: null,
+      pillars: [],
     };
   }
 
@@ -52,11 +53,21 @@ class Board extends React.Component {
       .then(resp => resp.json())
       .then(data => {
         let boards = data._embedded.board;
-        this.setState({ boards: boards });
+        this.setState({ boards });
 
         if (boards.length > 0) {
           let currentBoard = boards[0];
-          this.setState({ currentBoard: currentBoard });
+          console.log("current board:", currentBoard);
+          this.setState({ currentBoard });
+
+          if (currentBoard && currentBoard._links && currentBoard._links.pillars) {
+            fetch(currentBoard._links.pillars.href)
+              .then(resp => resp.json())
+              .then(data => {
+                this.setState({ pillars: data._embedded.pillar });
+                console.log("data:", data)
+              });
+          }
         }
       });
   }
@@ -70,7 +81,7 @@ class Board extends React.Component {
           <Toolbar>
             <Typography variant="title" color="inherit" noWrap>
               Retro Board
-          </Typography>
+            </Typography>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" classes={{ paper: classes.drawerPaper, }}>
@@ -79,7 +90,7 @@ class Board extends React.Component {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Pillars board={this.state.currentBoard} />
+          <Pillars pillars={this.state.pillars} />
         </main>
       </div>
     );

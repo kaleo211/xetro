@@ -9,95 +9,73 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
-  root: {
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 1,
-  },
-  item: {
-    paddingTop: theme.spacing.unit * 0,
-    paddingBottom: theme.spacing.unit * 2,
-  },
-  newItem: {
-    paddingBottom: theme.spacing.unit * 2,
-  }
+    root: {
+        paddingTop: theme.spacing.unit * 2,
+        paddingBottom: theme.spacing.unit * 1,
+    },
+    item: {
+        paddingTop: theme.spacing.unit * 0,
+        paddingBottom: theme.spacing.unit * 2,
+    },
+    newItem: {
+        paddingBottom: theme.spacing.unit * 2,
+    }
 });
 
 class Pillars extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      pillars: null,
+    constructor(props) {
+        super(props);
     }
 
-    let board = this.props.board;
-    console.log("update:", board);
+    render() {
+        const { classes } = this.props;
 
-    if (board && board._links && board._links.pillars) {
-      console.log("update:", board._links.pillars.href);
+        return (
+            < Grid
+                container
+                spacing={24}
+                direction="row"
+                justify="space-between"
+                alignItems="stretch" >
+                {
+                    this.props.pillars.map(pillar => (
+                        <Grid item key={pillar.title} xs={12} sm={12} md={4}>
+                            <Card>
+                                <CardHeader
+                                    title={pillar.title}
+                                    subheader={pillar.subheader}
+                                    titleTypographyProps={{ align: 'center' }}
+                                    subheaderTypographyProps={{ align: 'center' }}
+                                    action={null}
+                                />
+                                <CardContent>
+                                    <TextField
+                                        id="createNewItem"
+                                        label="New item"
+                                        type="search"
+                                        fullWidth={true}
+                                        className={classes.newItem}
+                                    />
 
-      fetch(board._links.pillars.href)
-        .then(resp => resp.json())
-        .then(data => {
-          this.setState({ pillars: data._embedded.pillar });
-          console.log("data:", data)
-        });
+                                    <div className={classes.item}>
+                                        <Card className={classes.root} elevation={1}>
+                                            <Typography variant="headline" component="h3">
+                                                This is a sheet of item.
+                                            </Typography>
+                                        </Card>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Grid>
+                    ))
+                }
+            </Grid >
+        )
     }
-  }
-
-
-  componentWillMount() {
-
-  }
-
-  render() {
-    const { classes } = this.props;
-
-    return (
-      < Grid
-        container
-        spacing={24}
-        direction="row"
-        justify="space-between"
-        alignItems="stretch" >
-        {
-          pillars.map(pillar => (
-            <Grid item key={pillar.title} xs={12} sm={12} md={4}>
-              <Card>
-                <CardHeader
-                  title={pillar.title}
-                  subheader={pillar.subheader}
-                  titleTypographyProps={{ align: 'center' }}
-                  subheaderTypographyProps={{ align: 'center' }}
-                  action={null}
-                />
-                <CardContent>
-                  <TextField
-                    id="createNewItem"
-                    label="New item"
-                    type="search"
-                    fullWidth={true}
-                    className={classes.newItem}
-                  />
-                  <div className={classes.item}>
-                    <Card className={classes.root} elevation={1}>
-                      <Typography variant="headline" component="h3">
-                        This is a sheet of item.
-                    </Typography>
-                    </Card>
-                  </div>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
-        }
-      </Grid >
-    )
-  }
 }
 
 Pillars.propTypes = {
-  classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(Pillars);
