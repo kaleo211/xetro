@@ -22,7 +22,7 @@ const styles = theme => ({
   }
 });
 
-const columns = [
+const pillars = [
   {
     title: 'Free',
     price: '0',
@@ -57,7 +57,7 @@ const columns = [
   },
 ];
 
-class Columns extends React.Component {
+class Pillars extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -73,12 +73,12 @@ class Columns extends React.Component {
         justify="space-between"
         alignItems="stretch" >
         {
-          columns.map(column => (
-            <Grid item key={column.title} xs={12} sm={12} md={4}>
+          pillars.map(pillar => (
+            <Grid item key={pillar.title} xs={12} sm={12} md={4}>
               <Card>
                 <CardHeader
-                  title={column.title}
-                  subheader={column.subheader}
+                  title={pillar.title}
+                  subheader={pillar.subheader}
                   titleTypographyProps={{ align: 'center' }}
                   subheaderTypographyProps={{ align: 'center' }}
                   action={null}
@@ -122,8 +122,8 @@ class Columns extends React.Component {
   }
 }
 
-Columns.propTypes = {
+Pillars.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Columns);
+export default withStyles(styles)(Pillars);

@@ -6,7 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Members from './Members';
-import Columns from './Columns';
+import Pillars from './Pillars';
 
 const drawerWidth = 75;
 
@@ -21,7 +21,7 @@ const styles = theme => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
   },
-  column: {
+  pillar: {
     height: '100%',
   },
   drawerPaper: {
@@ -36,8 +36,6 @@ const styles = theme => ({
   },
   toolbar: theme.mixins.toolbar,
 });
-
-
 
 class Body extends React.Component {
   constructor(props) {
@@ -62,7 +60,7 @@ class Body extends React.Component {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Columns />
+          <Pillars />
         </main>
       </div>
     );

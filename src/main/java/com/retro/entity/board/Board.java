@@ -1,19 +1,27 @@
 package com.retro.entity.board;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.OneToMany;
 import javax.persistence.GenerationType;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 import com.retro.entity.pillar.Pillar;
 
-@Data
+@Builder(toBuilder = true)
 @Entity
-@Table(name = "board")
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,14 +29,8 @@ public class Board {
 
     private String name;
     private boolean locked;
+    private boolean finished;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Pillar> pillars;
-
-    public Board() {
-    }
-
-    public Board(String name) {
-        this.name = name;
-    }
 }

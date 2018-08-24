@@ -7,20 +7,28 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.GenerationType;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 import com.retro.entity.board.Board;
 import com.retro.entity.item.Item;
 
-@Data
 @Entity
+@Builder
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor
 public class Pillar {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private String name;
+  private String title;
 
   @ManyToOne
   @JoinColumn(name = "board_id")
@@ -28,7 +36,4 @@ public class Pillar {
 
   @OneToMany(mappedBy = "pillar")
   private List<Item> items;
-
-  public Pillar() {
-  }
 }

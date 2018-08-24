@@ -15,6 +15,5 @@ public class BoardDatabaseLoader implements CommandLineRunner {
 
 	@Override
 	public void run(String... strings) throws Exception {
-		this.repository.save(new Board("Frodo"));
 	}
 }
