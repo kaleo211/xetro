@@ -22,44 +22,17 @@ const styles = theme => ({
   }
 });
 
-const pillars = [
-  {
-    title: 'Free',
-    price: '0',
-    description: ['10 users included', '2 GB of storage', 'Help center access', 'Email support'],
-    buttonText: 'Sign up for free',
-    buttonVariant: 'outlined',
-  },
-  {
-    title: 'Pro',
-    subheader: 'Most popular',
-    price: '15',
-    description: [
-      '20 users included',
-      '10 GB of storage',
-      'Help center access',
-      'Priority email support',
-    ],
-    buttonText: 'Get started',
-    buttonVariant: 'contained',
-  },
-  {
-    title: 'Enterprise',
-    price: '30',
-    description: [
-      '50 users included',
-      '30 GB of storage',
-      'Help center access',
-      'Phone & email support',
-    ],
-    buttonText: 'Contact us',
-    buttonVariant: 'outlined',
-  },
-];
-
 class Pillars extends React.Component {
   constructor(props) {
     super(props);
+  }
+
+  componentDidUpdate() {
+    console.log("update:", this.props.board)
+
+  }
+
+  componentDidMount() {
   }
 
   render() {
@@ -72,7 +45,7 @@ class Pillars extends React.Component {
         direction="row"
         justify="space-between"
         alignItems="stretch" >
-        {
+        {/* {
           pillars.map(pillar => (
             <Grid item key={pillar.title} xs={12} sm={12} md={4}>
               <Card>
@@ -98,25 +71,11 @@ class Pillars extends React.Component {
                     </Typography>
                     </Card>
                   </div>
-                  <div className={classes.item}>
-                    <Card className={classes.root} elevation={1}>
-                      <Typography variant="headline" component="h3">
-                        This is a sheet of item.
-                    </Typography>
-                    </Card>
-                  </div>
-                  <div className={classes.item}>
-                    <Card className={classes.root} elevation={1}>
-                      <Typography variant="headline" component="h3">
-                        This is a sheet of item.
-                    </Typography>
-                    </Card>
-                  </div>
                 </CardContent>
               </Card>
             </Grid>
           ))
-        }
+        } */}
       </Grid >
     )
   }

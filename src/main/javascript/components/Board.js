@@ -37,20 +37,40 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
 });
 
-class Body extends React.Component {
+class Board extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      boards: null,
+      currentBoard: "null",
+    };
+  }
+
+  componentWillMount() {
+    fetch('http://localhost:8080/api/board')
+      .then(resp => resp.json())
+      .then(data => {
+        let boards = data._embedded.board;
+        this.setState({ boards: boards });
+
+        if (boards.length > 0) {
+          let currentBoard = boards[0];
+          this.setState({ currentBoard: currentBoard });
+        }
+      });
   }
 
   render() {
     const { classes } = this.props;
+    let { currentBoard } = this.state;
 
     return (
-      <div className={classes.root}>
+      <div className={classes.root} >
         <AppBar position="absolute" className={classes.appBar}>
           <Toolbar>
             <Typography variant="title" color="inherit" noWrap>
-              Clipped drawer
+              Retro Board
           </Typography>
           </Toolbar>
         </AppBar>
@@ -60,15 +80,15 @@ class Body extends React.Component {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Pillars />
+          <Pillars board={currentBoard} />
         </main>
       </div>
     );
   }
 }
 
-Body.propTypes = {
+Board.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Body);
+export default withStyles(styles)(Board);

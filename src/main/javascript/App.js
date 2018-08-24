@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Body from './components/Body';
+import Board from './components/Board';
 
 class App extends React.Component {
   constructor(props) {
@@ -10,7 +10,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <Body />
+      <Board />
     );
   }
 }
