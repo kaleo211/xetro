@@ -25,14 +25,29 @@ const styles = theme => ({
 class Pillars extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      pillars: null,
+    }
+
+    let board = this.props.board;
+    console.log("update:", board);
+
+    if (board && board._links && board._links.pillars) {
+      console.log("update:", board._links.pillars.href);
+
+      fetch(board._links.pillars.href)
+        .then(resp => resp.json())
+        .then(data => {
+          this.setState({ pillars: data._embedded.pillar });
+          console.log("data:", data)
+        });
+    }
   }
 
-  componentDidUpdate() {
-    console.log("update:", this.props.board)
 
-  }
+  componentWillMount() {
 
-  componentDidMount() {
   }
 
   render() {
@@ -45,7 +60,7 @@ class Pillars extends React.Component {
         direction="row"
         justify="space-between"
         alignItems="stretch" >
-        {/* {
+        {
           pillars.map(pillar => (
             <Grid item key={pillar.title} xs={12} sm={12} md={4}>
               <Card>
@@ -75,7 +90,7 @@ class Pillars extends React.Component {
               </Card>
             </Grid>
           ))
-        } */}
+        }
       </Grid >
     )
   }

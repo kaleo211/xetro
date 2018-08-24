@@ -15,10 +15,11 @@ import lombok.NoArgsConstructor;
 
 import com.retro.entity.pillar.Pillar;;
 
+@Data
 @Entity
-@Builder
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Builder(toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class Item {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

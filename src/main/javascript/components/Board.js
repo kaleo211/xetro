@@ -63,7 +63,6 @@ class Board extends React.Component {
 
   render() {
     const { classes } = this.props;
-    let { currentBoard } = this.state;
 
     return (
       <div className={classes.root} >
@@ -80,7 +79,7 @@ class Board extends React.Component {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Pillars board={currentBoard} />
+          <Pillars board={this.state.currentBoard} />
         </main>
       </div>
     );

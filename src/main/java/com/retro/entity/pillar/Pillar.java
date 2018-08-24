@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -18,10 +19,11 @@ import java.util.List;
 import com.retro.entity.board.Board;
 import com.retro.entity.item.Item;
 
+@Data
 @Entity
-@Builder
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@Builder(toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class Pillar {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
