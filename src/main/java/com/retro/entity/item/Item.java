@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import com.retro.entity.pillar.Pillar;;
 
@@ -25,7 +26,11 @@ public class Item {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NonNull
   private String title;
+
+  private boolean checked;
+  private int likes;
 
   @ManyToOne
   @JoinColumn(name = "pillar_id")
