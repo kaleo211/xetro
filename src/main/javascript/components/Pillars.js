@@ -8,7 +8,16 @@ import IconButton from '@material-ui/core/IconButton';
 import PropTypes from 'prop-types';
 import Save from '@material-ui/icons/Save';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import PlusOne from '@material-ui/icons/PlusOne';
+import DeleteOutline from '@material-ui/icons/DeleteOutline';
+import Done from '@material-ui/icons/Done';
 
 const styles = theme => ({
   root: {
@@ -28,6 +37,26 @@ class Pillars extends React.Component {
     this.state = {
       isSaveButtonDisabled: [],
       newItems: {},
+      anchorEl: null,
+    }
+
+    this.handleShowItemMenu = this.handleShowItemMenu.bind(this);
+    this.handleCloseItemMenu = this.handleCloseItemMenu.bind(this);
+  }
+
+  componentWillReceiveProps(props) {
+    let pillars = props.pillars;
+    let isSaveButtonDisabled = [];
+
+    if (pillars) {
+      let newItems = {};
+      for (let idx = 0; idx < pillars.length; idx++) {
+        let pillar = pillars[idx]._links.self.href;
+        newItems[pillar] = "";
+        isSaveButtonDisabled[pillar] = true;
+        console.log("i am here");
+      }
+      this.setState({ newItems, isSaveButtonDisabled });
     }
   }
 
@@ -60,13 +89,10 @@ class Pillars extends React.Component {
   }
 
   handleNewItemChange(e) {
-    console.log("target name:", e.target.name);
     let newItems = this.state.newItems;
     newItems[e.target.name] = e.target.value;
     this.setState(newItems);
 
-    this.setState
-    console.log("changed title", this.state.newItems[e.target.name]);
     if (e.target.value === "") {
       this.state.isSaveButtonDisabled[e.target.name] = true
     } else {
@@ -74,20 +100,12 @@ class Pillars extends React.Component {
     }
   }
 
-  componentWillReceiveProps(props) {
-    let pillars = props.pillars;
-    let isSaveButtonDisabled = [];
+  handleShowItemMenu(event) {
+    this.setState({ anchorEl: event.currentTarget });
+  }
 
-    if (pillars) {
-      let newItems = {};
-      for (let idx = 0; idx < pillars.length; idx++) {
-        let pillar = pillars[idx]._links.self.href;
-        newItems[pillar] = "";
-        isSaveButtonDisabled[pillar] = true;
-        console.log("i am here");
-      }
-      this.setState({ newItems, isSaveButtonDisabled });
-    }
+  handleCloseItemMenu() {
+    this.setState({ anchorEl: null });
   }
 
   render() {
@@ -139,19 +157,42 @@ class Pillars extends React.Component {
                       </IconButton>
                     </Grid>
                   </Grid>
+                </CardContent>
+                <List component="nav">
                   {
                     pillar.items && pillar.items.map(item => (
-                      <div key={item.title} className={classes.item}>
-                        <Card className={classes.root} elevation={1}>
-                          <Typography variant="headline" component="h3">
-                            {item.title}
-                          </Typography>
-                        </Card>
+                      <div key={item.title}>
+                        <Divider />
+                        <ListItem button onClick={this.handleShowItemMenu}>
+                          <ListItemText primary={item.title} />
+                        </ListItem>
+
+                        <Menu
+                          id="lock-menu"
+                          anchorEl={this.state.anchorEl}
+                          open={Boolean(this.state.anchorEl)}
+                          onClose={this.handleCloseItemMenu}
+                        >
+                          <MenuItem onClick={event => this.handleShowItemMenu(event)}>
+                            <ListItemIcon className={classes.icon}>
+                              <PlusOne />
+                            </ListItemIcon>
+                          </MenuItem>
+                          <MenuItem onClick={event => this.handleShowItemMenu(event)}>
+                            <ListItemIcon className={classes.icon}>
+                              <Done />
+                            </ListItemIcon>
+                          </MenuItem>
+                          <MenuItem onClick={event => this.handleShowItemMenu(event)}>
+                            <ListItemIcon className={classes.icon}>
+                              <DeleteOutline />
+                            </ListItemIcon>
+                          </MenuItem>
+                        </Menu>
                       </div>
                     ))
                   }
-
-                </CardContent>
+                </List>
               </Card>
             </Grid>
           ))
