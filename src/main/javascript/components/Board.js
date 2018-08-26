@@ -47,6 +47,18 @@ class Board extends React.Component {
       pillars: [],
       members: [],
     };
+
+    this.updatePillar = this.updatePillar.bind(this);
+  }
+
+  updatePillar(idx) {
+    let pillars = this.state.pillars;
+    fetch(pillars[idx]._links.items.href)
+      .then(resp => resp.json())
+      .then(data => {
+        pillars[idx].items = data._embedded.item;
+        this.setState({ pillars });
+      });
   }
 
   componentWillMount() {
@@ -65,8 +77,17 @@ class Board extends React.Component {
             fetch(currentBoard._links.pillars.href)
               .then(resp => resp.json())
               .then(data => {
-                this.setState({ pillars: data._embedded.pillar });
-                console.log("data:", data)
+                let pillars = data._embedded.pillar
+                console.log("data:", pillars);
+
+                for (let idx = 0; idx < pillars.length; idx++) {
+                  fetch(pillars[idx]._links.items.href)
+                    .then(resp => resp.json())
+                    .then(data => {
+                      pillars[idx].items = data._embedded.item;
+                      this.setState({ pillars });
+                    });
+                }
               });
           }
         }
@@ -91,13 +112,15 @@ class Board extends React.Component {
             </Typography>
           </Toolbar>
         </AppBar>
+
         <Drawer variant="permanent" classes={{ paper: classes.drawerPaper, }}>
           <div className={classes.toolbar} />
           <Members members={this.state.members} />
         </Drawer>
+
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Pillars pillars={this.state.pillars} />
+          <Pillars pillars={this.state.pillars} updatePillar={this.updatePillar} />
         </main>
       </div>
     );

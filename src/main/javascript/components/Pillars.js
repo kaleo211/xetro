@@ -31,7 +31,7 @@ class Pillars extends React.Component {
     }
   }
 
-  handleNewItemSave(pillar, event) {
+  handleNewItemSave(idx, pillar, event) {
     console.log("handling saving new item:", pillar);
     console.log("new title:", this.state.newItems[pillar]);
 
@@ -40,32 +40,58 @@ class Pillars extends React.Component {
       pillar: pillar,
     }
 
-    console.log("body:", JSON.stringify(newItem));
-
     fetch("http://localhost:8080/api/item", {
       method: 'post',
       body: JSON.stringify(newItem),
       headers: new Headers({
         'Content-Type': 'application/json',
       })
-    }).then(resp => resp.json())
-      .then(data => {
-        console.log("post back date:", data);
-      })
+    }).then(resp => {
+      if (resp.ok) {
+        this.props.updatePillar(idx);
+        console.log("pillar save:", pillar);
+        this.state.newItems[pillar] = "";
+      } else {
+        throw new Error('failed to post new item');
+      }
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 
-  handleNewItemChange(event) {
-    this.state.newItems[event.target.name] = event.target.value;
-    if (event.target.value === "") {
-      this.state.isSaveButtonDisabled[event.target.name] = true
+  handleNewItemChange(e) {
+    console.log("target name:", e.target.name);
+    let newItems = this.state.newItems;
+    newItems[e.target.name] = e.target.value;
+    this.setState(newItems);
+
+    this.setState
+    console.log("changed title", this.state.newItems[e.target.name]);
+    if (e.target.value === "") {
+      this.state.isSaveButtonDisabled[e.target.name] = true
     } else {
-      this.state.isSaveButtonDisabled[event.target.name] = false
+      this.state.isSaveButtonDisabled[e.target.name] = false
     }
-    console.log("changed title:", this.state.newItems[event.target.name]);
+  }
+
+  componentWillReceiveProps(props) {
+    let pillars = props.pillars;
+    let isSaveButtonDisabled = [];
+
+    if (pillars) {
+      let newItems = {};
+      for (let idx = 0; idx < pillars.length; idx++) {
+        let pillar = pillars[idx]._links.self.href;
+        newItems[pillar] = "";
+        isSaveButtonDisabled[pillar] = true;
+        console.log("i am here");
+      }
+      this.setState({ newItems, isSaveButtonDisabled });
+    }
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, pillars } = this.props;
 
     return (
       < Grid
@@ -75,8 +101,8 @@ class Pillars extends React.Component {
         justify="space-between"
         alignItems="stretch" >
         {
-          this.props.pillars.map(pillar => (
-            <Grid item key={pillar.title} xs={12} sm={12} md={4}>
+          pillars.map((pillar, idx) => (
+            < Grid item key={pillar.title} xs={12} sm={12} md={4} >
               <Card>
                 <CardHeader
                   title={pillar.title}
@@ -98,6 +124,7 @@ class Pillars extends React.Component {
                         label="New item"
                         fullWidth
                         name={pillar._links.self.href}
+                        value={this.state.newItems[pillar._links.self.href]}
                         onChange={this.handleNewItemChange.bind(this)}
                       />
                     </Grid>
@@ -106,19 +133,24 @@ class Pillars extends React.Component {
                         color="primary"
                         disabled={this.state.isSaveButtonDisabled[pillar._links.self.href]}
                         aria-label="Add new item"
-                        onClick={this.handleNewItemSave.bind(this, pillar._links.self.href)}
+                        onClick={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
                       >
                         <Save />
                       </IconButton>
                     </Grid>
                   </Grid>
-                  <div className={classes.item}>
-                    <Card className={classes.root} elevation={1}>
-                      <Typography variant="headline" component="h3">
-                        This is a sheet of item.
-                      </Typography>
-                    </Card>
-                  </div>
+                  {
+                    pillar.items && pillar.items.map(item => (
+                      <div key={item.title} className={classes.item}>
+                        <Card className={classes.root} elevation={1}>
+                          <Typography variant="headline" component="h3">
+                            {item.title}
+                          </Typography>
+                        </Card>
+                      </div>
+                    ))
+                  }
+
                 </CardContent>
               </Card>
             </Grid>
