@@ -19,8 +19,19 @@ import MenuItem from '@material-ui/core/MenuItem';
 import PlusOne from '@material-ui/icons/PlusOne';
 import PropTypes from 'prop-types';
 import Save from '@material-ui/icons/Save';
+import Chat from '@material-ui/icons/Chat';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import Typography from '@material-ui/core/Typography';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Storage from '@material-ui/icons/Storage';
 import TextField from '@material-ui/core/TextField';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
+import SignalCellular1BarRounded from '@material-ui/icons/SignalCellular1BarRounded';
+import SignalCellular2BarRounded from '@material-ui/icons/SignalCellular2BarRounded';
+import SignalCellular3BarRounded from '@material-ui/icons/SignalCellular3BarRounded';
+import SignalCellular4BarRounded from '@material-ui/icons/SignalCellular4BarRounded';
 
 const styles = theme => ({
   root: {
@@ -44,6 +55,7 @@ class Pillars extends React.Component {
       isSaveButtonDisabled: [],
       newItems: {},
       anchorEl: {},
+      expandedItem: "",
     }
   }
 
@@ -136,6 +148,22 @@ class Pillars extends React.Component {
     });
   }
 
+  handleDoubleClick() {
+    alert("haha")
+  }
+
+  handleItemExpandToggle(item, event) {
+    console.log("hahah")
+    let expandedItem = this.state.expandedItem;
+    if (expandedItem && expandedItem === item._links.self.href) {
+      this.setState({
+        expandedItem: "",
+      })
+    } else {
+      this.setState({ expandedItem: item._links.self.href });
+    }
+  }
+
   handleNewItemChange(e) {
     let newItems = this.state.newItems;
     newItems[e.target.name] = e.target.value;
@@ -175,85 +203,90 @@ class Pillars extends React.Component {
         direction="row"
         justify="space-between"
         alignItems="stretch" >
-        {
-          pillars.map((pillar, idx) => (
-            < Grid item key={pillar.title} xs={12} sm={12} md={4} >
-              <Card>
-                <CardHeader
-                  title={pillar.title}
-                  subheader={pillar.subheader}
-                  titleTypographyProps={{ align: 'center' }}
-                  subheaderTypographyProps={{ align: 'center' }}
-                  action={null}
-                />
-                <CardContent>
-                  <Grid container alignItems="baseline" justify="space-evenly" >
-                    <Grid item xs={11} sm={9} md={10}>
-                      <TextField
-                        id="createNewItem"
-                        key={pillar._links.self.href}
-                        label="New item"
-                        fullWidth
-                        name={pillar._links.self.href}
-                        value={this.state.newItems[pillar._links.self.href]}
-                        onChange={this.handleNewItemChange.bind(this)}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <IconButton
-                        color="primary"
-                        disabled={this.state.isSaveButtonDisabled[pillar._links.self.href]}
-                        aria-label="Add new item"
-                        onClick={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
-                      >
-                        <Save />
-                      </IconButton>
-                    </Grid>
+        {pillars.map((pillar, idx) => (
+          < Grid item key={pillar.title} xs={12} sm={12} md={4} >
+            <Card>
+              <CardHeader
+                title={pillar.title}
+                subheader={pillar.subheader}
+                titleTypographyProps={{ align: 'center' }}
+                subheaderTypographyProps={{ align: 'center' }}
+                action={null}
+              />
+              <CardContent>
+                <Grid container alignItems="baseline" justify="space-evenly" >
+                  <Grid item xs={11} sm={9} md={10}>
+                    <TextField
+                      id="createNewItem"
+                      key={pillar._links.self.href}
+                      label="New item"
+                      fullWidth
+                      name={pillar._links.self.href}
+                      value={this.state.newItems[pillar._links.self.href]}
+                      onChange={this.handleNewItemChange.bind(this)}
+                    />
                   </Grid>
-                </CardContent>
-                <List component="nav">
-                  {pillar.items && pillar.items.map(item => (
-                    <div key={item.title} >
-                      <Divider />
-                      <ListItem button >
-                        <ListItemText style={{ overflow: 'hidden' }} className={item.checked ? classes.itemDone : null} primary={item.title} />
-                        <ListItemSecondaryAction>
-                          <IconButton aria-label="Comments" onClick={this.handleShowItemMenu.bind(this, item)}>
-                            {item.likes != 0 ? (<Badge badgeContent={item.likes} color="primary"><Storage /></Badge>) : (<Storage />)}
-                          </IconButton>
-                        </ListItemSecondaryAction>
-                      </ListItem>
+                  <Grid item>
+                    <IconButton
+                      color="primary"
+                      disabled={this.state.isSaveButtonDisabled[pillar._links.self.href]}
+                      aria-label="Add new item"
+                      onClick={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
+                    >
+                      <Save />
+                    </IconButton>
+                  </Grid>
+                </Grid>
+              </CardContent>
 
-                      <Menu
-                        id={item.title}
-                        anchorEl={this.state.anchorEl[item._links.self.href]}
-                        open={Boolean(this.state.anchorEl[item._links.self.href])}
-                        onClose={this.handleCloseItemMenu.bind(this, item)}
-                      >
-                        <MenuItem onClick={this.handleNewLikeSave.bind(this, idx, item)}>
-                          <ListItemIcon>
-                            <PlusOne />
-                          </ListItemIcon>
-                          {item._links.self.href}
-                        </MenuItem>
-                        <MenuItem onClick={this.handleItemDone.bind(this, idx, item)}>
-                          <ListItemIcon>
-                            <Done />
-                          </ListItemIcon>
-                        </MenuItem>
-                        <MenuItem onClick={this.handleItemDelete.bind(this, idx, item)}>
-                          <ListItemIcon>
-                            <DeleteOutline />
-                          </ListItemIcon>
-                        </MenuItem>
-                      </Menu>
-                    </div>
-                  ))}
-                </List>
-              </Card>
-            </Grid>
-          ))
-        }
+              {pillar.items && pillar.items.map(item => (
+                <ExpansionPanel
+                  key={item.title}
+                  expanded={this.state.expandedItem === item._links.self.href}
+                  onChange={this.handleItemExpandToggle.bind(this, item)}
+                >
+
+                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant={'subheading'} style={{ paddingRight: 15 }} className={item.checked ? classes.itemDone : null}>
+                      {item.title}
+                    </Typography>
+
+                    {item.likes > 0 && item.likes <= 2 && (
+                      <SignalCellular1BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
+                    )}
+                    {item.likes > 3 && item.likes <= 4 && (
+                      <SignalCellular2BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
+                    )}
+                    {item.likes > 4 && item.likes <= 6 && (
+                      <SignalCellular3BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
+                    )}
+                    {item.likes > 6 && (
+                      <SignalCellular4BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
+                    )}
+
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <Typography >
+                      Nulla facilisi.
+                    </Typography>
+                  </ExpansionPanelDetails>
+
+                  <ExpansionPanelActions>
+                    <IconButton onClick={this.handleItemDone.bind(this, idx, item)}>
+                      <Done />
+                    </IconButton>
+                    <IconButton onClick={this.handleItemDelete.bind(this, idx, item)}>
+                      <DeleteOutline />
+                    </IconButton>
+                    <IconButton onClick={this.handleNewLikeSave.bind(this, idx, item)}>
+                      <PlusOne />
+                    </IconButton>
+                  </ExpansionPanelActions>
+                </ExpansionPanel>
+              ))}
+            </Card>
+          </Grid>
+        ))}
       </Grid >
     )
   }
