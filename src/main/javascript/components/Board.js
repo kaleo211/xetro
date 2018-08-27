@@ -84,7 +84,15 @@ class Board extends React.Component {
                   fetch(pillars[idx]._links.items.href)
                     .then(resp => resp.json())
                     .then(data => {
-                      pillars[idx].items = data._embedded.item;
+                      let items = data._embedded.item;
+
+                      let likes = 0;
+                      for (let i = 0; i < items.length; i++) {
+                        likes += items[i].likes;
+                      }
+                      pillars[idx].likes = likes;
+                      pillars[idx].items = items;
+                      console.log("update pillar:", pillars);
                       this.setState({ pillars });
                     });
                 }

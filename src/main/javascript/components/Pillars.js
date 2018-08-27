@@ -18,6 +18,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import PlusOne from '@material-ui/icons/PlusOne';
 import DeleteOutline from '@material-ui/icons/DeleteOutline';
 import Done from '@material-ui/icons/Done';
+import Badge from '@material-ui/core/Badge';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import MoreVert from '@material-ui/icons/MoreVert';
 
 const styles = theme => ({
   root: {
@@ -27,6 +31,9 @@ const styles = theme => ({
   item: {
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 1,
+  },
+  itemDone: {
+    textDecoration: "line-through",
   },
 });
 
@@ -38,6 +45,7 @@ class Pillars extends React.Component {
       isSaveButtonDisabled: [],
       newItems: {},
       anchorEl: null,
+      progress: {},
     }
 
     this.handleShowItemMenu = this.handleShowItemMenu.bind(this);
@@ -54,16 +62,12 @@ class Pillars extends React.Component {
         let pillar = pillars[idx]._links.self.href;
         newItems[pillar] = "";
         isSaveButtonDisabled[pillar] = true;
-        console.log("i am here");
       }
       this.setState({ newItems, isSaveButtonDisabled });
     }
   }
 
   handleNewItemSave(idx, pillar, event) {
-    console.log("handling saving new item:", pillar);
-    console.log("new title:", this.state.newItems[pillar]);
-
     let newItem = {
       title: this.state.newItems[pillar],
       pillar: pillar,
@@ -85,6 +89,37 @@ class Pillars extends React.Component {
       }
     }).catch((error) => {
       console.log(error);
+    });
+  }
+
+  handleItemDone(idx, item, event) {
+    item.checked = true;
+    fetch(item._links.self.href, {
+      method: 'put',
+      body: JSON.stringify(item),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    }).then(resp => {
+      if (resp.ok) {
+        this.props.updatePillar(idx);
+        this.handleCloseItemMenu();
+      } else {
+        console.log("failed to update item resp:", resp);
+      }
+    })
+  }
+
+  handleItemDelete(idx, item, event) {
+    fetch(item._links.self.href, {
+      method: 'delete',
+    }).then(resp => {
+      if (resp.ok) {
+        this.props.updatePillar(idx);
+        this.handleCloseItemMenu();
+      } else {
+        console.log("failed to delete item resp:", resp);
+      }
     });
   }
 
@@ -161,30 +196,36 @@ class Pillars extends React.Component {
                 <List component="nav">
                   {
                     pillar.items && pillar.items.map(item => (
-                      <div key={item.title}>
+                      <div key={item.title} >
                         <Divider />
                         <ListItem button onClick={this.handleShowItemMenu}>
-                          <ListItemText primary={item.title} />
+                          <ListItemText style={{ overflow: 'hidden' }} className={item.checked ? classes.itemDone : null} primary={item.title} />
+                          <ListItemSecondaryAction>
+                            <IconButton aria-label="Comments">
+                              <Badge badgeContent={4} color="primary">
+                                <MoreVert />
+                              </Badge>
+                            </IconButton>
+                          </ListItemSecondaryAction>
                         </ListItem>
-
                         <Menu
                           id="lock-menu"
                           anchorEl={this.state.anchorEl}
                           open={Boolean(this.state.anchorEl)}
                           onClose={this.handleCloseItemMenu}
                         >
-                          <MenuItem onClick={event => this.handleShowItemMenu(event)}>
-                            <ListItemIcon className={classes.icon}>
+                          <MenuItem>
+                            <ListItemIcon>
                               <PlusOne />
                             </ListItemIcon>
                           </MenuItem>
-                          <MenuItem onClick={event => this.handleShowItemMenu(event)}>
-                            <ListItemIcon className={classes.icon}>
+                          <MenuItem onClick={this.handleItemDone.bind(this, idx, item)}>
+                            <ListItemIcon>
                               <Done />
                             </ListItemIcon>
                           </MenuItem>
-                          <MenuItem onClick={event => this.handleShowItemMenu(event)}>
-                            <ListItemIcon className={classes.icon}>
+                          <MenuItem onClick={this.handleItemDelete.bind(this, idx, item)}>
+                            <ListItemIcon>
                               <DeleteOutline />
                             </ListItemIcon>
                           </MenuItem>
