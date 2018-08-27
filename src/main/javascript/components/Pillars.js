@@ -18,8 +18,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import PlusOne from '@material-ui/icons/PlusOne';
 import PropTypes from 'prop-types';
-import Save from '@material-ui/icons/Save';
-import Chat from '@material-ui/icons/Chat';
+import Add from '@material-ui/icons/Add';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -32,6 +31,8 @@ import SignalCellular1BarRounded from '@material-ui/icons/SignalCellular1BarRoun
 import SignalCellular2BarRounded from '@material-ui/icons/SignalCellular2BarRounded';
 import SignalCellular3BarRounded from '@material-ui/icons/SignalCellular3BarRounded';
 import SignalCellular4BarRounded from '@material-ui/icons/SignalCellular4BarRounded';
+import CardActions from '@material-ui/core/CardActions';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 const styles = theme => ({
   root: {
@@ -111,28 +112,31 @@ class Pillars extends React.Component {
   }
 
   handleNewItemSave(idx, pillar, event) {
-    let newItem = {
-      title: this.state.newItems[pillar],
-      pillar: pillar,
-    }
-
-    fetch("http://localhost:8080/api/item", {
-      method: 'post',
-      body: JSON.stringify(newItem),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      })
-    }).then(resp => {
-      if (resp.ok) {
-        this.props.updatePillar(idx);
-        console.log("pillar save:", pillar);
-        this.state.newItems[pillar] = "";
-      } else {
-        throw new Error('failed to post new item');
+    console.log("i am here outside", event)
+    if (event && event.key === 'Enter') {
+      let newItem = {
+        title: this.state.newItems[pillar],
+        pillar: pillar,
       }
-    }).catch((error) => {
-      console.log(error);
-    });
+
+      fetch("http://localhost:8080/api/item", {
+        method: 'post',
+        body: JSON.stringify(newItem),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        })
+      }).then(resp => {
+        if (resp.ok) {
+          this.props.updatePillar(idx);
+          console.log("pillar save:", pillar);
+          this.state.newItems[pillar] = "";
+        } else {
+          throw new Error('failed to post new item');
+        }
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
   }
 
   handleItemDelete(idx, item, event) {
@@ -214,30 +218,28 @@ class Pillars extends React.Component {
                 action={null}
               />
               <CardContent>
-                <Grid container alignItems="baseline" justify="space-evenly" >
-                  <Grid item xs={11} sm={9} md={10}>
-                    <TextField
-                      id="createNewItem"
-                      key={pillar._links.self.href}
-                      label="New item"
-                      fullWidth
-                      name={pillar._links.self.href}
-                      value={this.state.newItems[pillar._links.self.href]}
-                      onChange={this.handleNewItemChange.bind(this)}
-                    />
-                  </Grid>
-                  <Grid item>
-                    <IconButton
-                      color="primary"
-                      disabled={this.state.isSaveButtonDisabled[pillar._links.self.href]}
-                      aria-label="Add new item"
-                      onClick={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
-                    >
-                      <Save />
-                    </IconButton>
-                  </Grid>
-                </Grid>
+                <TextField
+                  id="createNewItem"
+                  key={pillar._links.self.href}
+                  label="New item"
+                  fullWidth
+                  name={pillar._links.self.href}
+                  value={this.state.newItems[pillar._links.self.href]}
+                  onChange={this.handleNewItemChange.bind(this)}
+                  onKeyPress={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
+                />
               </CardContent>
+              {/* <CardActions style={{ display: 'flex' }} disableActionSpacing>
+                <IconButton
+                  style={{ marginLeft: 'auto', }}
+                  color="primary"
+                  disabled={this.state.isSaveButtonDisabled[pillar._links.self.href]}
+                  aria-label="Add new item"
+                  onClick={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
+                >
+                  <Save />
+                </IconButton>
+              </CardActions> */}
 
               {pillar.items && pillar.items.map(item => (
                 <ExpansionPanel
@@ -245,16 +247,14 @@ class Pillars extends React.Component {
                   expanded={this.state.expandedItem === item._links.self.href}
                   onChange={this.handleItemExpandToggle.bind(this, item)}
                 >
-
                   <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant={'subheading'} style={{ paddingRight: 15 }} className={item.checked ? classes.itemDone : null}>
+                    <Typography variant={'title'} style={{ paddingRight: 15 }} className={item.checked ? classes.itemDone : null}>
                       {item.title}
                     </Typography>
-
                     {item.likes > 0 && item.likes <= 2 && (
                       <SignalCellular1BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
                     )}
-                    {item.likes > 3 && item.likes <= 4 && (
+                    {item.likes > 2 && item.likes <= 4 && (
                       <SignalCellular2BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
                     )}
                     {item.likes > 4 && item.likes <= 6 && (
@@ -263,15 +263,23 @@ class Pillars extends React.Component {
                     {item.likes > 6 && (
                       <SignalCellular4BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
                     )}
-
                   </ExpansionPanelSummary>
+
                   <ExpansionPanelDetails>
-                    <Typography >
-                      Nulla facilisi.
-                    </Typography>
+                    <Grid container>
+                      <TextField xs={12}
+                        id="createNewActionItem"
+                        label="Action item"
+                        fullWidth
+                        name={pillar._links.self.href}
+                      />
+                      <IconButton xs={1} style={{ marginTop: 10 }}>
+                        <Add fontSize='inherit' />
+                      </IconButton>
+                    </Grid>
                   </ExpansionPanelDetails>
 
-                  <ExpansionPanelActions>
+                  <ExpansionPanelActions style={{ marginTop: -50 }}>
                     <IconButton onClick={this.handleItemDone.bind(this, idx, item)}>
                       <Done />
                     </IconButton>
