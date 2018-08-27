@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.GenerationType;
 
 import lombok.AccessLevel;
@@ -14,7 +15,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import com.retro.entity.pillar.Pillar;;
+import com.retro.entity.pillar.Pillar;
+import com.retro.entity.action.Action;
 
 @Data
 @Entity
@@ -36,4 +38,7 @@ public class Item {
   @ManyToOne
   @JoinColumn(name = "pillar_id")
   private Pillar pillar;
+
+  @OneToOne(mappedBy = "item")
+  private Action action;
 }

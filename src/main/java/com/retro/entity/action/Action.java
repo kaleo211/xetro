@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.GenerationType;
@@ -18,7 +19,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import com.retro.entity.member.Member;
-import com.retro.entity.pillar.Pillar;
+import com.retro.entity.item.Item;
 
 @Data
 @Entity
@@ -34,9 +35,11 @@ public class Action {
   private boolean lock;
   private boolean finished;
 
-  @OneToOne(mappedBy = "item", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
-  private List<Pillar> pillars;
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "item_id")
+  private Item item;
 
-  @ManyToOne()
+  @ManyToOne
+  @JoinColumn(name = "member_id")
   private Member owner;
 }
