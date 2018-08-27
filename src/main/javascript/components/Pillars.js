@@ -1,27 +1,26 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import Badge from '@material-ui/core/Badge';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import DeleteOutline from '@material-ui/icons/DeleteOutline';
+import Divider from '@material-ui/core/Divider';
+import Done from '@material-ui/icons/Done';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import PropTypes from 'prop-types';
-import Save from '@material-ui/icons/Save';
-import TextField from '@material-ui/core/TextField';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import Divider from '@material-ui/core/Divider';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import PlusOne from '@material-ui/icons/PlusOne';
-import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import Done from '@material-ui/icons/Done';
-import Badge from '@material-ui/core/Badge';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import MoreVert from '@material-ui/icons/MoreVert';
+import PropTypes from 'prop-types';
+import Save from '@material-ui/icons/Save';
+import Storage from '@material-ui/icons/Storage';
+import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
   root: {
@@ -44,12 +43,8 @@ class Pillars extends React.Component {
     this.state = {
       isSaveButtonDisabled: [],
       newItems: {},
-      anchorEl: null,
-      progress: {},
+      anchorEl: {},
     }
-
-    this.handleShowItemMenu = this.handleShowItemMenu.bind(this);
-    this.handleCloseItemMenu = this.handleCloseItemMenu.bind(this);
   }
 
   componentWillReceiveProps(props) {
@@ -59,12 +54,48 @@ class Pillars extends React.Component {
     if (pillars) {
       let newItems = {};
       for (let idx = 0; idx < pillars.length; idx++) {
-        let pillar = pillars[idx]._links.self.href;
-        newItems[pillar] = "";
-        isSaveButtonDisabled[pillar] = true;
+        let pillar = pillars[idx];
+        let pillarHref = pillar._links.self.href
+        newItems[pillarHref] = "";
+        isSaveButtonDisabled[pillarHref] = true;
       }
       this.setState({ newItems, isSaveButtonDisabled });
     }
+  }
+
+  handleNewLikeSave(idx, item, event) {
+    item.likes += 1;
+
+    fetch(item._links.self.href, {
+      method: 'put',
+      body: JSON.stringify(item),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    }).then(resp => {
+      if (resp.ok) {
+        this.props.updatePillar(idx);
+        this.handleCloseItemMenu(item, event);
+      }
+    })
+  }
+
+  handleItemDone(idx, item, event) {
+    item.checked = true;
+    fetch(item._links.self.href, {
+      method: 'put',
+      body: JSON.stringify(item),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    }).then(resp => {
+      if (resp.ok) {
+        this.props.updatePillar(idx);
+        this.handleCloseItemMenu(item, event);
+      } else {
+        console.log("failed to update item resp:", resp);
+      }
+    })
   }
 
   handleNewItemSave(idx, pillar, event) {
@@ -92,31 +123,13 @@ class Pillars extends React.Component {
     });
   }
 
-  handleItemDone(idx, item, event) {
-    item.checked = true;
-    fetch(item._links.self.href, {
-      method: 'put',
-      body: JSON.stringify(item),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-    }).then(resp => {
-      if (resp.ok) {
-        this.props.updatePillar(idx);
-        this.handleCloseItemMenu();
-      } else {
-        console.log("failed to update item resp:", resp);
-      }
-    })
-  }
-
   handleItemDelete(idx, item, event) {
     fetch(item._links.self.href, {
       method: 'delete',
     }).then(resp => {
       if (resp.ok) {
         this.props.updatePillar(idx);
-        this.handleCloseItemMenu();
+        this.handleCloseItemMenu(item, event);
       } else {
         console.log("failed to delete item resp:", resp);
       }
@@ -135,12 +148,21 @@ class Pillars extends React.Component {
     }
   }
 
-  handleShowItemMenu(event) {
-    this.setState({ anchorEl: event.currentTarget });
+  handleShowItemMenu(item, event) {
+    console.log("item in show button:", item);
+    if (item._links) {
+      let anchorEl = this.state.anchorEl;
+      anchorEl[item._links.self.href] = event.currentTarget;
+      this.setState({ anchorEl });
+    }
   }
 
-  handleCloseItemMenu() {
-    this.setState({ anchorEl: null });
+  handleCloseItemMenu(item, event) {
+    if (item._links) {
+      let anchorEl = this.state.anchorEl;
+      anchorEl[item._links.self.href] = null;
+      this.setState({ anchorEl });
+    }
   }
 
   render() {
@@ -165,11 +187,7 @@ class Pillars extends React.Component {
                   action={null}
                 />
                 <CardContent>
-                  <Grid
-                    container
-                    alignItems="baseline"
-                    justify="space-evenly"
-                  >
+                  <Grid container alignItems="baseline" justify="space-evenly" >
                     <Grid item xs={11} sm={9} md={10}>
                       <TextField
                         id="createNewItem"
@@ -194,45 +212,43 @@ class Pillars extends React.Component {
                   </Grid>
                 </CardContent>
                 <List component="nav">
-                  {
-                    pillar.items && pillar.items.map(item => (
-                      <div key={item.title} >
-                        <Divider />
-                        <ListItem button onClick={this.handleShowItemMenu}>
-                          <ListItemText style={{ overflow: 'hidden' }} className={item.checked ? classes.itemDone : null} primary={item.title} />
-                          <ListItemSecondaryAction>
-                            <IconButton aria-label="Comments">
-                              <Badge badgeContent={4} color="primary">
-                                <MoreVert />
-                              </Badge>
-                            </IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                        <Menu
-                          id="lock-menu"
-                          anchorEl={this.state.anchorEl}
-                          open={Boolean(this.state.anchorEl)}
-                          onClose={this.handleCloseItemMenu}
-                        >
-                          <MenuItem>
-                            <ListItemIcon>
-                              <PlusOne />
-                            </ListItemIcon>
-                          </MenuItem>
-                          <MenuItem onClick={this.handleItemDone.bind(this, idx, item)}>
-                            <ListItemIcon>
-                              <Done />
-                            </ListItemIcon>
-                          </MenuItem>
-                          <MenuItem onClick={this.handleItemDelete.bind(this, idx, item)}>
-                            <ListItemIcon>
-                              <DeleteOutline />
-                            </ListItemIcon>
-                          </MenuItem>
-                        </Menu>
-                      </div>
-                    ))
-                  }
+                  {pillar.items && pillar.items.map(item => (
+                    <div key={item.title} >
+                      <Divider />
+                      <ListItem button >
+                        <ListItemText style={{ overflow: 'hidden' }} className={item.checked ? classes.itemDone : null} primary={item.title} />
+                        <ListItemSecondaryAction>
+                          <IconButton aria-label="Comments" onClick={this.handleShowItemMenu.bind(this, item)}>
+                            {item.likes != 0 ? (<Badge badgeContent={item.likes} color="primary"><Storage /></Badge>) : (<Storage />)}
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+
+                      <Menu
+                        id={item.title}
+                        anchorEl={this.state.anchorEl[item._links.self.href]}
+                        open={Boolean(this.state.anchorEl[item._links.self.href])}
+                        onClose={this.handleCloseItemMenu.bind(this, item)}
+                      >
+                        <MenuItem onClick={this.handleNewLikeSave.bind(this, idx, item)}>
+                          <ListItemIcon>
+                            <PlusOne />
+                          </ListItemIcon>
+                          {item._links.self.href}
+                        </MenuItem>
+                        <MenuItem onClick={this.handleItemDone.bind(this, idx, item)}>
+                          <ListItemIcon>
+                            <Done />
+                          </ListItemIcon>
+                        </MenuItem>
+                        <MenuItem onClick={this.handleItemDelete.bind(this, idx, item)}>
+                          <ListItemIcon>
+                            <DeleteOutline />
+                          </ListItemIcon>
+                        </MenuItem>
+                      </Menu>
+                    </div>
+                  ))}
                 </List>
               </Card>
             </Grid>

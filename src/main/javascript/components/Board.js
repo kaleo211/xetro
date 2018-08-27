@@ -53,10 +53,17 @@ class Board extends React.Component {
 
   updatePillar(idx) {
     let pillars = this.state.pillars;
+
+    console.log("requesting:", pillars[idx]._links.items.href + "?sort=id")
     fetch(pillars[idx]._links.items.href)
       .then(resp => resp.json())
       .then(data => {
-        pillars[idx].items = data._embedded.item;
+        let items = data._embedded.item;
+        items.sort((x, y) => {
+          return x.title < y.title;
+        });
+        console.log("sorted items", items);
+        pillars[idx].items = items;
         this.setState({ pillars });
       });
   }
@@ -70,7 +77,6 @@ class Board extends React.Component {
 
         if (boards.length > 0) {
           let currentBoard = boards[0];
-          console.log("current board:", currentBoard);
           this.setState({ currentBoard });
 
           if (currentBoard && currentBoard._links && currentBoard._links.pillars) {
@@ -78,20 +84,12 @@ class Board extends React.Component {
               .then(resp => resp.json())
               .then(data => {
                 let pillars = data._embedded.pillar
-                console.log("data:", pillars);
 
                 for (let idx = 0; idx < pillars.length; idx++) {
                   fetch(pillars[idx]._links.items.href)
                     .then(resp => resp.json())
                     .then(data => {
-                      let items = data._embedded.item;
-
-                      let likes = 0;
-                      for (let i = 0; i < items.length; i++) {
-                        likes += items[i].likes;
-                      }
-                      pillars[idx].likes = likes;
-                      pillars[idx].items = items;
+                      pillars[idx].items = data._embedded.item;
                       console.log("update pillar:", pillars);
                       this.setState({ pillars });
                     });
