@@ -13,17 +13,15 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import com.retro.entity.pillar.Pillar;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import com.retro.entity.action.Action;
 
 @Data
+@Getter
 @Entity
 @Builder(toBuilder = true)
 @NoArgsConstructor
@@ -44,7 +42,6 @@ public class Item {
   @JoinColumn(name = "pillar_id")
   private Pillar pillar;
 
-  @OneToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "action_id")
+  @OneToOne(mappedBy = "item", fetch = FetchType.EAGER)
   private Action action;
 }

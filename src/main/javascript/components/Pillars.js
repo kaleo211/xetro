@@ -9,7 +9,6 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import PlusOne from '@material-ui/icons/PlusOne';
 import PropTypes from 'prop-types';
-import Add from '@material-ui/icons/Add';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -18,6 +17,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TextField from '@material-ui/core/TextField';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import Likes from './Likes';
+import Action from './Action';
 
 const styles = theme => ({
   root: {
@@ -40,9 +40,7 @@ class Pillars extends React.Component {
     this.state = {
       isSaveButtonDisabled: [],
       newItems: {},
-      anchorEl: {},
       expandedItem: "",
-      newAction: "",
     }
   }
 
@@ -64,17 +62,24 @@ class Pillars extends React.Component {
   }
 
   handleNewLikeSave(item, event) {
-    item.likes += 1;
+    let updatedItem = {
+      title: item.title,
+      likes: item.likes + 1,
+    }
+    console.log("item to add like", JSON.stringify(item));
+    console.log("item patch link:", item._links.self.href.replace('{?projection}', ''));
 
     fetch(item._links.self.href.replace('{?projection}', ''), {
-      method: 'put',
-      body: JSON.stringify(item),
+      method: 'PATCH',
+      body: JSON.stringify(updatedItem),
       headers: new Headers({
         'Content-Type': 'application/json',
       }),
     }).then(resp => {
       if (resp.ok) {
         this.props.updatePillars();
+      } else {
+        console.log("failed to post new like")
       }
     })
   }
@@ -83,7 +88,7 @@ class Pillars extends React.Component {
     item.checked = true;
     console.log("item done link:", item);
     fetch(item._links.self.href.replace('{?projection}', ''), {
-      method: 'put',
+      method: 'PATCH',
       body: JSON.stringify(item),
       headers: new Headers({
         'Content-Type': 'application/json',
@@ -98,7 +103,7 @@ class Pillars extends React.Component {
     })
   }
 
-  handleNewItemSave(idx, pillar, event) {
+  handleNewItemSave(pillar, event) {
     if (event && event.key === 'Enter') {
       console.log("i am here")
       let newItem = {
@@ -115,22 +120,13 @@ class Pillars extends React.Component {
       }).then(resp => {
         if (resp.ok) {
           this.props.updatePillars();
-          console.log("pillar save:", pillar);
           this.state.newItems[pillar] = "";
         } else {
           throw new Error('failed to post new item');
         }
-      }).catch((error) => {
+      }).catch(error => {
         console.log(error);
       });
-    }
-  }
-
-  handleNewActionSave(idx, pillar, event) {
-    if (event && event.key === 'Enter') {
-      let newAction = {
-        title: this.state.newAction,
-      }
     }
   }
 
@@ -164,24 +160,8 @@ class Pillars extends React.Component {
     this.setState(newItems);
   }
 
-  handleNewActionChange(e) {
-    this.setState({
-      newAction: e.target.value,
-    });
-  }
-
-  handleShowItemMenu(item, event) {
-    console.log("item in show button:", item);
-    if (item._links) {
-      let anchorEl = this.state.anchorEl;
-      anchorEl[item._links.self.href] = event.currentTarget;
-      this.setState({ anchorEl });
-    }
-  }
-
   render() {
     const { classes, pillars } = this.props;
-
     return (
       < Grid
         container
@@ -208,7 +188,7 @@ class Pillars extends React.Component {
                   name={pillar._links.self.href}
                   value={this.state.newItems[pillar._links.self.href]}
                   onChange={this.handleNewItemChange.bind(this)}
-                  onKeyPress={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
+                  onKeyPress={this.handleNewItemSave.bind(this, pillar._links.self.href)}
                 />
               </CardContent>
 
@@ -223,22 +203,10 @@ class Pillars extends React.Component {
                       {item.title}
                     </Typography>
                     <Likes item={item} />
-
-
                   </ExpansionPanelSummary>
+
                   <ExpansionPanelDetails>
-                    <TextField
-                      id="createNewActionItem"
-                      label="Action item"
-                      fullWidth
-                      name={pillar._links.self.href}
-                      value={this.state.newAction}
-                      onChange={this.handleNewActionChange.bind(this)}
-                      onKeyPress={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
-                    />
-                    <IconButton disabled={this.state.newAction === ""} style={{ marginTop: 10 }}>
-                      <Add fontSize='inherit' />
-                    </IconButton>
+                    <Action item={item} members={this.props.members} pillar={pillar} updatePillars={this.props.updatePillars} />
                   </ExpansionPanelDetails>
 
                   <ExpansionPanelActions style={{ paddingTop: 0 }} >
