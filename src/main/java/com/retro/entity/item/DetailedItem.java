@@ -1,6 +1,6 @@
 package com.retro.entity.item;
 
-import com.retro.entity.action.Action;
+import com.retro.entity.action.DetailedAction;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
@@ -15,5 +15,5 @@ public interface DetailedItem {
 
   Integer getLikes();
 
-  Action getAction();
+  DetailedAction getAction();
 }

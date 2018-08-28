@@ -115,7 +115,7 @@ class Board extends React.Component {
 
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Pillars pillars={this.state.pillars} updatePillars={this.updatePillars} />
+          <Pillars pillars={this.state.pillars} updatePillars={this.updatePillars} members={this.state.members} />
         </main>
       </div>
     );
