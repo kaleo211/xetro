@@ -1,11 +1,9 @@
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
 export default class Members extends React.Component {
-
   constructor(props) {
     super(props)
   }
@@ -13,16 +11,13 @@ export default class Members extends React.Component {
   render() {
     return (
       <List>
-        {
-          this.props.members.map(member => (
-            < ListItem key="" button >
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary={`${member.userID}`} />
-            </ListItem>
-          ))
-        }
+        {this.props.members.map(member => (
+          <ListItem key={member.userID} button >
+            <ListItemAvatar style={{ marginLeft: -8 }}>
+              <Avatar>{member.userID}</Avatar>
+            </ListItemAvatar>
+          </ListItem>
+        ))}
       </List>
     )
   }

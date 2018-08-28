@@ -54,7 +54,6 @@ class Board extends React.Component {
   updatePillar(idx) {
     let pillars = this.state.pillars;
 
-    console.log("requesting:", pillars[idx]._links.items.href + "?sort=id")
     fetch(pillars[idx]._links.items.href)
       .then(resp => resp.json())
       .then(data => {
@@ -62,7 +61,6 @@ class Board extends React.Component {
         items.sort((x, y) => {
           return x.title < y.title;
         });
-        console.log("sorted items", items);
         pillars[idx].items = items;
         this.setState({ pillars });
       });
@@ -89,8 +87,12 @@ class Board extends React.Component {
                   fetch(pillars[idx]._links.items.href)
                     .then(resp => resp.json())
                     .then(data => {
-                      pillars[idx].items = data._embedded.item;
-                      console.log("update pillar:", pillars);
+                      let items = data._embedded.item;
+                      items.sort((x, y) => {
+                        return x.title < y.title;
+                      });
+                      pillars[idx].items = items;
+
                       this.setState({ pillars });
                     });
                 }
@@ -136,5 +138,4 @@ class Board extends React.Component {
 Board.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-
 export default withStyles(styles)(Board);

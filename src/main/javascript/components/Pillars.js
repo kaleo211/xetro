@@ -1,21 +1,12 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Badge from '@material-ui/core/Badge';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import Divider from '@material-ui/core/Divider';
 import Done from '@material-ui/icons/Done';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import PlusOne from '@material-ui/icons/PlusOne';
 import PropTypes from 'prop-types';
 import Add from '@material-ui/icons/Add';
@@ -24,15 +15,9 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Storage from '@material-ui/icons/Storage';
 import TextField from '@material-ui/core/TextField';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-import SignalCellular1BarRounded from '@material-ui/icons/SignalCellular1BarRounded';
-import SignalCellular2BarRounded from '@material-ui/icons/SignalCellular2BarRounded';
-import SignalCellular3BarRounded from '@material-ui/icons/SignalCellular3BarRounded';
-import SignalCellular4BarRounded from '@material-ui/icons/SignalCellular4BarRounded';
-import CardActions from '@material-ui/core/CardActions';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import Likes from './Likes';
 
 const styles = theme => ({
   root: {
@@ -88,7 +73,6 @@ class Pillars extends React.Component {
     }).then(resp => {
       if (resp.ok) {
         this.props.updatePillar(idx);
-        this.handleCloseItemMenu(item, event);
       }
     })
   }
@@ -104,7 +88,7 @@ class Pillars extends React.Component {
     }).then(resp => {
       if (resp.ok) {
         this.props.updatePillar(idx);
-        this.handleCloseItemMenu(item, event);
+        this.handleItemExpandToggle(item, event);
       } else {
         console.log("failed to update item resp:", resp);
       }
@@ -145,7 +129,6 @@ class Pillars extends React.Component {
     }).then(resp => {
       if (resp.ok) {
         this.props.updatePillar(idx);
-        this.handleCloseItemMenu(item, event);
       } else {
         console.log("failed to delete item resp:", resp);
       }
@@ -189,14 +172,6 @@ class Pillars extends React.Component {
     }
   }
 
-  handleCloseItemMenu(item, event) {
-    if (item._links) {
-      let anchorEl = this.state.anchorEl;
-      anchorEl[item._links.self.href] = null;
-      this.setState({ anchorEl });
-    }
-  }
-
   render() {
     const { classes, pillars } = this.props;
 
@@ -229,17 +204,6 @@ class Pillars extends React.Component {
                   onKeyPress={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
                 />
               </CardContent>
-              {/* <CardActions style={{ display: 'flex' }} disableActionSpacing>
-                <IconButton
-                  style={{ marginLeft: 'auto', }}
-                  color="primary"
-                  disabled={this.state.isSaveButtonDisabled[pillar._links.self.href]}
-                  aria-label="Add new item"
-                  onClick={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
-                >
-                  <Save />
-                </IconButton>
-              </CardActions> */}
 
               {pillar.items && pillar.items.map(item => (
                 <ExpansionPanel
@@ -251,35 +215,23 @@ class Pillars extends React.Component {
                     <Typography variant={'title'} style={{ paddingRight: 15 }} className={item.checked ? classes.itemDone : null}>
                       {item.title}
                     </Typography>
-                    {item.likes > 0 && item.likes <= 2 && (
-                      <SignalCellular1BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
-                    )}
-                    {item.likes > 2 && item.likes <= 4 && (
-                      <SignalCellular2BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
-                    )}
-                    {item.likes > 4 && item.likes <= 6 && (
-                      <SignalCellular3BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
-                    )}
-                    {item.likes > 6 && (
-                      <SignalCellular4BarRounded style={{ paddingTop: 4, paddingLeft: 10 }} fontSize='inherit' />
-                    )}
-                  </ExpansionPanelSummary>
+                    <Likes item={item} />
 
+
+                  </ExpansionPanelSummary>
                   <ExpansionPanelDetails>
-                    <Grid container>
-                      <TextField xs={12}
-                        id="createNewActionItem"
-                        label="Action item"
-                        fullWidth
-                        name={pillar._links.self.href}
-                      />
-                      <IconButton xs={1} style={{ marginTop: 10 }}>
-                        <Add fontSize='inherit' />
-                      </IconButton>
-                    </Grid>
+                    <TextField
+                      id="createNewActionItem"
+                      label="Action item"
+                      fullWidth
+                      name={pillar._links.self.href}
+                    />
+                    <IconButton style={{ marginTop: 10 }}>
+                      <Add fontSize='inherit' />
+                    </IconButton>
                   </ExpansionPanelDetails>
 
-                  <ExpansionPanelActions style={{ marginTop: -50 }}>
+                  <ExpansionPanelActions style={{ paddingTop: 0 }} >
                     <IconButton onClick={this.handleItemDone.bind(this, idx, item)}>
                       <Done />
                     </IconButton>
