@@ -42,6 +42,7 @@ class Pillars extends React.Component {
       newItems: {},
       anchorEl: {},
       expandedItem: "",
+      newAction: "",
     }
   }
 
@@ -50,10 +51,11 @@ class Pillars extends React.Component {
     let isSaveButtonDisabled = [];
 
     if (pillars) {
+      console.log("pillars in pillars:", pillars);
       let newItems = {};
       for (let idx = 0; idx < pillars.length; idx++) {
         let pillar = pillars[idx];
-        let pillarHref = pillar._links.self.href
+        let pillarHref = pillar._links.self.href;
         newItems[pillarHref] = "";
         isSaveButtonDisabled[pillarHref] = true;
       }
@@ -61,10 +63,10 @@ class Pillars extends React.Component {
     }
   }
 
-  handleNewLikeSave(idx, item, event) {
+  handleNewLikeSave(item, event) {
     item.likes += 1;
 
-    fetch(item._links.self.href, {
+    fetch(item._links.self.href.replace('{?projection}', ''), {
       method: 'put',
       body: JSON.stringify(item),
       headers: new Headers({
@@ -72,14 +74,15 @@ class Pillars extends React.Component {
       }),
     }).then(resp => {
       if (resp.ok) {
-        this.props.updatePillar(idx);
+        this.props.updatePillars();
       }
     })
   }
 
-  handleItemDone(idx, item, event) {
+  handleItemDone(item, event) {
     item.checked = true;
-    fetch(item._links.self.href, {
+    console.log("item done link:", item);
+    fetch(item._links.self.href.replace('{?projection}', ''), {
       method: 'put',
       body: JSON.stringify(item),
       headers: new Headers({
@@ -87,7 +90,7 @@ class Pillars extends React.Component {
       }),
     }).then(resp => {
       if (resp.ok) {
-        this.props.updatePillar(idx);
+        this.props.updatePillars();
         this.handleItemExpandToggle(item, event);
       } else {
         console.log("failed to update item resp:", resp);
@@ -96,14 +99,14 @@ class Pillars extends React.Component {
   }
 
   handleNewItemSave(idx, pillar, event) {
-    console.log("i am here outside", event)
     if (event && event.key === 'Enter') {
+      console.log("i am here")
       let newItem = {
         title: this.state.newItems[pillar],
         pillar: pillar,
       }
 
-      fetch("http://localhost:8080/api/item", {
+      fetch("http://localhost:8080/api/items", {
         method: 'post',
         body: JSON.stringify(newItem),
         headers: new Headers({
@@ -111,7 +114,7 @@ class Pillars extends React.Component {
         })
       }).then(resp => {
         if (resp.ok) {
-          this.props.updatePillar(idx);
+          this.props.updatePillars();
           console.log("pillar save:", pillar);
           this.state.newItems[pillar] = "";
         } else {
@@ -123,20 +126,24 @@ class Pillars extends React.Component {
     }
   }
 
-  handleItemDelete(idx, item, event) {
-    fetch(item._links.self.href, {
+  handleNewActionSave(idx, pillar, event) {
+    if (event && event.key === 'Enter') {
+      let newAction = {
+        title: this.state.newAction,
+      }
+    }
+  }
+
+  handleItemDelete(item, event) {
+    fetch(item._links.self.href.replace('{?projection}', ''), {
       method: 'delete',
     }).then(resp => {
       if (resp.ok) {
-        this.props.updatePillar(idx);
+        this.props.updatePillars();
       } else {
         console.log("failed to delete item resp:", resp);
       }
     });
-  }
-
-  handleDoubleClick() {
-    alert("haha")
   }
 
   handleItemExpandToggle(item, event) {
@@ -155,12 +162,12 @@ class Pillars extends React.Component {
     let newItems = this.state.newItems;
     newItems[e.target.name] = e.target.value;
     this.setState(newItems);
+  }
 
-    if (e.target.value === "") {
-      this.state.isSaveButtonDisabled[e.target.name] = true
-    } else {
-      this.state.isSaveButtonDisabled[e.target.name] = false
-    }
+  handleNewActionChange(e) {
+    this.setState({
+      newAction: e.target.value,
+    });
   }
 
   handleShowItemMenu(item, event) {
@@ -225,20 +232,23 @@ class Pillars extends React.Component {
                       label="Action item"
                       fullWidth
                       name={pillar._links.self.href}
+                      value={this.state.newAction}
+                      onChange={this.handleNewActionChange.bind(this)}
+                      onKeyPress={this.handleNewItemSave.bind(this, idx, pillar._links.self.href)}
                     />
-                    <IconButton style={{ marginTop: 10 }}>
+                    <IconButton disabled={this.state.newAction === ""} style={{ marginTop: 10 }}>
                       <Add fontSize='inherit' />
                     </IconButton>
                   </ExpansionPanelDetails>
 
                   <ExpansionPanelActions style={{ paddingTop: 0 }} >
-                    <IconButton onClick={this.handleItemDone.bind(this, idx, item)}>
+                    <IconButton disabled={item.checked} onClick={this.handleItemDone.bind(this, item)}>
                       <Done />
                     </IconButton>
-                    <IconButton onClick={this.handleItemDelete.bind(this, idx, item)}>
+                    <IconButton onClick={this.handleItemDelete.bind(this, item)}>
                       <DeleteOutline />
                     </IconButton>
-                    <IconButton onClick={this.handleNewLikeSave.bind(this, idx, item)}>
+                    <IconButton onClick={this.handleNewLikeSave.bind(this, item)}>
                       <PlusOne />
                     </IconButton>
                   </ExpansionPanelActions>

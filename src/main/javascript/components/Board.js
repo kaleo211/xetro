@@ -43,61 +43,48 @@ class Board extends React.Component {
 
     this.state = {
       boards: null,
-      currentBoard: null,
+      selectedBoard: null,
       pillars: [],
       members: [],
     };
 
-    this.updatePillar = this.updatePillar.bind(this);
+    this.updatePillars = this.updatePillars.bind(this);
   }
 
-  updatePillar(idx) {
-    let pillars = this.state.pillars;
-
-    fetch(pillars[idx]._links.items.href)
+  updatePillars() {
+    fetch(this.state.selectedBoard.pillarsLink)
       .then(resp => resp.json())
       .then(data => {
-        let items = data._embedded.item;
-        items.sort((x, y) => {
-          return x.title < y.title;
-        });
-        pillars[idx].items = items;
+        let pillars = data._embedded.pillars;
         this.setState({ pillars });
+        console.log("updated pillars:", pillars);
       });
   }
 
   componentWillMount() {
-    fetch('http://localhost:8080/api/board')
+    fetch('http://localhost:8080/api/boards')
       .then(resp => resp.json())
       .then(data => {
-        let boards = data._embedded.board;
+        let boards = data._embedded.boards;
         this.setState({ boards });
 
+        console.log("udpate boards:", boards);
         if (boards.length > 0) {
-          let currentBoard = boards[0];
-          this.setState({ currentBoard });
+          let selectedBoard = boards[0];
+          selectedBoard.pillarsLink = selectedBoard._links.pillars.href.replace('{?projection}', '');
 
-          if (currentBoard && currentBoard._links && currentBoard._links.pillars) {
-            fetch(currentBoard._links.pillars.href)
-              .then(resp => resp.json())
-              .then(data => {
-                let pillars = data._embedded.pillar
-
-                for (let idx = 0; idx < pillars.length; idx++) {
-                  fetch(pillars[idx]._links.items.href)
-                    .then(resp => resp.json())
-                    .then(data => {
-                      let items = data._embedded.item;
-                      items.sort((x, y) => {
-                        return x.title < y.title;
-                      });
-                      pillars[idx].items = items;
-
-                      this.setState({ pillars });
-                    });
-                }
-              });
-          }
+          fetch(selectedBoard.pillarsLink)
+            .then(resp => {
+              if (resp.ok) {
+                return resp.json();
+              } else {
+                console.log("failed to fetch pillars")
+              }
+            }).then(data => {
+              console.log("initialized pillars:", data);
+              let pillars = data._embedded.pillars;
+              this.setState({ selectedBoard, pillars });
+            });
         }
       });
 
@@ -128,7 +115,7 @@ class Board extends React.Component {
 
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Pillars pillars={this.state.pillars} updatePillar={this.updatePillar} />
+          <Pillars pillars={this.state.pillars} updatePillars={this.updatePillars} />
         </main>
       </div>
     );

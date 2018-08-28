@@ -1,10 +1,12 @@
 package com.retro.entity.pillar;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.GenerationType;
 
@@ -24,6 +26,7 @@ import com.retro.entity.item.Item;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NamedEntityGraph(name = "joined", includeAllAttributes = true)
 public class Pillar {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +34,7 @@ public class Pillar {
 
   private String title;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "board_id")
   private Board board;
 

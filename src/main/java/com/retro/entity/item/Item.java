@@ -1,6 +1,7 @@
 package com.retro.entity.item;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -16,6 +17,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import com.retro.entity.pillar.Pillar;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import com.retro.entity.action.Action;
 
 @Data
@@ -39,6 +44,7 @@ public class Item {
   @JoinColumn(name = "pillar_id")
   private Pillar pillar;
 
-  @OneToOne(mappedBy = "item")
+  @OneToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "action_id")
   private Action action;
 }
