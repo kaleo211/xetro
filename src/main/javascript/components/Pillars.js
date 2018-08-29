@@ -12,6 +12,8 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -217,7 +219,8 @@ class Pillars extends React.Component {
   }
 
   render() {
-    const { classes, pillars, members } = this.props;
+    const { classes, pillars, members, board } = this.props;
+
     return (
       < Grid
         container
@@ -226,8 +229,8 @@ class Pillars extends React.Component {
         justify="space-between"
         alignItems="stretch" >
         {pillars.map((pillar) => (
-          < Grid item key={pillar.title} xs={12} sm={12} md={4} >
-            <Card>
+          <Grid item key={pillar.title} xs={12} sm={12} md={4} >
+            <Card wrap='nowrap'>
               <CardHeader
                 title={pillar.title}
                 subheader={pillar.subheader}
@@ -238,9 +241,10 @@ class Pillars extends React.Component {
               <CardContent>
                 <TextField
                   id="createNewItem"
+                  fullWidth
                   key={pillar._links.self.href}
                   label="New item"
-                  fullWidth
+                  disabled={board && board.locked}
                   name={pillar._links.self.href}
                   value={this.state.newItems[pillar._links.self.href]}
                   onChange={this.handleNewItemChange.bind(this)}
@@ -250,30 +254,24 @@ class Pillars extends React.Component {
 
               {pillar.items && pillar.items.map(item => (
                 <ExpansionPanel
-                  key={item.title}
+                  key={item._links.self.href}
                   expanded={this.state.expandedItem === item._links.self.href}
                   onChange={this.handleItemExpandToggle.bind(this, item)}
                 >
                   <ExpansionPanelSummary>
-                    <Grid container justify="space-between" alignItems="center" >
-                      <Grid item>
-                        <Grid container wrap="nowrap">
-                          <Grid item zeroMinWidth>
-                            <Typography noWrap variant="headline" className={item.checked ? classes.itemDone : null}>
-                              {item.title}
-                            </Typography>
-                          </Grid>
-                          <Grid >
-                            <Likes item={item} />
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                      <Grid item style={{ marginRight: -45 }}>
+                    <Typography noWrap variant="headline" className={item.checked ? classes.itemDone : null}>
+                      {item.title}
+                    </Typography>
+                    <Likes item={item} />
+                    <Typography style={{ flexGrow: 1 }}></Typography>
+
+                    {board && !board.locked && (
+                      <div style={{ marginTop: -8, marginBottom: -10, marginRight: -50 }}>
                         <IconButton onClick={this.handleNewLikeSave.bind(this, item)}>
                           <PlusOne />
                         </IconButton>
-                      </Grid>
-                    </Grid>
+                      </div>
+                    )}
                   </ExpansionPanelSummary>
 
                   <ExpansionPanelDetails>
@@ -303,7 +301,7 @@ class Pillars extends React.Component {
                   </ExpansionPanelDetails>
 
                   <ExpansionPanelActions style={{ paddingTop: 0 }} >
-                    {!item.action && (
+                    {!item.action && !item.checked && (
                       <div>
                         <IconButton disabled={item.checked} onClick={this.handleItemDone.bind(this, item)}>
                           <Done />
@@ -313,7 +311,6 @@ class Pillars extends React.Component {
                         </IconButton>
                       </div>
                     )}
-
                     {item.action && item.action.title !== "" && (
                       <IconButton disabled={!item.action} style={{ marginTop: 10 }} onClick={this.handleOwerListOpen}>
                         <Add fontSize='inherit' />

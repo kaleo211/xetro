@@ -10,5 +10,7 @@ public interface DetailedBoard {
 
   Boolean getLocked();
 
+  Boolean getFinished();
+
   List<DetailedPillar> getPillars();
 }

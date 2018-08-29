@@ -1,19 +1,30 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Avatar from '@material-ui/core/Avatar';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
-export default class Members extends React.Component {
+
+const styles = theme => ({
+});
+
+class Members extends React.Component {
   constructor(props) {
     super(props)
   }
 
   render() {
-    const { members } = this.props;
+    const { members, selectedMember } = this.props;
     return (
-      <List>
+      <List component="nav">
         {members.map(member => (
-          <ListItem key={member.userID} button >
+          <ListItem key={member.userID} button
+            selected={true}
+            onClick={this.props.updateSelectedMember(member)}
+          >
             <ListItemAvatar style={{ marginLeft: -8 }}>
               <Avatar>{member.userID}</Avatar>
             </ListItemAvatar>
@@ -23,3 +34,8 @@ export default class Members extends React.Component {
     )
   }
 }
+
+Members.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+export default withStyles(styles)(Members);
