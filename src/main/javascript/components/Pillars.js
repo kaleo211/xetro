@@ -1,23 +1,26 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+
+import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import Done from '@material-ui/icons/Done';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import PlusOne from '@material-ui/icons/PlusOne';
-import PropTypes from 'prop-types';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
+import Typography from '@material-ui/core/Typography';
+
+import { PlusOne, Done, Add, DeleteOutline } from '@material-ui/icons';
+
 import Likes from './Likes';
-import Action from './Action';
 
 const styles = theme => ({
   root: {
@@ -41,7 +44,12 @@ class Pillars extends React.Component {
       isSaveButtonDisabled: [],
       newItems: {},
       expandedItem: "",
+      anchorEl: null,
+      newAction: "",
     }
+
+    this.handleOwerListClose = this.handleOwerListClose.bind(this);
+    this.handleOwerListOpen = this.handleOwerListOpen.bind(this);
   }
 
   componentWillReceiveProps(props) {
@@ -62,13 +70,14 @@ class Pillars extends React.Component {
   }
 
   handleNewLikeSave(item, event) {
+    event.stopPropagation();
+
     let updatedItem = {
       title: item.title,
       likes: item.likes + 1,
     }
     console.log("item to add like", JSON.stringify(item));
     console.log("item patch link:", item._links.self.href.replace('{?projection}', ''));
-
     fetch(item._links.self.href.replace('{?projection}', ''), {
       method: 'PATCH',
       body: JSON.stringify(updatedItem),
@@ -143,7 +152,6 @@ class Pillars extends React.Component {
   }
 
   handleItemExpandToggle(item, event) {
-    console.log("hahah")
     let expandedItem = this.state.expandedItem;
     if (expandedItem && expandedItem === item._links.self.href) {
       this.setState({
@@ -160,8 +168,56 @@ class Pillars extends React.Component {
     this.setState(newItems);
   }
 
+
+
+  handleOwerListClose() {
+    this.setState({
+      anchorEl: null,
+    })
+  }
+
+  handleOwerListOpen(event) {
+    this.setState({
+      anchorEl: event.currentTarget,
+    })
+  }
+
+  handleNewActionSave(item, event) {
+    if (event && event.key === 'Enter') {
+      let newAction = {
+        title: this.state.newAction,
+        item: item,
+      }
+
+      fetch("http://localhost:8080/api/actions", {
+        method: 'post',
+        body: JSON.stringify(newAction),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        })
+      }).then(resp => {
+        if (resp.ok) {
+          this.props.updatePillars();
+          this.setState({
+            newAction: "",
+          });
+        } else {
+          throw new Error('failed to post new action');
+        }
+      }).catch(error => {
+        console.log(error);
+      });
+    }
+  }
+
+  handleNewActionChange(event) {
+    this.setState({
+      newAction: event.target.value,
+    });
+  }
+
   render() {
-    const { classes, pillars } = this.props;
+    const { classes, pillars, members } = this.props;
     return (
       < Grid
         container
@@ -169,7 +225,7 @@ class Pillars extends React.Component {
         direction="row"
         justify="space-between"
         alignItems="stretch" >
-        {pillars.map((pillar, idx) => (
+        {pillars.map((pillar) => (
           < Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card>
               <CardHeader
@@ -198,28 +254,73 @@ class Pillars extends React.Component {
                   expanded={this.state.expandedItem === item._links.self.href}
                   onChange={this.handleItemExpandToggle.bind(this, item)}
                 >
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant={'title'} style={{ paddingRight: 15 }} className={item.checked ? classes.itemDone : null}>
-                      {item.title}
-                    </Typography>
-                    <Likes item={item} />
+                  <ExpansionPanelSummary>
+                    <Grid container justify="space-between" alignItems="center" >
+                      <Grid item>
+                        <Grid container wrap="nowrap">
+                          <Grid item zeroMinWidth>
+                            <Typography noWrap variant="headline" className={item.checked ? classes.itemDone : null}>
+                              {item.title}
+                            </Typography>
+                          </Grid>
+                          <Grid >
+                            <Likes item={item} />
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                      <Grid item style={{ marginRight: -45 }}>
+                        <IconButton onClick={this.handleNewLikeSave.bind(this, item)}>
+                          <PlusOne />
+                        </IconButton>
+                      </Grid>
+                    </Grid>
                   </ExpansionPanelSummary>
 
                   <ExpansionPanelDetails>
-                    <Action item={item} members={this.props.members} pillar={pillar} updatePillars={this.props.updatePillars} />
+                    <TextField
+                      id="createNewActionItem"
+                      label="Action item"
+                      fullWidth
+                      name={item._links.self.href}
+                      disabled={item.action !== null}
+                      value={item.action ? item.action.title : this.state.newAction}
+                      onChange={this.handleNewActionChange.bind(this)}
+                      onKeyPress={this.handleNewActionSave.bind(this, item._links.self.href)}
+                    />
+                    <Menu
+                      anchorEl={this.state.anchorEl}
+                      open={Boolean(this.state.anchorEl)}
+                      onClose={this.handleOwerListClose}
+                    >
+                      {members && members.map(member => (
+                        <MenuItem style={{ paddingTop: 20, paddingBottom: 20 }} key={"owner" + member.userID} onClick={this.handleOwerListClose}>
+                          <ListItemAvatar>
+                            <Avatar>{member.userID}</Avatar>
+                          </ListItemAvatar>
+                        </MenuItem>
+                      ))}
+                    </Menu>
                   </ExpansionPanelDetails>
 
                   <ExpansionPanelActions style={{ paddingTop: 0 }} >
-                    <IconButton disabled={item.checked} onClick={this.handleItemDone.bind(this, item)}>
-                      <Done />
-                    </IconButton>
-                    <IconButton onClick={this.handleItemDelete.bind(this, item)}>
-                      <DeleteOutline />
-                    </IconButton>
-                    <IconButton onClick={this.handleNewLikeSave.bind(this, item)}>
-                      <PlusOne />
-                    </IconButton>
+                    {!item.action && (
+                      <div>
+                        <IconButton disabled={item.checked} onClick={this.handleItemDone.bind(this, item)}>
+                          <Done />
+                        </IconButton>
+                        <IconButton onClick={this.handleItemDelete.bind(this, item)}>
+                          <DeleteOutline />
+                        </IconButton>
+                      </div>
+                    )}
+
+                    {item.action && item.action.title !== "" && (
+                      <IconButton disabled={!item.action} style={{ marginTop: 10 }} onClick={this.handleOwerListOpen}>
+                        <Add fontSize='inherit' />
+                      </IconButton>
+                    )}
                   </ExpansionPanelActions>
+
                 </ExpansionPanel>
               ))}
             </Card>

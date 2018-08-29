@@ -47,5 +47,7 @@ public class DataLoader implements ApplicationRunner {
     itemRepository.save(item);
 
     memberRepository.save(Member.builder().userID("xhe").build());
+    memberRepository.save(Member.builder().userID("yan").build());
+    memberRepository.save(Member.builder().userID("xh").build());
   }
 }

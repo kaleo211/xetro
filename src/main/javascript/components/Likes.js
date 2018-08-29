@@ -1,10 +1,9 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import SignalCellular1BarRounded from '@material-ui/icons/SignalCellular1BarRounded';
-import SignalCellular2BarRounded from '@material-ui/icons/SignalCellular2BarRounded';
-import SignalCellular3BarRounded from '@material-ui/icons/SignalCellular3BarRounded';
-import SignalCellular4BarRounded from '@material-ui/icons/SignalCellular4BarRounded';
+import StarBorderRounded from '@material-ui/icons/StarBorderRounded';
+import StarHalfRounded from '@material-ui/icons/StarHalfRounded';
+import StarRounded from '@material-ui/icons/StarRounded';
 
 
 const styles = theme => ({
@@ -21,20 +20,16 @@ class Likes extends React.Component {
 
   render() {
     const { item, classes } = this.props;
-
     return (
       <div>
         {item.likes > 0 && item.likes <= 2 && (
-          <SignalCellular1BarRounded className={classes.likes} fontSize='inherit' />
+          <StarBorderRounded className={classes.likes} />
         )}
         {item.likes > 2 && item.likes <= 4 && (
-          <SignalCellular2BarRounded className={classes.likes} fontSize='inherit' />
+          <StarHalfRounded className={classes.likes} />
         )}
-        {item.likes > 4 && item.likes <= 6 && (
-          <SignalCellular3BarRounded className={classes.likes} fontSize='inherit' />
-        )}
-        {item.likes > 6 && (
-          <SignalCellular4BarRounded className={classes.likes} fontSize='inherit' />
+        {item.likes > 4 && (
+          <StarRounded className={classes.likes} />
         )}
       </div>
     );

@@ -9,9 +9,10 @@ export default class Members extends React.Component {
   }
 
   render() {
+    const { members } = this.props;
     return (
       <List>
-        {this.props.members.map(member => (
+        {members.map(member => (
           <ListItem key={member.userID} button >
             <ListItemAvatar style={{ marginLeft: -8 }}>
               <Avatar>{member.userID}</Avatar>
