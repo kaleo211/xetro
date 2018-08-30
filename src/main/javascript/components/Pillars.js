@@ -12,7 +12,6 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Menu from '@material-ui/core/Menu';
@@ -46,12 +45,10 @@ class Pillars extends React.Component {
       isSaveButtonDisabled: [],
       newItems: {},
       expandedItem: "",
-      anchorEl: null,
+      ownerAnchorEl: {},
       newAction: "",
     }
 
-    this.handleOwerListClose = this.handleOwerListClose.bind(this);
-    this.handleOwerListOpen = this.handleOwerListOpen.bind(this);
   }
 
   componentWillReceiveProps(props) {
@@ -107,11 +104,38 @@ class Pillars extends React.Component {
     }).then(resp => {
       if (resp.ok) {
         this.props.updatePillars();
-        this.handleItemExpandToggle(item, event);
       } else {
         console.log("failed to update item resp:", resp);
       }
     })
+  }
+
+  handleActionOwnerAdd(item, owner) {
+    this.handleOwerListClose(item._links.self.href)
+    let action = item.action;
+
+    console.log("i am here")
+    if (action && action._links) {
+      let updatedAction = {
+        member: owner._links.self.href,
+      }
+      console.log("action link", action);
+      console.log("ower link", owner);
+
+      fetch(action._links.self.href.replace('{?projection}', ''), {
+        method: 'PATCH',
+        body: JSON.stringify(updatedAction),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+      }).then(resp => {
+        if (resp.ok) {
+          this.props.updatePillars();
+        } else {
+          console.log("failed to add owner to action");
+        }
+      })
+    }
   }
 
   handleNewItemSave(pillar, event) {
@@ -170,25 +194,29 @@ class Pillars extends React.Component {
     this.setState(newItems);
   }
 
+  handleOwerListClose(item) {
+    console.log("i am here11")
 
-
-  handleOwerListClose() {
+    let ownerAnchorEl = this.state.ownerAnchorEl;
+    ownerAnchorEl[item] = null;
     this.setState({
-      anchorEl: null,
+      ownerAnchorEl,
     })
   }
 
-  handleOwerListOpen(event) {
+  handleOwerListOpen(item, event) {
+    let ownerAnchorEl = this.state.ownerAnchorEl;
+    ownerAnchorEl[item] = event.currentTarget;
     this.setState({
-      anchorEl: event.currentTarget,
-    })
+      ownerAnchorEl,
+    });
   }
 
   handleNewActionSave(item, event) {
     if (event && event.key === 'Enter') {
       let newAction = {
         title: this.state.newAction,
-        item: item,
+        item: item._links.self.href,
       }
 
       fetch("http://localhost:8080/api/actions", {
@@ -203,6 +231,7 @@ class Pillars extends React.Component {
           this.setState({
             newAction: "",
           });
+          this.handleItemDone(item);
         } else {
           throw new Error('failed to post new action');
         }
@@ -265,7 +294,7 @@ class Pillars extends React.Component {
                     <Likes item={item} />
                     <Typography style={{ flexGrow: 1 }}></Typography>
 
-                    {board && !board.locked && (
+                    {board && !board.locked && !item.checked && (
                       <div style={{ marginTop: -8, marginBottom: -10, marginRight: -50 }}>
                         <IconButton onClick={this.handleNewLikeSave.bind(this, item)}>
                           <PlusOne />
@@ -283,21 +312,38 @@ class Pillars extends React.Component {
                       disabled={item.action !== null}
                       value={item.action ? item.action.title : this.state.newAction}
                       onChange={this.handleNewActionChange.bind(this)}
-                      onKeyPress={this.handleNewActionSave.bind(this, item._links.self.href)}
+                      onKeyPress={this.handleNewActionSave.bind(this, item)}
                     />
-                    <Menu
-                      anchorEl={this.state.anchorEl}
-                      open={Boolean(this.state.anchorEl)}
-                      onClose={this.handleOwerListClose}
-                    >
-                      {members && members.map(member => (
-                        <MenuItem style={{ paddingTop: 20, paddingBottom: 20 }} key={"owner" + member.userID} onClick={this.handleOwerListClose}>
-                          <ListItemAvatar>
-                            <Avatar>{member.userID}</Avatar>
-                          </ListItemAvatar>
-                        </MenuItem>
-                      ))}
-                    </Menu>
+                    {item.action && item.action.title !== "" && (
+                      <div style={{ marginRight: -17, marginTop: 10 }}>
+                        {item.action.member ? (
+                          <Avatar>{item.action.member.userID}</Avatar>
+                        ) : (
+                            <div>
+                              <IconButton onClick={this.handleOwerListOpen.bind(this, item._links.self.href)}>
+                                <Add fontSize='inherit' />
+                              </IconButton>
+                              <Menu
+                                anchorEl={this.state.ownerAnchorEl[item._links.self.href]}
+                                open={Boolean(this.state.ownerAnchorEl[item._links.self.href])}
+                                onClose={this.handleOwerListClose.bind(this, item._links.self.href)}
+                              >
+                                {members && members.map(member => (
+                                  <MenuItem
+                                    style={{ paddingTop: 20, paddingBottom: 20 }}
+                                    key={"owner" + member.userID}
+                                    onClick={this.handleActionOwnerAdd.bind(this, item, member)}
+                                  >
+                                    <ListItemAvatar>
+                                      <Avatar>{member.userID}</Avatar>
+                                    </ListItemAvatar>
+                                  </MenuItem>
+                                ))}
+                              </Menu>
+                            </div>
+                          )}
+                      </div>
+                    )}
                   </ExpansionPanelDetails>
 
                   <ExpansionPanelActions style={{ paddingTop: 0 }} >
@@ -306,18 +352,14 @@ class Pillars extends React.Component {
                         <IconButton disabled={item.checked} onClick={this.handleItemDone.bind(this, item)}>
                           <Done />
                         </IconButton>
-                        <IconButton onClick={this.handleItemDelete.bind(this, item)}>
-                          <DeleteOutline />
-                        </IconButton>
+                        {board && !board.locked && (
+                          <IconButton onClick={this.handleItemDelete.bind(this, item)}>
+                            <DeleteOutline />
+                          </IconButton>
+                        )}
                       </div>
                     )}
-                    {item.action && item.action.title !== "" && (
-                      <IconButton disabled={!item.action} style={{ marginTop: 10 }} onClick={this.handleOwerListOpen}>
-                        <Add fontSize='inherit' />
-                      </IconButton>
-                    )}
                   </ExpansionPanelActions>
-
                 </ExpansionPanel>
               ))}
             </Card>

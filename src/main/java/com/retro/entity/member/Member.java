@@ -13,7 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import com.retro.entity.item.Item;
+import com.retro.entity.action.Action;
 
 @Data
 @Entity
@@ -29,6 +29,6 @@ public class Member {
   private String firstName;
   private String lastName;
 
-  @OneToMany
-  private List<Item> items;
+  @OneToMany(mappedBy = "member")
+  private List<Action> actions;
 }

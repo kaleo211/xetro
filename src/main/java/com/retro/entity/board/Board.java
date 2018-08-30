@@ -1,5 +1,6 @@
 package com.retro.entity.board;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -7,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.GenerationType;
 
@@ -16,6 +19,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.retro.entity.member.Member;
 import com.retro.entity.pillar.Pillar;
 
 @Data
@@ -31,6 +35,12 @@ public class Board {
     private String name;
     private boolean locked;
     private boolean finished;
+    private boolean started;
+    private Timestamp endTime;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Pillar> pillars;

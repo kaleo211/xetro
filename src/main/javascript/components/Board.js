@@ -63,6 +63,7 @@ class Board extends React.Component {
   }
 
   updatePillars() {
+    console.log("selected board:", this.state.selectedBoard);
     fetch(this.state.selectedBoard.pillarsLink)
       .then(resp => {
         if (resp.ok) {
@@ -96,8 +97,11 @@ class Board extends React.Component {
         console.log("failed to lock board")
       }
     }).then(data => {
+      let board = data;
+      board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
+
       this.setState({
-        selectedBoard: data,
+        selectedBoard: board,
       });
     })
   }
@@ -162,10 +166,11 @@ class Board extends React.Component {
         }
       });
 
-    fetch("http://localhost:8080/api/member")
+    fetch("http://localhost:8080/api/members")
       .then(resp => resp.json())
       .then(data => {
-        let members = data._embedded.member;
+        console.log("members:", data);
+        let members = data._embedded.members;
         if (members.length > 0) {
           this.setState({
             members,
@@ -189,12 +194,12 @@ class Board extends React.Component {
             <div>
               {selectedBoard && !selectedBoard.locked && (
                 <IconButton onClick={this.handleBoardLock} color="inherit">
-                  <LockOutlined />
+                  <LockOpenOutlined />
                 </IconButton>
               )}
               {selectedBoard && selectedBoard.locked && (
                 <IconButton onClick={this.handleBoardUnlock} color="inherit">
-                  <LockOpenOutlined />
+                  <LockOutlined />
                 </IconButton>
               )}
             </div>

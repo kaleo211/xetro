@@ -38,5 +38,5 @@ public class Action {
 
   @ManyToOne
   @JoinColumn(name = "member_id")
-  private Member owner;
+  private Member member;
 }

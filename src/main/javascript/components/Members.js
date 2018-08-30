@@ -6,6 +6,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Avatar from '@material-ui/core/Avatar';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import { ListItemText } from '@material-ui/core';
 
 
 const styles = theme => ({
@@ -25,9 +26,10 @@ class Members extends React.Component {
             selected={true}
             onClick={this.props.updateSelectedMember(member)}
           >
-            <ListItemAvatar style={{ marginLeft: -8 }}>
+            <ListItemText primary="haha" />
+            {/* <ListItemAvatar style={{ marginLeft: -8 }}>
               <Avatar>{member.userID}</Avatar>
-            </ListItemAvatar>
+            </ListItemAvatar> */}
           </ListItem>
         ))}
       </List>

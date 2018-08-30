@@ -1,6 +1,6 @@
 package com.retro.entity.action;
 
-import com.retro.entity.item.DetailedItem;
+import com.retro.entity.member.Member;
 
 import org.springframework.data.rest.core.config.Projection;
 
@@ -8,5 +8,5 @@ import org.springframework.data.rest.core.config.Projection;
 public interface DetailedAction {
   String getTitle();
 
-  DetailedItem getItem();
+  Member getMember();
 }
