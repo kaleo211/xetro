@@ -159,8 +159,8 @@ class Board extends React.Component {
   }
 
   render() {
-    const { classes, selectedMember, members, board } = this.props;
-    const { pillars } = this.state;
+    const { classes, selectedMember, members } = this.props;
+    const { pillars, board } = this.state;
 
     return (
       <div className={classes.root} >

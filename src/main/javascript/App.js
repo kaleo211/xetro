@@ -109,7 +109,6 @@ class App extends React.Component {
   handleRandomFacilitator() {
     let upLimit = this.state.members.length;
     let randomIndex = Math.floor(Math.random() * (upLimit));
-    console.log("random facilitator", randomIndex);
     this.setState({
       facilitator: this.state.members[randomIndex],
     })
@@ -122,7 +121,31 @@ class App extends React.Component {
   }
 
   handleStartBoard() {
+    let board = {
+      member: this.state.facilitator._links.self.href,
+      started: true,
+    }
+    if (this.state.board) {
+      fetch(this.state.board._links.self.href, {
+        method: 'PATCH',
+        body: JSON.stringify(board),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+      }).then(resp => {
+        if (resp.ok) {
+          return resp.json();
+        } else {
+          console.log("failed to start board")
+        }
+      }).then(data => {
+        this.handleClose();
+        this.setState({
+          board: data,
+        })
 
+      });
+    }
   }
 
   getStepContent(step, members) {
@@ -226,7 +249,7 @@ class App extends React.Component {
                         <ArrowUpwardRounded />
                       </IconButton>
                       {(activeStep === steps.length - 1) ? (
-                        <IconButton variant="contained" color="primary" onClick={this.handleClose}>
+                        <IconButton disabled={facilitator === null} variant="contained" color="primary" onClick={this.handleStartBoard.bind(this)}>
                           <CheckRounded />
                         </IconButton>
                       ) : (
