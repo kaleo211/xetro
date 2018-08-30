@@ -47,7 +47,7 @@ class Board extends React.Component {
 
     this.state = {
       boards: null,
-      selectedBoard: null,
+      board: null,
       pillars: [],
       members: [],
       selectedMember: null,
@@ -63,8 +63,8 @@ class Board extends React.Component {
   }
 
   updatePillars() {
-    console.log("selected board:", this.state.selectedBoard);
-    fetch(this.state.selectedBoard.pillarsLink)
+    console.log("selected board:", this.state.board);
+    fetch(this.state.board.pillarsLink)
       .then(resp => {
         if (resp.ok) {
           return resp.json();
@@ -101,7 +101,7 @@ class Board extends React.Component {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
 
       this.setState({
-        selectedBoard: board,
+        board: board,
       });
     })
   }
@@ -110,7 +110,7 @@ class Board extends React.Component {
     let board = {
       locked: true,
     };
-    let boardLink = this.state.selectedBoard._links.self.href;
+    let boardLink = this.state.board._links.self.href;
     this.updateBoard(board, boardLink);
 
     this.handleSnackbarOpen("The board has been LOCKED.")
@@ -120,7 +120,7 @@ class Board extends React.Component {
     let board = {
       locked: false,
     };
-    let boardLink = this.state.selectedBoard._links.self.href;
+    let boardLink = this.state.board._links.self.href;
     this.updateBoard(board, boardLink);
 
     this.handleSnackbarOpen("The board has been UNLOCKED.")
@@ -139,50 +139,28 @@ class Board extends React.Component {
     })
   }
 
-  componentWillMount() {
-    fetch('http://localhost:8080/api/boards')
-      .then(resp => resp.json())
-      .then(data => {
-        let boards = data._embedded.boards;
-        this.setState({ boards });
-
-        console.log("udpate boards:", boards);
-        if (boards.length > 0) {
-          let selectedBoard = boards[0];
-          selectedBoard.pillarsLink = selectedBoard._links.pillars.href.replace('{?projection}', '');
-
-          fetch(selectedBoard.pillarsLink)
-            .then(resp => {
-              if (resp.ok) {
-                return resp.json();
-              } else {
-                console.log("failed to fetch pillars")
-              }
-            }).then(data => {
-              console.log("initialized pillars:", data);
-              let pillars = data._embedded.pillars;
-              this.setState({ selectedBoard, pillars });
-            });
-        }
-      });
-
-    fetch("http://localhost:8080/api/members")
-      .then(resp => resp.json())
-      .then(data => {
-        console.log("members:", data);
-        let members = data._embedded.members;
-        if (members.length > 0) {
-          this.setState({
-            members,
-            selectedMember: members[0],
-          });
-        }
-      });
+  componentWillReceiveProps() {
+    let board = this.props.board;
+    if (board) {
+      board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
+      fetch(board.pillarsLink)
+        .then(resp => {
+          if (resp.ok) {
+            return resp.json();
+          } else {
+            console.log("failed to fetch pillars")
+          }
+        }).then(data => {
+          console.log("initialized pillars:", data);
+          let pillars = data._embedded.pillars;
+          this.setState({ board, pillars });
+        });
+    }
   }
 
   render() {
-    const { classes } = this.props;
-    const { selectedBoard, selectedMember, pillars, members } = this.state;
+    const { classes, selectedMember, members, board } = this.props;
+    const { pillars } = this.state;
 
     return (
       <div className={classes.root} >
@@ -192,12 +170,12 @@ class Board extends React.Component {
               Retro Board
             </Typography>
             <div>
-              {selectedBoard && !selectedBoard.locked && (
+              {board && !board.locked && (
                 <IconButton onClick={this.handleBoardLock} color="inherit">
                   <LockOpenOutlined />
                 </IconButton>
               )}
-              {selectedBoard && selectedBoard.locked && (
+              {board && board.locked && (
                 <IconButton onClick={this.handleBoardUnlock} color="inherit">
                   <LockOutlined />
                 </IconButton>
@@ -213,7 +191,7 @@ class Board extends React.Component {
 
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Pillars pillars={pillars} updatePillars={this.updatePillars} members={members} board={selectedBoard} />
+          <Pillars pillars={pillars} updatePillars={this.updatePillars} members={members} board={board} />
         </main>
 
         <Snackbar

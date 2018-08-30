@@ -8,7 +8,6 @@ import Avatar from '@material-ui/core/Avatar';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import { ListItemText } from '@material-ui/core';
 
-
 const styles = theme => ({
 });
 

@@ -53,7 +53,9 @@ class App extends React.Component {
       open: true,
       activeStep: 0,
       members: [],
-      selectedMember: null,
+      facilitator: null,
+      board: null,
+      boards: [],
     };
   }
 
@@ -61,13 +63,20 @@ class App extends React.Component {
     fetch("http://localhost:8080/api/members")
       .then(resp => resp.json())
       .then(data => {
-        console.log("APP members:", data);
         let members = data._embedded.members;
         if (members.length > 0) {
           this.setState({
             members,
           });
         }
+      });
+
+    fetch('http://localhost:8080/api/boards')
+      .then(resp => resp.json())
+      .then(data => {
+        let boards = data._embedded.boards;
+        let board = boards[0];
+        this.setState({ boards, board });
       });
   }
 
@@ -102,14 +111,18 @@ class App extends React.Component {
     let randomIndex = Math.floor(Math.random() * (upLimit));
     console.log("random facilitator", randomIndex);
     this.setState({
-      selectedMember: this.state.members[randomIndex],
+      facilitator: this.state.members[randomIndex],
     })
   }
 
   handlePickFacilitator(idx, event) {
     this.setState({
-      selectedMember: this.state.members[idx],
+      facilitator: this.state.members[idx],
     });
+  }
+
+  handleStartBoard() {
+
   }
 
   getStepContent(step, members) {
@@ -125,7 +138,7 @@ class App extends React.Component {
           </form>);
       case 1:
         return (
-          <Grid container justify="space-between" spacing={32}>
+          <Grid style={{ paddingTop: 20 }} container justify="space-between" spacing={32}>
             {members.map(member => (member.actionCount > 0 && (
               <Grid item xs={4} key={"action" + member.userID}>
                 <List>
@@ -158,7 +171,7 @@ class App extends React.Component {
               {members.map((member, idx) => (
                 <Grid key={"facilitator" + member.userID} item>
                   <IconButton onClick={this.handlePickFacilitator.bind(this, idx)} >
-                    {this.state.selectedMember && this.state.selectedMember.userID === member.userID ? (
+                    {this.state.facilitator && this.state.facilitator.userID === member.userID ? (
                       <Badge badgeContent={<TransitEnterexitRounded />}>
                         <Avatar>{member.userID}</Avatar>
                       </Badge>
@@ -175,12 +188,11 @@ class App extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const { activeStep, members } = this.state;
+    const { activeStep, members, facilitator, board } = this.state;
     const steps = getSteps();
     return (
       <div>
-        <Board />
+        <Board members={members} selectedMember={facilitator} board={board} />
 
         <Dialog
           fullScreen
