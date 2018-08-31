@@ -165,26 +165,10 @@ class App extends React.Component {
   }
 
   handleCheckAction(action) {
-    let updatedAction = {
-      finished: true,
-    }
-
-    fetch(action._links.self.href.replace('{?projection}', ''), {
-      method: 'PATCH',
-      body: JSON.stringify(updatedAction),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-    }).then(resp => {
-      if (resp.ok) {
-        return resp.json();
-      } else {
-        console.log("failed to check action")
-      }
-    }).then(data => {
+    let updatedAction = { finished: true }
+    Utils.patchResource(action, updatedAction, (body => {
       this.fetchMembers();
-      console.log("updated action:", data);
-    });
+    }));
   }
 
   getStepContent(step, members) {

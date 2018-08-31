@@ -11,6 +11,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Utils from './Utils';
 
 import { LockOutlined, LockOpenOutlined } from '@material-ui/icons';
 
@@ -65,67 +66,34 @@ class Board extends React.Component {
   }
 
   updatePillars() {
-    console.log("selected board:", this.state.board);
-    fetch(this.state.board.pillarsLink)
-      .then(resp => {
-        if (resp.ok) {
-          return resp.json();
-        } else {
-          console.log("failed to fetch pillars");
-        }
-      })
-      .then(data => {
-        let pillars = data._embedded.pillars;
-        this.setState({ pillars });
-        console.log("updated pillars:", pillars);
-      });
+    Utils.get(this.state.board.pillarsLink, (body => {
+      let pillars = body._embedded.pillars;
+      this.setState({ pillars });
+    }));
   }
 
-  updateSelectedMember(member, event) {
-    console.log("=========updated member:", member);
+  updateSelectedMember(member) {
     this.setState({ selectedMember: member });
   }
 
-  updateBoard(board, link) {
-    fetch(link, {
-      method: 'PATCH',
-      body: JSON.stringify(board),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-    }).then(resp => {
-      if (resp.ok) {
-        return resp.json();
-      } else {
-        console.log("failed to lock board")
-      }
-    }).then(data => {
-      let board = data;
-      board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
-
-      this.setState({
-        board: board,
-      });
-    })
-  }
-
   handleBoardLock() {
-    let board = {
-      locked: true,
-    };
-    let boardLink = this.state.board._links.self.href;
-    this.updateBoard(board, boardLink);
+    let updatedBoard = { locked: true };
+    Utils.patchResource(this.state.board, updatedBoard, (body => {
+      let board = body;
+      board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
+      this.setState({ board: board });
+    }));
 
     this.handleSnackbarOpen("The board has been LOCKED.")
   }
 
   handleBoardUnlock() {
-    let board = {
-      locked: false,
-    };
-    let boardLink = this.state.board._links.self.href;
-    this.updateBoard(board, boardLink);
-
+    let updatedBoard = { locked: false };
+    Utils.patchResource(this.state.board, updatedBoard, (body => {
+      let board = body;
+      board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
+      this.setState({ board: board });
+    }));
     this.handleSnackbarOpen("The board has been UNLOCKED.")
   }
 
@@ -151,27 +119,16 @@ class Board extends React.Component {
     let board = this.props.board;
     if (board) {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
-      fetch(board.pillarsLink)
-        .then(resp => {
-          if (resp.ok) {
-            return resp.json();
-          } else {
-            console.log("failed to fetch pillars")
-          }
-        }).then(data => {
-          console.log("initialized pillars:", data);
-          let pillars = data._embedded.pillars;
-          this.setState({ board, pillars });
-        });
+      Utils.get(board.pillar, (body => {
+        let pillars = body._embedded.pillars;
+        this.setState({ board, pillars });
+      }));
     }
   }
 
   render() {
     const { classes } = this.props;
-
-    console.log("selected member in board:", this.state.selectedMember);
     const { pillars, board, selectedMember, members } = this.state;
-
     return (
       <div className={classes.root} >
         <AppBar position="absolute" className={classes.appBar}>

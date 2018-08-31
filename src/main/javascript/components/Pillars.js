@@ -73,75 +73,36 @@ class Pillars extends React.Component {
 
   handleNewLikeSave(item, event) {
     event.stopPropagation();
-
     let updatedItem = {
       title: item.title,
       likes: item.likes + 1,
     }
-    console.log("item to add like", JSON.stringify(item));
-    console.log("item patch link:", item._links.self.href.replace('{?projection}', ''));
-    fetch(item._links.self.href.replace('{?projection}', ''), {
-      method: 'PATCH',
-      body: JSON.stringify(updatedItem),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-    }).then(resp => {
-      if (resp.ok) {
-        this.props.updatePillars();
-      } else {
-        console.log("failed to post new like")
-      }
-    })
+    Utils.patchResource(item, updatedItem, (body => {
+      this.props.updatePillars();
+    }));
   }
 
-  handleItemDone(item, event) {
+  handleItemDone(item) {
     if (this.state.newAction !== "") {
       this.saveAction(item);
     }
-
-    item.checked = true;
-    console.log("item done link:", item);
-    fetch(item._links.self.href.replace('{?projection}', ''), {
-      method: 'PATCH',
-      body: JSON.stringify(item),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-    }).then(resp => {
-      if (resp.ok) {
-        this.props.updatePillars();
-      } else {
-        console.log("failed to update item resp:", resp);
-      }
-    })
+    let updatedItem = { checked: true }
+    Utils.patchResource(item, updatedItem, (body => {
+      this.props.updatePillars();
+    }));
   }
 
   handleActionOwnerAdd(item, owner) {
     this.handleOwerListClose(item._links.self.href)
-    let action = item.action;
 
-    console.log("i am here")
+    let action = item.action;
     if (action && action._links) {
       let updatedAction = {
         member: owner._links.self.href,
       }
-      console.log("action link", action);
-      console.log("ower link", owner);
-
-      fetch(action._links.self.href.replace('{?projection}', ''), {
-        method: 'PATCH',
-        body: JSON.stringify(updatedAction),
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-      }).then(resp => {
-        if (resp.ok) {
-          this.props.updatePillars();
-        } else {
-          console.log("failed to add owner to action");
-        }
-      })
+      Utils.patchResource(action, updatedAction, (body => {
+        this.props.updatePillars();
+      }));
     }
   }
 
@@ -158,16 +119,10 @@ class Pillars extends React.Component {
     }
   }
 
-  handleItemDelete(item, event) {
-    fetch(item._links.self.href.replace('{?projection}', ''), {
-      method: 'delete',
-    }).then(resp => {
-      if (resp.ok) {
-        this.props.updatePillars();
-      } else {
-        console.log("failed to delete item resp:", resp);
-      }
-    });
+  handleItemDelete(item) {
+    Utils.deleteResource(item, (body => {
+      this.props.updatePillars();
+    }));
   }
 
   handleItemExpandToggle(item, event) {
@@ -192,13 +147,9 @@ class Pillars extends React.Component {
   }
 
   handleOwerListClose(item) {
-    console.log("i am here11")
-
     let ownerAnchorEl = this.state.ownerAnchorEl;
     ownerAnchorEl[item] = null;
-    this.setState({
-      ownerAnchorEl,
-    })
+    this.setState({ ownerAnchorEl })
   }
 
   handleOwerListOpen(item, event) {
@@ -221,11 +172,8 @@ class Pillars extends React.Component {
     let item = this.state.selectedItem;
     if (item && item.startTime) {
       let seconds = Math.floor((new Date().getTime() - new Date(item.startTime).getTime()) / 1000);
-      console.log("seconds since start:", seconds);
       if (seconds > this.state.secondsPerItem) {
-        this.setState({
-          itemProgress: 0,
-        });
+        this.setState({ itemProgress: 0 });
       } else {
         this.setState({
           itemProgress: Math.floor((this.state.secondsPerItem - seconds) * 100 / this.state.secondsPerItem),
@@ -244,19 +192,9 @@ class Pillars extends React.Component {
       startTime: new Date(),
     }
 
-    fetch(item._links.self.href.replace('{?projection}', ''), {
-      method: 'PATCH',
-      body: JSON.stringify(updatedItem),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-    }).then(resp => {
-      if (resp.ok) {
-        this.props.updatePillars();
-      } else {
-        console.log("failed to start item");
-      }
-    })
+    Utils.patchResource(item, updatedItem, (body => {
+      this.props.updatePillars();
+    }))
   }
 
   saveAction(item) {
@@ -264,14 +202,9 @@ class Pillars extends React.Component {
       title: this.state.newAction,
       item: item._links.self.href,
     }
-
-    let url = "http://" + process.env.RETRO_HOST_IP + ":8080/api/actions";
-
     Utils.postResource("actions", newAction, (data => {
       this.props.updatePillars();
-      this.setState({
-        newAction: "",
-      });
+      this.setState({ newAction: "" });
       this.handleItemDone(item);
     }));
   }

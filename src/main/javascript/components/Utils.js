@@ -2,21 +2,48 @@ import React from 'react';
 
 export default class Board extends React.Component {
 
-  static fetchResource(resource, callback) {
-    let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resource;
-
+  static get(url, callback) {
     fetch(url)
       .then(resp => {
         if (resp.ok) {
           return resp.json();
         } else {
-          throw new Error("failed to fetch:", url);
+          throw new Error("failed to get:", url);
         }
       }).then(data => {
         callback(data);
       }).catch(error => {
         console.log(error);
       });
+  }
+
+  static deleteResource(resource, callback) {
+    let url = resource._links.self.href.replace('{?projection}', '');
+    fetch(url, {
+      method: 'delete',
+    }).then(resp => {
+      if (resp.ok) {
+        return resp.json();
+      } else {
+        throw new Error("failed to delete:", url);
+      }
+    }).then(data => {
+      callback(data);
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
+  static fetchResource(resourceType, callback) {
+    let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
+    this.get(url, callback);
+  }
+
+  static getSelfLink(resource) {
+    if (resource && resource._links) {
+      return resource._links.self.href.replace('{?projection}', '');
+    }
+    return "";
   }
 
   static postResource(resourceType, resource, callback) {
@@ -40,10 +67,10 @@ export default class Board extends React.Component {
     });
   }
 
-  static patchResource(url, resource, callback) {
-    fetch(url, {
+  static patchResource(resource, updatedResource, callback) {
+    fetch(this.getSelfLink(resource), {
       method: 'PATCH',
-      body: JSON.stringify(resource),
+      body: JSON.stringify(updatedResource),
       headers: new Headers({
         'Content-Type': 'application/json',
       }),
@@ -51,7 +78,7 @@ export default class Board extends React.Component {
       if (resp.ok) {
         return resp.json();
       } else {
-        throw new Error("failed to patch:", url);
+        throw new Error("failed to patch:", resource, updatedResource);
       }
     }).then(data => {
       callback(data);
