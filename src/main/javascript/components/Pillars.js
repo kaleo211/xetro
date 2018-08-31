@@ -21,6 +21,7 @@ import Typography from '@material-ui/core/Typography';
 import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-ui/icons';
 
 import Likes from './Likes';
+import Utils from './Utils';
 
 const styles = theme => ({
   root: {
@@ -146,29 +147,14 @@ class Pillars extends React.Component {
 
   handleNewItemSave(pillar, event) {
     if (event && event.key === 'Enter' && this.state.newItems[pillar] !== "") {
-      console.log("i am here")
       let newItem = {
         title: this.state.newItems[pillar],
         pillar: pillar,
       }
-
-      let url = "http://" + process.env.RETRO_HOST_IP + ":8080/api/items";
-      fetch(url, {
-        method: 'post',
-        body: JSON.stringify(newItem),
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        })
-      }).then(resp => {
-        if (resp.ok) {
-          this.props.updatePillars();
-          this.state.newItems[pillar] = "";
-        } else {
-          throw new Error('failed to post new item');
-        }
-      }).catch(error => {
-        console.log(error);
-      });
+      Utils.postResource("items", newItem, (data => {
+        this.props.updatePillars();
+        this.state.newItems[pillar] = "";
+      }));
     }
   }
 
@@ -281,25 +267,13 @@ class Pillars extends React.Component {
 
     let url = "http://" + process.env.RETRO_HOST_IP + ":8080/api/actions";
 
-    fetch(url, {
-      method: 'post',
-      body: JSON.stringify(newAction),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      })
-    }).then(resp => {
-      if (resp.ok) {
-        this.props.updatePillars();
-        this.setState({
-          newAction: "",
-        });
-        this.handleItemDone(item);
-      } else {
-        throw new Error('failed to post new action');
-      }
-    }).catch(error => {
-      console.log(error);
-    });
+    Utils.postResource("actions", newAction, (data => {
+      this.props.updatePillars();
+      this.setState({
+        newAction: "",
+      });
+      this.handleItemDone(item);
+    }));
   }
 
   handleNewActionSave(item, event) {

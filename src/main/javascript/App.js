@@ -24,6 +24,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Utils from './components/Utils';
 
 import { CheckRounded, ArrowUpwardRounded, ArrowDownwardRounded, TransitEnterexitRounded } from '@material-ui/icons';
 import { Badge } from '@material-ui/core';
@@ -57,31 +58,23 @@ class App extends React.Component {
     };
   }
 
-  fetchMembers() {
-    let url = "http://" + process.env.RETRO_HOST_IP + ":8080/api/members";
-    fetch(url)
-      .then(resp => resp.json())
-      .then(data => {
-        let members = data._embedded.members;
-        if (members.length > 0) {
-          console.log("updated members:", members);
-          this.setState({
-            members,
-          });
-        }
-      });
-  }
 
   componentWillMount() {
-    this.fetchMembers();
-    let url = "http://" + process.env.RETRO_HOST_IP + ":8080/api/boards";
-    fetch(url)
-      .then(resp => resp.json())
-      .then(data => {
-        let boards = data._embedded.boards;
+    Utils.fetchResource("members", (data => {
+      let members = data._embedded.members;
+      if (members.length > 0) {
+        console.log("updated members:", members);
+        this.setState({ members });
+      }
+    }))
+
+    Utils.fetchResource("boards", (data => {
+      let boards = data._embedded.boards;
+      if (boards.length > 0) {
         let board = boards[0];
         this.setState({ boards, board });
-      });
+      }
+    }))
   }
 
   handleClickOpen = () => {
@@ -156,31 +149,18 @@ class App extends React.Component {
   // }
 
   handleStartBoard() {
-    let board = {
-      member: this.state.facilitator._links.self.href,
-      started: true,
-      // endTime: this.state.endTime,
-    }
     if (this.state.board) {
-      fetch(this.state.board._links.self.href, {
-        method: 'PATCH',
-        body: JSON.stringify(board),
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-      }).then(resp => {
-        if (resp.ok) {
-          return resp.json();
-        } else {
-          console.log("failed to start board")
-        }
-      }).then(data => {
+      let board = {
+        member: this.state.facilitator._links.self.href,
+        started: true,
+        // endTime: this.state.endTime,
+      };
+      Utils.patchResource(this.state.board._links.self.href, board, (data => {
         this.handleClose();
         this.setState({
           board: data,
         })
-
-      });
+      }));
     }
   }
 
