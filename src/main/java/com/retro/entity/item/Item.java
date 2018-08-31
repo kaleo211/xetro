@@ -1,6 +1,6 @@
 package com.retro.entity.item;
 
-import javax.persistence.CascadeType;
+import java.sql.Timestamp;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,7 +30,6 @@ import com.retro.entity.action.Action;
 public class Item {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-
   private Long id;
 
   @NonNull
@@ -38,6 +37,10 @@ public class Item {
 
   private boolean checked;
   private int likes;
+
+  private Timestamp startTime;
+
+  private boolean started;
 
   @ManyToOne
   @JoinColumn(name = "pillar_id")

@@ -14,8 +14,6 @@ public interface DetailedMember {
 
   String getLastName();
 
+  // @Value("#{@memberHelper.filterCheckedActions(target.actions)}")
   List<DetailedAction> getActions();
-
-  @Value("#{target.getActions().size()}")
-  int getActionCount();
 }

@@ -2,7 +2,6 @@
 package com.retro.entity.pillar;
 
 import java.util.List;
-
 import com.retro.entity.item.DetailedItem;
 
 import org.springframework.beans.factory.annotation.Value;

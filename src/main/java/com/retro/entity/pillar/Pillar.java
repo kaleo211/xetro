@@ -26,7 +26,7 @@ import com.retro.entity.item.Item;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-@NamedEntityGraph(name = "joined", includeAllAttributes = true)
+@NamedEntityGraph(name = "pillarEntityGraph", includeAllAttributes = true)
 public class Pillar {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

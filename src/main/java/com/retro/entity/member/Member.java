@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.GenerationType;
 
@@ -20,6 +21,7 @@ import com.retro.entity.action.Action;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedEntityGraph(name = "memberEntityGraph", includeAllAttributes = true)
 public class Member {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

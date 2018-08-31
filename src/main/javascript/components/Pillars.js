@@ -18,7 +18,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { PlusOne, Done, Add, DeleteOutline } from '@material-ui/icons';
+import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-ui/icons';
 
 import Likes from './Likes';
 
@@ -46,8 +46,11 @@ class Pillars extends React.Component {
       expandedItem: "",
       ownerAnchorEl: {},
       newAction: "",
+      selectedItem: null,
+      progressTimer: null,
+      itemProgress: 0,
+      secondsPerItem: 30,
     }
-
   }
 
   componentWillReceiveProps(props) {
@@ -92,6 +95,10 @@ class Pillars extends React.Component {
   }
 
   handleItemDone(item, event) {
+    if (this.state.newAction !== "") {
+      this.saveAction(item);
+    }
+
     item.checked = true;
     console.log("item done link:", item);
     fetch(item._links.self.href.replace('{?projection}', ''), {
@@ -145,7 +152,8 @@ class Pillars extends React.Component {
         pillar: pillar,
       }
 
-      fetch("http://localhost:8080/api/items", {
+      let url = "http://" + process.env.RETRO_HOST_IP + ":8080/api/items";
+      fetch(url, {
         method: 'post',
         body: JSON.stringify(newItem),
         headers: new Headers({
@@ -181,9 +189,13 @@ class Pillars extends React.Component {
     if (expandedItem && expandedItem === item._links.self.href) {
       this.setState({
         expandedItem: "",
+        selectedItem: null,
       })
     } else {
-      this.setState({ expandedItem: item._links.self.href });
+      this.setState({
+        expandedItem: item._links.self.href,
+        selectedItem: item,
+      });
     }
   }
 
@@ -211,32 +223,88 @@ class Pillars extends React.Component {
     });
   }
 
+  componentDidMount() {
+    this.progressTimer = setInterval(this.updateItemProgress, 2000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.progressTimer);
+  }
+
+  updateItemProgress = () => {
+    let item = this.state.selectedItem;
+    if (item && item.startTime) {
+      let seconds = Math.floor((new Date().getTime() - new Date(item.startTime).getTime()) / 1000);
+      console.log("seconds since start:", seconds);
+      if (seconds > this.state.secondsPerItem) {
+        this.setState({
+          itemProgress: 0,
+        });
+      } else {
+        this.setState({
+          itemProgress: Math.floor((this.state.secondsPerItem - seconds) * 100 / this.state.secondsPerItem),
+        });
+      }
+    }
+  };
+
+  handleStartItem(item) {
+    this.setState({
+      expandedItem: item._links.self.href,
+    })
+
+    let updatedItem = {
+      started: true,
+      startTime: new Date(),
+    }
+
+    fetch(item._links.self.href.replace('{?projection}', ''), {
+      method: 'PATCH',
+      body: JSON.stringify(updatedItem),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    }).then(resp => {
+      if (resp.ok) {
+        this.props.updatePillars();
+      } else {
+        console.log("failed to start item");
+      }
+    })
+  }
+
+  saveAction(item) {
+    let newAction = {
+      title: this.state.newAction,
+      item: item._links.self.href,
+    }
+
+    let url = "http://" + process.env.RETRO_HOST_IP + ":8080/api/actions";
+
+    fetch(url, {
+      method: 'post',
+      body: JSON.stringify(newAction),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      })
+    }).then(resp => {
+      if (resp.ok) {
+        this.props.updatePillars();
+        this.setState({
+          newAction: "",
+        });
+        this.handleItemDone(item);
+      } else {
+        throw new Error('failed to post new action');
+      }
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
   handleNewActionSave(item, event) {
     if (event && event.key === 'Enter' && this.state.newAction !== "") {
-      let newAction = {
-        title: this.state.newAction,
-        item: item._links.self.href,
-      }
-
-      fetch("http://localhost:8080/api/actions", {
-        method: 'post',
-        body: JSON.stringify(newAction),
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        })
-      }).then(resp => {
-        if (resp.ok) {
-          this.props.updatePillars();
-          this.setState({
-            newAction: "",
-          });
-          this.handleItemDone(item);
-        } else {
-          throw new Error('failed to post new action');
-        }
-      }).catch(error => {
-        console.log(error);
-      });
+      this.saveAction(item);
     }
   }
 
@@ -299,6 +367,11 @@ class Pillars extends React.Component {
                           <PlusOne />
                         </IconButton>
                       )}
+                      {board && board.locked && !item.checked && !item.started && (
+                        <IconButton onClick={this.handleStartItem.bind(this, item)}>
+                          <PlayArrowRounded />
+                        </IconButton>
+                      )}
                       {item.action && item.action.member && (<Avatar>{item.action.member.userID}</Avatar>)}
                     </div>
                   </ExpansionPanelSummary>
@@ -340,24 +413,32 @@ class Pillars extends React.Component {
                         )}
                       </div>
                     )}
-
                   </ExpansionPanelDetails>
 
-                  <ExpansionPanelActions >
-
-
-                    {!item.action && !item.checked && (
-                      <div>
-                        <IconButton disabled={item.checked} onClick={this.handleItemDone.bind(this, item)}>
-                          <Done />
-                        </IconButton>
-                        {board && !board.locked && (
-                          <IconButton onClick={this.handleItemDelete.bind(this, item)}>
-                            <DeleteOutline />
-                          </IconButton>
-                        )}
-                      </div>
-                    )}
+                  <ExpansionPanelActions>
+                    <Grid container direction="column">
+                      <Grid item>
+                        <Grid container justify="flex-end">
+                          {!item.action && !item.checked && (
+                            <Grid item>
+                              <IconButton disabled={item.checked} onClick={this.handleItemDone.bind(this, item)}>
+                                <Done />
+                              </IconButton>
+                              {board && !board.locked && (
+                                <IconButton onClick={this.handleItemDelete.bind(this, item)}>
+                                  <DeleteOutline />
+                                </IconButton>
+                              )}
+                            </Grid>
+                          )}
+                        </Grid>
+                      </Grid>
+                      {board.locked && !item.checked && item.started && (
+                        <Grid item style={{ paddingTop: 8 }}>
+                          <LinearProgress variant="determinate" value={this.state.itemProgress} />
+                        </Grid>
+                      )}
+                    </Grid>
                   </ExpansionPanelActions>
                 </ExpansionPanel>
               ))}

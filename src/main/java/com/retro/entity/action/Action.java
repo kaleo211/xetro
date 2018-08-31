@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import com.retro.entity.member.Member;
 import com.retro.entity.item.Item;
@@ -28,8 +29,9 @@ public class Action {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @NonNull
   private String title;
-  private boolean lock;
+  private boolean locked;
   private boolean finished;
 
   @OneToOne(fetch = FetchType.EAGER)

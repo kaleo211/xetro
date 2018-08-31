@@ -23,6 +23,7 @@ import Stepper from '@material-ui/core/Stepper';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import { CheckRounded, ArrowUpwardRounded, ArrowDownwardRounded, TransitEnterexitRounded } from '@material-ui/icons';
 import { Badge } from '@material-ui/core';
@@ -56,19 +57,25 @@ class App extends React.Component {
     };
   }
 
-  componentWillMount() {
-    fetch("http://localhost:8080/api/members")
+  fetchMembers() {
+    let url = "http://" + process.env.RETRO_HOST_IP + ":8080/api/members";
+    fetch(url)
       .then(resp => resp.json())
       .then(data => {
         let members = data._embedded.members;
         if (members.length > 0) {
+          console.log("updated members:", members);
           this.setState({
             members,
           });
         }
       });
+  }
 
-    fetch('http://localhost:8080/api/boards')
+  componentWillMount() {
+    this.fetchMembers();
+    let url = "http://" + process.env.RETRO_HOST_IP + ":8080/api/boards";
+    fetch(url)
       .then(resp => resp.json())
       .then(data => {
         let boards = data._embedded.boards;
@@ -126,6 +133,28 @@ class App extends React.Component {
     });
   }
 
+  // handleSaveEndTime() {
+  //   fetch(this.state.board._links.self.href, {
+  //     method: 'PATCH',
+  //     body: JSON.stringify(board),
+  //     headers: new Headers({
+  //       'Content-Type': 'application/json',
+  //     }),
+  //   }).then(resp => {
+  //     if (resp.ok) {
+  //       return resp.json();
+  //     } else {
+  //       console.log("failed to start board")
+  //     }
+  //   }).then(data => {
+  //     this.handleClose();
+  //     this.setState({
+  //       board: data,
+  //     })
+
+  //   });
+  // }
+
   handleStartBoard() {
     let board = {
       member: this.state.facilitator._links.self.href,
@@ -155,6 +184,29 @@ class App extends React.Component {
     }
   }
 
+  handleCheckAction(action) {
+    let updatedAction = {
+      finished: true,
+    }
+
+    fetch(action._links.self.href.replace('{?projection}', ''), {
+      method: 'PATCH',
+      body: JSON.stringify(updatedAction),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    }).then(resp => {
+      if (resp.ok) {
+        return resp.json();
+      } else {
+        console.log("failed to check action")
+      }
+    }).then(data => {
+      this.fetchMembers();
+      console.log("updated action:", data);
+    });
+  }
+
   getStepContent(step, members) {
     switch (step) {
       case 0:
@@ -170,22 +222,22 @@ class App extends React.Component {
       case 1:
         return (
           <Grid style={{ paddingTop: 20 }} container justify="space-between" spacing={32}>
-            {members.map(member => (member.actionCount > 0 && (
-              <Grid item xs={4} key={"action" + member.userID}>
+            {members.filter(m => m.actions.filter(a => !a.finished).length > 0).map(member => (
+              <Grid item xs={12} md={6} lg={4} key={"action" + member.userID}>
                 <List>
-                  {member.actions.map((action, idx) => (
+                  {member.actions.map((action, idx) => (!action.finished &&
                     <ListItem divider key={"action" + action.title} dense button >
                       <Avatar style={{ marginLeft: -15 }}>
                         {idx === 0 && member.userID}
                       </Avatar>
                       <ListItemText primary={action.title} />
-                      <ListItemSecondaryAction>
-                        <Checkbox />
+                      <ListItemSecondaryAction onClick={this.handleCheckAction.bind(this, action)}>
+                        <IconButton><CheckRounded /></IconButton>
                       </ListItemSecondaryAction>
                     </ListItem>
                   ))}
                 </List>
-              </Grid>)
+              </Grid>
             ))}
           </Grid>
         );
@@ -256,15 +308,22 @@ class App extends React.Component {
                           <IconButton disabled={activeStep === 0} onClick={this.handleBack}>
                             <ArrowUpwardRounded />
                           </IconButton>
-                          {(activeStep === steps.length - 1) ? (
-                            <IconButton disabled={facilitator === null} variant="contained" color="primary" onClick={this.handleStartBoard.bind(this)}>
+                          {(activeStep === 0) && (
+                            <IconButton variant="contained" color="primary" onClick={this.handleNextStep}>
+                              <ArrowDownwardRounded />
+                            </IconButton>
+                          )}
+                          {(activeStep === 1) && (
+                            <IconButton variant="contained" color="primary" onClick={this.handleNextStep}>
+                              <ArrowDownwardRounded />
+                            </IconButton>
+                          )}
+                          {(activeStep === 2) && (
+                            <IconButton disabled={facilitator === null} variant="contained" color="primary"
+                              onClick={this.handleStartBoard.bind(this)}>
                               <CheckRounded />
                             </IconButton>
-                          ) : (
-                              <IconButton variant="contained" color="primary" onClick={this.handleNextStep}>
-                                <ArrowDownwardRounded />
-                              </IconButton>
-                            )}
+                          )}
                         </div>
                       </StepContent>
                     </Step>

@@ -9,6 +9,8 @@ import Members from './Members';
 import Pillars from './Pillars';
 import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
+import Grid from '@material-ui/core/Grid';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import { LockOutlined, LockOpenOutlined } from '@material-ui/icons';
 
@@ -173,23 +175,31 @@ class Board extends React.Component {
     return (
       <div className={classes.root} >
         <AppBar position="absolute" className={classes.appBar}>
-          <Toolbar>
-            <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
-              Retro Board
+          <Grid container direction="column">
+            <Grid item>
+              <Toolbar>
+                <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
+                  Retro Board
             </Typography>
-            <div>
-              {board && !board.locked && (
-                <IconButton onClick={this.handleBoardLock} color="inherit">
-                  <LockOpenOutlined />
-                </IconButton>
-              )}
-              {board && board.locked && (
-                <IconButton onClick={this.handleBoardUnlock} color="inherit">
-                  <LockOutlined />
-                </IconButton>
-              )}
-            </div>
-          </Toolbar>
+                <div>
+                  {board && !board.locked && (
+                    <IconButton onClick={this.handleBoardLock} color="inherit">
+                      <LockOpenOutlined />
+                    </IconButton>
+                  )}
+                  {board && board.locked && (
+                    <IconButton onClick={this.handleBoardUnlock} color="inherit">
+                      <LockOutlined />
+                    </IconButton>
+                  )}
+                </div>
+              </Toolbar>
+            </Grid>
+            <Grid item>
+              <LinearProgress color="secondary" variant="determinate" value={70} />
+            </Grid>
+          </Grid>
+
         </AppBar>
 
         <Drawer variant="permanent" classes={{ paper: classes.drawerPaper, }}>
