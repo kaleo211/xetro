@@ -12,7 +12,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 
 import { LockOutlined, LockOpenOutlined } from '@material-ui/icons';
 
-const drawerWidth = 75;
+const drawerWidth = 82;
 
 const styles = theme => ({
   root: {
@@ -56,10 +56,10 @@ class Board extends React.Component {
     };
 
     this.updatePillars = this.updatePillars.bind(this);
-    this.updateSelectedMember = this.updateSelectedMember.bind(this);
     this.handleBoardLock = this.handleBoardLock.bind(this);
     this.handleBoardUnlock = this.handleBoardUnlock.bind(this);
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
+    this.updateSelectedMember = this.updateSelectedMember.bind(this);
   }
 
   updatePillars() {
@@ -79,8 +79,9 @@ class Board extends React.Component {
       });
   }
 
-  updateSelectedMember(member) {
-    this.state.selectedMember = member;
+  updateSelectedMember(member, event) {
+    console.log("=========updated member:", member);
+    this.setState({ selectedMember: member });
   }
 
   updateBoard(board, link) {
@@ -140,6 +141,11 @@ class Board extends React.Component {
   }
 
   componentWillReceiveProps() {
+    this.setState({
+      members: this.props.members,
+      selectedMember: this.props.selectedMember,
+    })
+
     let board = this.props.board;
     if (board) {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
@@ -159,8 +165,10 @@ class Board extends React.Component {
   }
 
   render() {
-    const { classes, selectedMember, members } = this.props;
-    const { pillars, board } = this.state;
+    const { classes } = this.props;
+
+    console.log("selected member in board:", this.state.selectedMember);
+    const { pillars, board, selectedMember, members } = this.state;
 
     return (
       <div className={classes.root} >

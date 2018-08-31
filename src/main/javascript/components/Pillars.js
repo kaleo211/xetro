@@ -12,13 +12,12 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-
 import { PlusOne, Done, Add, DeleteOutline } from '@material-ui/icons';
 
 import Likes from './Likes';
@@ -139,7 +138,7 @@ class Pillars extends React.Component {
   }
 
   handleNewItemSave(pillar, event) {
-    if (event && event.key === 'Enter') {
+    if (event && event.key === 'Enter' && this.state.newItems[pillar] !== "") {
       console.log("i am here")
       let newItem = {
         title: this.state.newItems[pillar],
@@ -213,7 +212,7 @@ class Pillars extends React.Component {
   }
 
   handleNewActionSave(item, event) {
-    if (event && event.key === 'Enter') {
+    if (event && event.key === 'Enter' && this.state.newAction !== "") {
       let newAction = {
         title: this.state.newAction,
         item: item._links.self.href,
@@ -288,19 +287,20 @@ class Pillars extends React.Component {
                   onChange={this.handleItemExpandToggle.bind(this, item)}
                 >
                   <ExpansionPanelSummary>
+                    <LinearProgress variant="determinate" value={70} />
                     <Typography noWrap variant="headline" className={item.checked ? classes.itemDone : null}>
                       {item.title}
                     </Typography>
                     <Likes item={item} />
                     <Typography style={{ flexGrow: 1 }}></Typography>
-
-                    {board && !board.locked && !item.checked && (
-                      <div style={{ marginTop: -8, marginBottom: -10, marginRight: -50 }}>
+                    <div style={{ marginTop: -5, marginBottom: -20, marginRight: -48 }}>
+                      {board && !board.locked && !item.checked && (
                         <IconButton onClick={this.handleNewLikeSave.bind(this, item)}>
                           <PlusOne />
                         </IconButton>
-                      </div>
-                    )}
+                      )}
+                      {item.action && item.action.member && (<Avatar>{item.action.member.userID}</Avatar>)}
+                    </div>
                   </ExpansionPanelSummary>
 
                   <ExpansionPanelDetails>
@@ -316,37 +316,36 @@ class Pillars extends React.Component {
                     />
                     {item.action && item.action.title !== "" && (
                       <div style={{ marginRight: -17, marginTop: 10 }}>
-                        {item.action.member ? (
-                          <Avatar>{item.action.member.userID}</Avatar>
-                        ) : (
-                            <div>
-                              <IconButton onClick={this.handleOwerListOpen.bind(this, item._links.self.href)}>
-                                <Add fontSize='inherit' />
-                              </IconButton>
-                              <Menu
-                                anchorEl={this.state.ownerAnchorEl[item._links.self.href]}
-                                open={Boolean(this.state.ownerAnchorEl[item._links.self.href])}
-                                onClose={this.handleOwerListClose.bind(this, item._links.self.href)}
-                              >
-                                {members && members.map(member => (
-                                  <MenuItem
-                                    style={{ paddingTop: 20, paddingBottom: 20 }}
-                                    key={"owner" + member.userID}
-                                    onClick={this.handleActionOwnerAdd.bind(this, item, member)}
-                                  >
-                                    <ListItemAvatar>
-                                      <Avatar>{member.userID}</Avatar>
-                                    </ListItemAvatar>
-                                  </MenuItem>
-                                ))}
-                              </Menu>
-                            </div>
-                          )}
+                        {!item.action.member && (
+                          <div>
+                            <IconButton onClick={this.handleOwerListOpen.bind(this, item._links.self.href)}>
+                              <Add fontSize='inherit' />
+                            </IconButton>
+                            <Menu
+                              anchorEl={this.state.ownerAnchorEl[item._links.self.href]}
+                              open={Boolean(this.state.ownerAnchorEl[item._links.self.href])}
+                              onClose={this.handleOwerListClose.bind(this, item._links.self.href)}
+                            >
+                              {members && members.map(member => (
+                                <MenuItem
+                                  style={{ paddingTop: 20, paddingBottom: 20 }}
+                                  key={"owner" + member.userID}
+                                  onClick={this.handleActionOwnerAdd.bind(this, item, member)}
+                                >
+                                  <Avatar>{member.userID}</Avatar>
+                                </MenuItem>
+                              ))}
+                            </Menu>
+                          </div>
+                        )}
                       </div>
                     )}
+
                   </ExpansionPanelDetails>
 
-                  <ExpansionPanelActions style={{ paddingTop: 0 }} >
+                  <ExpansionPanelActions >
+
+
                     {!item.action && !item.checked && (
                       <div>
                         <IconButton disabled={item.checked} onClick={this.handleItemDone.bind(this, item)}>

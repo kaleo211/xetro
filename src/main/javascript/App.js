@@ -6,7 +6,6 @@ import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
-import { TransitEnterexitRounded, Done, Add, DeleteOutline } from '@material-ui/icons';
 
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -16,7 +15,6 @@ import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import Paper from '@material-ui/core/Paper';
 import Slide from '@material-ui/core/Slide';
 import Step from '@material-ui/core/Step';
 import StepContent from '@material-ui/core/StepContent';
@@ -26,7 +24,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 
-import { CheckRounded, ArrowUpwardRounded, ArrowDownwardRounded } from '@material-ui/icons';
+import { CheckRounded, ArrowUpwardRounded, ArrowDownwardRounded, TransitEnterexitRounded } from '@material-ui/icons';
 import { Badge } from '@material-ui/core';
 
 const styles = {
@@ -44,8 +42,6 @@ function getSteps() {
   ];
 }
 
-
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -56,6 +52,7 @@ class App extends React.Component {
       facilitator: null,
       board: null,
       boards: [],
+      endTime: "17:00",
     };
   }
 
@@ -88,7 +85,10 @@ class App extends React.Component {
     this.setState({ open: false });
   };
 
-  handleNext = () => {
+  handleNextStep = () => {
+    if (this.state.activeStep === 0) {
+      console.log("time stap", this.state.endTime);
+    }
     this.setState(state => ({
       activeStep: state.activeStep + 1,
     }));
@@ -120,10 +120,17 @@ class App extends React.Component {
     });
   }
 
+  handleChangeEndTime(event) {
+    this.setState({
+      endTime: event.target.value,
+    });
+  }
+
   handleStartBoard() {
     let board = {
       member: this.state.facilitator._links.self.href,
       started: true,
+      // endTime: this.state.endTime,
     }
     if (this.state.board) {
       fetch(this.state.board._links.self.href, {
@@ -154,9 +161,10 @@ class App extends React.Component {
         return (
           <form noValidate>
             <TextField id="endTime" type="time"
-              defaultValue="17:30"
               InputLabelProps={{ shrink: true }}
               inputProps={{ step: 900 }}
+              value={this.state.endTime}
+              onChange={this.handleChangeEndTime.bind(this)}
             />
           </form>);
       case 1:
@@ -234,35 +242,37 @@ class App extends React.Component {
             </Toolbar>
           </AppBar>
 
-          <Stepper activeStep={activeStep} orientation="vertical">
-            {steps.map((label, index) => {
-              return (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                  <StepContent>
-                    {this.getStepContent(index, members)}
-                    <div style={{ paddingTop: 20 }} >
-                      <IconButton
-                        disabled={activeStep === 0}
-                        onClick={this.handleBack}
-                      >
-                        <ArrowUpwardRounded />
-                      </IconButton>
-                      {(activeStep === steps.length - 1) ? (
-                        <IconButton disabled={facilitator === null} variant="contained" color="primary" onClick={this.handleStartBoard.bind(this)}>
-                          <CheckRounded />
-                        </IconButton>
-                      ) : (
-                          <IconButton variant="contained" color="primary" onClick={this.handleNext}>
-                            <ArrowDownwardRounded />
+          <Grid container>
+            <Grid item xs={1}></Grid>
+            <Grid item xs={10}>
+              <Stepper activeStep={activeStep} orientation="vertical">
+                {steps.map((label, index) => {
+                  return (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                      <StepContent>
+                        {this.getStepContent(index, members)}
+                        <div style={{ paddingTop: 20 }} >
+                          <IconButton disabled={activeStep === 0} onClick={this.handleBack}>
+                            <ArrowUpwardRounded />
                           </IconButton>
-                        )}
-                    </div>
-                  </StepContent>
-                </Step>
-              );
-            })}
-          </Stepper>
+                          {(activeStep === steps.length - 1) ? (
+                            <IconButton disabled={facilitator === null} variant="contained" color="primary" onClick={this.handleStartBoard.bind(this)}>
+                              <CheckRounded />
+                            </IconButton>
+                          ) : (
+                              <IconButton variant="contained" color="primary" onClick={this.handleNextStep}>
+                                <ArrowDownwardRounded />
+                              </IconButton>
+                            )}
+                        </div>
+                      </StepContent>
+                    </Step>
+                  );
+                })}
+              </Stepper>
+            </Grid>
+          </Grid>
         </Dialog>
       </div>
     );

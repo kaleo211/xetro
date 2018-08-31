@@ -6,32 +6,58 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Avatar from '@material-ui/core/Avatar';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import { ListItemText } from '@material-ui/core';
+import { Badge } from '@material-ui/core';
+import { KeyboardRounded } from '@material-ui/icons';
 
 const styles = theme => ({
 });
 
 class Members extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
+
+    this.state = {
+      members: [],
+      selectedMember: null,
+    }
+  }
+
+  componentWillReceiveProps() {
+    // console.log("members in members:", this.props.selectedMember);
+    this.setState({
+      members: this.props.members,
+      selectedMember: this.props.selectedMember,
+    })
+  }
+
+  updateSelected(member) {
+    this.setState(
+      { selectedMember: member },
+      this.props.updateSelectedMember(member) // wait for state to be updated
+    );
   }
 
   render() {
-    const { members, selectedMember } = this.props;
+    const { members, selectedMember } = this.state;
+    // console.log("update member:", selectedMember, members);
     return (
-      <List component="nav">
+      <List component="nav" style={{ marginRight: -20 }}>
         {members.map(member => (
-          <ListItem key={member.userID} button
+          <ListItem key={"side" + member.userID} button
             selected={true}
-            onClick={this.props.updateSelectedMember(member)}
+            onClick={this.updateSelected.bind(this, member)}
+            style={{ paddingTop: 16, paddingBottom: 16 }}
           >
-            <ListItemText primary="haha" />
-            {/* <ListItemAvatar style={{ marginLeft: -8 }}>
-              <Avatar>{member.userID}</Avatar>
-            </ListItemAvatar> */}
+            <ListItemAvatar>
+              {selectedMember && selectedMember.userID === member.userID ? (
+                <Badge badgeContent={(<KeyboardRounded />)}>
+                  <Avatar>{member.userID}</Avatar>
+                </Badge>
+              ) : (<Avatar>{member.userID}</Avatar>)}
+            </ListItemAvatar>
           </ListItem>
         ))}
-      </List>
+      </List >
     )
   }
 }
