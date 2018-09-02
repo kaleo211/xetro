@@ -1,19 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
+
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Members from './Members';
-import Pillars from './Pillars';
+import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
-import Grid from '@material-ui/core/Grid';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Utils from './Utils';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Avatar from '@material-ui/core/Avatar';
+import Badge from '@material-ui/core/Badge';
 
-import { LockOutlined, LockOpenOutlined } from '@material-ui/icons';
+import {
+  LockOutlined,
+  LockOpenOutlined,
+  KeyboardRounded,
+} from '@material-ui/icons';
+
+import Utils from './Utils';
+import Pillars from './Pillars';
+import Timer from './Timer';
 
 const drawerWidth = 82;
 
@@ -53,16 +62,12 @@ class Board extends React.Component {
       board: null,
       pillars: [],
       members: [],
-      selectedMember: null,
       snackbarMessage: "",
       snackbarOpen: false,
     };
 
     this.updatePillars = this.updatePillars.bind(this);
-    this.handleBoardLock = this.handleBoardLock.bind(this);
-    this.handleBoardUnlock = this.handleBoardUnlock.bind(this);
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
-    this.updateSelectedMember = this.updateSelectedMember.bind(this);
   }
 
   updatePillars() {
@@ -72,8 +77,15 @@ class Board extends React.Component {
     }));
   }
 
-  updateSelectedMember(member) {
-    this.setState({ selectedMember: member });
+  updateSelected(member) {
+    console.log("updated member in board:", member._links.self.href);
+    let updatedBoard = {
+      selected: member._links.self.href,
+    }
+    Utils.patchResource(this.state.board, updatedBoard, (body => {
+      console.log("returned board:", body)
+      this.setState({ board: body });
+    }));
   }
 
   handleBoardLock() {
@@ -83,8 +95,7 @@ class Board extends React.Component {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
       this.setState({ board: board });
     }));
-
-    this.handleSnackbarOpen("The board has been LOCKED.")
+    this.handleSnackbarOpen("Board has been LOCKED.")
   }
 
   handleBoardUnlock() {
@@ -94,13 +105,11 @@ class Board extends React.Component {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
       this.setState({ board: board });
     }));
-    this.handleSnackbarOpen("The board has been UNLOCKED.")
+    this.handleSnackbarOpen("Board has been UNLOCKED.")
   }
 
   handleSnackbarClose() {
-    this.setState({
-      snackbarOpen: false,
-    })
+    this.setState({ snackbarOpen: false })
   }
 
   handleSnackbarOpen(message) {
@@ -113,55 +122,72 @@ class Board extends React.Component {
   componentWillReceiveProps() {
     this.setState({
       members: this.props.members,
-      selectedMember: this.props.selectedMember,
-    })
+    });
 
     let board = this.props.board;
     if (board) {
+      console.log("board in receive:", board);
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
-      Utils.get(board.pillar, (body => {
+      Utils.get(board.pillarsLink, (body => {
+        console.log("updating pillars with board:", board);
         let pillars = body._embedded.pillars;
         this.setState({ board, pillars });
       }));
     }
   }
 
+
+
   render() {
     const { classes } = this.props;
-    const { pillars, board, selectedMember, members } = this.state;
+    const { pillars, board, members } = this.state;
+
     return (
       <div className={classes.root} >
         <AppBar position="absolute" className={classes.appBar}>
-          <Grid container direction="column">
-            <Grid item>
-              <Toolbar>
-                <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
-                  Retro Board
+          <Toolbar>
+            <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
+              Retro Board
             </Typography>
-                <div>
-                  {board && !board.locked && (
-                    <IconButton onClick={this.handleBoardLock} color="inherit">
-                      <LockOpenOutlined />
-                    </IconButton>
-                  )}
-                  {board && board.locked && (
-                    <IconButton onClick={this.handleBoardUnlock} color="inherit">
-                      <LockOutlined />
-                    </IconButton>
-                  )}
-                </div>
-              </Toolbar>
-            </Grid>
-            <Grid item>
-              <LinearProgress color="secondary" variant="determinate" value={70} />
-            </Grid>
-          </Grid>
 
+            <div style={{ flexGrow: 1 }}>
+              <Timer board={board} />
+            </div>
+
+            <div>
+              {board && !board.locked && (
+                <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
+                  <LockOpenOutlined />
+                </IconButton>
+              )}
+              {board && board.locked && (
+                <IconButton onClick={this.handleBoardUnlock.bind(this)} color="inherit">
+                  <LockOutlined />
+                </IconButton>
+              )}
+            </div>
+          </Toolbar>
         </AppBar>
 
         <Drawer variant="permanent" classes={{ paper: classes.drawerPaper, }}>
           <div className={classes.toolbar} />
-          <Members members={members} selectedMember={selectedMember} updateSelectedMember={this.updateSelectedMember} />
+          <List component="nav" style={{ marginRight: -20 }}>
+            {members.map(member => (
+              <ListItem key={"side" + member.userID} button
+                onClick={this.updateSelected.bind(this, member)}
+                style={{ paddingTop: 16, paddingBottom: 16 }}
+              >
+                <ListItemAvatar>
+                  {board && (board._embedded && board._embedded.selected && board._embedded.selected.userID === member.userID
+                    || board.selected && board.selected.userID === member.userID) ? (
+                      <Badge badgeContent={(<KeyboardRounded />)}>
+                        <Avatar>{member.userID}</Avatar>
+                      </Badge>
+                    ) : (<Avatar>{member.userID}</Avatar>)}
+                </ListItemAvatar>
+              </ListItem>
+            ))}
+          </List >
         </Drawer>
 
         <main className={classes.content}>
