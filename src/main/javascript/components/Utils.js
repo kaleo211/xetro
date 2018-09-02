@@ -3,18 +3,20 @@ import React from 'react';
 export default class Board extends React.Component {
 
   static get(url, callback) {
-    fetch(url)
-      .then(resp => {
-        if (resp.ok) {
-          return resp.json();
-        } else {
-          throw new Error("failed to get:", url);
-        }
-      }).then(data => {
-        callback(data);
-      }).catch(error => {
-        console.log(error);
-      });
+    if (url) {
+      fetch(url)
+        .then(resp => {
+          if (resp.ok) {
+            return resp.json();
+          } else {
+            throw new Error("failed to get:", url);
+          }
+        }).then(data => {
+          callback(data);
+        }).catch(error => {
+          console.log(error);
+        });
+    }
   }
 
   static deleteResource(resource, callback) {
@@ -43,7 +45,7 @@ export default class Board extends React.Component {
     if (resource && resource._links) {
       return resource._links.self.href.replace('{?projection}', '');
     }
-    return "";
+    return null;
   }
 
   static postResource(resourceType, resource, callback) {
@@ -68,20 +70,24 @@ export default class Board extends React.Component {
   }
 
   static patchResource(resource, updatedResource, callback) {
-    fetch(this.getSelfLink(resource), {
-      method: 'PATCH',
-      body: JSON.stringify(updatedResource),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-    }).then(resp => {
-      if (resp.ok) {
-        return resp.json();
-      } else {
-        throw new Error("failed to patch:", resource, updatedResource);
-      }
-    }).then(data => {
-      callback(data);
-    });
+    let url = this.getSelfLink(resource);
+    if (url) {
+      fetch(url, {
+        method: 'PATCH',
+        body: JSON.stringify(updatedResource),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+      }).then(resp => {
+        if (resp.ok) {
+          return resp.json();
+        } else {
+          throw new Error("failed to patch:", resource, updatedResource);
+        }
+      }).then(data => {
+        callback(data);
+      });
+    }
+
   }
 }

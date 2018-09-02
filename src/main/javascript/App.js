@@ -2,32 +2,36 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Board from './components/Board';
 
-import Grid from '@material-ui/core/Grid';
-import Avatar from '@material-ui/core/Avatar';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Checkbox from '@material-ui/core/Checkbox';
-
 import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Slide from '@material-ui/core/Slide';
 import Step from '@material-ui/core/Step';
 import StepContent from '@material-ui/core/StepContent';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
+import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Utils from './components/Utils';
+import Tooltip from '@material-ui/core/Tooltip';
 
-import { CheckRounded, ArrowUpwardRounded, ArrowDownwardRounded, TransitEnterexitRounded } from '@material-ui/icons';
-import { Badge } from '@material-ui/core';
+import {
+  ArrowDownwardRounded,
+  ArrowUpwardRounded,
+  CheckRounded,
+  TransitEnterexitRounded,
+  Casino,
+} from '@material-ui/icons';
+
+import Utils from './components/Utils';
 
 const styles = {
 };
@@ -47,6 +51,7 @@ function getSteps() {
 class App extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       open: true,
       activeStep: 0,
@@ -58,8 +63,8 @@ class App extends React.Component {
     };
   }
 
-
   componentWillMount() {
+    console.log("fetching members");
     Utils.fetchResource("members", (data => {
       let members = data._embedded.members;
       if (members.length > 0) {
@@ -68,6 +73,7 @@ class App extends React.Component {
       }
     }))
 
+    console.log("fetching boards");
     Utils.fetchResource("boards", (data => {
       let boards = data._embedded.boards;
       if (boards.length > 0) {
@@ -77,15 +83,11 @@ class App extends React.Component {
     }))
   }
 
-  handleClickOpen = () => {
-    this.setState({ open: true });
-  };
-
-  handleClose = () => {
+  handleSetupPageClose = () => {
     this.setState({ open: false });
   };
 
-  handleNextStep = () => {
+  handleStepNext = () => {
     if (this.state.activeStep === 0) {
       console.log("time stap", this.state.endTime);
     }
@@ -94,19 +96,13 @@ class App extends React.Component {
     }));
   };
 
-  handleBack = () => {
+  handleStepBack = () => {
     this.setState(state => ({
       activeStep: state.activeStep - 1,
     }));
   };
 
-  handleReset = () => {
-    this.setState({
-      activeStep: 0,
-    });
-  };
-
-  handleRandomFacilitator() {
+  handleFacilitatorRandomPick() {
     let upLimit = this.state.members.length;
     let randomIndex = Math.floor(Math.random() * (upLimit));
     this.setState({
@@ -114,60 +110,53 @@ class App extends React.Component {
     })
   }
 
-  handlePickFacilitator(idx, event) {
+  handleFacilitatorPick(idx) {
     this.setState({
       facilitator: this.state.members[idx],
     });
   }
 
-  handleChangeEndTime(event) {
+  handleBoardEndTimeChange(event) {
+    console.log("updated end time:", event.target.value);
     this.setState({
       endTime: event.target.value,
     });
   }
 
-  // handleSaveEndTime() {
-  //   fetch(this.state.board._links.self.href, {
-  //     method: 'PATCH',
-  //     body: JSON.stringify(board),
-  //     headers: new Headers({
-  //       'Content-Type': 'application/json',
-  //     }),
-  //   }).then(resp => {
-  //     if (resp.ok) {
-  //       return resp.json();
-  //     } else {
-  //       console.log("failed to start board")
-  //     }
-  //   }).then(data => {
-  //     this.handleClose();
-  //     this.setState({
-  //       board: data,
-  //     })
+  getDate() {
+    let now = new Date();
+    let numbers = this.state.endTime.split(':');
+    now.setHours(numbers[0], numbers[1], 0);
+    return now;
+  }
 
-  //   });
-  // }
-
-  handleStartBoard() {
+  handleBoardStart() {
     if (this.state.board) {
+      let link = this.state.facilitator._links.self.href;
       let board = {
-        member: this.state.facilitator._links.self.href,
+        facilitator: link,
+        selected: link,
         started: true,
-        // endTime: this.state.endTime,
+        endTime: this.getDate(),
       };
-      Utils.patchResource(this.state.board._links.self.href, board, (data => {
-        this.handleClose();
+
+      console.log("starting board");
+      Utils.patchResource(this.state.board, board, (body => {
         this.setState({
-          board: data,
-        })
+          board: body,
+        });
+        this.handleSetupPageClose();
       }));
     }
   }
 
-  handleCheckAction(action) {
+  handleActionCheck(action) {
     let updatedAction = { finished: true }
-    Utils.patchResource(action, updatedAction, (body => {
-      this.fetchMembers();
+    Utils.patchResource(action, updatedAction, (() => {
+      Utils.fetchResource("members", (body => {
+        console.log("updated members:", body);
+        this.setState({ members: body._embedded.members });
+      }));
     }));
   }
 
@@ -180,9 +169,10 @@ class App extends React.Component {
               InputLabelProps={{ shrink: true }}
               inputProps={{ step: 900 }}
               value={this.state.endTime}
-              onChange={this.handleChangeEndTime.bind(this)}
+              onChange={this.handleBoardEndTimeChange.bind(this)}
             />
-          </form>);
+          </form>
+        );
       case 1:
         return (
           <Grid style={{ paddingTop: 20 }} container justify="space-between" spacing={32}>
@@ -190,12 +180,12 @@ class App extends React.Component {
               <Grid item xs={12} md={6} lg={4} key={"action" + member.userID}>
                 <List>
                   {member.actions.map((action, idx) => (!action.finished &&
-                    <ListItem divider key={"action" + action.title} dense button >
+                    <ListItem divider key={"action" + action._links.self.href} dense button >
                       <Avatar style={{ marginLeft: -15 }}>
-                        {idx === 0 && member.userID}
+                        {member.userID}
                       </Avatar>
                       <ListItemText primary={action.title} />
-                      <ListItemSecondaryAction onClick={this.handleCheckAction.bind(this, action)}>
+                      <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, action)}>
                         <IconButton><CheckRounded /></IconButton>
                       </ListItemSecondaryAction>
                     </ListItem>
@@ -208,16 +198,18 @@ class App extends React.Component {
       case 2:
         return (
           <div>
-            <div>
-              <Button variant="contained" color="primary"
-                onClick={this.handleRandomFacilitator.bind(this)}
-              >Random</Button>
-            </div>
-            <Divider style={{ marginTop: 15, marginBottom: 15 }} />
-            <Grid justify="flex-start" style={{}} container spacing={16}>
+            <Grid container justify="flex-start" spacing={16}>
+              <Grid item style={{ paddingTop: 12, paddingLeft: 24 }}>
+                <Tooltip title="Random pick" placement="left">
+                  <Button mini variant="fab" color="primary" onClick={this.handleFacilitatorRandomPick.bind(this)}>
+                    <Casino />
+                  </Button>
+                </Tooltip>
+              </Grid>
+
               {members.map((member, idx) => (
-                <Grid key={"facilitator" + member.userID} item>
-                  <IconButton onClick={this.handlePickFacilitator.bind(this, idx)} >
+                <Grid item key={"facilitator" + member.userID} >
+                  <IconButton onClick={this.handleFacilitatorPick.bind(this, idx)} >
                     {this.state.facilitator && this.state.facilitator.userID === member.userID ? (
                       <Badge badgeContent={<TransitEnterexitRounded />}>
                         <Avatar>{member.userID}</Avatar>
@@ -239,12 +231,12 @@ class App extends React.Component {
     const steps = getSteps();
     return (
       <div>
-        <Board members={members} selectedMember={facilitator} board={board} />
+        <Board members={members} board={board} />
 
         <Dialog
           fullScreen
           open={this.state.open}
-          onClose={this.handleClose}
+          onClose={this.handleSetupPageClose}
           TransitionComponent={Transition}
         >
           <AppBar style={{ position: 'relative', }}>
@@ -252,7 +244,7 @@ class App extends React.Component {
               <Typography variant="title" color="inherit" style={{ flex: 1 }} >
                 New Retro Board
               </Typography>
-              <Button color="inherit" onClick={this.handleClose} >
+              <Button color="inherit" onClick={this.handleSetupPageClose} >
                 Skip
               </Button>
             </Toolbar>
@@ -269,22 +261,22 @@ class App extends React.Component {
                       <StepContent>
                         {this.getStepContent(index, members)}
                         <div style={{ paddingTop: 20 }} >
-                          <IconButton disabled={activeStep === 0} onClick={this.handleBack}>
+                          <IconButton disabled={activeStep === 0} onClick={this.handleStepBack}>
                             <ArrowUpwardRounded />
                           </IconButton>
                           {(activeStep === 0) && (
-                            <IconButton variant="contained" color="primary" onClick={this.handleNextStep}>
+                            <IconButton variant="contained" color="primary" onClick={this.handleStepNext}>
                               <ArrowDownwardRounded />
                             </IconButton>
                           )}
                           {(activeStep === 1) && (
-                            <IconButton variant="contained" color="primary" onClick={this.handleNextStep}>
+                            <IconButton variant="contained" color="primary" onClick={this.handleStepNext}>
                               <ArrowDownwardRounded />
                             </IconButton>
                           )}
                           {(activeStep === 2) && (
                             <IconButton disabled={facilitator === null} variant="contained" color="primary"
-                              onClick={this.handleStartBoard.bind(this)}>
+                              onClick={this.handleBoardStart.bind(this)}>
                               <CheckRounded />
                             </IconButton>
                           )}

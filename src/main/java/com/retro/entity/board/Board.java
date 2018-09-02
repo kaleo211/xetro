@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 
 import com.retro.entity.member.Member;
 import com.retro.entity.pillar.Pillar;
+import com.retro.entity.team.Team;
 
 @Data
 @Entity
@@ -39,9 +40,17 @@ public class Board {
     private Timestamp endTime;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "facilitator_id")
+    private Member facilitator;
+
+    @ManyToOne
+    @JoinColumn(name = "selected_id")
+    private Member selected;
 
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Pillar> pillars;
+
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
 }

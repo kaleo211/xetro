@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.GenerationType;
@@ -15,6 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import com.retro.entity.action.Action;
+import com.retro.entity.team.Team;
 
 @Data
 @Entity
@@ -33,4 +35,7 @@ public class Member {
 
   @OneToMany(mappedBy = "member")
   private List<Action> actions;
+
+  @ManyToMany(mappedBy = "members")
+  private List<Team> teams;
 }

@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.retro.entity.member.Member;
 import com.retro.entity.pillar.DetailedPillar;
+import com.retro.entity.team.Team;
+
 import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "detailedBoard", types = { Board.class })
@@ -19,7 +21,11 @@ public interface DetailedBoard {
 
   Timestamp getEndTime();
 
-  Member getMember();
+  Member getFacilitator();
+
+  Member getSelected();
 
   List<DetailedPillar> getPillars();
+
+  Team getTeam();
 }

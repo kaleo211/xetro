@@ -13,11 +13,11 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import LinearProgress from '@material-ui/core/LinearProgress';
-
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+
 import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-ui/icons';
 
 import Likes from './Likes';
@@ -58,8 +58,8 @@ class Pillars extends React.Component {
     let pillars = props.pillars;
     let isSaveButtonDisabled = [];
 
-    if (pillars) {
-      console.log("pillars in pillars:", pillars);
+    if (pillars && pillars.length > 0) {
+      // console.log("pillars in pillars:", pillars);
       let newItems = {};
       for (let idx = 0; idx < pillars.length; idx++) {
         let pillar = pillars[idx];
@@ -257,7 +257,7 @@ class Pillars extends React.Component {
 
               {pillar.items && pillar.items.map(item => (
                 <ExpansionPanel
-                  key={item._links.self.href}
+                  key={"item" + item._links.self.href}
                   expanded={this.state.expandedItem === item._links.self.href}
                   onChange={this.handleItemExpandToggle.bind(this, item)}
                 >
