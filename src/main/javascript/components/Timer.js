@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 import Button from '@material-ui/core/Button';
-
+import Tooltip from '@material-ui/core/Tooltip';
 
 import {
   Filter1,
@@ -81,10 +81,12 @@ class Timer extends React.Component {
     const MinuteSecondIcon = this.dynamicIcons[this.state.minuteSecond];
 
     return (
-      <Button color="inherit" >
-        <MinuteSecondIcon />
-        <MinuteFirstIcon />
-      </Button>
+      <Tooltip title="Minutes left" placement="bottom">
+        <Button color="inherit" >
+          <MinuteSecondIcon />
+          <MinuteFirstIcon />
+        </Button>
+      </Tooltip>
     );
   }
 }

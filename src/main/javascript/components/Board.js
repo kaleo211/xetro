@@ -14,6 +14,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import deepPurple from '@material-ui/core/colors/deepPurple';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import {
   LockOutlined,
@@ -166,19 +167,25 @@ class Board extends React.Component {
 
             <div>
               {board.facilitator && board.facilitator.video && (
-                <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
-                  <VoiceChat />
-                </IconButton>
+                <Tooltip title="Open video chat" placement="bottom">
+                  <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
+                    <VoiceChat />
+                  </IconButton>
+                </Tooltip>
               )}
               {!board.locked && (
-                <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
-                  <LockOpenOutlined />
-                </IconButton>
+                <Tooltip title="Lock board" placement="bottom">
+                  <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
+                    <LockOpenOutlined />
+                  </IconButton>
+                </Tooltip>
               )}
               {board.locked && (
-                <IconButton onClick={this.handleBoardUnlock.bind(this)} color="inherit">
-                  <LockOutlined />
-                </IconButton>
+                <Tooltip title="Unlock board" placement="bottom">
+                  <IconButton onClick={this.handleBoardUnlock.bind(this)} color="inherit">
+                    <LockOutlined />
+                  </IconButton>
+                </Tooltip>
               )}
             </div>
           </Toolbar>

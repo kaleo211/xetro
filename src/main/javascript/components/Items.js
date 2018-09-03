@@ -47,6 +47,14 @@ class Items extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.progressTimer = setInterval(this.updateItemProgress, 2000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.progressTimer);
+  }
+
   handleItemDone(item) {
     if (this.state.newAction !== "") {
       this.saveAction(item);
@@ -117,16 +125,6 @@ class Items extends React.Component {
     });
   }
 
-  componentDidMount() {
-    this.progressTimer = setInterval(this.updateItemProgress, 2000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.progressTimer);
-  }
-
-
-
   updateItemProgress = () => {
     let item = this.state.selectedItem;
     if (item && item.startTime) {
@@ -158,7 +156,7 @@ class Items extends React.Component {
 
   saveAction(item) {
     let newAction = {
-      title: this.state.newAction,
+      title: this.state.newAction.capitalize(),
       item: item._links.self.href,
       team: this.props.board.team._links.self.href,
     }
@@ -182,9 +180,10 @@ class Items extends React.Component {
   }
 
   render() {
-    const { item, board, members } = this.props;
-    return (
+    const { pillar, board, members } = this.props;
+    return (<div>{pillar.items && pillar.items.map(item => (
       <ExpansionPanel
+        key={"item-" + item._links.self.href}
         expanded={this.state.expandedItem === item._links.self.href}
         onChange={this.handleItemExpandToggle.bind(this, item)}
       >
@@ -274,8 +273,8 @@ class Items extends React.Component {
             )}
           </Grid>
         </ExpansionPanelActions>
-      </ExpansionPanel>
-    );
+      </ExpansionPanel >
+    ))}</div>);
   }
 }
 

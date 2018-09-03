@@ -55,7 +55,7 @@ class Pillars extends React.Component {
   handleNewItemSave(pillar, event) {
     if (event && event.key === 'Enter' && this.state.newItems[pillar] !== "") {
       let newItem = {
-        title: this.state.newItems[pillar],
+        title: this.state.newItems[pillar].capitalize(),
         pillar: pillar,
       }
       Utils.postResource("items", newItem, (data => {
@@ -106,11 +106,7 @@ class Pillars extends React.Component {
                 />
               </CardContent>
 
-              {pillar.items && pillar.items.map(item => (item &&
-                <Items key={"item-" + item._links.self.href} board={board} item={item} members={members}
-                  updatePillars={this.props.updatePillars}
-                />
-              ))}
+              <Items board={board} pillar={pillar} members={members} updatePillars={this.props.updatePillars} />
             </Card>
           </Grid>
         ))}
