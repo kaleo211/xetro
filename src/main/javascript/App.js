@@ -161,9 +161,7 @@ class App extends React.Component {
 
       Utils.patchResource(this.state.board, board, (body => {
         console.log("starting board", body);
-        let board = body;
-        board.facilitator = board._embedded.facilitator;
-        board.team = board._embedded.team;
+        let board = Utils.reformBoard(body);
         this.setState({ board });
         this.handleSetupPageClose();
       }));

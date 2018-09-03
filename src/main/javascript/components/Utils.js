@@ -2,6 +2,16 @@ import React from 'react';
 
 export default class Board extends React.Component {
 
+  static reformBoard(board) {
+    if (board._embedded) {
+      board.facilitator = board._embedded.facilitator;
+      board.selected = board._embedded.selected;
+      board.pillars = board._embedded.pillars;
+      board.team = board._embedded.team;
+    }
+    return board;
+  }
+
   static get(url, callback) {
     if (url) {
       fetch(url)
