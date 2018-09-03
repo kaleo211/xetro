@@ -175,11 +175,11 @@ class App extends React.Component {
         );
       case 1:
         return (
-          <Grid style={{ paddingTop: 20 }} container justify="space-between" spacing={32}>
+          <Grid style={{ paddingTop: 20 }} container justify="flex-start" spacing={32}>
             {members.filter(m => m.actions.filter(a => !a.finished).length > 0).map(member => (
               <Grid item xs={12} md={6} lg={4} key={"action" + member.userID}>
                 <List>
-                  {member.actions.map((action, idx) => (!action.finished &&
+                  {member.actions.map((action) => (!action.finished &&
                     <ListItem divider key={"action" + action._links.self.href} dense button >
                       <Avatar style={{ marginLeft: -15 }}>
                         {member.userID}

@@ -136,8 +136,6 @@ class Board extends React.Component {
     }
   }
 
-
-
   render() {
     const { classes } = this.props;
     const { pillars, board, members } = this.state;

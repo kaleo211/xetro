@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import com.retro.entity.member.Member;
-import com.retro.entity.pillar.DetailedPillar;
+import com.retro.entity.pillar.Pillar;
 import com.retro.entity.team.Team;
 
 import org.springframework.data.rest.core.config.Projection;
@@ -25,7 +25,7 @@ public interface DetailedBoard {
 
   Member getSelected();
 
-  List<DetailedPillar> getPillars();
+  List<Pillar> getPillars();
 
   Team getTeam();
 }
