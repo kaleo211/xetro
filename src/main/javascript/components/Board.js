@@ -158,12 +158,14 @@ class Board extends React.Component {
   render() {
     const { classes } = this.props;
     const { pillars, board, members } = this.state;
-    return (
-      <div className={classes.root} >
+    return (<div>{board && (
+      <div className={classes.root}>
         <AppBar position="absolute" className={classes.appBar}>
           <Toolbar>
             <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
-              Retro Board
+              {board.team && board.team.name && (
+                board.team.name.toUpperCase()
+              )}
             </Typography>
 
             <div style={{ flexGrow: 1 }}>
@@ -171,17 +173,17 @@ class Board extends React.Component {
             </div>
 
             <div>
-              {board && board.facilitator && board.facilitator.video && (
+              {board.facilitator && board.facilitator.video && (
                 <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
                   <VoiceChat />
                 </IconButton>
               )}
-              {board && !board.locked && (
+              {!board.locked && (
                 <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
                   <LockOpenOutlined />
                 </IconButton>
               )}
-              {board && board.locked && (
+              {board.locked && (
                 <IconButton onClick={this.handleBoardUnlock.bind(this)} color="inherit">
                   <LockOutlined />
                 </IconButton>
@@ -190,8 +192,7 @@ class Board extends React.Component {
           </Toolbar>
         </AppBar>
 
-        {/* Member List */}
-        <Drawer variant="permanent" classes={{ paper: classes.drawerPaper, }}>
+        <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
           <div className={classes.toolbar} />
           <List component="nav" style={{ marginRight: -20 }}>
             {members.map(member => (
@@ -200,16 +201,15 @@ class Board extends React.Component {
                 style={{ paddingTop: 16, paddingBottom: 16 }}
               >
                 <ListItemAvatar>
-                  {board && (board._embedded && board._embedded.selected && board._embedded.selected.userID === member.userID
-                    || board.selected && board.selected.userID === member.userID) ? (
-                      <Badge badgeContent={(<KeyboardRounded />)}>
-                        <Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>
-                      </Badge>
-                    ) : (<Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>)}
+                  {board.selected && board.selected.userID === member.userID ? (
+                    <Badge badgeContent={(<KeyboardRounded />)}>
+                      <Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>
+                    </Badge>
+                  ) : (<Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>)}
                 </ListItemAvatar>
               </ListItem>
             ))}
-          </List >
+          </List>
         </Drawer>
 
         <main className={classes.content}>
@@ -225,7 +225,8 @@ class Board extends React.Component {
           autoHideDuration={1500}
           transitionDuration={400}
         />
-      </div >
+      </div>
+    )}</div >
     );
   }
 }

@@ -38,13 +38,13 @@ public class DataLoader implements ApplicationRunner {
     Board board = Board.builder().name("Week").build();
     boardRepository.save(board);
 
-    Pillar pillar = Pillar.builder().title("Happy").board(board).build();
+    Pillar pillar = Pillar.builder().title("Happy").intro("I'm so happy that...").board(board).build();
     pillarRepository.save(pillar);
 
-    pillar = Pillar.builder().title("Med").board(board).build();
+    pillar = Pillar.builder().title("Med").intro("I'm wondering that...").board(board).build();
     pillarRepository.save(pillar);
 
-    pillar = Pillar.builder().title("Sad").board(board).build();
+    pillar = Pillar.builder().title("Sad").intro("I'm worry about...").board(board).build();
     pillarRepository.save(pillar);
 
     Item item = Item.builder().title("this is great!").pillar(pillar).build();

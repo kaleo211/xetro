@@ -11,6 +11,8 @@ import org.springframework.data.rest.core.config.Projection;
 public interface DetailedPillar {
   String getTitle();
 
+  String getIntro();
+
   @Value("#{@pillarHelper.sortItems(target.items)}")
   List<DetailedItem> getItems();
 }

@@ -33,6 +33,7 @@ public class Pillar {
   private Long id;
 
   private String title;
+  private String intro;
 
   @ManyToOne(fetch = FetchType.EAGER, optional = false)
   @JoinColumn(name = "board_id")

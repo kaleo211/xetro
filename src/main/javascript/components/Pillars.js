@@ -97,7 +97,7 @@ class Pillars extends React.Component {
                   id="createNewItem"
                   fullWidth
                   key={pillar._links.self.href}
-                  label="New item"
+                  label={pillar.intro}
                   disabled={board && board.locked}
                   name={pillar._links.self.href}
                   value={this.state.newItems[pillar._links.self.href]}
@@ -108,7 +108,8 @@ class Pillars extends React.Component {
 
               {pillar.items && pillar.items.map(item => (item &&
                 <Items key={"item-" + item._links.self.href} board={board} item={item} members={members}
-                  updatePillars={this.props.updatePillars} />
+                  updatePillars={this.props.updatePillars}
+                />
               ))}
             </Card>
           </Grid>
