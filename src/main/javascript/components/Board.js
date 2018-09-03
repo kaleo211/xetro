@@ -78,14 +78,21 @@ class Board extends React.Component {
     }));
   }
 
+  validateBoard(board) {
+    if (board._embedded) {
+      board.facilitator = board._embedded.facilitator;
+    }
+    return board;
+  }
+
   updateSelected(member) {
     console.log("updated member in board:", member._links.self.href);
     let updatedBoard = {
       selected: member._links.self.href,
     }
     Utils.patchResource(this.state.board, updatedBoard, (body => {
-      console.log("returned board:", body)
-      this.setState({ board: body });
+      console.log("returned board:", this.validateBoard(body))
+      this.setState({ board: this.validateBoard(body) });
     }));
   }
 
@@ -94,7 +101,7 @@ class Board extends React.Component {
     Utils.patchResource(this.state.board, updatedBoard, (body => {
       let board = body;
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
-      this.setState({ board: board });
+      this.setState({ board: this.validateBoard(board) });
     }));
     this.handleSnackbarOpen("Board is LOCKED.")
   }
@@ -104,7 +111,7 @@ class Board extends React.Component {
     Utils.patchResource(this.state.board, updatedBoard, (body => {
       let board = body;
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
-      this.setState({ board: board });
+      this.setState({ board: this.validateBoard(board) });
     }));
     this.handleSnackbarOpen("Board is UNLOCKED.")
   }
@@ -137,7 +144,7 @@ class Board extends React.Component {
       Utils.get(board.pillarsLink, (body => {
         console.log("updating pillars with board:", board);
         let pillars = body._embedded.pillars;
-        this.setState({ board, pillars });
+        this.setState({ board: this.validateBoard(board), pillars });
       }));
     }
   }
