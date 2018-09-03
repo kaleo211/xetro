@@ -33,6 +33,9 @@ public class Member {
   private String firstName;
   private String lastName;
 
+  private String video;
+  private String email;
+
   @OneToMany(mappedBy = "member")
   private List<Action> actions;
 

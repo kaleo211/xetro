@@ -18,6 +18,7 @@ import {
   LockOutlined,
   LockOpenOutlined,
   KeyboardRounded,
+  VoiceChat,
 } from '@material-ui/icons';
 
 import Utils from './Utils';
@@ -119,6 +120,11 @@ class Board extends React.Component {
     })
   }
 
+  handleVideoOpen(url) {
+    let win = window.open(url, '_blank');
+    win.focus();
+  }
+
   componentWillReceiveProps() {
     this.setState({
       members: this.props.members,
@@ -139,6 +145,7 @@ class Board extends React.Component {
   render() {
     const { classes } = this.props;
     const { pillars, board, members } = this.state;
+    console.log("board in board:", board);
 
     return (
       <div className={classes.root} >
@@ -153,6 +160,11 @@ class Board extends React.Component {
             </div>
 
             <div>
+              {board && board.facilitator && board.facilitator.video && (
+                <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
+                  <VoiceChat />
+                </IconButton>
+              )}
               {board && !board.locked && (
                 <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
                   <LockOpenOutlined />

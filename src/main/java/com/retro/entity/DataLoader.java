@@ -50,9 +50,9 @@ public class DataLoader implements ApplicationRunner {
     Item item = Item.builder().title("this is great!").pillar(pillar).build();
     itemRepository.save(item);
 
-    memberRepository.save(Member.builder().userID("xhe").build());
-    memberRepository.save(Member.builder().userID("yan").build());
-    memberRepository.save(Member.builder().userID("xh").build());
+    memberRepository.save(Member.builder().userID("xhe").video("http://google.com").build());
+    memberRepository.save(Member.builder().userID("yan").video("http://bing.com").build());
+    memberRepository.save(Member.builder().userID("xh").video("http://yahoo.com").build());
 
     teamRepository.save(Team.builder().name("dojo").build());
     teamRepository.save(Team.builder().name("asaka").build());

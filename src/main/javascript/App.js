@@ -159,11 +159,12 @@ class App extends React.Component {
         endTime: this.getDate(),
       };
 
-      console.log("starting board", board);
       Utils.patchResource(this.state.board, board, (body => {
-        this.setState({
-          board: body,
-        });
+        console.log("starting board", body);
+        let board = body;
+        board.facilitator = board._embedded.facilitator;
+        board.team = board._embedded.team;
+        this.setState({ board });
         this.handleSetupPageClose();
       }));
     }
