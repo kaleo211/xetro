@@ -42,6 +42,7 @@ function Transition(props) {
 
 function getSteps() {
   return [
+    'Pick a team',
     'Pick time the retro meeting should end',
     'Check finished action items',
     'Pick facilitator'
@@ -59,28 +60,39 @@ class App extends React.Component {
       facilitator: null,
       board: null,
       boards: [],
+      teams: [],
+      team: null,
       endTime: "17:00",
     };
   }
 
   componentWillMount() {
     console.log("fetching members");
-    Utils.fetchResource("members", (data => {
-      let members = data._embedded.members;
+    Utils.fetchResource("members", (body => {
+      let members = body._embedded.members;
       if (members.length > 0) {
         console.log("updated members:", members);
         this.setState({ members });
       }
-    }))
+    }));
 
     console.log("fetching boards");
-    Utils.fetchResource("boards", (data => {
-      let boards = data._embedded.boards;
+    Utils.fetchResource("boards", (body => {
+      let boards = body._embedded.boards;
       if (boards.length > 0) {
         let board = boards[0];
-        this.setState({ boards, board });
+        let team = board.team;
+        this.setState({ boards, board, team });
       }
-    }))
+    }));
+
+    Utils.fetchResource("teams", (body => {
+      let teams = body._embedded.teams;
+      if (teams.length > 0) {
+        console.log("updated teams:", teams);
+        this.setState({ teams });
+      }
+    }));
   }
 
   handleSetupPageClose = () => {
@@ -107,12 +119,18 @@ class App extends React.Component {
     let randomIndex = Math.floor(Math.random() * (upLimit));
     this.setState({
       facilitator: this.state.members[randomIndex],
-    })
+    });
   }
 
   handleFacilitatorPick(idx) {
     this.setState({
       facilitator: this.state.members[idx],
+    });
+  }
+
+  handleTeamPick(idx) {
+    this.setState({
+      team: this.state.teams[idx],
     });
   }
 
@@ -137,10 +155,11 @@ class App extends React.Component {
         facilitator: link,
         selected: link,
         started: true,
+        team: this.state.team._links.self.href,
         endTime: this.getDate(),
       };
 
-      console.log("starting board");
+      console.log("starting board", board);
       Utils.patchResource(this.state.board, board, (body => {
         this.setState({
           board: body,
@@ -160,9 +179,31 @@ class App extends React.Component {
     }));
   }
 
-  getStepContent(step, members) {
+  getStepContent(step, members, teams) {
     switch (step) {
       case 0:
+        return (
+          <Grid container justify="flex-start" spacing={16}>
+            <Grid item>
+              <List>
+                {teams.map((team, idx) => (
+                  <ListItem divider dense button
+                    key={"team" + team.name}
+                    onClick={this.handleTeamPick.bind(this, idx)}
+                  >
+                    {this.state.team && this.state.team.name === team.name ? (
+                      <Badge badgeContent={<TransitEnterexitRounded />}>
+                        <Avatar>{team.name}</Avatar>
+                      </Badge>
+                    ) : (<Avatar>{team.name}</Avatar>)}
+                    <ListItemText primary={team.name} />
+                  </ListItem>
+                ))}
+              </List>
+            </Grid>
+          </Grid>
+        )
+      case 1:
         return (
           <form noValidate>
             <TextField id="endTime" type="time"
@@ -173,7 +214,7 @@ class App extends React.Component {
             />
           </form>
         );
-      case 1:
+      case 2:
         return (
           <Grid style={{ paddingTop: 20 }} container justify="flex-start" spacing={32}>
             {members.filter(m => m.actions.filter(a => !a.finished).length > 0).map(member => (
@@ -195,31 +236,29 @@ class App extends React.Component {
             ))}
           </Grid>
         );
-      case 2:
+      case 3:
         return (
-          <div>
-            <Grid container justify="flex-start" spacing={16}>
-              <Grid item style={{ paddingTop: 12, paddingLeft: 24 }}>
-                <Tooltip title="Random pick" placement="left">
-                  <Button mini variant="fab" color="primary" onClick={this.handleFacilitatorRandomPick.bind(this)}>
-                    <Casino />
-                  </Button>
-                </Tooltip>
-              </Grid>
-
-              {members.map((member, idx) => (
-                <Grid item key={"facilitator" + member.userID} >
-                  <IconButton onClick={this.handleFacilitatorPick.bind(this, idx)} >
-                    {this.state.facilitator && this.state.facilitator.userID === member.userID ? (
-                      <Badge badgeContent={<TransitEnterexitRounded />}>
-                        <Avatar>{member.userID}</Avatar>
-                      </Badge>
-                    ) : (<Avatar>{member.userID}</Avatar>)}
-                  </IconButton>
-                </Grid>
-              ))}
+          <Grid container justify="flex-start" spacing={16}>
+            <Grid item style={{ paddingTop: 12, paddingLeft: 24 }}>
+              <Tooltip title="Random pick" placement="left">
+                <Button mini variant="fab" color="primary" onClick={this.handleFacilitatorRandomPick.bind(this)}>
+                  <Casino />
+                </Button>
+              </Tooltip>
             </Grid>
-          </div >
+
+            {members.map((member, idx) => (
+              <Grid item key={"facilitator" + member.userID} >
+                <IconButton onClick={this.handleFacilitatorPick.bind(this, idx)} >
+                  {this.state.facilitator && this.state.facilitator.userID === member.userID ? (
+                    <Badge badgeContent={<TransitEnterexitRounded />}>
+                      <Avatar>{member.userID}</Avatar>
+                    </Badge>
+                  ) : (<Avatar>{member.userID}</Avatar>)}
+                </IconButton>
+              </Grid>
+            ))}
+          </Grid>
         );
       default:
         return 'Unknown step';
@@ -227,7 +266,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { activeStep, members, facilitator, board } = this.state;
+    const { activeStep, members, facilitator, board, teams } = this.state;
     const steps = getSteps();
     return (
       <div>
@@ -259,22 +298,22 @@ class App extends React.Component {
                     <Step key={label}>
                       <StepLabel>{label}</StepLabel>
                       <StepContent>
-                        {this.getStepContent(index, members)}
+                        {this.getStepContent(index, members, teams)}
                         <div style={{ paddingTop: 20 }} >
                           <IconButton disabled={activeStep === 0} onClick={this.handleStepBack}>
                             <ArrowUpwardRounded />
                           </IconButton>
                           {(activeStep === 0) && (
+                            <IconButton disabled={this.state.team === null} variant="contained" color="primary" onClick={this.handleStepNext}>
+                              <ArrowDownwardRounded />
+                            </IconButton>
+                          )}
+                          {(activeStep === 1 || activeStep === 2) && (
                             <IconButton variant="contained" color="primary" onClick={this.handleStepNext}>
                               <ArrowDownwardRounded />
                             </IconButton>
                           )}
-                          {(activeStep === 1) && (
-                            <IconButton variant="contained" color="primary" onClick={this.handleStepNext}>
-                              <ArrowDownwardRounded />
-                            </IconButton>
-                          )}
-                          {(activeStep === 2) && (
+                          {(activeStep === 3) && (
                             <IconButton disabled={facilitator === null} variant="contained" color="primary"
                               onClick={this.handleBoardStart.bind(this)}>
                               <CheckRounded />

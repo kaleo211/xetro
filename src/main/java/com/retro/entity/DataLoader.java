@@ -8,6 +8,8 @@ import com.retro.entity.member.Member;
 import com.retro.entity.member.MemberRepository;
 import com.retro.entity.pillar.Pillar;
 import com.retro.entity.pillar.PillarRepository;
+import com.retro.entity.team.Team;
+import com.retro.entity.team.TeamRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -20,14 +22,16 @@ public class DataLoader implements ApplicationRunner {
   private PillarRepository pillarRepository;
   private MemberRepository memberRepository;
   private ItemRepository itemRepository;
+  private TeamRepository teamRepository;
 
   @Autowired
   public DataLoader(BoardRepository boardRepository, PillarRepository pillarRepository,
-      MemberRepository memberRepository, ItemRepository itemRepository) {
+      MemberRepository memberRepository, ItemRepository itemRepository, TeamRepository teamRepository) {
     this.boardRepository = boardRepository;
     this.pillarRepository = pillarRepository;
     this.memberRepository = memberRepository;
     this.itemRepository = itemRepository;
+    this.teamRepository = teamRepository;
   }
 
   public void run(ApplicationArguments args) {
@@ -49,5 +53,8 @@ public class DataLoader implements ApplicationRunner {
     memberRepository.save(Member.builder().userID("xhe").build());
     memberRepository.save(Member.builder().userID("yan").build());
     memberRepository.save(Member.builder().userID("xh").build());
+
+    teamRepository.save(Team.builder().name("dojo").build());
+    teamRepository.save(Team.builder().name("asaka").build());
   }
 }

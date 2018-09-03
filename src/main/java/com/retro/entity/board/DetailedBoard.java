@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.retro.entity.member.Member;
 import com.retro.entity.pillar.Pillar;
-import com.retro.entity.team.Team;
+import com.retro.entity.team.DetailedTeam;
 
 import org.springframework.data.rest.core.config.Projection;
 
@@ -27,5 +27,5 @@ public interface DetailedBoard {
 
   List<Pillar> getPillars();
 
-  Team getTeam();
+  DetailedTeam getTeam();
 }

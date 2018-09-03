@@ -156,12 +156,11 @@ class Items extends React.Component {
     }))
   }
 
-
-
   saveAction(item) {
     let newAction = {
       title: this.state.newAction,
       item: item._links.self.href,
+      team: this.props.board.team._links.self.href,
     }
     Utils.postResource("actions", newAction, (data => {
       this.props.updatePillars();

@@ -95,7 +95,7 @@ class Board extends React.Component {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
       this.setState({ board: board });
     }));
-    this.handleSnackbarOpen("Board has been LOCKED.")
+    this.handleSnackbarOpen("Board is LOCKED.")
   }
 
   handleBoardUnlock() {
@@ -105,7 +105,7 @@ class Board extends React.Component {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
       this.setState({ board: board });
     }));
-    this.handleSnackbarOpen("Board has been UNLOCKED.")
+    this.handleSnackbarOpen("Board is UNLOCKED.")
   }
 
   handleSnackbarClose() {

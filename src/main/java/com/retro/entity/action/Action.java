@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import com.retro.entity.member.Member;
+import com.retro.entity.team.Team;
 import com.retro.entity.item.Item;
 
 @Data
@@ -41,4 +42,8 @@ public class Action {
   @ManyToOne
   @JoinColumn(name = "member_id")
   private Member member;
+
+  @ManyToOne
+  @JoinColumn(name = "team_id")
+  private Team team;
 }
