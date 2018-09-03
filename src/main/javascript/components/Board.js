@@ -13,6 +13,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
+import deepPurple from '@material-ui/core/colors/deepPurple';
 
 import {
   LockOutlined,
@@ -52,6 +53,10 @@ const styles = theme => ({
     minWidth: 0,
   },
   toolbar: theme.mixins.toolbar,
+  purpleAvatar: {
+    color: '#fff',
+    backgroundColor: deepPurple[300],
+  },
 });
 
 class Board extends React.Component {
@@ -81,6 +86,7 @@ class Board extends React.Component {
   validateBoard(board) {
     if (board._embedded) {
       board.facilitator = board._embedded.facilitator;
+      board.selected = board._embedded.selected;
     }
     return board;
   }
@@ -152,8 +158,6 @@ class Board extends React.Component {
   render() {
     const { classes } = this.props;
     const { pillars, board, members } = this.state;
-    console.log("board in board:", board);
-
     return (
       <div className={classes.root} >
         <AppBar position="absolute" className={classes.appBar}>
@@ -186,6 +190,7 @@ class Board extends React.Component {
           </Toolbar>
         </AppBar>
 
+        {/* Member List */}
         <Drawer variant="permanent" classes={{ paper: classes.drawerPaper, }}>
           <div className={classes.toolbar} />
           <List component="nav" style={{ marginRight: -20 }}>
@@ -198,9 +203,9 @@ class Board extends React.Component {
                   {board && (board._embedded && board._embedded.selected && board._embedded.selected.userID === member.userID
                     || board.selected && board.selected.userID === member.userID) ? (
                       <Badge badgeContent={(<KeyboardRounded />)}>
-                        <Avatar>{member.userID}</Avatar>
+                        <Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>
                       </Badge>
-                    ) : (<Avatar>{member.userID}</Avatar>)}
+                    ) : (<Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>)}
                 </ListItemAvatar>
               </ListItem>
             ))}

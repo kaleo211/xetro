@@ -75,12 +75,13 @@ class Pillars extends React.Component {
     const { pillars, members, board } = this.props;
 
     return (
-      < Grid
+      <Grid
         container
         spacing={8}
         direction="row"
         justify="space-between"
-        alignItems="stretch" >
+        alignItems="stretch"
+      >
         {pillars.map((pillar) => (
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card wrap='nowrap'>
