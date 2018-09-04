@@ -14,11 +14,8 @@ export default class Board extends React.Component {
 
   static get(url, callback) {
     if (url) {
-      fetch(url, {
-        headers: new Headers({
-          'Origin': location.protocol + '//' + location.host,
-        })
-      }).then(resp => {
+      fetch(url)
+        .then(resp => {
           if (resp.ok) {
             return resp.json();
           } else {
@@ -36,9 +33,6 @@ export default class Board extends React.Component {
     let url = resource._links.self.href.replace('{?projection}', '');
     fetch(url, {
       method: 'delete',
-      headers: new Headers({
-        'Origin': location.protocol + '//' + location.host,
-      })
     }).then(resp => {
       if (!resp.ok) {
         throw new Error("failed to delete:", url);
@@ -51,7 +45,7 @@ export default class Board extends React.Component {
   }
 
   static fetchResource(resourceType, callback) {
-    let url = window.location.protocol + "//" + window.location.host + "/api/" + resourceType;
+    let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
     this.get(url, callback);
   }
 
@@ -63,13 +57,12 @@ export default class Board extends React.Component {
   }
 
   static postResource(resourceType, resource, callback) {
-    let url = window.location.protocol + "//" + window.location.host + "/api/" + resourceType;
+    let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
     fetch(url, {
       method: 'POST',
       body: JSON.stringify(resource),
       headers: new Headers({
         'Content-Type': 'application/json',
-        'Origin': location.protocol + '//' + location.host,
       })
     }).then(resp => {
       if (resp.ok) {
@@ -92,7 +85,6 @@ export default class Board extends React.Component {
         body: JSON.stringify(updatedResource),
         headers: new Headers({
           'Content-Type': 'application/json',
-          'Origin': location.protocol + '//' + location.host,
         }),
       }).then(resp => {
         if (resp.ok) {
