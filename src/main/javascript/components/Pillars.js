@@ -27,7 +27,6 @@ class Pillars extends React.Component {
       newItems: {},
       expandedItem: "",
       ownerAnchorEl: {},
-      newAction: "",
       progressTimer: null,
       itemProgress: 0,
       secondsPerItem: 30,
@@ -61,9 +60,9 @@ class Pillars extends React.Component {
       }
       Utils.postResource("items", newItem, (data => {
         this.props.updatePillars();
-        let newItems = this.state.newAction;
+        let newItems = this.state.newItems;
         newItems[pillar] = "";
-        this.setState({ newItems })
+        this.setState({ newItems });
       }));
     }
   }

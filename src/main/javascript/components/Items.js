@@ -185,8 +185,6 @@ class Items extends React.Component {
   render() {
     const { pillar, board, members } = this.props;
     const { selectedItem } = this.state;
-    console.log("updated selected item in items:", selectedItem);
-
     return (<div>{pillar.items && pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item._links.self.href}
@@ -227,28 +225,26 @@ class Items extends React.Component {
           />
           {item.action && item.action.title !== "" && (
             <div style={{ marginRight: -17, marginTop: 10 }}>
-              {!item.action.member && (
-                <div>
-                  <IconButton onClick={this.handleOwerListOpen.bind(this, item._links.self.href)}>
-                    <Add fontSize='inherit' />
-                  </IconButton>
-                  <Menu
-                    anchorEl={this.state.ownerAnchorEl[item._links.self.href]}
-                    open={Boolean(this.state.ownerAnchorEl[item._links.self.href])}
-                    onClose={this.handleOwerListClose.bind(this, item._links.self.href)}
-                  >
-                    {members && members.map(member => (
-                      <MenuItem
-                        style={{ paddingTop: 20, paddingBottom: 20 }}
-                        key={"owner" + member.userID}
-                        onClick={this.handleActionOwnerAdd.bind(this, item, member)}
-                      >
-                        <Avatar>{member.userID}</Avatar>
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                </div>
-              )}
+              {!item.action.member && (<div>
+                <IconButton onClick={this.handleOwerListOpen.bind(this, item._links.self.href)}>
+                  <Add fontSize='inherit' />
+                </IconButton>
+                <Menu
+                  anchorEl={this.state.ownerAnchorEl[item._links.self.href]}
+                  open={Boolean(this.state.ownerAnchorEl[item._links.self.href])}
+                  onClose={this.handleOwerListClose.bind(this, item._links.self.href)}
+                >
+                  {members && members.map(member => (
+                    <MenuItem
+                      style={{ paddingTop: 20, paddingBottom: 20 }}
+                      key={"owner" + member.userID}
+                      onClick={this.handleActionOwnerAdd.bind(this, item, member)}
+                    >
+                      <Avatar>{member.userID}</Avatar>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </div>)}
             </div>
           )}
         </ExpansionPanelDetails>
