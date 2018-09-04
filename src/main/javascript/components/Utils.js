@@ -34,9 +34,7 @@ export default class Board extends React.Component {
     fetch(url, {
       method: 'delete',
     }).then(resp => {
-      if (resp.ok) {
-        return resp.json();
-      } else {
+      if (!resp.ok) {
         throw new Error("failed to delete:", url);
       }
     }).then(data => {

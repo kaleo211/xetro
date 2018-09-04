@@ -167,7 +167,6 @@ class Items extends React.Component {
     Utils.postResource("actions", newAction, (data => {
       this.props.updatePillars();
       this.setState({ newAction: "" });
-      this.handleItemDone(item);
     }));
   }
 
