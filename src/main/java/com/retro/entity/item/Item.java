@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.GenerationType;
 
@@ -20,6 +21,7 @@ import lombok.NonNull;
 
 import com.retro.entity.pillar.Pillar;
 import com.retro.entity.action.Action;
+import com.retro.entity.member.Member;
 
 @Data
 @Getter
@@ -48,4 +50,8 @@ public class Item {
 
   @OneToOne(mappedBy = "item", fetch = FetchType.EAGER)
   private Action action;
+
+  @ManyToOne
+  @JoinColumn(name = "owner_id")
+  private Member owner;
 }

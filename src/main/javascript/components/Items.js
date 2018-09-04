@@ -37,16 +37,16 @@ class Items extends React.Component {
     this.state = {
       isSaveButtonDisabled: [],
       newItems: {},
-      expandedItem: "",
       ownerAnchorEl: {},
       newAction: "",
-      selectedItem: null,
       progressTimer: null,
       itemProgress: 0,
-      secondsPerItem: 30,
+      secondsPerItem: 300,
+      selectedItem: null,
     }
   }
 
+  // Timer
   componentDidMount() {
     this.progressTimer = setInterval(this.updateItemProgress, 2000);
   }
@@ -55,36 +55,26 @@ class Items extends React.Component {
     clearInterval(this.progressTimer);
   }
 
+  updateItemProgress = () => {
+    let item = this.state.selectedItem;
+    if (item && item.startTime) {
+      let seconds = Math.floor((new Date().getTime() - new Date(item.startTime).getTime()) / 1000);
+      if (seconds > this.state.secondsPerItem) {
+        this.setState({ itemProgress: 0 });
+      } else {
+        this.setState({
+          itemProgress: Math.floor((this.state.secondsPerItem - seconds) * 100 / this.state.secondsPerItem),
+        });
+      }
+    }
+  };
+
+  // Item
   handleItemDone(item) {
     if (this.state.newAction !== "") {
       this.saveAction(item);
     }
     let updatedItem = { checked: true }
-    Utils.patchResource(item, updatedItem, (body => {
-      this.props.updatePillars();
-    }));
-  }
-
-  handleActionOwnerAdd(item, owner) {
-    this.handleOwerListClose(item._links.self.href)
-
-    let action = item.action;
-    if (action && action._links) {
-      let updatedAction = {
-        member: owner._links.self.href,
-      }
-      Utils.patchResource(action, updatedAction, (body => {
-        this.props.updatePillars();
-      }));
-    }
-  }
-
-  handleNewLikeSave(item, event) {
-    event.stopPropagation();
-    let updatedItem = {
-      title: item.title,
-      likes: item.likes + 1,
-    }
     Utils.patchResource(item, updatedItem, (body => {
       this.props.updatePillars();
     }));
@@ -96,18 +86,18 @@ class Items extends React.Component {
     }));
   }
 
-  handleItemExpandToggle(item, event) {
-    let expandedItem = this.state.expandedItem;
-    if (expandedItem && expandedItem === item._links.self.href) {
-      this.setState({
-        expandedItem: "",
-        selectedItem: null,
-      })
-    } else {
-      this.setState({
-        expandedItem: item._links.self.href,
-        selectedItem: item,
-      });
+  // Owner
+  handleActionOwnerAdd(item, owner) {
+    this.handleOwerListClose(item._links.self.href)
+
+    let action = item.action;
+    if (action && action._links) {
+      let updatedAction = {
+        member: owner._links.self.href,
+      }
+      Utils.patchResource(action, updatedAction, (body => {
+        this.props.updatePillars();
+      }));
     }
   }
 
@@ -125,35 +115,49 @@ class Items extends React.Component {
     });
   }
 
-  updateItemProgress = () => {
-    let item = this.state.selectedItem;
-    if (item && item.startTime) {
-      let seconds = Math.floor((new Date().getTime() - new Date(item.startTime).getTime()) / 1000);
-      if (seconds > this.state.secondsPerItem) {
-        this.setState({ itemProgress: 0 });
-      } else {
-        this.setState({
-          itemProgress: Math.floor((this.state.secondsPerItem - seconds) * 100 / this.state.secondsPerItem),
-        });
-      }
+  // Like
+  handleNewLikeSave(item, event) {
+    event.stopPropagation();
+    let updatedItem = {
+      title: item.title,
+      likes: item.likes + 1,
     }
-  };
+    Utils.patchResource(item, updatedItem, (body => {
+      this.props.updatePillars();
+    }));
+  }
 
-  handleStartItem(item) {
+  updateSelectedItem(item) {
     this.setState({
-      expandedItem: item._links.self.href,
-    })
+      selectedItem: item,
+    });
+  }
 
+  // Toggle
+  handleItemExpandToggle(item) {
+    let selectedItem = this.state.selectedItem;
+
+    if (selectedItem === item) {
+      this.updateSelectedItem(null);
+    } else {
+      this.updateSelectedItem(item);
+    }
+  }
+
+  handleStartItem(item, evt) {
+    evt.stopPropagation();
     let updatedItem = {
       started: true,
       startTime: new Date(),
-    }
-
-    Utils.patchResource(item, updatedItem, (body => {
+    };
+    Utils.patchResource(item, updatedItem, (() => {
       this.props.updatePillars();
-    }))
+    }));
+
+    this.updateSelectedItem(item);
   }
 
+  // Action
   saveAction(item) {
     let newAction = {
       title: this.state.newAction.capitalize(),
@@ -181,14 +185,16 @@ class Items extends React.Component {
 
   render() {
     const { pillar, board, members } = this.props;
+    const { selectedItem } = this.state;
+    console.log("updated selected item in items:", selectedItem);
+
     return (<div>{pillar.items && pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item._links.self.href}
-        expanded={this.state.expandedItem === item._links.self.href}
+        expanded={selectedItem === item}
         onChange={this.handleItemExpandToggle.bind(this, item)}
       >
         <ExpansionPanelSummary>
-          <LinearProgress variant="determinate" value={70} />
           <Typography noWrap variant="headline" className={item.checked ? styles.itemDone : null}>
             {item.title}
           </Typography>
@@ -266,7 +272,7 @@ class Items extends React.Component {
                 )}
               </Grid>
             </Grid>
-            {board.locked && !item.checked && item.started && (
+            {board.locked && selectedItem && selectedItem._links.self.href === item._links.self.href && !item.checked && item.started && (
               <Grid item style={{ paddingTop: 8 }}>
                 <LinearProgress variant="determinate" value={this.state.itemProgress} />
               </Grid>

@@ -28,7 +28,6 @@ class Pillars extends React.Component {
       expandedItem: "",
       ownerAnchorEl: {},
       newAction: "",
-      selectedItem: null,
       progressTimer: null,
       itemProgress: 0,
       secondsPerItem: 30,
@@ -54,13 +53,17 @@ class Pillars extends React.Component {
 
   handleNewItemSave(pillar, event) {
     if (event && event.key === 'Enter' && this.state.newItems[pillar] !== "") {
+      console.log("board in new item save:", this.props.board);
       let newItem = {
         title: this.state.newItems[pillar].capitalize(),
         pillar: pillar,
+        onwer: this.props.board._links.facilitator.href.replace('{?projection}', ''),
       }
       Utils.postResource("items", newItem, (data => {
         this.props.updatePillars();
-        this.state.newItems[pillar] = "";
+        let newItems = this.state.newAction;
+        newItems[pillar] = "";
+        this.setState({ newItems })
       }));
     }
   }
@@ -73,7 +76,6 @@ class Pillars extends React.Component {
 
   render() {
     const { pillars, members, board } = this.props;
-
     return (
       <Grid
         container
@@ -82,7 +84,7 @@ class Pillars extends React.Component {
         justify="space-between"
         alignItems="stretch"
       >
-        {pillars.map((pillar) => (
+        {board && board.facilitator && pillars.map((pillar) => (
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card wrap='nowrap'>
               <CardHeader
@@ -106,7 +108,12 @@ class Pillars extends React.Component {
                 />
               </CardContent>
 
-              <Items board={board} pillar={pillar} members={members} updatePillars={this.props.updatePillars} />
+              <Items
+                board={board}
+                pillar={pillar}
+                members={members}
+                updatePillars={this.props.updatePillars}
+              />
             </Card>
           </Grid>
         ))}
