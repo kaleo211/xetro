@@ -1,4 +1,3 @@
-
 package com.retro.entity.pillar;
 
 import java.util.List;

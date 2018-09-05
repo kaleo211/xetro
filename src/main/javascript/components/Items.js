@@ -35,8 +35,6 @@ class Items extends React.Component {
     super(props);
 
     this.state = {
-      isSaveButtonDisabled: [],
-      newItems: {},
       ownerAnchorEl: {},
       newAction: "",
       progressTimer: null,
@@ -75,13 +73,13 @@ class Items extends React.Component {
       this.saveAction(item);
     }
     let updatedItem = { checked: true }
-    Utils.patchResource(item, updatedItem, (body => {
+    Utils.patchResource(item, updatedItem, (() => {
       this.props.updatePillars();
     }));
   }
 
   handleItemDelete(item) {
-    Utils.deleteResource(item, (body => {
+    Utils.deleteResource(item, (() => {
       this.props.updatePillars();
     }));
   }
@@ -95,7 +93,7 @@ class Items extends React.Component {
       let updatedAction = {
         member: owner._links.self.href,
       }
-      Utils.patchResource(action, updatedAction, (body => {
+      Utils.patchResource(action, updatedAction, (() => {
         this.props.updatePillars();
       }));
     }
@@ -110,9 +108,7 @@ class Items extends React.Component {
   handleOwerListOpen(item, event) {
     let ownerAnchorEl = this.state.ownerAnchorEl;
     ownerAnchorEl[item] = event.currentTarget;
-    this.setState({
-      ownerAnchorEl,
-    });
+    this.setState({ ownerAnchorEl });
   }
 
   // Like
@@ -127,35 +123,6 @@ class Items extends React.Component {
     }));
   }
 
-  updateSelectedItem(item) {
-    this.setState({
-      selectedItem: item,
-    });
-  }
-
-  // Toggle
-  handleItemExpandToggle(item) {
-    let selectedItem = this.state.selectedItem;
-
-    if (selectedItem === item) {
-      this.updateSelectedItem(null);
-    } else {
-      this.updateSelectedItem(item);
-    }
-  }
-
-  handleStartItem(item, evt) {
-    evt.stopPropagation();
-    let updatedItem = {
-      started: true,
-      startTime: new Date(),
-    };
-    Utils.patchResource(item, updatedItem, (() => {
-      this.props.updatePillars();
-    }));
-
-    this.updateSelectedItem(item);
-  }
 
   // Action
   saveAction(item) {
@@ -182,14 +149,35 @@ class Items extends React.Component {
     });
   }
 
+  // Toggle
+  handleItemExpandToggle = item => (event, expanded) => {
+    // console.log("expanded:", expanded, item);
+    // this.setState({
+    //   selectedItem: expanded ? null : item,
+    // });
+  };
+
+  handleStartItem(item, evt) {
+    evt.stopPropagation();
+    let updatedItem = {
+      started: true,
+      startTime: new Date(),
+    };
+    Utils.patchResource(item, updatedItem, (() => {
+      this.props.updatePillars();
+    }));
+
+    this.updateSelectedItem(item);
+  }
+
   render() {
     const { pillar, board, members } = this.props;
-    const { selectedItem } = this.state;
-    return (<div>{pillar.items && pillar.items.map(item => (
+    const { selectedItem, newAction, ownerAnchorEl } = this.state;
+    return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item._links.self.href}
-        expanded={selectedItem === item}
-        onChange={this.handleItemExpandToggle.bind(this, item)}
+        expanded={selectedItem && selectedItem._links.self.href === item._links.self.href}
+        onChange={this.handleItemExpandToggle(item)}
       >
         <ExpansionPanelSummary>
           <Typography noWrap variant="headline" className={item.checked ? styles.itemDone : null}>
@@ -219,7 +207,7 @@ class Items extends React.Component {
             fullWidth
             name={item._links.self.href}
             disabled={item.action !== null}
-            value={item.action ? item.action.title : this.state.newAction}
+            value={item.action ? item.action.title : newAction}
             onChange={this.handleNewActionChange.bind(this)}
             onKeyPress={this.handleNewActionSave.bind(this, item)}
           />
@@ -230,8 +218,8 @@ class Items extends React.Component {
                   <Add fontSize='inherit' />
                 </IconButton>
                 <Menu
-                  anchorEl={this.state.ownerAnchorEl[item._links.self.href]}
-                  open={Boolean(this.state.ownerAnchorEl[item._links.self.href])}
+                  anchorEl={ownerAnchorEl[item._links.self.href]}
+                  open={Boolean(ownerAnchorEl[item._links.self.href])}
                   onClose={this.handleOwerListClose.bind(this, item._links.self.href)}
                 >
                   {members && members.map(member => (
@@ -275,7 +263,7 @@ class Items extends React.Component {
           </Grid>
         </ExpansionPanelActions>
       </ExpansionPanel >
-    ))}</div>);
+    ))} </div>);
   }
 }
 

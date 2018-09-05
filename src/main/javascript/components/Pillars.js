@@ -23,44 +23,23 @@ class Pillars extends React.Component {
     super(props);
 
     this.state = {
-      isSaveButtonDisabled: [],
       newItems: {},
-      expandedItem: "",
-      ownerAnchorEl: {},
-      progressTimer: null,
-      itemProgress: 0,
-      secondsPerItem: 30,
-    }
-  }
-
-  componentWillReceiveProps(props) {
-    let pillars = props.pillars;
-    let isSaveButtonDisabled = [];
-
-    if (pillars && pillars.length > 0) {
-      // console.log("pillars in pillars:", pillars);
-      let newItems = {};
-      for (let idx = 0; idx < pillars.length; idx++) {
-        let pillar = pillars[idx];
-        let pillarHref = pillar._links.self.href;
-        newItems[pillarHref] = "";
-        isSaveButtonDisabled[pillarHref] = true;
-      }
-      this.setState({ newItems, isSaveButtonDisabled });
     }
   }
 
   handleNewItemSave(pillar, event) {
-    if (event && event.key === 'Enter' && this.state.newItems[pillar] !== "") {
+    let newItems = this.state.newItems;
+
+    if (event && event.key === 'Enter' && newItems[pillar] !== "") {
       console.log("board in new item save:", this.props.board);
       let newItem = {
-        title: this.state.newItems[pillar].capitalize(),
+        title: newItems[pillar].capitalize(),
         pillar: pillar,
         onwer: this.props.board._links.facilitator.href.replace('{?projection}', ''),
-      }
-      Utils.postResource("items", newItem, (data => {
+      };
+
+      Utils.postResource("items", newItem, (() => {
         this.props.updatePillars();
-        let newItems = this.state.newItems;
         newItems[pillar] = "";
         this.setState({ newItems });
       }));
@@ -75,6 +54,10 @@ class Pillars extends React.Component {
 
   render() {
     const { pillars, members, board } = this.props;
+    const { newItems } = this.state;
+
+    console.log("render in pillars:", pillars)
+
     return (
       <Grid
         container
@@ -101,7 +84,7 @@ class Pillars extends React.Component {
                   label={pillar.intro}
                   disabled={board && board.locked}
                   name={pillar._links.self.href}
-                  value={this.state.newItems[pillar._links.self.href]}
+                  value={newItems[pillar._links.self.href]}
                   onChange={this.handleNewItemChange.bind(this)}
                   onKeyPress={this.handleNewItemSave.bind(this, pillar._links.self.href)}
                 />

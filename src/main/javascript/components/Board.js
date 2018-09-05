@@ -21,6 +21,7 @@ import {
   LockOpenOutlined,
   KeyboardRounded,
   VoiceChat,
+  RefreshRounded,
 } from '@material-ui/icons';
 
 import Utils from './Utils';
@@ -112,7 +113,7 @@ class Board extends React.Component {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
       this.setState({ board: Utils.reformBoard(board) });
     }));
-    this.handleSnackbarOpen("Board is UNLOCKED.")
+    this.handleSnackbarOpen("Board is UNLOCKED.");
   }
 
   handleSnackbarClose() {
@@ -123,7 +124,7 @@ class Board extends React.Component {
     this.setState({
       snackbarOpen: true,
       snackbarMessage: message,
-    })
+    });
   }
 
   handleVideoOpen(url) {
@@ -151,6 +152,7 @@ class Board extends React.Component {
   render() {
     const { classes } = this.props;
     const { pillars, board, members } = this.state;
+
     return (<div>{board && (
       <div className={classes.root}>
         <AppBar position="absolute" className={classes.appBar}>
@@ -166,6 +168,11 @@ class Board extends React.Component {
             </div>
 
             <div>
+              <Tooltip title="Refresh board" placement="bottom">
+                <IconButton onClick={this.updatePillars} color="inherit">
+                  <RefreshRounded />
+                </IconButton>
+              </Tooltip>
               {board.facilitator && board.facilitator.video && (
                 <Tooltip title="Open video chat" placement="bottom">
                   <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
