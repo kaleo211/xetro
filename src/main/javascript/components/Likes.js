@@ -8,8 +8,10 @@ import StarRounded from '@material-ui/icons/StarRounded';
 
 const styles = theme => ({
   likes: {
-    paddingTop: 4,
-    paddingLeft: 10,
+    paddingTop: 6,
+    fontSize: 18,
+    marginLeft: -20,
+    marginRight: 2,
   }
 });
 

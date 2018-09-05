@@ -180,18 +180,26 @@ class Items extends React.Component {
         onChange={this.handleItemExpandToggle(item)}
       >
         <ExpansionPanelSummary>
-          <Typography noWrap variant="headline" className={item.checked ? styles.itemDone : null}>
-            {item.title}
-          </Typography>
-          <Likes item={item} />
-          <Typography style={{ flexGrow: 1 }}></Typography>
+          <Grid container>
+            {item.likes > 0 && (
+              <Grid item>
+                <Likes item={item} />
+              </Grid>
+            )}
+            <Grid item>
+              <Typography style={{}} noWrap variant="headline" className={item.checked ? styles.itemDone : null}>
+                {item.title}
+              </Typography>
+            </Grid>
+          </Grid>
+
           <div style={{ marginTop: -5, marginBottom: -20, marginRight: -48 }}>
-            {board && !board.locked && !item.checked && (
+            {board && !board.locked && !item.checked && !item.started && !item.action && (
               <IconButton onClick={this.handleNewLikeSave.bind(this, item)}>
                 <PlusOne />
               </IconButton>
             )}
-            {board && board.locked && !item.checked && !item.started && (
+            {board && board.locked && !item.checked && !item.started && !item.action && (
               <IconButton onClick={this.handleStartItem.bind(this, item)}>
                 <PlayArrowRounded />
               </IconButton>
