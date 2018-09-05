@@ -13,6 +13,7 @@ target
 src/main/resources/static/built/*
 .classpath
 .project
+index.html
 
 # misc
 .DS_Store

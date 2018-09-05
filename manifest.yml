@@ -1,0 +1,7 @@
+---
+applications:
+- name: xetro
+  memory: 128M
+  instances: 1
+  buildpacks: [java_buildpack]
+  command: mvn spring-boot:run
