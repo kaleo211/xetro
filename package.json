@@ -22,12 +22,20 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "jasmine --config=src/main/javascript/spec/config/jasmine.json",
     "eject": "react-scripts eject",
     "start:dev": "webpack-dev-server --host 0.0.0.0"
   },
   "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-preset-react-app": "^3.1.2",
+    "enzyme": "^3.6.0",
+    "enzyme-adapter-react-16": "^1.4.0",
     "html-webpack-plugin": "^3.2.0",
+    "ignore-styles": "^5.0.1",
+    "jasmine": "^3.2.0",
+    "jasmine-enzyme": "^6.0.4",
+    "jsdom": "^12.0.0",
     "webpack-dev-server": "^3.1.5"
   }
 }
