@@ -171,7 +171,7 @@ class Items extends React.Component {
   }
 
   render() {
-    const { pillar, board, members } = this.props;
+    const { pillar, board, members, classes } = this.props;
     const { selectedItem, newAction, ownerAnchorEl } = this.state;
     return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
       <ExpansionPanel
@@ -187,7 +187,7 @@ class Items extends React.Component {
               </Grid>
             )}
             <Grid item>
-              <Typography style={{}} noWrap variant="headline" className={item.checked ? styles.itemDone : null}>
+              <Typography noWrap variant="headline" className={item.checked ? classes.itemDone : null}>
                 {item.title}
               </Typography>
             </Grid>
