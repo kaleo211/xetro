@@ -1,11 +1,13 @@
 package com.retro;
 
-import org.springframework.boot.SpringApplication;
+import com.retro.configuration.SpringApplicationContextInitializer;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 @SpringBootApplication
 public class App {
 	public static void main(String[] args) {
-		SpringApplication.run(App.class, args);
+		new SpringApplicationBuilder(App.class).initializers(new SpringApplicationContextInitializer()).application()
+				.run(args);
 	}
 }
