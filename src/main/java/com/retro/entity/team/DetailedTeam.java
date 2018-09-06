@@ -7,6 +7,8 @@ import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "detailedTeam", types = { Team.class })
 public interface DetailedTeam {
+  Long getId();
+
   String getName();
 
   List<DetailedMember> getMembers();

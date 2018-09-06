@@ -25,12 +25,11 @@ class ActiveBoardList extends React.Component {
   }
 
   handleBoardSelect(board) {
-    this.props.updateSelectedBoard(board._links.self.href);
+    this.props.updateSelectedBoard(board.id);
   }
 
   render() {
     const { boards } = this.props;
-    console.log("boards in active list:", boards);
     return (<div>
       <AppBar style={{ position: 'relative', }}>
         <Toolbar>
@@ -44,7 +43,7 @@ class ActiveBoardList extends React.Component {
         <Grid item xs={6} md={4} >
           <List>
             {boards && boards.map(board => (
-              <ListItem key={board._links.self.href} dense button >
+              <ListItem key={"activeBoard" + board.id} dense button >
                 <Avatar>{board.team.name}</Avatar>
                 <ListItemText primary={board.name} />
                 <ListItemSecondaryAction onClick={this.handleBoardSelect.bind(this, board)}>

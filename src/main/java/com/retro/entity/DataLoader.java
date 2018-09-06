@@ -35,7 +35,15 @@ public class DataLoader implements ApplicationRunner {
   }
 
   public void run(ApplicationArguments args) {
-    Board board = Board.builder().name("Week").build();
+    Team dojo = Team.builder().name("dojo").build();
+    Team asaka = Team.builder().name("asaka").build();
+    teamRepository.save(dojo);
+    teamRepository.save(asaka);
+
+    Board board = Board.builder().name("Week1").started(true).team(dojo).build();
+    boardRepository.save(board);
+
+    board = Board.builder().name("Week2").started(true).team(asaka).build();
     boardRepository.save(board);
 
     Pillar pillar = Pillar.builder().title("Happy").intro("I'm so happy that...").board(board).build();
@@ -53,8 +61,5 @@ public class DataLoader implements ApplicationRunner {
     memberRepository.save(Member.builder().userID("xhe").video("http://google.com").build());
     memberRepository.save(Member.builder().userID("yan").video("http://bing.com").build());
     memberRepository.save(Member.builder().userID("xh").video("http://yahoo.com").build());
-
-    teamRepository.save(Team.builder().name("dojo").build());
-    teamRepository.save(Team.builder().name("asaka").build());
   }
 }

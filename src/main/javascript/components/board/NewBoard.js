@@ -176,7 +176,7 @@ class NewBoard extends React.Component {
               <Grid item xs={12} md={6} lg={4} key={"action" + member.userID}>
                 <List>
                   {member.actions.map((action) => (!action.finished &&
-                    <ListItem divider key={"action" + action._links.self.href} dense button >
+                    <ListItem divider key={"actionToCheck" + action.id} dense button >
                       <Avatar style={{ marginLeft: -15 }}>
                         {member.userID}
                       </Avatar>

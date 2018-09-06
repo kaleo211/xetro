@@ -11,6 +11,8 @@ import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "detailedBoard", types = { Board.class })
 public interface DetailedBoard {
+  Long getId();
+
   String getName();
 
   Boolean getLocked();

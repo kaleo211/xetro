@@ -74,10 +74,10 @@ class App extends React.Component {
     this.updateBoards(() => { });
   }
 
-  updateSelectedBoard(boardLink) {
+  updateSelectedBoard(boardID) {
     this.updateBoards((boards) => {
       boards.map(board => {
-        if (board._links.self.href === boardLink) {
+        if (board.id === boardID) {
           this.setState({ board, page: "" });
         }
       })

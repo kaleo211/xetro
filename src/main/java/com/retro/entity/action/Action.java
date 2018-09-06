@@ -35,6 +35,7 @@ public class Action {
   private boolean locked;
   private boolean finished;
 
+  @NonNull
   @OneToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "item_id")
   private Item item;
@@ -43,6 +44,7 @@ public class Action {
   @JoinColumn(name = "member_id")
   private Member member;
 
+  @NonNull
   @ManyToOne
   @JoinColumn(name = "team_id")
   private Team team;

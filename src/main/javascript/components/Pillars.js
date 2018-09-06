@@ -27,20 +27,28 @@ class Pillars extends React.Component {
     }
   }
 
-  handleNewItemSave(pillar, event) {
+  handleNewItemSave(pillarID, event) {
     let newItems = this.state.newItems;
 
-    if (event && event.key === 'Enter' && newItems[pillar] !== "") {
+    if (event && event.key === 'Enter' && newItems[pillarID] !== "") {
       console.log("board in new item save:", this.props.board);
+
+      let pillarLink = "";
+      this.props.pillars.map(pillar => {
+        if (pillar.id === pillarID) {
+          pillarLink = pillar._links.self.href;
+        }
+      });
+
       let newItem = {
-        title: newItems[pillar].capitalize(),
-        pillar: pillar,
+        title: newItems[pillarID].capitalize(),
+        pillar: pillarLink,
         onwer: this.props.board._links.facilitator.href.replace('{?projection}', ''),
       };
 
       Utils.postResource("items", newItem, (() => {
         this.props.updatePillars();
-        newItems[pillar] = "";
+        newItems[pillarID] = "";
         this.setState({ newItems });
       }));
     }
@@ -80,13 +88,13 @@ class Pillars extends React.Component {
                 <TextField
                   id="createNewItem"
                   fullWidth
-                  key={pillar._links.self.href}
+                  key={"pillar" + pillar.id}
                   label={pillar.intro}
                   disabled={board && board.locked}
-                  name={pillar._links.self.href}
-                  value={newItems[pillar._links.self.href]}
+                  name={pillar.id}
+                  value={newItems[pillar.id]}
                   onChange={this.handleNewItemChange.bind(this)}
-                  onKeyPress={this.handleNewItemSave.bind(this, pillar._links.self.href)}
+                  onKeyPress={this.handleNewItemSave.bind(this, pillar.id)}
                 />
               </CardContent>
 

@@ -8,6 +8,8 @@ import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "detailedPillar", types = { Pillar.class })
 public interface DetailedPillar {
+  Long getId();
+
   String getTitle();
 
   String getIntro();

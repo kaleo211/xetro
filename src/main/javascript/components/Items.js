@@ -86,7 +86,7 @@ class Items extends React.Component {
 
   // Owner
   handleActionOwnerAdd(item, owner) {
-    this.handleOwerListClose(item._links.self.href)
+    this.handleOwerListClose(item.id)
 
     let action = item.action;
     if (action && action._links) {
@@ -99,15 +99,15 @@ class Items extends React.Component {
     }
   }
 
-  handleOwerListClose(item) {
+  handleOwerListClose(itemID) {
     let ownerAnchorEl = this.state.ownerAnchorEl;
-    ownerAnchorEl[item] = null;
+    ownerAnchorEl[itemID] = null;
     this.setState({ ownerAnchorEl })
   }
 
-  handleOwerListOpen(item, event) {
+  handleOwerListOpen(itemID, event) {
     let ownerAnchorEl = this.state.ownerAnchorEl;
-    ownerAnchorEl[item] = event.currentTarget;
+    ownerAnchorEl[itemID] = event.currentTarget;
     this.setState({ ownerAnchorEl });
   }
 
@@ -175,8 +175,8 @@ class Items extends React.Component {
     const { selectedItem, newAction, ownerAnchorEl } = this.state;
     return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
       <ExpansionPanel
-        key={"item-" + item._links.self.href}
-        expanded={selectedItem && selectedItem._links.self.href === item._links.self.href}
+        key={"item-" + item.id}
+        expanded={selectedItem && selectedItem.id === item.id}
         onChange={this.handleItemExpandToggle(item)}
       >
         <ExpansionPanelSummary>
@@ -213,7 +213,6 @@ class Items extends React.Component {
             id="createNewActionItem"
             label="Action item"
             fullWidth
-            name={item._links.self.href}
             disabled={item.action !== null}
             value={item.action ? item.action.title : newAction}
             onChange={this.handleNewActionChange.bind(this)}
@@ -222,13 +221,13 @@ class Items extends React.Component {
           {item.action && item.action.title !== "" && (
             <div style={{ marginRight: -17, marginTop: 10 }}>
               {!item.action.member && (<div>
-                <IconButton onClick={this.handleOwerListOpen.bind(this, item._links.self.href)}>
+                <IconButton onClick={this.handleOwerListOpen.bind(this, item.id)}>
                   <Add fontSize='inherit' />
                 </IconButton>
                 <Menu
-                  anchorEl={ownerAnchorEl[item._links.self.href]}
-                  open={Boolean(ownerAnchorEl[item._links.self.href])}
-                  onClose={this.handleOwerListClose.bind(this, item._links.self.href)}
+                  anchorEl={ownerAnchorEl[item.id]}
+                  open={Boolean(ownerAnchorEl[item.id])}
+                  onClose={this.handleOwerListClose.bind(this, item.id)}
                 >
                   {members && members.map(member => (
                     <MenuItem
@@ -263,7 +262,7 @@ class Items extends React.Component {
                 )}
               </Grid>
             </Grid>
-            {board.locked && selectedItem && selectedItem._links.self.href === item._links.self.href && !item.checked && item.started && (
+            {board.locked && selectedItem && selectedItem.id === item.id && !item.checked && item.started && (
               <Grid item style={{ paddingTop: 8 }}>
                 <LinearProgress variant="determinate" value={this.state.itemProgress} />
               </Grid>
