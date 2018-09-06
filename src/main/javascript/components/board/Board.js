@@ -24,9 +24,9 @@ import {
   RefreshRounded,
 } from '@material-ui/icons';
 
-import Utils from './Utils';
-import Pillars from './Pillars';
-import Timer from './Timer';
+import Utils from '../Utils';
+import Pillars from '../Pillars';
+import Timer from '../Timer';
 
 const drawerWidth = 82;
 
