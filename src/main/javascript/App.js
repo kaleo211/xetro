@@ -26,9 +26,11 @@ class App extends React.Component {
       board: null,
       boards: [],
       teams: [],
+      team: null,
     };
 
     this.updateSelectedBoard = this.updateSelectedBoard.bind(this);
+    this.updateSelectedTeam = this.updateSelectedTeam.bind(this);
     this.updatePage = this.updatePage.bind(this);
 
     String.prototype.capitalize = function () {
@@ -37,24 +39,19 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    console.log("fetching members");
-    Utils.fetchResource("members", (body => {
-      let members = body._embedded.members;
-      console.log("updated members:", members);
-      this.setState({ members });
-    }));
-
     this.updateBoards(() => { });
+    this.updateTeams(() => { });
 
-    Utils.fetchResource("teams", (body => {
-      let teams = body._embedded.teams;
-      console.log("updated teams:", teams);
-      this.setState({ teams });
-    }));
+    // console.log("fetching members");
+    // Utils.fetchResource("members", (body => {
+    //   let members = body._embedded.members;
+    //   console.log("updated members:", members);
+    //   this.setState({ members });
+    // }));
   }
 
   updateBoards(callback) {
-    console.log("fetching boards");
+    // console.log("App# fetching boards");
     Utils.fetchResource("boards", (body => {
       let boards = body._embedded.boards;
       if (boards === null || boards.length === 0) {
@@ -84,25 +81,38 @@ class App extends React.Component {
     });
   }
 
+  updateTeams(callback) {
+    console.log("fetching teams");
+    Utils.fetchResource("teams", (body => {
+      let teams = body._embedded.teams;
+      this.setState({ teams }, callback(teams));
+    }));
+  }
+
+  updateSelectedTeam(teamID) {
+    this.state.teams.map(team => {
+      if (team.id === teamID) {
+        this.setState({ team });
+        Utils.get(team._links.members.href, (body => {
+          let members = body._embedded.members;
+          console.log("#App# members after team selected:", members);
+          this.setState({ members });
+        }));
+      }
+    });
+  }
+
   render() {
-    const { members, board, teams, boards } = this.state;
+    const { members, board, teams, boards, team, page } = this.state;
     return (
       <div>
-        <Board members={members} board={board} />
+        <Board members={members} board={board} teams={teams} team={team} updateSelectedTeam={this.updateSelectedTeam} />
 
-        <Dialog
-          fullScreen
-          open={this.state.page === "newBoard"}
-          TransitionComponent={Transition}
-        >
+        <Dialog fullScreen open={page === "newBoard"} TransitionComponent={Transition} >
           <NewBoard members={members} teams={teams} updateSelectedBoard={this.updateSelectedBoard} updatePage={this.updatePage} />
         </Dialog>
 
-        <Dialog
-          fullScreen
-          open={this.state.page === "activeBoards"}
-          TransitionComponent={Transition}
-        >
+        <Dialog fullScreen open={page === "activeBoards"} TransitionComponent={Transition} >
           <BoardActiveList boards={boards} updateSelectedBoard={this.updateSelectedBoard} updatePage={this.updatePage} />
         </Dialog>
       </div >

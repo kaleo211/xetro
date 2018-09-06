@@ -27,6 +27,7 @@ import {
 import Utils from '../Utils';
 import Pillars from '../Pillars';
 import Timer from '../Timer';
+import TeamMenu from '../TeamMenu';
 
 const drawerWidth = 82;
 
@@ -66,10 +67,7 @@ class Board extends React.Component {
     super(props);
 
     this.state = {
-      boards: null,
-      board: null,
       pillars: [],
-      members: [],
       snackbarMessage: "",
       snackbarOpen: false,
     };
@@ -86,12 +84,10 @@ class Board extends React.Component {
   }
 
   updateSelected(member) {
-    console.log("updated member in board:", member._links.self.href);
     let updatedBoard = {
       selected: member._links.self.href,
     }
     Utils.patchResource(this.state.board, updatedBoard, (body => {
-      console.log("returned board:", Utils.reformBoard(body))
       this.setState({ board: Utils.reformBoard(body) });
     }));
   }
@@ -133,10 +129,6 @@ class Board extends React.Component {
   }
 
   componentWillReceiveProps() {
-    this.setState({
-      members: this.props.members,
-    });
-
     let board = this.props.board;
     if (board) {
       console.log("board in receive:", board);
@@ -150,8 +142,8 @@ class Board extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const { pillars, board, members } = this.state;
+    const { classes, board, teams, team, members } = this.props;
+    const { pillars } = this.state;
 
     return (<div>{board && (
       <div className={classes.root}>
@@ -200,7 +192,10 @@ class Board extends React.Component {
 
         <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
           <div className={classes.toolbar} />
-          <List component="nav" style={{ marginRight: -20 }}>
+          <div style={{ marginTop: 8 }}>
+            <TeamMenu team={team} teams={teams} updateSelectedTeam={this.props.updateSelectedTeam} />
+          </div>
+          <List component="nav" style={{ marginLeft: -6 }}>
             {members.map(member => (
               <ListItem key={"side" + member.userID} button
                 onClick={this.updateSelected.bind(this, member)}

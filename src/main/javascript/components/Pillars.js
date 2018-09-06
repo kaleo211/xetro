@@ -31,7 +31,7 @@ class Pillars extends React.Component {
     let newItems = this.state.newItems;
 
     if (event && event.key === 'Enter' && newItems[pillarID] !== "") {
-      console.log("board in new item save:", this.props.board);
+      // console.log("#Pillars# board in new item save:", this.props.board);
 
       let pillarLink = "";
       this.props.pillars.map(pillar => {
@@ -63,9 +63,6 @@ class Pillars extends React.Component {
   render() {
     const { pillars, members, board } = this.props;
     const { newItems } = this.state;
-
-    console.log("render in pillars:", pillars)
-
     return (
       <Grid
         container

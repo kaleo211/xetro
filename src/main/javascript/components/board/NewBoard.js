@@ -63,7 +63,7 @@ class NewBoard extends React.Component {
 
   handleStepNext = () => {
     if (this.state.activeStep === 0) {
-      console.log("time stap", this.state.endTime);
+      console.log("NewBoard# time stap", this.state.endTime);
     }
     this.setState(state => ({
       activeStep: state.activeStep + 1,
@@ -107,7 +107,7 @@ class NewBoard extends React.Component {
   }
 
   handleBoardEndTimeChange(event) {
-    console.log("updated end time:", event.target.value);
+    console.log("NewBoard# updated end time:", event.target.value);
     this.setState({
       endTime: event.target.value,
     });
@@ -119,7 +119,7 @@ class NewBoard extends React.Component {
     newBoard.started = true;
 
     Utils.postResource("boards", newBoard, (body => {
-      console.log("posted board", body);
+      console.log("NewBoard# posted board", body);
       this.props.updateSelectedBoard();
     }));
   }
@@ -128,7 +128,7 @@ class NewBoard extends React.Component {
     let updatedAction = { finished: true }
     Utils.patchResource(action, updatedAction, (() => {
       Utils.fetchResource("members", (body => {
-        console.log("updated members:", body);
+        console.log("NewBoard# updated members:", body);
         this.setState({ members: body._embedded.members });
       }));
     }));

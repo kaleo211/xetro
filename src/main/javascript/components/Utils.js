@@ -14,7 +14,7 @@ export default class Board extends React.Component {
 
   static get(url, callback) {
     if (url) {
-      fetch(url)
+      fetch(url.replace('{?projection}', ''))
         .then(resp => {
           if (resp.ok) {
             return resp.json();

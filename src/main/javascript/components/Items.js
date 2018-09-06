@@ -123,7 +123,6 @@ class Items extends React.Component {
     }));
   }
 
-
   // Action
   saveAction(item) {
     let newAction = {
