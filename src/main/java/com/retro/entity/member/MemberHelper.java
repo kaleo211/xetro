@@ -2,7 +2,6 @@ package com.retro.entity.member;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import com.retro.entity.action.Action;
 
 import org.slf4j.Logger;

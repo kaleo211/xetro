@@ -2,10 +2,10 @@ package com.retro.entity.member;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.OneToMany;
 import javax.persistence.GenerationType;
@@ -16,7 +16,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import com.retro.entity.action.Action;
-import com.retro.entity.team.Team;
+import com.retro.entity.teammember.TeamMember;
 
 @Data
 @Entity
@@ -39,6 +39,6 @@ public class Member {
   @OneToMany(mappedBy = "member")
   private List<Action> actions;
 
-  @ManyToMany(mappedBy = "members")
-  private List<Team> teams;
+  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<TeamMember> teammembers;
 }

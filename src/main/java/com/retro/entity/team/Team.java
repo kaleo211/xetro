@@ -7,10 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
-
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.GenerationType;
 
@@ -21,7 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import com.retro.entity.board.Board;
-import com.retro.entity.member.Member;
+import com.retro.entity.teammember.TeamMember;
 
 @Data
 @Entity
@@ -35,11 +31,8 @@ public class Team {
 
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "team_members", joinColumns = {
-            @JoinColumn(name = "team_id", referencedColumnName = "id") }, inverseJoinColumns = {
-                    @JoinColumn(name = "member_id", referencedColumnName = "id") })
-    private List<Member> members;
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TeamMember> teamMembers;
 
     @OneToMany(mappedBy = "team", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Board> boards;
