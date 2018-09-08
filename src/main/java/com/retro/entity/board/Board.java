@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import com.retro.entity.member.Member;
 import com.retro.entity.pillar.Pillar;
@@ -46,6 +47,7 @@ public class Board {
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Pillar> pillars;
 
+    @NonNull
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;

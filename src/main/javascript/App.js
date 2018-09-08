@@ -14,6 +14,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import Button from '@material-ui/core/Button';
+import deepPurple from '@material-ui/core/colors/deepPurple';
 
 import Board from './components/board/Board';
 import BoardActiveList from './components/board/BoardActiveList';
@@ -24,18 +26,10 @@ import BarSettings from './components/BarSettings';
 import TeamMenu from './components/TeamMenu';
 
 import {
+  Add,
+  Done,
   KeyboardRounded,
 } from '@material-ui/icons';
-
-// import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-
-import deepPurple from '@material-ui/core/colors/deepPurple';
-
-// const theme = createMuiTheme({
-//   palette: {
-//     primary: blue,
-//   },
-// });
 
 const styles = theme => ({
   root: {
@@ -47,9 +41,6 @@ const styles = theme => ({
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-  },
-  pillar: {
-    height: '100%',
   },
   drawerPaper: {
     position: 'relative',
@@ -65,6 +56,11 @@ const styles = theme => ({
   purpleAvatar: {
     color: '#fff',
     backgroundColor: deepPurple[300],
+  },
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing.unit * 2,
+    right: theme.spacing.unit * 2,
   },
 });
 
@@ -158,7 +154,11 @@ class App extends React.Component {
     this.updateBoards((boards) => {
       boards.map(board => {
         if (board.id === boardID) {
-          this.setState({ board, page: "" });
+          this.setState({
+            board,
+            page: "board",
+            team: board.team,
+          });
         }
       })
     });
@@ -185,13 +185,20 @@ class App extends React.Component {
     });
   }
 
+  handleFloatingButtonClick() {
+    const { page } = this.state;
+    if (page === "") {
+      this.setState({
+        page: "newBoard",
+      })
+    }
+  }
+
   render() {
     const { members, board, teams, boards, team, page, selectedMember } = this.state;
     const { classes } = this.props;
-
-
-
-    return (<div>
+    console.log("page:", page);
+    return (<div className={classes.root}>
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
           <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
@@ -220,9 +227,9 @@ class App extends React.Component {
               <ListItemAvatar>
                 {selectedMember && selectedMember.userID === member.userID ? (
                   <Badge badgeContent={(<KeyboardRounded />)}>
-                    <Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>
+                    <Avatar className={board && board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>
                   </Badge>
-                ) : (<Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>)}
+                ) : (<Avatar className={board && board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>)}
               </ListItemAvatar>
             </ListItem>
           ))}
@@ -231,20 +238,33 @@ class App extends React.Component {
 
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        <Board members={members} board={board} teams={teams} team={team}
-          updateSelectedTeam={this.updateSelectedTeam}
-          handleSnackbarOpen={this.handleSnackbarOpen}
-        />
-        {/* <Pillars pillars={pillars} updatePillars={this.updatePillars} members={members} board={board} /> */}
+        {page === "board" && (
+          <Board members={members} board={board} teams={teams} team={team}
+            updateSelectedTeam={this.updateSelectedTeam}
+            handleSnackbarOpen={this.handleSnackbarOpen}
+          />
+        )}
+        {page === "newBoard" && (
+          <NewBoard members={members} teams={teams} updatePage={this.updatePage}
+            updateSelectedBoard={this.updateSelectedBoard}
+          />
+        )}
+        {page === "activeBoards" && (
+          <BoardActiveList boards={boards} updatePage={this.updatePage}
+            updateSelectedBoard={this.updateSelectedBoard}
+          />
+        )}
       </main>
 
-      <Dialog fullScreen open={page === "newBoard"} TransitionComponent={Transition} >
-        <NewBoard members={members} teams={teams} updateSelectedBoard={this.updateSelectedBoard} updatePage={this.updatePage} />
-      </Dialog>
+      {page === "" && <Button variant="fab" className={classes.fab}
+        onClick={this.handleFloatingButtonClick.bind(this)}>
+        {<Add />}
+      </Button>}
 
-      <Dialog fullScreen open={page === "activeBoards"} TransitionComponent={Transition} >
-        <BoardActiveList boards={boards} updateSelectedBoard={this.updateSelectedBoard} updatePage={this.updatePage} />
-      </Dialog>
+      {page === "board" && <Button variant="fab" className={classes.fab}
+        onClick={this.handleFloatingButtonClick.bind(this)}>
+        {<Done />}
+      </Button>}
 
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}

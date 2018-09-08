@@ -8,12 +8,10 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 
+import Items from '../Items';
+
 import {
-  LockOutlined,
-  LockOpenOutlined,
-  KeyboardRounded,
-  VoiceChat,
-  RefreshRounded,
+
 } from '@material-ui/icons';
 
 import Utils from '../Utils';
@@ -66,12 +64,8 @@ class Board extends React.Component {
   handleNewItemChange(e) {
     let newItems = this.state.newItems;
     newItems[e.target.name] = e.target.value;
-    this.setState(newItems);
+    this.setState({ newItems });
   }
-
-
-
-
 
   handleBoardLock() {
     let updatedBoard = { locked: true };
@@ -101,7 +95,6 @@ class Board extends React.Component {
   componentWillReceiveProps() {
     let board = this.props.board;
     if (board) {
-      console.log("board in receive:", board);
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
       Utils.get(board.pillarsLink, (body => {
         console.log("updating pillars with board:", board);
@@ -113,8 +106,8 @@ class Board extends React.Component {
 
   render() {
     const { classes, board, teams, team, members } = this.props;
-    const { pillars, selectedMember } = this.state;
-
+    const { pillars, selectedMember, newItems } = this.state;
+    console.log("pillars in board:", pillars);
     return (
       <Grid
         container
@@ -146,7 +139,6 @@ class Board extends React.Component {
                   onKeyPress={this.handleNewItemSave.bind(this, pillar.id)}
                 />
               </CardContent>
-
               <Items
                 board={board}
                 pillar={pillar}
@@ -156,7 +148,7 @@ class Board extends React.Component {
             </Card>
           </Grid>
         ))}
-      </Grid >
+      </Grid>
     );
   }
 }

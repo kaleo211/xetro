@@ -2,7 +2,6 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
@@ -17,9 +16,7 @@ import StepContent from '@material-ui/core/StepContent';
 import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import TextField from '@material-ui/core/TextField';
-import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 
 import {
   ArrowDownwardRounded,
@@ -33,6 +30,10 @@ import Utils from '../Utils';
 
 
 const styles = theme => ({
+  root: {
+    paddingTop: theme.spacing.unit * 1,
+    paddingBottom: theme.spacing.unit * 1,
+  },
 });
 
 function getSteps() {
@@ -172,10 +173,10 @@ class NewBoard extends React.Component {
       case 2:
         return (
           <Grid style={{ paddingTop: 20 }} container justify="flex-start" spacing={32}>
-            {members.filter(m => m.actions.filter(a => !a.finished).length > 0).map(member => (
+            {members.filter(m => m.actions && m.actions.filter(a => !a.finished).length > 0).map(member => (
               <Grid item xs={12} md={6} lg={4} key={"action" + member.userID}>
                 <List>
-                  {member.actions.map((action) => (!action.finished &&
+                  {member.actions && member.actions.map((action) => (!action.finished &&
                     <ListItem divider key={"actionToCheck" + action.id} dense button >
                       <Avatar style={{ marginLeft: -15 }}>
                         {member.userID}
@@ -221,62 +222,50 @@ class NewBoard extends React.Component {
   }
 
   render() {
-    const { members, teams } = this.props;
+    const { members, teams, classes } = this.props;
     const { activeStep, newBoard } = this.state;
     const steps = getSteps();
 
-    return (<div>{members && teams && (
-      <div>
-        <AppBar style={{ position: 'relative', }}>
-          <Toolbar>
-            <Typography variant="title" color="inherit" style={{ flex: 1 }} >
-              New Retro Board
-            </Typography>
-            <Button color="inherit" onClick={this.props.updatePage} >Skip</Button>
-          </Toolbar>
-        </AppBar>
-
-        <Grid container>
-          <Grid item xs={1}></Grid>
-          <Grid item xs={10}>
-            <Stepper activeStep={activeStep} orientation="vertical">
-              {steps.map((label, index) => {
-                return (
-                  <Step key={label}>
-                    <StepLabel>{label}</StepLabel>
-                    <StepContent>
-                      {this.getStepContent(index, members, teams, newBoard)}
-                      <div style={{ paddingTop: 20 }} >
-                        <IconButton disabled={activeStep === 0} onClick={this.handleStepBack}>
-                          <ArrowUpwardRounded />
+    return (members && teams && (
+      <Grid container className={classes.root}>
+        <Grid item xs={1}></Grid>
+        <Grid item xs={10}>
+          <Stepper activeStep={activeStep} orientation="vertical">
+            {steps.map((label, index) => {
+              return (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                  <StepContent>
+                    {this.getStepContent(index, members, teams, newBoard)}
+                    <div style={{ paddingTop: 20 }} >
+                      <IconButton disabled={activeStep === 0} onClick={this.handleStepBack}>
+                        <ArrowUpwardRounded />
+                      </IconButton>
+                      {(activeStep === 0) && (
+                        <IconButton disabled={newBoard.team === null} variant="contained" color="primary" onClick={this.handleStepNext}>
+                          <ArrowDownwardRounded />
                         </IconButton>
-                        {(activeStep === 0) && (
-                          <IconButton disabled={newBoard.team === null} variant="contained" color="primary" onClick={this.handleStepNext}>
-                            <ArrowDownwardRounded />
-                          </IconButton>
-                        )}
-                        {(activeStep === 1 || activeStep === 2) && (
-                          <IconButton variant="contained" color="primary" onClick={this.handleStepNext}>
-                            <ArrowDownwardRounded />
-                          </IconButton>
-                        )}
-                        {(activeStep === 3) && (
-                          <IconButton disabled={newBoard.facilitator === null} variant="contained" color="primary"
-                            onClick={this.handleBoardStart.bind(this)}>
-                            <CheckRounded />
-                          </IconButton>
-                        )}
-                      </div>
-                    </StepContent>
-                  </Step>
-                );
-              })}
-            </Stepper>
-          </Grid>
+                      )}
+                      {(activeStep === 1 || activeStep === 2) && (
+                        <IconButton variant="contained" color="primary" onClick={this.handleStepNext}>
+                          <ArrowDownwardRounded />
+                        </IconButton>
+                      )}
+                      {(activeStep === 3) && (
+                        <IconButton disabled={newBoard.facilitator === null} variant="contained" color="primary"
+                          onClick={this.handleBoardStart.bind(this)}>
+                          <CheckRounded />
+                        </IconButton>
+                      )}
+                    </div>
+                  </StepContent>
+                </Step>
+              );
+            })}
+          </Stepper>
         </Grid>
-      </div>
-    )}</div>
-    );
+      </Grid>
+    ));
   }
 }
 
