@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -27,6 +27,15 @@ import {
   KeyboardRounded,
 } from '@material-ui/icons';
 
+// import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+
+import deepPurple from '@material-ui/core/colors/deepPurple';
+
+// const theme = createMuiTheme({
+//   palette: {
+//     primary: blue,
+//   },
+// });
 
 const styles = theme => ({
   root: {
@@ -178,7 +187,10 @@ class App extends React.Component {
 
   render() {
     const { members, board, teams, boards, team, page, selectedMember } = this.state;
-    const classes = this.state;
+    const { classes } = this.props;
+
+
+
     return (<div>
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
@@ -246,9 +258,7 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('react')
-)
-
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
 export default withStyles(styles)(App);
