@@ -2,19 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import AppBar from '@material-ui/core/AppBar';
-import Drawer from '@material-ui/core/Drawer';
-import IconButton from '@material-ui/core/IconButton';
-import Snackbar from '@material-ui/core/Snackbar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
-import Badge from '@material-ui/core/Badge';
-import deepPurple from '@material-ui/core/colors/deepPurple';
-import Tooltip from '@material-ui/core/Tooltip';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
 
 import {
   LockOutlined,
@@ -25,40 +17,12 @@ import {
 } from '@material-ui/icons';
 
 import Utils from '../Utils';
-import Pillars from '../Pillars';
-import Timer from '../Timer';
-import TeamMenu from '../TeamMenu';
 
-const drawerWidth = 82;
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
-    zIndex: 1,
-    overflow: 'hidden',
-    position: 'relative',
-    display: 'flex',
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-  },
-  pillar: {
-    height: '100%',
-  },
-  drawerPaper: {
-    position: 'relative',
-    width: drawerWidth,
-  },
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 1,
-    minWidth: 0,
-  },
-  toolbar: theme.mixins.toolbar,
-  purpleAvatar: {
-    color: '#fff',
-    backgroundColor: deepPurple[300],
+    paddingTop: theme.spacing.unit * 1,
+    paddingBottom: theme.spacing.unit * 1,
   },
 });
 
@@ -68,29 +32,46 @@ class Board extends React.Component {
 
     this.state = {
       pillars: [],
-      snackbarMessage: "",
-      snackbarOpen: false,
+      newItems: {},
     };
-
-    this.updatePillars = this.updatePillars.bind(this);
-    this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
   }
 
-  updatePillars() {
-    Utils.get(this.state.board.pillarsLink, (body => {
-      let pillars = body._embedded.pillars;
-      this.setState({ pillars });
-    }));
-  }
+  handleNewItemSave(pillarID, event) {
+    let newItems = this.state.newItems;
 
-  updateSelected(member) {
-    let updatedBoard = {
-      selected: member._links.self.href,
+    if (event && event.key === 'Enter' && newItems[pillarID] !== "") {
+      // console.log("#Pillars# board in new item save:", this.props.board);
+
+      let pillarLink = "";
+      this.props.pillars.map(pillar => {
+        if (pillar.id === pillarID) {
+          pillarLink = pillar._links.self.href;
+        }
+      });
+
+      let newItem = {
+        title: newItems[pillarID].capitalize(),
+        pillar: pillarLink,
+        onwer: this.props.board._links.facilitator.href.replace('{?projection}', ''),
+      };
+
+      Utils.postResource("items", newItem, (() => {
+        this.props.updatePillars();
+        newItems[pillarID] = "";
+        this.setState({ newItems });
+      }));
     }
-    Utils.patchResource(this.state.board, updatedBoard, (body => {
-      this.setState({ board: Utils.reformBoard(body) });
-    }));
   }
+
+  handleNewItemChange(e) {
+    let newItems = this.state.newItems;
+    newItems[e.target.name] = e.target.value;
+    this.setState(newItems);
+  }
+
+
+
+
 
   handleBoardLock() {
     let updatedBoard = { locked: true };
@@ -99,7 +80,7 @@ class Board extends React.Component {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
       this.setState({ board: Utils.reformBoard(board) });
     }));
-    this.handleSnackbarOpen("Board is LOCKED.")
+    this.props.handleSnackbarOpen("Board is LOCKED.")
   }
 
   handleBoardUnlock() {
@@ -109,18 +90,7 @@ class Board extends React.Component {
       board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
       this.setState({ board: Utils.reformBoard(board) });
     }));
-    this.handleSnackbarOpen("Board is UNLOCKED.");
-  }
-
-  handleSnackbarClose() {
-    this.setState({ snackbarOpen: false })
-  }
-
-  handleSnackbarOpen(message) {
-    this.setState({
-      snackbarOpen: true,
-      snackbarMessage: message,
-    });
+    this.props.handleSnackbarOpen("Board is UNLOCKED.");
   }
 
   handleVideoOpen(url) {
@@ -143,91 +113,50 @@ class Board extends React.Component {
 
   render() {
     const { classes, board, teams, team, members } = this.props;
-    const { pillars } = this.state;
+    const { pillars, selectedMember } = this.state;
 
-    return (<div>{board && (
-      <div className={classes.root}>
-        <AppBar position="absolute" className={classes.appBar}>
-          <Toolbar>
-            <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
-              {board.team && board.team.name && (
-                board.team.name.toUpperCase()
-              )}
-            </Typography>
+    return (
+      <Grid
+        container
+        spacing={8}
+        direction="row"
+        justify="space-between"
+        alignItems="stretch"
+      >
+        {board && board.facilitator && pillars.map((pillar) => (
+          <Grid item key={pillar.title} xs={12} sm={12} md={4} >
+            <Card wrap='nowrap'>
+              <CardHeader
+                title={pillar.title}
+                subheader={pillar.subheader}
+                titleTypographyProps={{ align: 'center' }}
+                subheaderTypographyProps={{ align: 'center' }}
+                action={null}
+              />
+              <CardContent>
+                <TextField
+                  id="createNewItem"
+                  fullWidth
+                  key={"pillar" + pillar.id}
+                  label={pillar.intro}
+                  disabled={board && board.locked}
+                  name={pillar.id}
+                  value={newItems[pillar.id]}
+                  onChange={this.handleNewItemChange.bind(this)}
+                  onKeyPress={this.handleNewItemSave.bind(this, pillar.id)}
+                />
+              </CardContent>
 
-            <div style={{ flexGrow: 1 }}>
-              <Timer board={board} />
-            </div>
-
-            <div>
-              <Tooltip title="Refresh board" placement="bottom">
-                <IconButton onClick={this.updatePillars} color="inherit">
-                  <RefreshRounded />
-                </IconButton>
-              </Tooltip>
-              {board.facilitator && board.facilitator.video && (
-                <Tooltip title="Open video chat" placement="bottom">
-                  <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
-                    <VoiceChat />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {!board.locked && (
-                <Tooltip title="Lock board" placement="bottom">
-                  <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
-                    <LockOpenOutlined />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {board.locked && (
-                <Tooltip title="Unlock board" placement="bottom">
-                  <IconButton onClick={this.handleBoardUnlock.bind(this)} color="inherit">
-                    <LockOutlined />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </div>
-          </Toolbar>
-        </AppBar>
-
-        <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
-          <div className={classes.toolbar} />
-          <div style={{ marginTop: 8 }}>
-            <TeamMenu team={team} teams={teams} updateSelectedTeam={this.props.updateSelectedTeam} />
-          </div>
-          <List component="nav" style={{ marginLeft: -6 }}>
-            {members.map(member => (
-              <ListItem key={"side" + member.userID} button
-                onClick={this.updateSelected.bind(this, member)}
-                style={{ paddingTop: 16, paddingBottom: 16 }}
-              >
-                <ListItemAvatar>
-                  {board.selected && board.selected.userID === member.userID ? (
-                    <Badge badgeContent={(<KeyboardRounded />)}>
-                      <Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>
-                    </Badge>
-                  ) : (<Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>)}
-                </ListItemAvatar>
-              </ListItem>
-            ))}
-          </List>
-        </Drawer>
-
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Pillars pillars={pillars} updatePillars={this.updatePillars} members={members} board={board} />
-        </main>
-
-        <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={this.state.snackbarOpen}
-          message={this.state.snackbarMessage}
-          onClose={this.handleSnackbarClose}
-          autoHideDuration={1500}
-          transitionDuration={400}
-        />
-      </div>
-    )}</div >
+              <Items
+                board={board}
+                pillar={pillar}
+                members={members}
+                updatePillars={this.props.updatePillars}
+              />
+            </Card>
+          </Grid>
+        ))}
+      </Grid >
     );
   }
 }

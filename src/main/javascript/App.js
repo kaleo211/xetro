@@ -1,15 +1,62 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import ReactDOM from 'react-dom';
-import Board from './components/board/Board';
 
+import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import Badge from '@material-ui/core/Badge';
 import Dialog from '@material-ui/core/Dialog';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import Slide from '@material-ui/core/Slide';
+import Snackbar from '@material-ui/core/Snackbar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Drawer from '@material-ui/core/Drawer';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 
+import Board from './components/board/Board';
+import BoardActiveList from './components/board/BoardActiveList';
 import NewBoard from './components/board/NewBoard';
 import Utils from './components/Utils';
-import BoardActiveList from './components/board/BoardActiveList';
+import Timer from './components/Timer';
+import BarSettings from './components/BarSettings';
+import TeamMenu from './components/TeamMenu';
+
+import {
+  KeyboardRounded,
+} from '@material-ui/icons';
+
 
 const styles = theme => ({
+  root: {
+    flexGrow: 1,
+    zIndex: 1,
+    overflow: 'hidden',
+    position: 'relative',
+    display: 'flex',
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  pillar: {
+    height: '100%',
+  },
+  drawerPaper: {
+    position: 'relative',
+    width: 82,
+  },
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing.unit * 1,
+    minWidth: 0,
+  },
+  toolbar: theme.mixins.toolbar,
+  purpleAvatar: {
+    color: '#fff',
+    backgroundColor: deepPurple[300],
+  },
 });
 
 function Transition(props) {
@@ -27,11 +74,16 @@ class App extends React.Component {
       boards: [],
       teams: [],
       team: null,
+      snackbarMessage: "",
+      snackbarOpen: false,
+      selectedMember: null,
     };
 
     this.updateSelectedBoard = this.updateSelectedBoard.bind(this);
     this.updateSelectedTeam = this.updateSelectedTeam.bind(this);
     this.updatePage = this.updatePage.bind(this);
+    this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
+    this.updatePillars = this.updatePillars.bind(this);
 
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
@@ -48,6 +100,28 @@ class App extends React.Component {
     //   console.log("updated members:", members);
     //   this.setState({ members });
     // }));
+  }
+
+  handleSnackbarClose() {
+    this.setState({ snackbarOpen: false })
+  }
+
+  handleSnackbarOpen(message) {
+    this.setState({
+      snackbarOpen: true,
+      snackbarMessage: message,
+    });
+  }
+
+  updatePillars() {
+    Utils.get(this.state.board.pillarsLink, (body => {
+      let pillars = body._embedded.pillars;
+      this.setState({ pillars });
+    }));
+  }
+
+  updateSelectedMember(member) {
+    this.setState({ selectedMember: member });
   }
 
   updateBoards(callback) {
@@ -93,7 +167,7 @@ class App extends React.Component {
     this.state.teams.map(team => {
       if (team.id === teamID) {
         this.setState({ team });
-        Utils.get(team._links.members.href, (body => {
+        Utils.fetchResource("teamMember/team/" + teamID, (body => {
           let members = body._embedded.members;
           console.log("#App# members after team selected:", members);
           this.setState({ members });
@@ -103,20 +177,72 @@ class App extends React.Component {
   }
 
   render() {
-    const { members, board, teams, boards, team, page } = this.state;
-    return (
-      <div>
-        <Board members={members} board={board} teams={teams} team={team} updateSelectedTeam={this.updateSelectedTeam} />
+    const { members, board, teams, boards, team, page, selectedMember } = this.state;
+    const classes = this.state;
+    return (<div>
+      <AppBar position="absolute" className={classes.appBar}>
+        <Toolbar>
+          <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
+            {board && board.name && board.name.toUpperCase()}
+          </Typography>
 
-        <Dialog fullScreen open={page === "newBoard"} TransitionComponent={Transition} >
-          <NewBoard members={members} teams={teams} updateSelectedBoard={this.updateSelectedBoard} updatePage={this.updatePage} />
-        </Dialog>
+          <div style={{ flexGrow: 1 }}>
+            <Timer board={board} />
+          </div>
 
-        <Dialog fullScreen open={page === "activeBoards"} TransitionComponent={Transition} >
-          <BoardActiveList boards={boards} updateSelectedBoard={this.updateSelectedBoard} updatePage={this.updatePage} />
-        </Dialog>
-      </div >
-    );
+          <BarSettings />
+        </Toolbar>
+      </AppBar>
+
+      <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
+        <div className={classes.toolbar} />
+        <div style={{ marginTop: 8 }}>
+          <TeamMenu team={team} teams={teams} updateSelectedTeam={this.updateSelectedTeam} />
+        </div>
+        <List component="nav" style={{ marginLeft: -6 }}>
+          {members.map(member => (
+            <ListItem key={"side" + member.userID} button
+              onClick={this.updateSelectedMember.bind(this, member)}
+              style={{ paddingTop: 16, paddingBottom: 16 }}
+            >
+              <ListItemAvatar>
+                {selectedMember && selectedMember.userID === member.userID ? (
+                  <Badge badgeContent={(<KeyboardRounded />)}>
+                    <Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>
+                  </Badge>
+                ) : (<Avatar className={board.facilitator && board.facilitator.userID === member.userID ? classes.purpleAvatar : null}>{member.userID}</Avatar>)}
+              </ListItemAvatar>
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
+
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        <Board members={members} board={board} teams={teams} team={team}
+          updateSelectedTeam={this.updateSelectedTeam}
+          handleSnackbarOpen={this.handleSnackbarOpen}
+        />
+        {/* <Pillars pillars={pillars} updatePillars={this.updatePillars} members={members} board={board} /> */}
+      </main>
+
+      <Dialog fullScreen open={page === "newBoard"} TransitionComponent={Transition} >
+        <NewBoard members={members} teams={teams} updateSelectedBoard={this.updateSelectedBoard} updatePage={this.updatePage} />
+      </Dialog>
+
+      <Dialog fullScreen open={page === "activeBoards"} TransitionComponent={Transition} >
+        <BoardActiveList boards={boards} updateSelectedBoard={this.updateSelectedBoard} updatePage={this.updatePage} />
+      </Dialog>
+
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={this.state.snackbarOpen}
+        message={this.state.snackbarMessage}
+        onClose={this.handleSnackbarClose}
+        autoHideDuration={1500}
+        transitionDuration={400}
+      />
+    </div >);
   }
 }
 
@@ -124,3 +250,5 @@ ReactDOM.render(
   <App />,
   document.getElementById('react')
 )
+
+export default withStyles(styles)(App);

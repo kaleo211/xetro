@@ -48,7 +48,7 @@ class TeamMenu extends React.Component {
         onClose={this.handleMenuClose.bind(this)}
       >
         {teams.map(t => (
-          <MenuItem onClick={this.handleTeamSelect.bind(this, t.id)}>
+          <MenuItem key={t.id} onClick={this.handleTeamSelect.bind(this, t.id)}>
             {t.name}
           </MenuItem>
         ))}
