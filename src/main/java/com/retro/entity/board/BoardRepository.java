@@ -10,6 +10,5 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @RepositoryRestResource(excerptProjection = DetailedBoard.class)
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-  List<Board> findByStarted(Boolean started);
-
+  List<Board> findByStartedAndFinished(Boolean started, Boolean finished);
 }

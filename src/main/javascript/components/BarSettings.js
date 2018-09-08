@@ -6,8 +6,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 
 import {
+  VpnKeyOutlined,
   LockOutlined,
-  LockOpenOutlined,
   VoiceChat,
   RefreshRounded,
 } from '@material-ui/icons';
@@ -21,6 +21,11 @@ class Likes extends React.Component {
     super(props);
   }
 
+  handleVideoOpen(url) {
+    let win = window.open(url, '_blank');
+    win.focus();
+  }
+
   render() {
     const { board } = this.props;
     return (
@@ -31,29 +36,27 @@ class Likes extends React.Component {
           </IconButton>
         </Tooltip>
 
-        {board && (<div>
-          {board.facilitator && board.facilitator.video && (
-            <Tooltip title="Open video chat" placement="bottom">
-              <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
-                <VoiceChat />
-              </IconButton>
-            </Tooltip>
-          )}
-          {!board.locked && (
-            <Tooltip title="Lock board" placement="bottom">
-              <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
-                <LockOpenOutlined />
-              </IconButton>
-            </Tooltip>
-          )}
-          {board.locked && (
-            <Tooltip title="Unlock board" placement="bottom">
-              <IconButton onClick={this.handleBoardUnlock.bind(this)} color="inherit">
-                <LockOutlined />
-              </IconButton>
-            </Tooltip>
-          )}
-        </div>)}
+        {board && board.facilitator && board.facilitator.video && (
+          <Tooltip title="Open video chat" placement="bottom">
+            <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
+              <VoiceChat />
+            </IconButton>
+          </Tooltip>
+        )}
+        {board && !board.locked && (
+          <Tooltip title="Lock board" placement="bottom">
+            <IconButton onClick={this.props.handleBoardLock} color="inherit">
+              <LockOutlined />
+            </IconButton>
+          </Tooltip>
+        )}
+        {board && board.locked && (
+          <Tooltip title="Unlock board" placement="bottom">
+            <IconButton onClick={this.props.handleBoardUnlock} color="inherit">
+              <VpnKeyOutlined />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
     );
   }

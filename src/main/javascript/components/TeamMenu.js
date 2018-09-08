@@ -35,10 +35,10 @@ class TeamMenu extends React.Component {
     const { team, teams } = this.props;
     const { anchorEl } = this.state;
 
-    console.log("teams in menu:", team, teams);
-
     return (<div>
-      <Button variant="outlined" component="span" onClick={this.handleClick.bind(this)} >
+      <Button fullWidth variant="contained" component="span"
+        onClick={this.handleClick.bind(this)}
+      >
         {team === null ? "TEAMS" : team.name}
       </Button>
       <Menu

@@ -11,7 +11,6 @@ import TextField from '@material-ui/core/TextField';
 import Items from '../Items';
 
 import {
-
 } from '@material-ui/icons';
 
 import Utils from '../Utils';
@@ -32,6 +31,15 @@ class Board extends React.Component {
       pillars: [],
       newItems: {},
     };
+
+    this.updatePillars = this.updatePillars.bind(this);
+  }
+
+  updatePillars() {
+    Utils.get(this.state.board.pillarsLink, (body => {
+      let pillars = body._embedded.pillars;
+      this.setState({ pillars });
+    }));
   }
 
   handleNewItemSave(pillarID, event) {
@@ -41,7 +49,7 @@ class Board extends React.Component {
       // console.log("#Pillars# board in new item save:", this.props.board);
 
       let pillarLink = "";
-      this.props.pillars.map(pillar => {
+      this.state.pillars.map(pillar => {
         if (pillar.id === pillarID) {
           pillarLink = pillar._links.self.href;
         }
@@ -54,7 +62,7 @@ class Board extends React.Component {
       };
 
       Utils.postResource("items", newItem, (() => {
-        this.props.updatePillars();
+        this.updatePillars();
         newItems[pillarID] = "";
         this.setState({ newItems });
       }));
@@ -65,31 +73,6 @@ class Board extends React.Component {
     let newItems = this.state.newItems;
     newItems[e.target.name] = e.target.value;
     this.setState({ newItems });
-  }
-
-  handleBoardLock() {
-    let updatedBoard = { locked: true };
-    Utils.patchResource(this.state.board, updatedBoard, (body => {
-      let board = body;
-      board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
-      this.setState({ board: Utils.reformBoard(board) });
-    }));
-    this.props.handleSnackbarOpen("Board is LOCKED.")
-  }
-
-  handleBoardUnlock() {
-    let updatedBoard = { locked: false };
-    Utils.patchResource(this.state.board, updatedBoard, (body => {
-      let board = body;
-      board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
-      this.setState({ board: Utils.reformBoard(board) });
-    }));
-    this.props.handleSnackbarOpen("Board is UNLOCKED.");
-  }
-
-  handleVideoOpen(url) {
-    let win = window.open(url, '_blank');
-    win.focus();
   }
 
   componentWillReceiveProps() {
@@ -143,7 +126,7 @@ class Board extends React.Component {
                 board={board}
                 pillar={pillar}
                 members={members}
-                updatePillars={this.props.updatePillars}
+                updatePillars={this.updatePillars}
               />
             </Card>
           </Grid>

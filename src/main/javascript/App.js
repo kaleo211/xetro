@@ -88,7 +88,8 @@ class App extends React.Component {
     this.updateSelectedTeam = this.updateSelectedTeam.bind(this);
     this.updatePage = this.updatePage.bind(this);
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
-    this.updatePillars = this.updatePillars.bind(this);
+    this.handleBoardUnlock = this.handleBoardUnlock.bind(this);
+    this.handleBoardLock = this.handleBoardLock.bind(this);
 
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
@@ -116,13 +117,6 @@ class App extends React.Component {
       snackbarOpen: true,
       snackbarMessage: message,
     });
-  }
-
-  updatePillars() {
-    Utils.get(this.state.board.pillarsLink, (body => {
-      let pillars = body._embedded.pillars;
-      this.setState({ pillars });
-    }));
   }
 
   updateSelectedMember(member) {
@@ -185,13 +179,50 @@ class App extends React.Component {
     });
   }
 
+
+
   handleFloatingButtonClick() {
     const { page } = this.state;
-    if (page === "") {
-      this.setState({
-        page: "newBoard",
-      })
+    switch (page) {
+      case "":
+        this.setState({ page: "newBoard" })
+        break;
+
+      case "board":
+        this.setState({ page: null });
+        this.handleBoardDone();
+        break;
+
+      default:
+        break;
     }
+  }
+
+  updateBoard(updatedBoard) {
+    Utils.patchResource(this.state.board, updatedBoard, (body => {
+      let board = body;
+      board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
+      this.setState({ board: Utils.reformBoard(board) });
+    }));
+    this.handleSnackbarOpen("Board is LOCKED.")
+  }
+
+  handleBoardLock() {
+    let updatedBoard = { locked: true };
+    this.updateBoard(updatedBoard);
+    this.handleSnackbarOpen("Board is LOCKED.")
+  }
+
+  handleBoardDone() {
+    let updatedBoard = { finished: true };
+    this.updateBoard(updatedBoard);
+    this.handleSnackbarOpen("Board is ARCHIVED.");
+  }
+
+  handleBoardUnlock() {
+    let updatedBoard = { locked: false };
+    this.updateBoard(updatedBoard);
+    this.handleSnackbarOpen("Board is UNLOCKED.");
   }
 
   render() {
@@ -209,7 +240,9 @@ class App extends React.Component {
             <Timer board={board} />
           </div>
 
-          <BarSettings />
+          <BarSettings board={board} handleBoardLock={this.handleBoardLock}
+            handleBoardUnlock={this.handleBoardUnlock}
+          />
         </Toolbar>
       </AppBar>
 
@@ -241,7 +274,6 @@ class App extends React.Component {
         {page === "board" && (
           <Board members={members} board={board} teams={teams} team={team}
             updateSelectedTeam={this.updateSelectedTeam}
-            handleSnackbarOpen={this.handleSnackbarOpen}
           />
         )}
         {page === "newBoard" && (

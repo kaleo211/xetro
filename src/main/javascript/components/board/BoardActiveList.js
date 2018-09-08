@@ -10,7 +10,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 
-import MeetingRoomOutlined from '@material-ui/icons/MeetingRoomOutlined';
+import { Forum } from '@material-ui/icons';
 
 const styles = theme => ({
 });
@@ -31,12 +31,12 @@ class ActiveBoardList extends React.Component {
         <Grid item xs={12} md={4} >
           <List>
             {boards && boards.map(board => (
-              <ListItem key={"activeBoard" + board.id} dense button >
+              <ListItem key={"activeBoard" + board.id} dense divider button >
                 <Avatar>{board.team.name}</Avatar>
                 <ListItemText primary={board.name} />
                 <ListItemSecondaryAction onClick={this.handleBoardSelect.bind(this, board)}>
                   <IconButton>
-                    <MeetingRoomOutlined />
+                    <Forum />
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>

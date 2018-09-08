@@ -23,7 +23,7 @@ public class BoardController {
 
   @RequestMapping(method = RequestMethod.GET, value = "/active", produces = "application/hal+json")
   public @ResponseBody ResponseEntity<?> getActiveBoards() {
-    List<Board> boards = repository.findByStarted(true);
+    List<Board> boards = repository.findByStartedAndFinished(true, false);
     Resources<Board> resources = new Resources<Board>(boards);
     return ResponseEntity.ok(resources);
   }
