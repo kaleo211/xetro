@@ -24,14 +24,14 @@ public class TeamMemberController {
     this.repository = repository;
   }
 
-  @GetMapping(value = "/teams/{id}", produces = "application/hal+json")
+  @GetMapping(value = "/team/{id}", produces = "application/hal+json")
   public @ResponseBody ResponseEntity<?> getMembers(@PathVariable("id") final Long id) {
     List<Member> members = repository.findMembersByTeamID(id);
     Resources<Member> resources = new Resources<Member>(members);
     return ResponseEntity.ok(resources);
   }
 
-  @GetMapping(value = "/members/{id}", produces = "application/hal+json")
+  @GetMapping(value = "/member/{id}", produces = "application/hal+json")
   public @ResponseBody ResponseEntity<?> getTeams(@PathVariable("id") final Long id) {
     List<Team> teams = repository.findTeamsByMemberID(id);
     Resources<Team> resources = new Resources<Team>(teams);

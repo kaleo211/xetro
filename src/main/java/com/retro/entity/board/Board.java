@@ -43,10 +43,6 @@ public class Board {
     @JoinColumn(name = "facilitator_id")
     private Member facilitator;
 
-    @ManyToOne
-    @JoinColumn(name = "selected_id")
-    private Member selected;
-
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Pillar> pillars;
 

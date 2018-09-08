@@ -25,8 +25,6 @@ public interface DetailedBoard {
 
   Member getFacilitator();
 
-  Member getSelected();
-
   List<Pillar> getPillars();
 
   DetailedTeam getTeam();

@@ -6,6 +6,8 @@ import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "detailedMember", types = { Member.class })
 public interface DetailedMember {
+  Long getId();
+
   String getUserID();
 
   String getFirstName();
