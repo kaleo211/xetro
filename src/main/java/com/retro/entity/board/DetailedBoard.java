@@ -3,7 +3,7 @@ package com.retro.entity.board;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.retro.entity.member.Member;
+import com.retro.entity.member.DetailedMember;
 import com.retro.entity.pillar.Pillar;
 import com.retro.entity.team.DetailedTeam;
 
@@ -23,7 +23,7 @@ public interface DetailedBoard {
 
   Timestamp getEndTime();
 
-  Member getFacilitator();
+  DetailedMember getFacilitator();
 
   List<Pillar> getPillars();
 
