@@ -12,6 +12,10 @@ export default class Board extends React.Component {
     return board;
   }
 
+  static appendLink(path) {
+    return window.location.protocol + "//" + window.location.hostname + ":8080/api/" + path;
+  }
+
   static get(url, callback) {
     if (url) {
       fetch(url.replace('{?projection}', ''))

@@ -32,7 +32,7 @@ class ActiveBoardList extends React.Component {
           <List>
             {boards && boards.map(board => (
               <ListItem key={"activeBoard" + board.id} dense divider button >
-                <Avatar>{board.team.name}</Avatar>
+                <Avatar>{board.team.name || "Unknow"}</Avatar>
                 <ListItemText primary={board.name} />
                 <ListItemSecondaryAction onClick={this.handleBoardSelect.bind(this, board)}>
                   <IconButton>

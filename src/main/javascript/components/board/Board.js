@@ -35,18 +35,10 @@ class Board extends React.Component {
     this.updatePillars = this.updatePillars.bind(this);
   }
 
-  updatePillars() {
-    Utils.get(this.state.board.pillarsLink, (body => {
-      let pillars = body._embedded.pillars;
-      this.setState({ pillars });
-    }));
-  }
-
   handleNewItemSave(pillarID, event) {
     let newItems = this.state.newItems;
-
     if (event && event.key === 'Enter' && newItems[pillarID] !== "") {
-      // console.log("#Pillars# board in new item save:", this.props.board);
+      console.log("#Board# newItems with pillarID");
 
       let pillarLink = "";
       this.state.pillars.map(pillar => {
@@ -58,8 +50,10 @@ class Board extends React.Component {
       let newItem = {
         title: newItems[pillarID].capitalize(),
         pillar: pillarLink,
-        onwer: this.props.board._links.facilitator.href.replace('{?projection}', ''),
+        owner: Utils.appendLink("members/" + this.props.selectedMember.id),
       };
+
+      console.log("updated new item", newItem);
 
       Utils.postResource("items", newItem, (() => {
         this.updatePillars();
@@ -75,22 +69,24 @@ class Board extends React.Component {
     this.setState({ newItems });
   }
 
-  componentWillReceiveProps() {
+  updatePillars() {
     let board = this.props.board;
-    if (board) {
-      board.pillarsLink = board._links.pillars.href.replace('{?projection}', '');
-      Utils.get(board.pillarsLink, (body => {
-        console.log("updating pillars with board:", board);
+    if (board && board._links && board._links.pillars) {
+      console.log("#Board# board received:", board);
+      Utils.get(board._links.pillars.href, (body => {
         let pillars = body._embedded.pillars;
         this.setState({ board: Utils.reformBoard(board), pillars });
       }));
     }
   }
 
+  componentWillReceiveProps() {
+    this.updatePillars();
+  }
+
   render() {
-    const { classes, board, teams, team, members } = this.props;
-    const { pillars, selectedMember, newItems } = this.state;
-    console.log("pillars in board:", pillars);
+    const { classes, board, selectedMember, teams, team, members } = this.props;
+    const { pillars, newItems } = this.state;
     return (
       <Grid
         container
@@ -111,7 +107,6 @@ class Board extends React.Component {
               />
               <CardContent>
                 <TextField
-                  id="createNewItem"
                   fullWidth
                   key={"pillar" + pillar.id}
                   label={pillar.intro}
