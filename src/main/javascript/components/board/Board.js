@@ -2,24 +2,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 
-import Items from '../Items';
-
 import {
+  Add,
 } from '@material-ui/icons';
 
+import Items from '../Items';
 import Utils from '../Utils';
-
 
 const styles = theme => ({
   root: {
     paddingTop: theme.spacing.unit * 1,
     paddingBottom: theme.spacing.unit * 1,
+  },
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing.unit * 10,
+    right: theme.spacing.unit * 3,
   },
 });
 
@@ -30,6 +35,7 @@ class Board extends React.Component {
     this.state = {
       pillars: [],
       newItems: {},
+      newPillar: null,
     };
 
     this.updatePillars = this.updatePillars.bind(this);
@@ -40,20 +46,11 @@ class Board extends React.Component {
     if (event && event.key === 'Enter' && newItems[pillarID] !== "") {
       console.log("#Board# newItems with pillarID");
 
-      let pillarLink = "";
-      this.state.pillars.map(pillar => {
-        if (pillar.id === pillarID) {
-          pillarLink = pillar._links.self.href;
-        }
-      });
-
       let newItem = {
         title: newItems[pillarID].capitalize(),
-        pillar: pillarLink,
+        pillar: Utils.appendLink("pillars/" + pillarID),
         owner: Utils.appendLink("members/" + this.props.selectedMember.id),
       };
-
-      console.log("updated new item", newItem);
 
       Utils.postResource("items", newItem, (() => {
         this.updatePillars();
@@ -69,13 +66,37 @@ class Board extends React.Component {
     this.setState({ newItems });
   }
 
+  handleNewPillarClick() {
+    this.setState({
+      newPillar: {
+        board: this.props.board._links.self.href,
+      },
+    });
+  }
+
+  handleNewPillarTitleChange(evt) {
+    let newPillar = this.state.newPillar;
+    newPillar.title = evt.target.value;
+    this.setState({ newPillar });
+  }
+
+  handleNewPillarAdd(evt) {
+    if (evt && evt.key === 'Enter' && this.state.newPillar.title != "") {
+      Utils.postPillar(this.state.newPillar, (body => {
+        console.log("#Board# posted new pillar:", body);
+        this.setState({ newPillar: null });
+        this.updatePillars();
+      }));
+    }
+  }
+
   updatePillars() {
     let board = this.props.board;
     if (board && board._links && board._links.pillars) {
-      console.log("#Board# board received:", board);
+      // console.log("#Board# board received:", board);
       Utils.get(board._links.pillars.href, (body => {
         let pillars = body._embedded.pillars;
-        this.setState({ board: Utils.reformBoard(board), pillars });
+        this.setState({ pillars });
       }));
     }
   }
@@ -85,9 +106,9 @@ class Board extends React.Component {
   }
 
   render() {
-    const { classes, board, selectedMember, teams, team, members } = this.props;
-    const { pillars, newItems } = this.state;
-    return (
+    const { classes, board, members } = this.props;
+    const { pillars, newItems, newPillar } = this.state;
+    return (<div>
       <Grid
         container
         spacing={8}
@@ -126,8 +147,29 @@ class Board extends React.Component {
             </Card>
           </Grid>
         ))}
+        <Grid item xs={12} sm={12} md={4} >
+          {newPillar && (
+            <Card wrap='nowrap'>
+              <CardContent>
+                <TextField
+                  fullWidth
+                  label="New title"
+                  value={newPillar.title}
+                  onChange={this.handleNewPillarTitleChange.bind(this)}
+                  onKeyPress={this.handleNewPillarAdd.bind(this)}
+                />
+              </CardContent>
+            </Card>
+          )}
+        </Grid>
       </Grid>
-    );
+
+      {newPillar === null && !board.locked && <Button mini variant="fab" className={classes.fab}
+        onClick={this.handleNewPillarClick.bind(this)}
+      >
+        <Add />
+      </Button>}
+    </div>);
   }
 }
 

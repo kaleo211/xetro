@@ -142,9 +142,14 @@ class App extends React.Component {
 
   updateActiveBoardsByTeam(teamID) {
     Utils.fetchResource("boards/active/team/" + teamID, (body => {
-      let boards = body._embedded.boards || [];
+      let boards = body && body._embedded && body._embedded.boards || [];
+      console.log("boards:", boards);
       if (boards.length === 0) {
-        this.setState({ board: null, page: "" });
+        this.setState({
+          board: null,
+          boards,
+          page: ""
+        });
       } else if (boards.length === 1) {
         let board = boards[0];
         console.log("#App# fetched board by team:", board);
@@ -169,7 +174,7 @@ class App extends React.Component {
       this.setState({
         board,
         page: "board",
-        team: board.team,
+        team: board._embedded.team,
         selectedMember: board.facilitator,
       });
     }));
@@ -215,27 +220,25 @@ class App extends React.Component {
     this.handleSnackbarOpen("Board is UNLOCKED.");
   }
 
-  handleFloatingButtonClick() {
-    const { page } = this.state;
-    switch (page) {
-      case "":
-        this.setState({ page: "newBoard" })
-        break;
+  handleBoardFinished() {
+    let updatedBoard = { finished: true };
+    Utils.patchResource(this.state.board, updatedBoard, (() => {
+      this.handleSnackbarOpen("Board is FINISHED.");
+      this.setState({
+        page: "",
+        board: null,
+      });
+    }));
+  }
 
-      case "board":
-        this.setState({ page: null });
-        this.handleBoardDone();
-        break;
-
-      default:
-        break;
-    }
+  handleBoardAdd() {
+    this.setState({ page: "newBoard" });
   }
 
   render() {
     const { members, board, teams, boards, team, page, selectedMember } = this.state;
     const { classes } = this.props;
-    console.log("page:", page);
+    console.log("page:", page, "team", team);
     return (<div className={classes.root}>
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
@@ -244,7 +247,7 @@ class App extends React.Component {
           </Typography>
 
           <div style={{ flexGrow: 1 }}>
-            {board && board.started && !board.finished && <Timer board={board} />}
+            {/* {board && board.started && !board.finished && <Timer board={board} />} */}
           </div>
 
           <BarSettings board={board} handleBoardLock={this.handleBoardLock}
@@ -285,7 +288,7 @@ class App extends React.Component {
           />
         )}
         {page === "newBoard" && (
-          <NewBoard members={members} teams={teams} updatePage={this.updatePage}
+          <NewBoard members={members} team={team} updatePage={this.updatePage}
             updateSelectedBoard={this.updateSelectedBoard}
           />
         )}
@@ -296,15 +299,16 @@ class App extends React.Component {
         )}
       </main>
 
-      {page === "" && <Button variant="fab" className={classes.fab}
-        onClick={this.handleFloatingButtonClick.bind(this)}>
-        {<Add />}
-      </Button>}
-
-      {page === "board" && <Button variant="fab" className={classes.fab}
-        onClick={this.handleFloatingButtonClick.bind(this)}>
-        {<Done />}
-      </Button>}
+      {team && (<div>
+        {page === "" && <Button variant="fab" className={classes.fab}
+          onClick={this.handleBoardAdd.bind(this)}>
+          {<Add />}
+        </Button>}
+        {page === "board" && <Button variant="fab" className={classes.fab}
+          onClick={this.handleBoardFinished.bind(this)}>
+          {<Done />}
+        </Button>}
+      </div>)}
 
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}

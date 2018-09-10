@@ -38,7 +38,7 @@ const styles = theme => ({
 
 function getSteps() {
   return [
-    'Pick a team',
+    'Put a name',
     'Pick time the retro meeting should end',
     'Check finished action items',
     'Pick facilitator'
@@ -49,6 +49,9 @@ class NewBoard extends React.Component {
   constructor(props) {
     super(props);
 
+    let now = new Date();
+    let boardName = now.getMonth() + "-" + now.getDate() + "-" + now.getFullYear();
+
     this.state = {
       open: true,
       activeStep: 0,
@@ -56,9 +59,8 @@ class NewBoard extends React.Component {
       facilitator: null,
       newBoard: {},
       boards: [],
-      teams: [],
-      team: null,
       endTime: "17:00",
+      name: boardName,
     };
   }
 
@@ -77,27 +79,18 @@ class NewBoard extends React.Component {
     }));
   };
 
-
-  updateFacilitator(idx) {
-    let newBoard = this.state.newBoard;
-    newBoard.facilitator = this.props.members[idx]._links.self.href;
-    this.setState({ newBoard });
-  }
-
   handleFacilitatorRandomPick() {
     let upLimit = this.props.members.length;
     let randomIndex = Math.floor(Math.random() * (upLimit));
-    this.updateFacilitator(randomIndex);
+    this.setState({
+      facilitator: this.props.members[randomIndex],
+    })
   }
 
   handleFacilitatorPick(idx) {
-    this.updateFacilitator(idx);
-  }
-
-  handleTeamPick(idx) {
-    let newBoard = this.state.newBoard;
-    newBoard.team = this.props.teams[idx]._links.self.href;
-    this.setState({ newBoard });
+    this.setState({
+      facilitator: this.props.members[idx],
+    })
   }
 
   getDate() {
@@ -108,56 +101,54 @@ class NewBoard extends React.Component {
   }
 
   handleBoardEndTimeChange(event) {
-    console.log("NewBoard# updated end time:", event.target.value);
+    console.log("#NewBoard# updated end time:", event.target.value);
     this.setState({
       endTime: event.target.value,
     });
   }
 
-  handleBoardStart() {
-    let newBoard = this.state.newBoard;
-    newBoard.endTime = this.getDate();
-    newBoard.started = true;
-
-    Utils.postResource("boards", newBoard, (body => {
-      console.log("NewBoard# posted board", body);
-      this.props.updateSelectedBoard();
-    }));
+  handleBoardNameChange(event) {
+    console.log("#NewBoard# updated end time:", event.target.value);
+    this.setState({
+      name: event.target.value,
+    });
   }
 
   handleActionCheck(action) {
     let updatedAction = { finished: true }
     Utils.patchResource(action, updatedAction, (() => {
       Utils.fetchResource("members", (body => {
-        console.log("NewBoard# updated members:", body);
+        console.log("#NewBoard# updated members:", body);
         this.setState({ members: body._embedded.members });
       }));
     }));
   }
 
-  getStepContent(step, members, teams, newBoard) {
+  handleBoardStart() {
+    let newBoard = this.state.newBoard;
+    newBoard.endTime = this.getDate();
+    newBoard.started = true;
+    newBoard.team = Utils.appendLink("teams/" + this.props.team.id);
+    newBoard.name = this.state.name;
+    newBoard.facilitator = this.state.facilitator._links.self.href;
+    console.log("#NewBoard# posted board", newBoard);
+
+    Utils.postResource("boards", newBoard, ((body) => {
+      console.log("#NewBoard# posted new board:", body);
+      this.props.updateSelectedBoard(body._links.self.href.match(/.*\/([0-9]+)$/)[1]);
+    }));
+  }
+
+  getStepContent(step, members, facilitator) {
     switch (step) {
       case 0:
         return (
-          <Grid container justify="flex-start" spacing={16}>
-            <Grid item>
-              <List>
-                {teams.map((team, idx) => (
-                  <ListItem divider dense button
-                    key={"team" + team.name}
-                    onClick={this.handleTeamPick.bind(this, idx)}
-                  >
-                    {newBoard.team && newBoard.team === team._links.self.href ? (
-                      <Badge badgeContent={<TransitEnterexitRounded />}>
-                        <Avatar>{team.name}</Avatar>
-                      </Badge>
-                    ) : (<Avatar>{team.name}</Avatar>)}
-                    <ListItemText primary={team.name} />
-                  </ListItem>
-                ))}
-              </List>
-            </Grid>
-          </Grid>
+          <TextField
+            autoFocus
+            label="Board name"
+            value={this.state.name}
+            onChange={this.handleBoardNameChange.bind(this)}
+          />
         )
       case 1:
         return (
@@ -206,7 +197,7 @@ class NewBoard extends React.Component {
             {members.map((member, idx) => (
               <Grid item key={"facilitator" + member.userID} >
                 <IconButton onClick={this.handleFacilitatorPick.bind(this, idx)} >
-                  {newBoard.facilitator && newBoard.facilitator === member._links.self.href ? (
+                  {facilitator && facilitator.id === member.id ? (
                     <Badge badgeContent={<TransitEnterexitRounded />}>
                       <Avatar>{member.userID}</Avatar>
                     </Badge>
@@ -222,11 +213,11 @@ class NewBoard extends React.Component {
   }
 
   render() {
-    const { members, teams, classes } = this.props;
-    const { activeStep, newBoard } = this.state;
+    const { members, classes } = this.props;
+    const { activeStep, facilitator } = this.state;
     const steps = getSteps();
 
-    return (members && teams && (
+    return (members && (
       <Grid container className={classes.root}>
         <Grid item xs={1}></Grid>
         <Grid item xs={10}>
@@ -236,23 +227,18 @@ class NewBoard extends React.Component {
                 <Step key={label}>
                   <StepLabel>{label}</StepLabel>
                   <StepContent>
-                    {this.getStepContent(index, members, teams, newBoard)}
+                    {this.getStepContent(index, members, facilitator)}
                     <div style={{ paddingTop: 20 }} >
                       <IconButton disabled={activeStep === 0} onClick={this.handleStepBack}>
                         <ArrowUpwardRounded />
                       </IconButton>
-                      {(activeStep === 0) && (
-                        <IconButton disabled={newBoard.team === null} variant="contained" color="primary" onClick={this.handleStepNext}>
-                          <ArrowDownwardRounded />
-                        </IconButton>
-                      )}
-                      {(activeStep === 1 || activeStep === 2) && (
+                      {(activeStep === 0 || activeStep === 1 || activeStep === 2) && (
                         <IconButton variant="contained" color="primary" onClick={this.handleStepNext}>
                           <ArrowDownwardRounded />
                         </IconButton>
                       )}
                       {(activeStep === 3) && (
-                        <IconButton disabled={newBoard.facilitator === null} variant="contained" color="primary"
+                        <IconButton disabled={facilitator === null} variant="contained" color="primary"
                           onClick={this.handleBoardStart.bind(this)}>
                           <CheckRounded />
                         </IconButton>

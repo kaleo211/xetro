@@ -39,7 +39,7 @@ class TeamMenu extends React.Component {
       <Button fullWidth variant="contained" component="span"
         onClick={this.handleClick.bind(this)}
       >
-        {team === null ? "TEAMS" : team.name}
+        {team ? team.name : "TEAMS"}
       </Button>
       <Menu
         id="teamMenu"
