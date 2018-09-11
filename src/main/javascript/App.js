@@ -14,6 +14,7 @@ import Drawer from '@material-ui/core/Drawer';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Button from '@material-ui/core/Button';
 import deepPurple from '@material-ui/core/colors/deepPurple';
+import IconButton from '@material-ui/core/IconButton';
 
 import Board from './components/board/Board';
 import BoardActiveList from './components/board/BoardActiveList';
@@ -22,6 +23,7 @@ import Utils from './components/Utils';
 import Timer from './components/Timer';
 import BarSettings from './components/BarSettings';
 import TeamMenu from './components/TeamMenu';
+import MemberMenu from './components/MemberMenu';
 
 import {
   Add,
@@ -69,6 +71,7 @@ class App extends React.Component {
     this.state = {
       page: "",
       members: [],
+      allMembers: [],
       board: null,
       boards: [],
       teams: [],
@@ -91,8 +94,20 @@ class App extends React.Component {
   }
 
   componentWillMount() {
+    document.body.style.margin = 0;
+
     this.updateTeams(() => { });
+    this.updateAllMembers();
   }
+
+  updateAllMembers() {
+    Utils.fetchResource("members", (body => {
+      let allMembers = body._embedded.members;
+      console.log("#App# fetched all members:", allMembers);
+      this.setState({ allMembers });
+    }));
+  }
+
 
   handleSnackbarClose() {
     this.setState({ snackbarOpen: false })
@@ -107,6 +122,17 @@ class App extends React.Component {
 
   updateSelectedMember(member) {
     this.setState({ selectedMember: member });
+  }
+
+  addMemberToTeam(memberID) {
+    let teamMember = {
+      team: Utils.appendLink("teams/" + this.state.team.id),
+      member: Utils.appendLink("members/" + memberID),
+    }
+    Utils.postTeamMember(teamMember, (body => {
+      console.log("#App# returned posted association:", body);
+      this.updateSelectedTeam(this.state.team.id);
+    }));
   }
 
   updatePage(page) {
@@ -236,7 +262,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { members, board, teams, boards, team, page, selectedMember } = this.state;
+    const { members, board, teams, boards, team, page, selectedMember, allMembers } = this.state;
     const { classes } = this.props;
     console.log("page:", page, "team", team);
     return (<div className={classes.root}>
@@ -251,8 +277,7 @@ class App extends React.Component {
           </div>
 
           <BarSettings board={board} handleBoardLock={this.handleBoardLock}
-            handleBoardUnlock={this.handleBoardUnlock}
-          />
+            handleBoardUnlock={this.handleBoardUnlock} />
         </Toolbar>
       </AppBar>
 
@@ -277,6 +302,9 @@ class App extends React.Component {
             </ListItem>
           ))}
         </List>
+        <div style={{ marginLeft: 13 }}>
+          <MemberMenu members={allMembers} team={team} addMemberToTeam={this.addMemberToTeam.bind(this)} />
+        </div>
       </Drawer>
 
       <main className={classes.content}>
@@ -284,18 +312,15 @@ class App extends React.Component {
         {page === "board" && (
           <Board board={board} teams={teams} team={team}
             members={members} selectedMember={selectedMember}
-            updateSelectedTeam={this.updateSelectedTeam}
-          />
+            updateSelectedTeam={this.updateSelectedTeam} />
         )}
         {page === "newBoard" && (
           <NewBoard members={members} team={team} updatePage={this.updatePage}
-            updateSelectedBoard={this.updateSelectedBoard}
-          />
+            updateSelectedBoard={this.updateSelectedBoard} />
         )}
         {page === "activeBoards" && (
           <BoardActiveList boards={boards} updatePage={this.updatePage}
-            updateSelectedBoard={this.updateSelectedBoard}
-          />
+            updateSelectedBoard={this.updateSelectedBoard} />
         )}
       </main>
 

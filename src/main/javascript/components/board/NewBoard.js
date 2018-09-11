@@ -145,7 +145,6 @@ class NewBoard extends React.Component {
         return (
           <TextField
             autoFocus
-            label="Board name"
             value={this.state.name}
             onChange={this.handleBoardNameChange.bind(this)}
           />

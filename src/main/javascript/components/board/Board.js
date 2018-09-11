@@ -113,7 +113,7 @@ class Board extends React.Component {
         container
         spacing={8}
         direction="row"
-        justify="space-between"
+        justify="flex-start"
         alignItems="stretch"
       >
         {board && board.facilitator && pillars.map((pillar) => (
@@ -152,6 +152,7 @@ class Board extends React.Component {
             <Card wrap='nowrap'>
               <CardContent>
                 <TextField
+                  autoFocus
                   fullWidth
                   label="New title"
                   value={newPillar.title}

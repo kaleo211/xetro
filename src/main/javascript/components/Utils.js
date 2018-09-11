@@ -64,6 +64,10 @@ export default class Board extends React.Component {
     this.postResource("pillars", pillar, callback);
   }
 
+  static postTeamMember(teamMember, callback) {
+    this.postResource("teamMember", teamMember, callback);
+  }
+
   static postResource(resourceType, resource, callback) {
     let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
     fetch(url, {
