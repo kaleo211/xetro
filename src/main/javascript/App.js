@@ -14,7 +14,6 @@ import Drawer from '@material-ui/core/Drawer';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Button from '@material-ui/core/Button';
 import deepPurple from '@material-ui/core/colors/deepPurple';
-import IconButton from '@material-ui/core/IconButton';
 
 import Board from './components/board/Board';
 import BoardActiveList from './components/board/BoardActiveList';
@@ -24,6 +23,9 @@ import Timer from './components/Timer';
 import BarSettings from './components/BarSettings';
 import TeamMenu from './components/TeamMenu';
 import MemberMenu from './components/MemberMenu';
+
+import { fetchTeams } from './actions/teamActions';
+import { connect } from 'react-redux';
 
 import {
   Add,
@@ -74,7 +76,6 @@ class App extends React.Component {
       allMembers: [],
       board: null,
       boards: [],
-      teams: [],
       team: null,
       snackbarMessage: "",
       snackbarOpen: false,
@@ -94,6 +95,8 @@ class App extends React.Component {
   }
 
   componentWillMount() {
+    this.props.fetchTeams();
+
     document.body.style.margin = 0;
 
     this.updateTeams(() => { });
@@ -107,7 +110,6 @@ class App extends React.Component {
       this.setState({ allMembers });
     }));
   }
-
 
   handleSnackbarClose() {
     this.setState({ snackbarOpen: false })
@@ -149,7 +151,7 @@ class App extends React.Component {
   }
 
   updateSelectedTeam(teamID) {
-    this.state.teams.map(team => {
+    this.props.teams.map(team => {
       if (team.id === teamID) {
         this.setState({ team });
 
@@ -262,10 +264,12 @@ class App extends React.Component {
   }
 
   render() {
-    const { members, board, teams, boards, team, page, selectedMember, allMembers } = this.state;
-    const { classes } = this.props;
-    console.log("page:", page, "team", team);
-    return (<div className={classes.root}>
+    const { members, board, boards, team, page, selectedMember, allMembers } = this.state;
+    const { classes, teams } = this.props;
+
+    console.log("page:", page, "teams", teams);
+
+    return (teams && <div className={classes.root}>
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
           <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
@@ -347,7 +351,11 @@ class App extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  teams: state.teams.teams
+});
+
 App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(App);
+export default connect(mapStateToProps, { fetchTeams })(withStyles(styles)(App));
