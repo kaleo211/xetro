@@ -7,6 +7,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Add from '@material-ui/icons/Add';
 
+import { addMemberToTeam } from '../actions/teamActions';
+import { connect } from 'react-redux';
+
 const styles = theme => ({
 });
 
@@ -27,8 +30,8 @@ class MemberMenu extends React.Component {
     this.setState({ anchorEl: null });
   }
 
-  handleMemberSelect(memberID) {
-    this.props.addMemberToTeam(memberID);
+  handleMemberToAdd(memberID) {
+    this.props.addMemberToTeam(this.team.id, memberID);
     this.handleMenuClose();
   }
 
@@ -47,7 +50,7 @@ class MemberMenu extends React.Component {
         onClose={this.handleMenuClose.bind(this)}
       >
         {members.map(member => (
-          <MenuItem key={member.id} onClick={this.handleMemberSelect.bind(this, member.id)}>
+          <MenuItem key={member.id} onClick={this.handleMemberToAdd.bind(this, member.id)}>
             {member.userID}
           </MenuItem>
         ))}
@@ -56,7 +59,12 @@ class MemberMenu extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  team: state.teams.team,
+  members: state.teams.members,
+});
+
 MemberMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(MemberMenu);
+export default connect(mapStateToProps, { addMemberToTeam })(withStyles(styles)(MemberMenu));

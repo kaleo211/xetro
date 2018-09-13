@@ -12,6 +12,13 @@ export default class Board extends React.Component {
     return board;
   }
 
+  static reformTeam(team) {
+    if (team._embedded) {
+      team.boards = team._embedded.boards;
+    }
+    return team;
+  }
+
   static appendLink(path) {
     return window.location.protocol + "//" + window.location.hostname + ":8080/api/" + path;
   }

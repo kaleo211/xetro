@@ -24,7 +24,7 @@ import BarSettings from './components/BarSettings';
 import TeamMenu from './components/TeamMenu';
 import MemberMenu from './components/MemberMenu';
 
-import { fetchTeams } from './actions/teamActions';
+import { fetchTeams, selectTeam } from './actions/teamActions';
 import { connect } from 'react-redux';
 
 import {
@@ -72,11 +72,9 @@ class App extends React.Component {
 
     this.state = {
       page: "",
-      members: [],
       allMembers: [],
       board: null,
       boards: [],
-      team: null,
       snackbarMessage: "",
       snackbarOpen: false,
       selectedMember: null,
@@ -95,18 +93,15 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    this.props.fetchTeams();
-
     document.body.style.margin = 0;
 
-    this.updateTeams(() => { });
+    this.props.fetchTeams();
     this.updateAllMembers();
   }
 
   updateAllMembers() {
     Utils.fetchResource("members", (body => {
       let allMembers = body._embedded.members;
-      console.log("#App# fetched all members:", allMembers);
       this.setState({ allMembers });
     }));
   }
@@ -126,46 +121,29 @@ class App extends React.Component {
     this.setState({ selectedMember: member });
   }
 
-  addMemberToTeam(memberID) {
-    let teamMember = {
-      team: Utils.appendLink("teams/" + this.state.team.id),
-      member: Utils.appendLink("members/" + memberID),
-    }
-    Utils.postTeamMember(teamMember, (body => {
-      console.log("#App# returned posted association:", body);
-      this.updateSelectedTeam(this.state.team.id);
-    }));
-  }
-
   updatePage(page) {
     this.setState({ page });
     this.updateBoards(() => { });
   }
 
-  updateTeams(callback) {
-    console.log("fetching teams");
-    Utils.fetchResource("teams", (body => {
-      let teams = body._embedded.teams;
-      this.setState({ teams }, callback(teams));
-    }));
-  }
-
   updateSelectedTeam(teamID) {
-    this.props.teams.map(team => {
-      if (team.id === teamID) {
-        this.setState({ team });
+    this.props.selectTeam(teamID);
 
-        // Fetch all members of this team
-        Utils.fetchResource("teamMember/team/" + teamID, (body => {
-          let members = body._embedded.members;
-          // console.log("#App# members after team selected:", members);
-          this.setState({ members });
-        }));
+    // this.props.teams.map(team => {
+    //   if (team.id === teamID) {
+    //     this.setState({ team });
 
-        // Fetch all active boards belongs to this team
-        this.updateActiveBoardsByTeam(teamID);
-      }
-    });
+    //     // Fetch all members of this team
+    //     Utils.fetchResource("teamMember/team/" + teamID, (body => {
+    //       let members = body._embedded.members;
+    //       // console.log("#App# members after team selected:", members);
+    //       this.setState({ members });
+    //     }));
+
+    //     // Fetch all active boards belongs to this team
+    //     this.updateActiveBoardsByTeam(teamID);
+    //   }
+    // });
   }
 
   updateActiveBoardsByTeam(teamID) {
@@ -264,12 +242,11 @@ class App extends React.Component {
   }
 
   render() {
-    const { members, board, boards, team, page, selectedMember, allMembers } = this.state;
-    const { classes, teams } = this.props;
+    const { board, boards, page, selectedMember, allMembers } = this.state;
+    const { classes, teams, members, team } = this.props;
 
-    console.log("page:", page, "teams", teams);
-
-    return (teams && <div className={classes.root}>
+    console.log("page:", page, "teams", teams, "members", members, "team", team);
+    return (teams && members && <div className={classes.root}>
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
           <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
@@ -307,7 +284,7 @@ class App extends React.Component {
           ))}
         </List>
         <div style={{ marginLeft: 13 }}>
-          <MemberMenu members={allMembers} team={team} addMemberToTeam={this.addMemberToTeam.bind(this)} />
+          <MemberMenu members={allMembers} team={team} />
         </div>
       </Drawer>
 
@@ -352,10 +329,12 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  teams: state.teams.teams
+  teams: state.teams.teams,
+  team: state.teams.team,
+  members: state.teams.members,
 });
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, { fetchTeams })(withStyles(styles)(App));
+export default connect(mapStateToProps, { fetchTeams, selectTeam })(withStyles(styles)(App));

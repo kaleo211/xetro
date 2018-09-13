@@ -6,6 +6,9 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
+import { selectTeam } from '../actions/teamActions';
+import { connect } from 'react-redux';
+
 const styles = theme => ({
 });
 
@@ -27,7 +30,7 @@ class TeamMenu extends React.Component {
   };
 
   handleTeamSelect(teamID) {
-    this.props.updateSelectedTeam(teamID);
+    this.props.selectTeam(teamID);
     this.handleMenuClose();
   }
 
@@ -57,7 +60,12 @@ class TeamMenu extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  team: state.teams.team,
+  teams: state.teams.teams,
+});
+
 TeamMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(TeamMenu);
+export default connect(mapStateToProps, { selectTeam })(withStyles(styles)(TeamMenu));
