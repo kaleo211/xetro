@@ -1,4 +1,6 @@
 export const SHOW_PAGE = 'SHOW_PAGE';
+export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
+export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const FETCH_TEAMS = 'FETCH_TEAMS';
 export const SELECT_TEAM = 'SELECT_TEAM';

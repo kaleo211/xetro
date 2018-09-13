@@ -1,6 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
@@ -24,13 +25,15 @@ import BarSettings from './components/BarSettings';
 import TeamMenu from './components/TeamMenu';
 import MemberMenu from './components/MemberMenu';
 
-import { fetchActiveBoards, updateSelectedMember, patchBoard } from './actions/boardActions';
+import {
+  fetchActiveBoards,
+  updateSelectedMember,
+  patchBoard
+} from './actions/boardActions';
 import { fetchTeams } from './actions/teamActions';
-
-import { connect } from 'react-redux';
+import { showPage, openSnackBar, closeSnackBar } from './actions/localActions';
 
 import {
-  Add,
   Done,
   KeyboardRounded,
 } from '@material-ui/icons';
@@ -79,8 +82,6 @@ class App extends React.Component {
     };
 
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
-    this.handleBoardUnlock = this.handleBoardUnlock.bind(this);
-    this.handleBoardLock = this.handleBoardLock.bind(this);
 
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
@@ -105,40 +106,21 @@ class App extends React.Component {
     this.setState({ snackbarOpen: false })
   }
 
-  handleSnackbarOpen(message) {
-    this.setState({
-      snackbarOpen: true,
-      snackbarMessage: message,
-    });
-  }
-
   handleMemberSelect(memberID) {
     this.props.updateSelectedMember(memberID);
-  }
-
-  handleBoardLock() {
-    let updatedBoard = { locked: true };
-    this.props.patchBoard(this.props.board, updatedBoard);
-    this.handleSnackbarOpen("Board is LOCKED.")
-  }
-
-  handleBoardUnlock() {
-    let updatedBoard = { locked: false };
-    this.props.patchBoard(this.props.board, updatedBoard);
-    this.handleSnackbarOpen("Board is UNLOCKED.");
   }
 
   handleBoardFinish() {
     let updatedBoard = { finished: true };
     this.props.patchBoard(this.props.board, updatedBoard);
     this.props.showPage("boardCreate");
-    this.handleSnackbarOpen("Board is ARCHIVED.");
+    this.props.openSnackbar("Board is ARCHIVED.");
   }
 
   render() {
     const { page, board, classes, teams, members, team, selectedMember } = this.props;
     console.log("page:", page, "teams", teams, "members", members, "team", team);
-
+    console.log("snackbar:", this.props.snackbarOpen)
     return (teams && members && <div className={classes.root}>
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
@@ -150,8 +132,7 @@ class App extends React.Component {
             {/* {board && board.started && !board.finished && <Timer board={board} />} */}
           </div>
 
-          <BarSettings board={board} handleBoardLock={this.handleBoardLock}
-            handleBoardUnlock={this.handleBoardUnlock} />
+          <BarSettings />
         </Toolbar>
       </AppBar>
 
@@ -197,9 +178,9 @@ class App extends React.Component {
 
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={this.state.snackbarOpen}
-        message={this.state.snackbarMessage}
-        onClose={this.handleSnackbarClose}
+        open={this.props.snackbarOpen}
+        message={this.props.snackbarMessage}
+        onClose={this.props.closeSnackBar}
         autoHideDuration={1500}
         transitionDuration={400}
       />
@@ -213,7 +194,9 @@ const mapStateToProps = state => ({
   members: state.teams.members,
   board: state.boards.board,
   page: state.local.page,
-  selectedMember: state.boards.selectedMember
+  selectedMember: state.boards.selectedMember,
+  snackbarOpen: state.local.snackbarOpen,
+  snackbarMessage: state.local.snackbarMessage,
 });
 
 App.propTypes = {
@@ -222,6 +205,9 @@ App.propTypes = {
 export default connect(mapStateToProps, {
   fetchTeams,
   patchBoard,
+  showPage,
   fetchActiveBoards,
-  updateSelectedMember
+  updateSelectedMember,
+  openSnackBar,
+  closeSnackBar,
 })(withStyles(styles)(App));

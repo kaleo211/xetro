@@ -1,7 +1,13 @@
-import { SHOW_PAGE } from '../actions/types';
+import {
+  SHOW_PAGE,
+  CLOSE_SNACKBAR,
+  OPEN_SNACKBAR,
+} from '../actions/types';
 
 const initialState = {
   page: "",
+  snackbarOpen: false,
+  snackbarMessage: "",
 };
 
 export default function (state = initialState, action) {
@@ -10,6 +16,19 @@ export default function (state = initialState, action) {
       return {
         ...state,
         page: action.page
+      };
+
+    case OPEN_SNACKBAR:
+      return {
+        ...state,
+        snackbarMessage: action.snackbarMessage,
+        snackbarOpen: action.snackbarOpen
+      };
+
+    case CLOSE_SNACKBAR:
+      return {
+        ...state,
+        snackbarOpen: action.snackbarOpen
       };
 
     default:

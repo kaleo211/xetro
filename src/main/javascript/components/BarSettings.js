@@ -1,6 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,11 +13,13 @@ import {
   RefreshRounded,
 } from '@material-ui/icons';
 
-const styles = theme => ({
+import { patchBoard } from '../actions/boardActions';
+import { openSnackBar, closeSnackBar } from '../actions/localActions';
 
+const styles = theme => ({
 });
 
-class Likes extends React.Component {
+class BarSettings extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -24,6 +27,18 @@ class Likes extends React.Component {
   handleVideoOpen(url) {
     let win = window.open(url, '_blank');
     win.focus();
+  }
+
+  handleBoardLock() {
+    let updatedBoard = { locked: true };
+    this.props.patchBoard(this.props.board, updatedBoard);
+    this.props.openSnackBar("Board is LOCKED.")
+  }
+
+  handleBoardUnlock() {
+    let updatedBoard = { locked: false };
+    this.props.patchBoard(this.props.board, updatedBoard);
+    this.props.openSnackBar("Board is UNLOCKED.");
   }
 
   render() {
@@ -45,14 +60,14 @@ class Likes extends React.Component {
         )}
         {board && !board.locked && (
           <Tooltip title="Lock board" placement="bottom">
-            <IconButton onClick={this.props.handleBoardLock} color="inherit">
+            <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
               <LockOutlined />
             </IconButton>
           </Tooltip>
         )}
         {board && board.locked && (
           <Tooltip title="Unlock board" placement="bottom">
-            <IconButton onClick={this.props.handleBoardUnlock} color="inherit">
+            <IconButton onClick={this.handleBoardUnlock.bind(this)} color="inherit">
               <VpnKeyOutlined />
             </IconButton>
           </Tooltip>
@@ -62,7 +77,15 @@ class Likes extends React.Component {
   }
 }
 
-Likes.propTypes = {
+const mapStateToProps = state => ({
+  board: state.boards.board
+});
+
+BarSettings.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(Likes);
+export default connect(mapStateToProps, {
+  patchBoard,
+  openSnackBar,
+  closeSnackBar,
+})(withStyles(styles)(BarSettings));
