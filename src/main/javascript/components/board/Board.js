@@ -19,6 +19,7 @@ import { Add } from '@material-ui/icons';
 
 import Items from '../Items';
 import Utils from '../Utils';
+import { openSnackBar, closeSnackBar } from '../../actions/localActions';
 
 const styles = theme => ({
   root: {
@@ -49,17 +50,21 @@ class Board extends React.Component {
     if (event && event.key === 'Enter' && newItems[pillarID] !== "") {
       console.log("#Board# newItems with pillarID");
 
-      let newItem = {
-        title: newItems[pillarID].capitalize(),
-        pillar: Utils.appendLink("pillars/" + pillarID),
-        owner: Utils.appendLink("members/" + this.props.selectedMember.id),
-      };
+      if (this.props.selectedMember) {
+        let newItem = {
+          title: newItems[pillarID].capitalize(),
+          pillar: Utils.appendLink("pillars/" + pillarID),
+          owner: Utils.appendLink("members/" + this.props.selectedMember.id),
+        };
 
-      Utils.postResource("items", newItem, (() => {
-        this.updatePillars();
-        newItems[pillarID] = "";
-        this.setState({ newItems });
-      }));
+        Utils.postResource("items", newItem, (() => {
+          this.updatePillars();
+          newItems[pillarID] = "";
+          this.setState({ newItems });
+        }));
+      } else {
+        this.props.openSnackBar("please select item owner");
+      }
     }
   }
 
@@ -182,5 +187,7 @@ Board.propTypes = {
 };
 export default connect(mapStateToProps, {
   fetchTeamActiveBoards,
-  selectBoard
+  selectBoard,
+  openSnackBar,
+  closeSnackBar,
 })(withStyles(styles)(Board));

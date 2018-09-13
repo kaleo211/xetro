@@ -1,4 +1,4 @@
-import { SHOW_PAGE, OPEN_SNACKBAR, CLOSE_SNACKBAR } from './types';
+import { SHOW_PAGE, OPEN_SNACKBAR, CLOSE_SNACKBAR, SELECT_ITEM } from './types';
 
 export const showPage = (page) => dispatch => {
   dispatch({
@@ -21,4 +21,11 @@ export const closeSnackBar = () => dispatch => {
     type: CLOSE_SNACKBAR,
     snackbarOpen: false
   });
+}
+
+export const selectItem = (item) => dispatch => {
+  dispatch({
+    type: SELECT_ITEM,
+    selectedItemID: item
+  })
 }

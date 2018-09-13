@@ -1,6 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import Avatar from '@material-ui/core/Avatar';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -19,6 +20,10 @@ import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-u
 
 import Likes from './Likes';
 import Utils from './Utils';
+
+import { openSnackBar, closeSnackBar, selectItem } from '../actions/localActions';
+import { patchItem, deleteItem, postAction, patchAction } from '../actions/itemActions';
+import { selectBoard } from '../actions/boardActions';
 
 const styles = theme => ({
   item: {
@@ -40,7 +45,6 @@ class Items extends React.Component {
       progressTimer: null,
       itemProgress: 0,
       secondsPerItem: 300,
-      selectedItem: null,
     }
   }
 
@@ -54,7 +58,7 @@ class Items extends React.Component {
   }
 
   updateItemProgress = () => {
-    let item = this.state.selectedItem;
+    let item = this.props.selectedItemID;
     if (item && item.startTime) {
       let seconds = Math.floor((new Date().getTime() - new Date(item.startTime).getTime()) / 1000);
       if (seconds > this.state.secondsPerItem) {
@@ -72,16 +76,26 @@ class Items extends React.Component {
     if (this.state.newAction !== "") {
       this.saveAction(item);
     }
-    let updatedItem = { checked: true }
-    Utils.patchResource(item, updatedItem, (() => {
-      this.props.updatePillars();
-    }));
+    this.props.patchItem(item, { checked: true })
+      .then(() => {
+        this.props.selectBoard(this.props.board.id);
+      });
   }
 
-  handleItemDelete(item) {
-    Utils.deleteResource(item, (() => {
-      this.props.updatePillars();
-    }));
+  handleItemDelete(itemID) {
+    this.props.deleteItem(itemID);
+  }
+
+  handleStartItem(item, evt) {
+    evt.stopPropagation();
+    let updatedItem = {
+      started: true,
+      startTime: new Date(),
+    };
+    this.props.patchItem(item, updatedItem)
+      .then(() => {
+        this.props.selectBoard(this.props.board.id);
+      });
   }
 
   // Owner
@@ -90,12 +104,7 @@ class Items extends React.Component {
 
     let action = item.action;
     if (action && action._links) {
-      let updatedAction = {
-        member: owner._links.self.href,
-      }
-      Utils.patchResource(action, updatedAction, (() => {
-        this.props.updatePillars();
-      }));
+      this.props.patchAction("actions", { member: owner._links.self.href, })
     }
   }
 
@@ -114,13 +123,9 @@ class Items extends React.Component {
   // Like
   handleNewLikeSave(item, event) {
     event.stopPropagation();
-    let updatedItem = {
-      title: item.title,
-      likes: item.likes + 1,
-    }
-    Utils.patchResource(item, updatedItem, (body => {
-      this.props.updatePillars();
-    }));
+    this.props.patchItem(item, { likes: item.likes + 1, }).then(() => {
+      this.props.selectBoard(this.props.board.id);
+    });
   }
 
   // Action
@@ -130,10 +135,12 @@ class Items extends React.Component {
       item: item._links.self.href,
       team: this.props.board.team._links.self.href,
     }
-    Utils.postResource("actions", newAction, (data => {
-      this.props.updatePillars();
-      this.setState({ newAction: "" });
-    }));
+
+    this.props.postAction(newAction)
+      .then(() => {
+        this.props.selectBoard(this.props.board.id);
+        this.setState({ newAction: "" });
+      })
   }
 
   handleNewActionSave(item, event) {
@@ -148,35 +155,19 @@ class Items extends React.Component {
     });
   }
 
-  // Toggle
-  handleItemExpandToggle = item => (event, expanded) => {
-    // console.log("expanded:", expanded, item);
-    // this.setState({
-    //   selectedItem: expanded ? null : item,
-    // });
-  };
-
-  handleStartItem(item, evt) {
-    evt.stopPropagation();
-    let updatedItem = {
-      started: true,
-      startTime: new Date(),
-    };
-    Utils.patchResource(item, updatedItem, (() => {
-      this.props.updatePillars();
-    }));
-
-    this.updateSelectedItem(item);
+  handleItemSelect(itemID) {
+    this.props.selectItem(itemID);
   }
 
   render() {
-    const { pillar, board, members, classes } = this.props;
-    const { selectedItem, newAction, ownerAnchorEl } = this.state;
+    const { selectedItemID, pillar, board, members, classes } = this.props;
+    const { newAction, ownerAnchorEl } = this.state;
+
     return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item.id}
-        expanded={selectedItem && selectedItem.id === item.id}
-        onChange={this.handleItemExpandToggle(item)}
+        expanded={selectedItemID === item.id}
+        onChange={this.handleItemSelect.bind(this, item.id)}
       >
         <ExpansionPanelSummary>
           <Grid container>
@@ -253,7 +244,7 @@ class Items extends React.Component {
                       <Done />
                     </IconButton>
                     {board && !board.locked && (
-                      <IconButton onClick={this.handleItemDelete.bind(this, item)}>
+                      <IconButton onClick={this.handleItemDelete.bind(this, item.id)}>
                         <DeleteOutline />
                       </IconButton>
                     )}
@@ -261,7 +252,7 @@ class Items extends React.Component {
                 )}
               </Grid>
             </Grid>
-            {board.locked && selectedItem && selectedItem.id === item.id && !item.checked && item.started && (
+            {board.locked && selectedItemID === item.id && !item.checked && item.started && (
               <Grid item style={{ paddingTop: 8 }}>
                 <LinearProgress variant="determinate" value={this.state.itemProgress} />
               </Grid>
@@ -273,7 +264,23 @@ class Items extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  board: state.boards.board,
+  members: state.teams.members,
+  selectedMember: state.boards.selectedMember,
+  teams: state.teams.teams,
+  team: state.teams.team,
+  selectedItemID: state.local.selectedItemID,
+});
+
 Items.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(Items);
+export default connect(mapStateToProps, {
+  patchItem,
+  deleteItem,
+  postAction,
+  selectBoard,
+  patchAction,
+  selectItem,
+})(withStyles(styles)(Items));

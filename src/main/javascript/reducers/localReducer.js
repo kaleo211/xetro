@@ -2,12 +2,14 @@ import {
   SHOW_PAGE,
   CLOSE_SNACKBAR,
   OPEN_SNACKBAR,
+  SELECT_ITEM,
 } from '../actions/types';
 
 const initialState = {
   page: "",
   snackbarOpen: false,
   snackbarMessage: "",
+  selectedItemID: null,
 };
 
 export default function (state = initialState, action) {
@@ -29,6 +31,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         snackbarOpen: action.snackbarOpen
+      };
+
+    case SELECT_ITEM:
+      return {
+        ...state,
+        selectedItemID: action.selectedItemID
       };
 
     default:

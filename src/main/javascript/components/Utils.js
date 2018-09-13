@@ -45,6 +45,21 @@ export default class Board extends React.Component {
     }
   }
 
+  static delete(resource, callback) {
+    let url = this.appendLink(resource);
+    fetch(url, {
+      method: 'delete',
+    }).then(resp => {
+      if (!resp.ok) {
+        throw new Error("failed to delete:", url);
+      }
+    }).then(data => {
+      callback(data);
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
   static deleteResource(resource, callback) {
     let url = resource._links.self.href.replace('{?projection}', '');
     fetch(url, {
@@ -101,6 +116,27 @@ export default class Board extends React.Component {
     });
   }
 
+  static patch(resource, updatedResource, callback) {
+    let url = this.appendLink(resource);
+    if (url) {
+      fetch(url, {
+        method: 'PATCH',
+        body: JSON.stringify(updatedResource),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+      }).then(resp => {
+        if (resp.ok) {
+          return resp.json();
+        } else {
+          throw new Error("failed to patch:", resource, updatedResource);
+        }
+      }).then(data => {
+        callback(data);
+      });
+    }
+  }
+
   static patchResource(resource, updatedResource, callback) {
     let url = this.getSelfLink(resource);
     if (url) {
@@ -120,6 +156,5 @@ export default class Board extends React.Component {
         callback(data);
       });
     }
-
   }
 }
