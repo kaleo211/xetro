@@ -9,5 +9,7 @@ public class BoardRestConfig extends RepositoryRestConfigurerAdapter {
   @Override
   public void configureRepositoryRestConfiguration(RepositoryRestConfiguration repositoryRestConfiguration) {
     repositoryRestConfiguration.getProjectionConfiguration().addProjection(DetailedBoard.class);
+
+    repositoryRestConfiguration.exposeIdsFor(Board.class);
   }
 }

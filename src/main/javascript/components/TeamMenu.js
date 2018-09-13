@@ -1,13 +1,15 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
 import { selectTeam } from '../actions/teamActions';
-import { connect } from 'react-redux';
+import { fetchTeamActiveBoards, selectBoard } from '../actions/boardActions';
+import { showPage } from '../actions/localActions';
 
 const styles = theme => ({
 });
@@ -31,6 +33,20 @@ class TeamMenu extends React.Component {
 
   handleTeamSelect(teamID) {
     this.props.selectTeam(teamID);
+    this.props.fetchTeamActiveBoards(teamID)
+      .then((boards) => {
+        if (boards) {
+          if (boards.length === 0) {
+            this.props.showPage("boardCreate")
+          } else if (boards.length === 1) {
+            console.log("active ------- board:", boards[0])
+            this.props.selectBoard(boards[0].id)
+            this.props.showPage("board");
+          } else {
+            this.props.showPage("activeBoards");
+          }
+        }
+      });
     this.handleMenuClose();
   }
 
@@ -68,4 +84,4 @@ const mapStateToProps = state => ({
 TeamMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, { selectTeam })(withStyles(styles)(TeamMenu));
+export default connect(mapStateToProps, { selectTeam, selectBoard, showPage, fetchTeamActiveBoards })(withStyles(styles)(TeamMenu));

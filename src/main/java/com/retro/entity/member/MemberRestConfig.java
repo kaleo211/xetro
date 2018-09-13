@@ -9,5 +9,6 @@ public class MemberRestConfig extends RepositoryRestConfigurerAdapter {
   @Override
   public void configureRepositoryRestConfiguration(RepositoryRestConfiguration repositoryRestConfiguration) {
     repositoryRestConfiguration.getProjectionConfiguration().addProjection(DetailedMember.class);
+    repositoryRestConfiguration.exposeIdsFor(Member.class);
   }
 }

@@ -9,9 +9,10 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 
-import {
-  Add,
-} from '@material-ui/icons';
+import { fetchTeamActiveBoards, selectBoard } from '../../actions/boardActions';
+import { connect } from 'react-redux';
+
+import { Add } from '@material-ui/icons';
 
 import Items from '../Items';
 import Utils from '../Utils';
@@ -33,7 +34,6 @@ class Board extends React.Component {
     super(props);
 
     this.state = {
-      pillars: [],
       newItems: {},
       newPillar: null,
     };
@@ -91,24 +91,16 @@ class Board extends React.Component {
   }
 
   updatePillars() {
-    let board = this.props.board;
-    if (board && board._links && board._links.pillars) {
-      // console.log("#Board# board received:", board);
-      Utils.get(board._links.pillars.href, (body => {
-        let pillars = body._embedded.pillars;
-        this.setState({ pillars });
-      }));
-    }
-  }
-
-  componentWillReceiveProps() {
-    this.updatePillars();
+    this.props.selectBoard(this.props.board.id);
   }
 
   render() {
     const { classes, board, members } = this.props;
-    const { pillars, newItems, newPillar } = this.state;
-    return (<div>
+    const { newItems, newPillar } = this.state;
+
+    console.log("#Board# board:", board);
+
+    return (board && <div>
       <Grid
         container
         spacing={8}
@@ -116,7 +108,7 @@ class Board extends React.Component {
         justify="flex-start"
         alignItems="stretch"
       >
-        {board && board.facilitator && pillars.map((pillar) => (
+        {board.facilitator && board.pillars.map((pillar) => (
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card wrap='nowrap'>
               <CardHeader
@@ -174,7 +166,15 @@ class Board extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  board: state.boards.board,
+  members: state.teams.members,
+  selectedMember: state.boards.selectedMember,
+  teams: state.teams.teams,
+  team: state.teams.team,
+});
+
 Board.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(Board);
+export default connect(mapStateToProps, { fetchTeamActiveBoards, selectBoard })(withStyles(styles)(Board));

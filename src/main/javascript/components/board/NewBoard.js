@@ -1,6 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
@@ -26,6 +27,9 @@ import {
   Casino,
 } from '@material-ui/icons';
 
+
+import { postBoard } from '../../actions/boardActions';
+import { showPage } from '../../actions/localActions';
 import Utils from '../Utils';
 
 
@@ -101,14 +105,12 @@ class NewBoard extends React.Component {
   }
 
   handleBoardEndTimeChange(event) {
-    console.log("#NewBoard# updated end time:", event.target.value);
     this.setState({
       endTime: event.target.value,
     });
   }
 
   handleBoardNameChange(event) {
-    console.log("#NewBoard# updated end time:", event.target.value);
     this.setState({
       name: event.target.value,
     });
@@ -118,25 +120,23 @@ class NewBoard extends React.Component {
     let updatedAction = { finished: true }
     Utils.patchResource(action, updatedAction, (() => {
       Utils.fetchResource("members", (body => {
-        console.log("#NewBoard# updated members:", body);
         this.setState({ members: body._embedded.members });
       }));
     }));
   }
 
-  handleBoardStart() {
+  handleBoardCreate() {
+    console.log("haha", this.props.team)
     let newBoard = this.state.newBoard;
     newBoard.endTime = this.getDate();
     newBoard.started = true;
-    newBoard.team = Utils.appendLink("teams/" + this.props.team.id);
+    newBoard.team = this.props.team._links.self.href;
     newBoard.name = this.state.name;
     newBoard.facilitator = this.state.facilitator._links.self.href;
     console.log("#NewBoard# posted board", newBoard);
 
-    Utils.postResource("boards", newBoard, ((body) => {
-      console.log("#NewBoard# posted new board:", body);
-      this.props.updateSelectedBoard(body._links.self.href.match(/.*\/([0-9]+)$/)[1]);
-    }));
+    this.props.postBoard(newBoard);
+    this.props.showPage("board");
   }
 
   getStepContent(step, members, facilitator) {
@@ -238,7 +238,7 @@ class NewBoard extends React.Component {
                       )}
                       {(activeStep === 3) && (
                         <IconButton disabled={facilitator === null} variant="contained" color="primary"
-                          onClick={this.handleBoardStart.bind(this)}>
+                          onClick={this.handleBoardCreate.bind(this)}>
                           <CheckRounded />
                         </IconButton>
                       )}
@@ -254,7 +254,12 @@ class NewBoard extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  members: state.teams.members,
+  team: state.teams.team
+});
+
 NewBoard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(NewBoard);
+export default connect(mapStateToProps, { postBoard, showPage })(withStyles(styles)(NewBoard));
