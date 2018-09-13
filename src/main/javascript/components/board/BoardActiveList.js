@@ -1,6 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -12,6 +13,8 @@ import Grid from '@material-ui/core/Grid';
 
 import { Forum } from '@material-ui/icons';
 
+import { selectBoard } from '../../actions/boardActions';
+
 const styles = theme => ({
 });
 
@@ -20,8 +23,8 @@ class ActiveBoardList extends React.Component {
     super(props);
   }
 
-  handleBoardSelect(board) {
-    this.props.updateSelectedBoard(board.id);
+  handleBoardSelect(boardID) {
+    this.props.selectBoard(boardID);
   }
 
   render() {
@@ -34,7 +37,7 @@ class ActiveBoardList extends React.Component {
               <ListItem key={"activeBoard" + board.id} dense divider button >
                 <Avatar>{board.team.name || "Unknow"}</Avatar>
                 <ListItemText primary={board.name} />
-                <ListItemSecondaryAction onClick={this.handleBoardSelect.bind(this, board)}>
+                <ListItemSecondaryAction onClick={this.handleBoardSelect.bind(this, board.id)}>
                   <IconButton>
                     <Forum />
                   </IconButton>
@@ -48,7 +51,13 @@ class ActiveBoardList extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  boards: state.boards.boards,
+});
+
 ActiveBoardList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default withStyles(styles)(ActiveBoardList);
+export default connect(mapStateToProps, {
+  selectBoard,
+})(withStyles(styles)(ActiveBoardList));

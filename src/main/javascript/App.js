@@ -24,7 +24,7 @@ import BarSettings from './components/BarSettings';
 import TeamMenu from './components/TeamMenu';
 import MemberMenu from './components/MemberMenu';
 
-import { fetchActiveBoards, updateSelectedMember } from './actions/boardActions';
+import { fetchActiveBoards, updateSelectedMember, patchBoard } from './actions/boardActions';
 import { fetchTeams } from './actions/teamActions';
 
 import { connect } from 'react-redux';
@@ -74,14 +74,10 @@ class App extends React.Component {
 
     this.state = {
       allMembers: [],
-      board: null,
-      boards: [],
       snackbarMessage: "",
       snackbarOpen: false,
     };
 
-    this.updateSelectedBoard = this.updateSelectedBoard.bind(this);
-    this.updatePage = this.updatePage.bind(this);
     this.handleSnackbarClose = this.handleSnackbarClose.bind(this);
     this.handleBoardUnlock = this.handleBoardUnlock.bind(this);
     this.handleBoardLock = this.handleBoardLock.bind(this);
@@ -120,79 +116,27 @@ class App extends React.Component {
     this.props.updateSelectedMember(memberID);
   }
 
-  updatePage(page) {
-    this.setState({ page });
-    this.updateBoards(() => { });
-  }
-
-  updateSelectedBoard(boardID) {
-    Utils.fetchResource("boards/" + boardID, (body => {
-      let board = body;
-      console.log("#App# fetched board by id:", board);
-      this.setState({
-        board,
-        team: board._embedded.team,
-      });
-    }));
-  }
-
-  updateActiveBoards(callback) {
-    // console.log("App# fetching boards");
-    Utils.fetchResource("boards/active", (body => {
-      let boards = body._embedded.boards || [];
-      if (boards.length === 0) {
-        this.setState({ board: null });
-      } else if (boards.length === 1) {
-        this.updateSelectedBoard(boards[0].id);
-
-      } else {
-        this.setState({ board: null });
-      }
-      this.setState({ boards }, callback(boards));
-    }));
-  }
-
-  updateBoard(updatedBoard) {
-    Utils.patchResource(this.state.board, updatedBoard, (body => {
-      this.setState({ board: Utils.reformBoard(body) });
-    }));
-  }
-
   handleBoardLock() {
     let updatedBoard = { locked: true };
-    this.updateBoard(updatedBoard);
+    this.props.patchBoard(this.props.board, updatedBoard);
     this.handleSnackbarOpen("Board is LOCKED.")
-  }
-
-  handleBoardDone() {
-    let updatedBoard = { finished: true };
-    this.updateBoard(updatedBoard);
-    this.handleSnackbarOpen("Board is ARCHIVED.");
   }
 
   handleBoardUnlock() {
     let updatedBoard = { locked: false };
-    this.updateBoard(updatedBoard);
+    this.props.patchBoard(this.props.board, updatedBoard);
     this.handleSnackbarOpen("Board is UNLOCKED.");
   }
 
-  handleBoardFinished() {
+  handleBoardFinish() {
     let updatedBoard = { finished: true };
-    Utils.patchResource(this.state.board, updatedBoard, (() => {
-      this.handleSnackbarOpen("Board is FINISHED.");
-      this.setState({
-        page: "",
-        board: null,
-      });
-    }));
-  }
-
-  handleBoardAdd() {
-    this.setState({ page: "newBoard" });
+    this.props.patchBoard(this.props.board, updatedBoard);
+    this.props.showPage("boardCreate");
+    this.handleSnackbarOpen("Board is ARCHIVED.");
   }
 
   render() {
-    const { page, board, boards, classes, teams, members, team, selectedMember } = this.props;
+    const { page, board, classes, teams, members, team, selectedMember } = this.props;
     console.log("page:", page, "teams", teams, "members", members, "team", team);
 
     return (teams && members && <div className={classes.root}>
@@ -239,26 +183,14 @@ class App extends React.Component {
 
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        {page === "board" && (
-          <Board />
-        )}
-        {page === "boardCreate" && (
-          <NewBoard updatePage={this.updatePage}
-            updateSelectedBoard={this.updateSelectedBoard} />
-        )}
-        {page === "activeBoards" && (
-          <BoardActiveList boards={boards} updatePage={this.updatePage}
-            updateSelectedBoard={this.updateSelectedBoard} />
-        )}
+        {page === "board" && (<Board />)}
+        {page === "boardCreate" && (<NewBoard />)}
+        {page === "activeBoards" && (<BoardActiveList />)}
       </main>
 
       {team && (<div>
-        {page === "" && <Button variant="fab" className={classes.fab}
-          onClick={this.handleBoardAdd.bind(this)}>
-          {<Add />}
-        </Button>}
         {page === "board" && <Button variant="fab" className={classes.fab}
-          onClick={this.handleBoardFinished.bind(this)}>
+          onClick={this.handleBoardFinish.bind(this)}>
           {<Done />}
         </Button>}
       </div>)}
@@ -279,7 +211,7 @@ const mapStateToProps = state => ({
   teams: state.teams.teams,
   team: state.teams.team,
   members: state.teams.members,
-  boards: state.boards.boards,
+  board: state.boards.board,
   page: state.local.page,
   selectedMember: state.boards.selectedMember
 });
@@ -287,4 +219,9 @@ const mapStateToProps = state => ({
 App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, { fetchTeams, fetchActiveBoards, updateSelectedMember })(withStyles(styles)(App));
+export default connect(mapStateToProps, {
+  fetchTeams,
+  patchBoard,
+  fetchActiveBoards,
+  updateSelectedMember
+})(withStyles(styles)(App));

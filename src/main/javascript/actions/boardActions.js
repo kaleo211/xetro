@@ -2,6 +2,7 @@ import {
   FETCH_ACTIVE_BOARDS,
   FETCH_BOARD,
   FETCH_TEAM_ACTIVE_BOARDS,
+  PATCH_BOARD,
   POST_BOARD,
   UPDATE_SELECTED_MEMBER
 } from './types';
@@ -32,9 +33,21 @@ export const fetchActiveBoards = () => dispatch => {
 
 export const postBoard = (board) => dispatch => {
   Utils.postResource("boards", board, (body => {
-    let board = body._embedded.board;
+    let board = Utils.reform(body);
+    console.log("posted new board in action:", body);
     dispatch({
       type: POST_BOARD,
+      board
+    });
+  }));
+};
+
+export const patchBoard = (b, board) => dispatch => {
+  Utils.patchResource(b, board, (body => {
+    let board = Utils.reform(body);
+    console.log("posted new board in action:", body);
+    dispatch({
+      type: PATCH_BOARD,
       board
     });
   }));

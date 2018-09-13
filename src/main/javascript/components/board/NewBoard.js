@@ -262,4 +262,7 @@ const mapStateToProps = state => ({
 NewBoard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, { postBoard, showPage })(withStyles(styles)(NewBoard));
+export default connect(mapStateToProps, {
+  postBoard,
+  showPage
+})(withStyles(styles)(NewBoard));

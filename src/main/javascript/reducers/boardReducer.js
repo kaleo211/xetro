@@ -1,4 +1,11 @@
-import { FETCH_TEAM_ACTIVE_BOARDS, UPDATE_SELECTED_MEMBER, FETCH_ACTIVE_BOARDS, POST_BOARD, FETCH_BOARD } from '../actions/types';
+import {
+  FETCH_ACTIVE_BOARDS,
+  FETCH_BOARD,
+  FETCH_TEAM_ACTIVE_BOARDS,
+  PATCH_BOARD,
+  POST_BOARD,
+  UPDATE_SELECTED_MEMBER,
+} from '../actions/types';
 
 const initialState = {
   boards: [],
@@ -27,6 +34,13 @@ export default function (state = initialState, action) {
       return result;
 
     case POST_BOARD:
+      return {
+        ...state,
+        board: action.board
+      }
+
+
+    case PATCH_BOARD:
       return {
         ...state,
         board: action.board

@@ -84,4 +84,9 @@ const mapStateToProps = state => ({
 TeamMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, { selectTeam, selectBoard, showPage, fetchTeamActiveBoards })(withStyles(styles)(TeamMenu));
+export default connect(mapStateToProps, {
+  selectTeam,
+  selectBoard,
+  showPage,
+  fetchTeamActiveBoards
+})(withStyles(styles)(TeamMenu));

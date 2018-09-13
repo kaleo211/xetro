@@ -9,7 +9,10 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 
-import { fetchTeamActiveBoards, selectBoard } from '../../actions/boardActions';
+import {
+  fetchTeamActiveBoards,
+  selectBoard
+} from '../../actions/boardActions';
 import { connect } from 'react-redux';
 
 import { Add } from '@material-ui/icons';
@@ -108,7 +111,7 @@ class Board extends React.Component {
         justify="flex-start"
         alignItems="stretch"
       >
-        {board.facilitator && board.pillars.map((pillar) => (
+        {board.facilitator && board.pillars && board.pillars.map((pillar) => (
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card wrap='nowrap'>
               <CardHeader
@@ -177,4 +180,7 @@ const mapStateToProps = state => ({
 Board.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, { fetchTeamActiveBoards, selectBoard })(withStyles(styles)(Board));
+export default connect(mapStateToProps, {
+  fetchTeamActiveBoards,
+  selectBoard
+})(withStyles(styles)(Board));
