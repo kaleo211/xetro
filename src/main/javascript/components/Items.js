@@ -15,11 +15,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-
 import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-ui/icons';
 
 import Likes from './Likes';
-
 import { selectItem } from '../actions/localActions';
 import { patchItem, deleteItem, postAction, patchAction } from '../actions/itemActions';
 import { selectBoard } from '../actions/boardActions';
@@ -191,7 +189,7 @@ class Items extends React.Component {
             )}
             <Grid item>
               <Typography noWrap variant="headline" className={item.checked ? classes.itemDone : null}>
-                {item.title}
+                {(item.action && item.action.member) ? item.action.title : item.title}
               </Typography>
             </Grid>
           </Grid>
@@ -207,9 +205,7 @@ class Items extends React.Component {
                 <PlayArrowRounded />
               </IconButton>
             )}
-
             {item.action && item.action.member && (<Avatar>{item.action.member.userID}</Avatar>)}
-
             {board.locked && selectedItem.id === item.id && !item.checked && item.started && !item.action && (
               <CircularProgress variant="static" value={this.state.itemProgress} />
             )}

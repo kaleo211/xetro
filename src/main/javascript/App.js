@@ -152,9 +152,10 @@ class App extends React.Component {
 
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        {page === "board" && (<Board />)}
-        {page === "boardCreate" && (<NewBoard />)}
-        {page === "activeBoards" && (<BoardActiveList />)}
+        {page === "board" && <Board />}
+        {page === "boardCreate" && <NewBoard />}
+        {page === "activeBoards" && <BoardActiveList />}
+        {page === "userCreate" && <NewBoard />}
       </main>
 
       <Snackbar
