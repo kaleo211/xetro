@@ -103,11 +103,8 @@ class Board extends React.Component {
   }
 
   render() {
-    const { classes, board, members } = this.props;
+    const { classes, board } = this.props;
     const { newItems, newPillar } = this.state;
-
-    console.log("#Board# board:", board);
-
     return (board && <div>
       <Grid
         container
@@ -138,12 +135,7 @@ class Board extends React.Component {
                   onKeyPress={this.handleNewItemSave.bind(this, pillar.id)}
                 />
               </CardContent>
-              <Items
-                board={board}
-                pillar={pillar}
-                members={members}
-                updatePillars={this.updatePillars}
-              />
+              <Items pillar={pillar} />
             </Card>
           </Grid>
         ))}
@@ -165,18 +157,16 @@ class Board extends React.Component {
         </Grid>
       </Grid>
 
-      {newPillar === null && !board.locked && <Button mini variant="fab" className={classes.fab}
-        onClick={this.handleNewPillarClick.bind(this)}
-      >
-        <Add />
-      </Button>}
+      {newPillar === null && !board.locked && (!board.pillars || board.pillars.length < 3) &&
+        <Button mini variant="fab" className={classes.fab} onClick={this.handleNewPillarClick.bind(this)} >
+          <Add />
+        </Button>}
     </div>);
   }
 }
 
 const mapStateToProps = state => ({
   board: state.boards.board,
-  members: state.teams.members,
   selectedMember: state.boards.selectedMember,
   teams: state.teams.teams,
   team: state.teams.team,

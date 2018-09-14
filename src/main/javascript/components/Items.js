@@ -10,7 +10,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
@@ -44,7 +44,8 @@ class Items extends React.Component {
       newAction: "",
       progressTimer: null,
       itemProgress: 0,
-      secondsPerItem: 300,
+      secondsPerItem: 30,
+      switcher: false,
     }
   }
 
@@ -58,7 +59,7 @@ class Items extends React.Component {
   }
 
   updateItemProgress = () => {
-    let item = this.props.selectedItemID;
+    let item = this.props.selectedItem;
     if (item && item.startTime) {
       let seconds = Math.floor((new Date().getTime() - new Date(item.startTime).getTime()) / 1000);
       if (seconds > this.state.secondsPerItem) {
@@ -92,9 +93,13 @@ class Items extends React.Component {
       started: true,
       startTime: new Date(),
     };
+
     this.props.patchItem(item, updatedItem)
-      .then(() => {
+      .then((item) => {
+        this.setState({ switcher: true });
+
         this.props.selectBoard(this.props.board.id);
+        this.props.selectItem(item);
       });
   }
 
@@ -104,7 +109,10 @@ class Items extends React.Component {
 
     let action = item.action;
     if (action && action._links) {
-      this.props.patchAction("actions", { member: owner._links.self.href, })
+      this.props.patchAction("actions/" + action.id, { member: owner._links.self.href, })
+        .then(() => {
+          this.props.selectBoard(this.props.board.id);
+        });
     }
   }
 
@@ -155,19 +163,24 @@ class Items extends React.Component {
     });
   }
 
-  handleItemSelect(itemID) {
-    this.props.selectItem(itemID);
+  handleItemSelect(item) {
+    this.props.selectItem(item);
+
+    if (this.props.selectedItem.id === item.id && this.state.switcher) {
+      this.setState({ switcher: false })
+    } else {
+      this.setState({ switcher: true })
+    }
   }
 
   render() {
-    const { selectedItemID, pillar, board, members, classes } = this.props;
-    const { newAction, ownerAnchorEl } = this.state;
-
+    const { selectedItem, pillar, board, members, classes } = this.props;
+    const { newAction, ownerAnchorEl, switcher } = this.state;
     return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item.id}
-        expanded={selectedItemID === item.id}
-        onChange={this.handleItemSelect.bind(this, item.id)}
+        expanded={switcher && selectedItem.id === item.id}
+        onChange={this.handleItemSelect.bind(this, item)}
       >
         <ExpansionPanelSummary>
           <Grid container>
@@ -194,7 +207,12 @@ class Items extends React.Component {
                 <PlayArrowRounded />
               </IconButton>
             )}
+
             {item.action && item.action.member && (<Avatar>{item.action.member.userID}</Avatar>)}
+
+            {board.locked && selectedItem.id === item.id && !item.checked && item.started && !item.action && (
+              <CircularProgress variant="static" value={this.state.itemProgress} />
+            )}
           </div>
         </ExpansionPanelSummary>
 
@@ -252,11 +270,6 @@ class Items extends React.Component {
                 )}
               </Grid>
             </Grid>
-            {board.locked && selectedItemID === item.id && !item.checked && item.started && (
-              <Grid item style={{ paddingTop: 8 }}>
-                <LinearProgress variant="determinate" value={this.state.itemProgress} />
-              </Grid>
-            )}
           </Grid>
         </ExpansionPanelActions>
       </ExpansionPanel >
@@ -267,10 +280,8 @@ class Items extends React.Component {
 const mapStateToProps = state => ({
   board: state.boards.board,
   members: state.teams.members,
-  selectedMember: state.boards.selectedMember,
-  teams: state.teams.teams,
   team: state.teams.team,
-  selectedItemID: state.local.selectedItemID,
+  selectedItem: state.local.selectedItem,
 });
 
 Items.propTypes = {

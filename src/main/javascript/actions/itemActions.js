@@ -42,10 +42,11 @@ export const postAction = (updatedAction) => dispatch => {
   });
 };
 
-export const patchAction = (i, updatedAction) => dispatch => {
+export const patchAction = (path, updatedAction) => dispatch => {
   return new Promise((resolve, reject) => {
-    Utils.patchResource(i, updatedAction, (body => {
+    Utils.patch(path, updatedAction, (body => {
       let action = Utils.reform(body);
+      console.log("patched action:", action);
       dispatch({
         type: PATCH_ACTION,
         action,

@@ -9,7 +9,7 @@ const initialState = {
   page: "",
   snackbarOpen: false,
   snackbarMessage: "",
-  selectedItemID: null,
+  selectedItem: {},
 };
 
 export default function (state = initialState, action) {
@@ -36,7 +36,7 @@ export default function (state = initialState, action) {
     case SELECT_ITEM:
       return {
         ...state,
-        selectedItemID: action.selectedItemID
+        selectedItem: action.selectedItem
       };
 
     default:

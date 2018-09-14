@@ -26,6 +26,6 @@ export const closeSnackBar = () => dispatch => {
 export const selectItem = (item) => dispatch => {
   dispatch({
     type: SELECT_ITEM,
-    selectedItemID: item
+    selectedItem: item
   })
 }

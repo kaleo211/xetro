@@ -114,7 +114,7 @@ class App extends React.Component {
     let updatedBoard = { finished: true };
     this.props.patchBoard(this.props.board, updatedBoard);
     this.props.showPage("boardCreate");
-    this.props.openSnackbar("Board is ARCHIVED.");
+    this.props.openSnackBar("Board is ARCHIVED.");
   }
 
   render() {
