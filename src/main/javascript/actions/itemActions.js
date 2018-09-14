@@ -21,13 +21,12 @@ export const patchItem = (i, updatedItem) => dispatch => {
 };
 
 export const deleteItem = (itemID) => dispatch => {
-  Utils.delete(Utils.appendLink("items/" + itemID), (() => {
+  Utils.delete("items/" + itemID, (() => {
     dispatch({
       type: DELETE_ITEM,
     });
   }));
 };
-
 
 export const postAction = (updatedAction) => dispatch => {
   return new Promise((resolve, reject) => {
@@ -42,11 +41,24 @@ export const postAction = (updatedAction) => dispatch => {
   });
 };
 
+
+export const postItem = (updatedItem) => dispatch => {
+  return new Promise((resolve, reject) => {
+    Utils.postResource("items", updatedItem, (body => {
+      let item = Utils.reform(body);
+      dispatch({
+        type: POST_ITEM,
+        item,
+      });
+      resolve(item);
+    }));
+  });
+};
+
 export const patchAction = (path, updatedAction) => dispatch => {
   return new Promise((resolve, reject) => {
     Utils.patch(path, updatedAction, (body => {
       let action = Utils.reform(body);
-      console.log("patched action:", action);
       dispatch({
         type: PATCH_ACTION,
         action,

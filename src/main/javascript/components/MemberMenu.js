@@ -1,6 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
@@ -8,7 +9,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Add from '@material-ui/icons/Add';
 
 import { addMemberToTeam } from '../actions/teamActions';
-import { connect } from 'react-redux';
 
 const styles = theme => ({
 });
@@ -36,10 +36,10 @@ class MemberMenu extends React.Component {
   }
 
   render() {
-    const { team, members } = this.props;
+    const { team, users } = this.props;
     const { anchorEl } = this.state;
 
-    return (members && team && <div>
+    return (users && team && <div>
       <IconButton onClick={this.handleClick.bind(this)}>
         <Add />
       </IconButton>
@@ -49,9 +49,9 @@ class MemberMenu extends React.Component {
         open={Boolean(anchorEl)}
         onClose={this.handleMenuClose.bind(this)}
       >
-        {members.map(member => (
-          <MenuItem key={member.id} onClick={this.handleMemberToAdd.bind(this, member.id)}>
-            {member.userID}
+        {users.map(user => (
+          <MenuItem key={user.id} onClick={this.handleMemberToAdd.bind(this, user.id)}>
+            {user.userID}
           </MenuItem>
         ))}
       </Menu>
@@ -61,10 +61,12 @@ class MemberMenu extends React.Component {
 
 const mapStateToProps = state => ({
   team: state.teams.team,
-  members: state.teams.members,
+  users: state.users.users,
 });
 
 MemberMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, { addMemberToTeam })(withStyles(styles)(MemberMenu));
+export default connect(mapStateToProps, {
+  addMemberToTeam,
+})(withStyles(styles)(MemberMenu));

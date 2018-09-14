@@ -55,9 +55,7 @@ class TeamMenu extends React.Component {
     const { anchorEl } = this.state;
 
     return (<div>
-      <Button fullWidth variant="contained" component="span"
-        onClick={this.handleClick.bind(this)}
-      >
+      <Button fullWidth variant="flat" onClick={this.handleClick.bind(this)} style={{ color: "white" }}>
         {team ? team.name : "TEAMS"}
       </Button>
       <Menu

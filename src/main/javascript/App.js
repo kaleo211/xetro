@@ -13,7 +13,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Button from '@material-ui/core/Button';
 import deepPurple from '@material-ui/core/colors/deepPurple';
 
 import Board from './components/board/Board';
@@ -32,9 +31,9 @@ import {
 } from './actions/boardActions';
 import { fetchTeams } from './actions/teamActions';
 import { showPage, openSnackBar, closeSnackBar } from './actions/localActions';
+import { fetchUsers } from './actions/userActions';
 
 import {
-  Done,
   KeyboardRounded,
 } from '@material-ui/icons';
 
@@ -92,14 +91,7 @@ class App extends React.Component {
     document.body.style.margin = 0;
 
     this.props.fetchTeams();
-    this.updateAllMembers();
-  }
-
-  updateAllMembers() {
-    Utils.fetchResource("members", (body => {
-      let allMembers = body._embedded.members;
-      this.setState({ allMembers });
-    }));
+    this.props.fetchUsers();
   }
 
   handleSnackbarClose() {
@@ -110,13 +102,6 @@ class App extends React.Component {
     this.props.updateSelectedMember(memberID);
   }
 
-  handleBoardFinish() {
-    let updatedBoard = { finished: true };
-    this.props.patchBoard(this.props.board, updatedBoard);
-    this.props.showPage("boardCreate");
-    this.props.openSnackBar("Board is ARCHIVED.");
-  }
-
   render() {
     const { page, board, classes, teams, members, team, selectedMember } = this.props;
     console.log("page:", page, "teams", teams, "members", members, "team", team);
@@ -124,6 +109,12 @@ class App extends React.Component {
     return (teams && members && <div className={classes.root}>
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
+          <div style={{ marginLeft: -20 }}>
+            <TeamMenu />
+          </div>
+          <div style={{ flexGrow: 2 }}>
+          </div>
+
           <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
             {board && board.name && board.name.toUpperCase()}
           </Typography>
@@ -138,9 +129,6 @@ class App extends React.Component {
 
       <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
         <div className={classes.toolbar} />
-        <div style={{ marginTop: 8 }}>
-          <TeamMenu />
-        </div>
         <List component="nav" style={{ marginLeft: -6 }}>
           {members.map(member => (
             <ListItem key={"side" + member.userID} button
@@ -168,13 +156,6 @@ class App extends React.Component {
         {page === "boardCreate" && (<NewBoard />)}
         {page === "activeBoards" && (<BoardActiveList />)}
       </main>
-
-      {team && (<div>
-        {page === "board" && <Button variant="fab" className={classes.fab}
-          onClick={this.handleBoardFinish.bind(this)}>
-          {<Done />}
-        </Button>}
-      </div>)}
 
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
@@ -210,4 +191,5 @@ export default connect(mapStateToProps, {
   updateSelectedMember,
   openSnackBar,
   closeSnackBar,
+  fetchUsers,
 })(withStyles(styles)(App));

@@ -84,6 +84,7 @@ class Items extends React.Component {
 
   handleItemDelete(itemID) {
     this.props.deleteItem(itemID);
+    this.props.selectBoard(this.props.board.id);
   }
 
   handleStartItem(item, evt) {

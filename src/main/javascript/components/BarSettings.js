@@ -10,11 +10,13 @@ import {
   VpnKeyOutlined,
   LockOutlined,
   VoiceChat,
+  SaveOutlined,
   RefreshRounded,
 } from '@material-ui/icons';
 
 import { patchBoard, selectBoard } from '../actions/boardActions';
-import { openSnackBar, closeSnackBar } from '../actions/localActions';
+import { selectTeam } from '../actions/boardActions';
+import { openSnackBar, closeSnackBar, showPage } from '../actions/localActions';
 
 const styles = theme => ({
 });
@@ -43,6 +45,14 @@ class BarSettings extends React.Component {
 
   handleRefreshBoard() {
     this.props.selectBoard(this.props.board.id);
+  }
+
+  handleBoardFinish() {
+    let updatedBoard = { finished: true };
+    this.props.patchBoard(this.props.board, updatedBoard);
+    this.props.showPage("boardCreate");
+    this.props.openSnackBar("Board is ARCHIVED.");
+    this.props.selectTeam(this.props.team.id);
   }
 
   render() {
@@ -76,6 +86,14 @@ class BarSettings extends React.Component {
             </IconButton>
           </Tooltip>
         )}
+
+        {board && !board.finished && (
+          <Tooltip title="Archive board" placement="bottom">
+            <IconButton onClick={this.handleBoardFinish.bind(this)} color="inherit">
+              <SaveOutlined />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
     );
   }
@@ -93,4 +111,6 @@ export default connect(mapStateToProps, {
   openSnackBar,
   closeSnackBar,
   selectBoard,
+  showPage,
+  selectTeam,
 })(withStyles(styles)(BarSettings));

@@ -19,5 +19,6 @@ export const DELETE_ITEM = 'DELETE_ITEM'
 export const POST_ACTION = 'POST_ACTION'
 export const PATCH_ACTION = 'PATCH_ACTION'
 
-
 export const SELECT_ITEM = 'SELECT_ITEM'
+
+export const FETCH_USERS = 'FETCH_USERS'

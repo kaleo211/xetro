@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -8,18 +9,16 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
-
-import {
-  fetchTeamActiveBoards,
-  selectBoard
-} from '../../actions/boardActions';
-import { connect } from 'react-redux';
-
 import { Add } from '@material-ui/icons';
 
 import Items from '../Items';
 import Utils from '../Utils';
+import {
+  fetchTeamActiveBoards,
+  selectBoard
+} from '../../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../../actions/localActions';
+import { postItem } from '../../actions/itemActions';
 
 const styles = theme => ({
   root: {
@@ -28,7 +27,7 @@ const styles = theme => ({
   },
   fab: {
     position: 'absolute',
-    bottom: theme.spacing.unit * 10,
+    bottom: theme.spacing.unit * 3,
     right: theme.spacing.unit * 3,
   },
 });
@@ -41,15 +40,11 @@ class Board extends React.Component {
       newItems: {},
       newPillar: null,
     };
-
-    this.updatePillars = this.updatePillars.bind(this);
   }
 
   handleNewItemSave(pillarID, event) {
     let newItems = this.state.newItems;
     if (event && event.key === 'Enter' && newItems[pillarID] !== "") {
-      console.log("#Board# newItems with pillarID");
-
       if (this.props.selectedMember) {
         let newItem = {
           title: newItems[pillarID].capitalize(),
@@ -57,11 +52,11 @@ class Board extends React.Component {
           owner: Utils.appendLink("members/" + this.props.selectedMember.id),
         };
 
-        Utils.postResource("items", newItem, (() => {
-          this.updatePillars();
+        this.props.postItem(newItem).then(() => {
+          this.props.selectBoard(this.props.board.id);
           newItems[pillarID] = "";
           this.setState({ newItems });
-        }));
+        });
       } else {
         this.props.openSnackBar("please select item owner");
       }
@@ -93,13 +88,9 @@ class Board extends React.Component {
       Utils.postPillar(this.state.newPillar, (body => {
         console.log("#Board# posted new pillar:", body);
         this.setState({ newPillar: null });
-        this.updatePillars();
+        this.props.selectBoard(this.props.board.id);
       }));
     }
-  }
-
-  updatePillars() {
-    this.props.selectBoard(this.props.board.id);
   }
 
   render() {
@@ -158,7 +149,7 @@ class Board extends React.Component {
       </Grid>
 
       {newPillar === null && !board.locked && (!board.pillars || board.pillars.length < 3) &&
-        <Button mini variant="fab" className={classes.fab} onClick={this.handleNewPillarClick.bind(this)} >
+        <Button variant="fab" className={classes.fab} onClick={this.handleNewPillarClick.bind(this)} >
           <Add />
         </Button>}
     </div>);
@@ -180,4 +171,5 @@ export default connect(mapStateToProps, {
   selectBoard,
   openSnackBar,
   closeSnackBar,
+  postItem,
 })(withStyles(styles)(Board));
