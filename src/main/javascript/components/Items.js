@@ -19,9 +19,8 @@ import Typography from '@material-ui/core/Typography';
 import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-ui/icons';
 
 import Likes from './Likes';
-import Utils from './Utils';
 
-import { openSnackBar, closeSnackBar, selectItem } from '../actions/localActions';
+import { selectItem } from '../actions/localActions';
 import { patchItem, deleteItem, postAction, patchAction } from '../actions/itemActions';
 import { selectBoard } from '../actions/boardActions';
 
@@ -44,7 +43,7 @@ class Items extends React.Component {
       newAction: "",
       progressTimer: null,
       itemProgress: 0,
-      secondsPerItem: 30,
+      secondsPerItem: 300,
       switcher: false,
     }
   }

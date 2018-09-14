@@ -13,7 +13,7 @@ import {
   RefreshRounded,
 } from '@material-ui/icons';
 
-import { patchBoard } from '../actions/boardActions';
+import { patchBoard, selectBoard } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
 
 const styles = theme => ({
@@ -41,12 +41,16 @@ class BarSettings extends React.Component {
     this.props.openSnackBar("Board is UNLOCKED.");
   }
 
+  handleRefreshBoard() {
+    this.props.selectBoard(this.props.board.id);
+  }
+
   render() {
     const { board } = this.props;
     return (
       <div>
         <Tooltip title="Refresh board" placement="bottom">
-          <IconButton onClick={this.updatePillars} color="inherit">
+          <IconButton onClick={this.handleRefreshBoard.bind(this)} color="inherit">
             <RefreshRounded />
           </IconButton>
         </Tooltip>
@@ -88,4 +92,5 @@ export default connect(mapStateToProps, {
   patchBoard,
   openSnackBar,
   closeSnackBar,
+  selectBoard,
 })(withStyles(styles)(BarSettings));

@@ -30,7 +30,8 @@ import {
 
 import { postBoard } from '../../actions/boardActions';
 import { showPage } from '../../actions/localActions';
-import Utils from '../Utils';
+import { patchAction } from '../../actions/itemActions';
+import { selectTeam } from '../../actions/teamActions';
 
 
 const styles = theme => ({
@@ -117,23 +118,19 @@ class NewBoard extends React.Component {
   }
 
   handleActionCheck(action) {
-    let updatedAction = { finished: true }
-    Utils.patchResource(action, updatedAction, (() => {
-      Utils.fetchResource("members", (body => {
-        this.setState({ members: body._embedded.members });
-      }));
-    }));
+    this.props.patchAction("actions/" + action.id, { finished: true })
+      .then(() => {
+        this.props.selectTeam(this.props.team.id);
+      });
   }
 
   handleBoardCreate() {
-    console.log("haha", this.props.team)
     let newBoard = this.state.newBoard;
     newBoard.endTime = this.getDate();
     newBoard.started = true;
     newBoard.team = this.props.team._links.self.href;
     newBoard.name = this.state.name;
     newBoard.facilitator = this.state.facilitator._links.self.href;
-    console.log("#NewBoard# posted board", newBoard);
 
     this.props.postBoard(newBoard);
     this.props.showPage("board");
@@ -264,5 +261,7 @@ NewBoard.propTypes = {
 };
 export default connect(mapStateToProps, {
   postBoard,
-  showPage
+  showPage,
+  patchAction,
+  selectTeam,
 })(withStyles(styles)(NewBoard));

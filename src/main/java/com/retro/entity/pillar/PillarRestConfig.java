@@ -9,5 +9,6 @@ public class PillarRestConfig extends RepositoryRestConfigurerAdapter {
   @Override
   public void configureRepositoryRestConfiguration(RepositoryRestConfiguration repositoryRestConfiguration) {
     repositoryRestConfiguration.getProjectionConfiguration().addProjection(DetailedPillar.class);
+    repositoryRestConfiguration.exposeIdsFor(Pillar.class);
   }
 }

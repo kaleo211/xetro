@@ -9,5 +9,6 @@ public class ActionRestConfig extends RepositoryRestConfigurerAdapter {
   @Override
   public void configureRepositoryRestConfiguration(RepositoryRestConfiguration repositoryRestConfiguration) {
     repositoryRestConfiguration.getProjectionConfiguration().addProjection(DetailedAction.class);
+    repositoryRestConfiguration.exposeIdsFor(Action.class);
   }
 }

@@ -9,5 +9,6 @@ public class TeamRestConfig extends RepositoryRestConfigurerAdapter {
   @Override
   public void configureRepositoryRestConfiguration(RepositoryRestConfiguration repositoryRestConfiguration) {
     repositoryRestConfiguration.getProjectionConfiguration().addProjection(DetailedTeam.class);
+    repositoryRestConfiguration.exposeIdsFor(Team.class);
   }
 }

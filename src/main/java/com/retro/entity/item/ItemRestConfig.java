@@ -9,5 +9,6 @@ public class ItemRestConfig extends RepositoryRestConfigurerAdapter {
   @Override
   public void configureRepositoryRestConfiguration(RepositoryRestConfiguration repositoryRestConfiguration) {
     repositoryRestConfiguration.getProjectionConfiguration().addProjection(DetailedItem.class);
+    repositoryRestConfiguration.exposeIdsFor(Item.class);
   }
 }

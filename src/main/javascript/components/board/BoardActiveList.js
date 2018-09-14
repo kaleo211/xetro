@@ -10,7 +10,6 @@ import Avatar from '@material-ui/core/Avatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
-
 import { Forum } from '@material-ui/icons';
 
 import { selectBoard } from '../../actions/boardActions';

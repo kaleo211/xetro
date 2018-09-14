@@ -31,7 +31,7 @@ class MemberMenu extends React.Component {
   }
 
   handleMemberToAdd(memberID) {
-    this.props.addMemberToTeam(this.team.id, memberID);
+    this.props.addMemberToTeam(this.props.team.id, memberID);
     this.handleMenuClose();
   }
 
