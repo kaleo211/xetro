@@ -14,7 +14,7 @@ export const selectTeam = (teamID) => dispatch => {
   Utils.fetchResource("teams/" + teamID, (body => {
     let team = Utils.reformTeam(body);
     Utils.fetchResource("teamMember/team/" + teamID, (body => {
-      let members = body._embedded.members;
+      let members = body._embedded && body._embedded.members || [];
       dispatch({
         type: SELECT_TEAM,
         team,
@@ -32,7 +32,7 @@ export const addMemberToTeam = (teamID, memberID) => dispatch => {
 
   Utils.postTeamMember(teamMember, (body => {
     Utils.fetchResource("teamMember/team/" + teamID, body => {
-      let members = body._embedded.members;
+      let members = body._embedded && body._embedded.members || [];
       dispatch({
         type: ADD_MEMBER_TO_TEAM,
         members
