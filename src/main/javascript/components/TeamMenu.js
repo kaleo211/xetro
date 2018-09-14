@@ -38,11 +38,13 @@ class TeamMenu extends React.Component {
         if (boards) {
           if (boards.length === 0) {
             this.props.showPage("boardCreate")
+            this.props.selectBoard(null)
           } else if (boards.length === 1) {
             console.log("active ------- board:", boards[0])
             this.props.selectBoard(boards[0].id)
             this.props.showPage("board");
           } else {
+            this.props.selectBoard(null)
             this.props.showPage("activeBoards");
           }
         }
@@ -59,7 +61,6 @@ class TeamMenu extends React.Component {
         {team ? team.name : "TEAMS"}
       </Button>
       <Menu
-        id="teamMenu"
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={this.handleMenuClose.bind(this)}

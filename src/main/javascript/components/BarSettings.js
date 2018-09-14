@@ -53,18 +53,20 @@ class BarSettings extends React.Component {
     this.props.showPage("boardCreate");
     this.props.openSnackBar("Board is ARCHIVED.");
     this.props.selectTeam(this.props.team.id);
+    this.props.selectBoard(null);
   }
 
   render() {
     const { board } = this.props;
     return (
       <div>
-        <Tooltip title="Refresh board" placement="bottom">
-          <IconButton onClick={this.handleRefreshBoard.bind(this)} color="inherit">
-            <RefreshRounded />
-          </IconButton>
-        </Tooltip>
-
+        {board && (
+          <Tooltip title="Refresh board" placement="bottom">
+            <IconButton onClick={this.handleRefreshBoard.bind(this)} color="inherit">
+              <RefreshRounded />
+            </IconButton>
+          </Tooltip>
+        )}
         {board && board.facilitator && board.facilitator.video && (
           <Tooltip title="Open video chat" placement="bottom">
             <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">

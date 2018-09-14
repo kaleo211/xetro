@@ -54,13 +54,20 @@ export const patchBoard = (b, board) => dispatch => {
 };
 
 export const selectBoard = (boardID) => dispatch => {
-  Utils.fetchResource("boards/" + boardID, (body => {
-    let board = Utils.reformBoard(body);
+  if (boardID === null || boardID === "") {
     dispatch({
       type: FETCH_BOARD,
-      board
+      board: null
     });
-  }));
+  } else {
+    Utils.fetchResource("boards/" + boardID, (body => {
+      let board = Utils.reformBoard(body);
+      dispatch({
+        type: FETCH_BOARD,
+        board
+      });
+    }));
+  }
 };
 
 export const updateSelectedMember = (memberID) => dispatch => {

@@ -48,7 +48,7 @@ class Items extends React.Component {
 
   // Timer
   componentDidMount() {
-    this.progressTimer = setInterval(this.updateItemProgress, 2000);
+    this.progressTimer = setInterval(this.updateItemProgress, 1000);
   }
 
   componentWillUnmount() {
