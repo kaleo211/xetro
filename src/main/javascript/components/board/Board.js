@@ -24,6 +24,10 @@ const styles = theme => ({
     paddingTop: theme.spacing.unit * 1,
     paddingBottom: theme.spacing.unit * 1,
   },
+  title: {
+    textAlign: 'center',
+    fontSize: 32,
+  },
   fab: {
     position: 'absolute',
     bottom: theme.spacing.unit * 3,
@@ -92,12 +96,24 @@ class Board extends React.Component {
     }
   }
 
-  handlePillarTitleSubmit(pillarID, evt) {
-    if (evt && evt.key === 'Enter' && evt.target.value != "") {
-      this.props.patchPillar("pillars/" + pillarID, { title: evt.target.value })
-        .then(() => {
-          this.props.selectBoard(this.props.board.id);
+  handlePillarTitleChange(pillar, evt) {
+    this.setState({
+      ["pillarTitle" + pillar.id]: evt.target.value,
+    });
+  }
+
+  handlePillarTitleSubmit(pillar, evt) {
+    if (evt && evt.key === 'Enter') {
+      if (evt.target.value != "") {
+        this.props.patchPillar("pillars/" + pillar.id, { title: evt.target.value })
+          .then(() => {
+            this.props.selectBoard(this.props.board.id);
+          });
+      } else {
+        this.setState({
+          ["pillarTitle" + pillar.id]: pillar.title,
         });
+      }
     }
   }
 
@@ -109,9 +125,12 @@ class Board extends React.Component {
       return (
         <TextField fullWidth
           defaultValue={pillar.title}
-          InputProps={{ disableUnderline: true }}
-          onKeyPress={this.handlePillarTitleSubmit.bind(this, pillar.id)} >
-        </TextField>)
+          value={this.state["pillarTitle" + pillar.id]}
+          InputProps={{ disableUnderline: true, }}
+          inputProps={{ className: classes.title, }}
+          onChange={this.handlePillarTitleChange.bind(this, pillar)}
+          onKeyPress={this.handlePillarTitleSubmit.bind(this, pillar)} >
+        </TextField >)
     }
 
     board && board.pillars.sort((a, b) => {
