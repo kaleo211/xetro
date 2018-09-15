@@ -68,9 +68,9 @@ class MemberMenu extends React.Component {
       return team && selectedMember && selectedMember.userID === m.userID;
     }
 
-    return (usersToShow && <div>
+    return (<div>
       <List component="nav" style={{ marginLeft: -6 }}>
-        {usersToShow.map(m => (
+        {usersToShow && usersToShow.map(m => (
           <Tooltip key={"side" + m.userID} title={m.firstName} placement="right">
             <ListItem button
               onClick={this.handleMemberSelect.bind(this, m.id)}
@@ -100,11 +100,10 @@ class MemberMenu extends React.Component {
             </IconButton>
           </Tooltip>}
         <Menu
-          id="MemberMenu"
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={this.handleMenuClose.bind(this)} >
-          {users.map(user => (
+          {users && users.map(user => (
             <MenuItem key={user.id} onClick={this.handleMemberToAdd.bind(this, user.id)}>
               {user.firstName + " " + user.lastName}
             </MenuItem>))}

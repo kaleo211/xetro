@@ -1,5 +1,6 @@
 import {
   FETCH_USERS,
+  POST_USER,
 } from './types';
 import Utils from '../components/Utils';
 
@@ -12,3 +13,12 @@ export const fetchUsers = () => dispatch => {
     });
   }));
 };
+
+export const postUser = (user) => dispatch => {
+  Utils.postResource("members", user, (() => {
+    dispatch({
+      type: POST_USER,
+      user
+    });
+  }));
+}
