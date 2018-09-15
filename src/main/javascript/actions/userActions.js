@@ -15,10 +15,14 @@ export const fetchUsers = () => dispatch => {
 };
 
 export const postUser = (user) => dispatch => {
-  Utils.postResource("members", user, (() => {
-    dispatch({
-      type: POST_USER,
-      user
-    });
-  }));
+  return new Promise((resolve, reject) => {
+    Utils.postResource("members", user, ((body) => {
+      let user = Utils.reform(body);
+      dispatch({
+        type: POST_USER,
+        user,
+      });
+      resolve();
+    }));
+  });
 }

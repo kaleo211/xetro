@@ -8,6 +8,8 @@ import Drawer from '@material-ui/core/Drawer';
 import Snackbar from '@material-ui/core/Snackbar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import { FeedbackOutlined } from '@material-ui/icons';
+import { IconButton } from '@material-ui/core';
 
 import BarSettings from './components/BarSettings';
 import Board from './components/board/Board';
@@ -17,7 +19,6 @@ import NewBoard from './components/board/NewBoard';
 import NewTeam from './components/NewTeam';
 import NewUser from './components/NewUser';
 import TeamMenu from './components/TeamMenu';
-
 import { fetchTeams } from './actions/teamActions';
 import { closeSnackBar } from './actions/localActions';
 import { fetchUsers } from './actions/userActions';
@@ -44,10 +45,10 @@ const styles = theme => ({
     minWidth: 0,
   },
   toolbar: theme.mixins.toolbar,
-  fab: {
+  feedback: {
     position: 'absolute',
-    bottom: theme.spacing.unit * 2,
-    right: theme.spacing.unit * 2,
+    bottom: theme.spacing.unit * 1,
+    left: theme.spacing.unit * 2,
   },
 });
 
@@ -65,6 +66,11 @@ class App extends React.Component {
 
     this.props.fetchTeams();
     this.props.fetchUsers();
+  }
+
+  handleFeedbackClick() {
+    let win = window.open("https://github.com/kaleo211/retro-board/issues", '_blank');
+    win.focus();
   }
 
   render() {
@@ -91,6 +97,9 @@ class App extends React.Component {
       <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
         <div className={classes.toolbar} />
         <MemberMenu />
+        <IconButton className={classes.feedback} onClick={this.handleFeedbackClick.bind(this)} >
+          <FeedbackOutlined />
+        </IconButton>
       </Drawer>
 
       <main className={classes.content}>
@@ -108,8 +117,7 @@ class App extends React.Component {
         message={this.props.snackbarMessage}
         onClose={this.props.closeSnackBar}
         autoHideDuration={1500}
-        transitionDuration={400}
-      />
+        transitionDuration={400} />
     </div >);
   }
 }

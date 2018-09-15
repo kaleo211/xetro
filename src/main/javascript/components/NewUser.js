@@ -37,8 +37,9 @@ class NewUser extends React.Component {
       lastName: this.state.lastName,
       userID: this.state.userID,
     }
-    this.props.postUser(user);
-    this.props.fetchUsers();
+    this.props.postUser(user).then(() => {
+      this.props.fetchUsers();
+    });
 
     this.handleClose();
   }

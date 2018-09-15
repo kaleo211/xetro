@@ -87,7 +87,6 @@ class BarSettings extends React.Component {
 
   render() {
     const { board, members, team } = this.props;
-
     const membersWithActions = members.filter(member =>
       member.actions && member.actions.filter(action =>
         !action.finished && action.team.id === team.id
@@ -100,43 +99,37 @@ class BarSettings extends React.Component {
           <IconButton onClick={this.handleRefreshBoard.bind(this)} color="inherit">
             <RefreshRounded />
           </IconButton>
-        </Tooltip>
-      )}
+        </Tooltip>)}
       {board && board.facilitator && board.facilitator.video && (
         <Tooltip title="Open video chat" placement="bottom">
           <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
             <VoiceChat />
           </IconButton>
-        </Tooltip>
-      )}
+        </Tooltip>)}
       {board && (
         <Tooltip title="Show actions" placement="bottom">
           <IconButton onClick={this.handleDialogOpen} color="inherit">
             <Assignment />
           </IconButton>
-        </Tooltip>
-      )}
+        </Tooltip>)}
       {board && !board.locked && (
         <Tooltip title="Lock board" placement="bottom">
           <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
             <LockOutlined />
           </IconButton>
-        </Tooltip>
-      )}
+        </Tooltip>)}
       {board && board.locked && (
         <Tooltip title="Unlock board" placement="bottom">
           <IconButton onClick={this.handleBoardUnlock.bind(this)} color="inherit">
             <VpnKeyOutlined />
           </IconButton>
-        </Tooltip>
-      )}
+        </Tooltip>)}
       {board && !board.finished && (
         <Tooltip title="Archive board" placement="bottom">
           <IconButton onClick={this.handleBoardFinish.bind(this)} color="inherit">
             <SaveOutlined />
           </IconButton>
-        </Tooltip>
-      )}
+        </Tooltip>)}
 
       <Dialog
         fullWidth
