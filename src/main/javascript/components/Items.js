@@ -21,6 +21,7 @@ import Likes from './Likes';
 import { selectItem } from '../actions/localActions';
 import { patchItem, deleteItem, postAction, patchAction } from '../actions/itemActions';
 import { selectBoard } from '../actions/boardActions';
+import { selectTeam } from '../actions/teamActions';
 
 const styles = theme => ({
   item: {
@@ -111,6 +112,7 @@ class Items extends React.Component {
       this.props.patchAction("actions/" + action.id, { member: owner._links.self.href, })
         .then(() => {
           this.props.selectBoard(this.props.board.id);
+          this.props.selectTeam(this.props.team.id);
         });
     }
   }
@@ -215,7 +217,6 @@ class Items extends React.Component {
 
         <ExpansionPanelDetails>
           <TextField
-            id="createNewActionItem"
             label="Action item"
             fullWidth
             disabled={item.action !== null}
@@ -291,4 +292,5 @@ export default connect(mapStateToProps, {
   selectBoard,
   patchAction,
   selectItem,
+  selectTeam,
 })(withStyles(styles)(Items));

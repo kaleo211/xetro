@@ -109,7 +109,7 @@ class MemberMenu extends React.Component {
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={this.handleMenuClose.bind(this)} >
-          {users && users.map(user => (!memberIDSet.has(user.id) &&
+          {team && users && users.map(user => (!memberIDSet.has(user.id) &&
             <MenuItem key={user.id} onClick={this.handleMemberToAdd.bind(this, user.id)}>
               {user.firstName + " " + user.lastName}
             </MenuItem>))}
