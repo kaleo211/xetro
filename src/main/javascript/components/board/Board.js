@@ -17,6 +17,7 @@ import {
 } from '../../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../../actions/localActions';
 import { postItem } from '../../actions/itemActions';
+import { patchPillar } from '../../actions/pillarActions';
 
 const styles = theme => ({
   root: {
@@ -91,9 +92,32 @@ class Board extends React.Component {
     }
   }
 
+  handlePillarTitleSubmit(pillarID, evt) {
+    if (evt && evt.key === 'Enter' && evt.target.value != "") {
+      this.props.patchPillar("pillars/" + pillarID, { title: evt.target.value })
+        .then(() => {
+          this.props.selectBoard(this.props.board.id);
+        });
+    }
+  }
+
   render() {
     const { classes, board } = this.props;
     const { newItems, newPillar } = this.state;
+
+    const pillarTitle = (pillar) => {
+      return (
+        <TextField fullWidth
+          defaultValue={pillar.title}
+          InputProps={{ disableUnderline: true }}
+          onKeyPress={this.handlePillarTitleSubmit.bind(this, pillar.id)} >
+        </TextField>)
+    }
+
+    board && board.pillars.sort((a, b) => {
+      return a.id < b.id;
+    })
+
     return (board && <div>
       <Grid container spacing={8}
         direction="row"
@@ -103,12 +127,11 @@ class Board extends React.Component {
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card wrap='nowrap'>
               <CardHeader
-                title={pillar.title}
+                title={pillarTitle(pillar)}
                 subheader={pillar.subheader}
                 titleTypographyProps={{ align: 'center' }}
                 subheaderTypographyProps={{ align: 'center' }}
-                action={null}
-              />
+                action={null} />
               <CardContent>
                 <TextField fullWidth
                   label={pillar.intro}
@@ -161,4 +184,5 @@ export default connect(mapStateToProps, {
   openSnackBar,
   closeSnackBar,
   postItem,
+  patchPillar,
 })(withStyles(styles)(Board));

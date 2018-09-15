@@ -24,3 +24,6 @@ export const SELECT_ITEM = 'SELECT_ITEM'
 
 export const FETCH_USERS = 'FETCH_USERS'
 export const POST_USER = 'POST_USER'
+
+export const POST_PILLAR = 'POST_PILLAR'
+export const PATCH_PILLAR = 'PATCH_PILLAR'

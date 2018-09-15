@@ -87,6 +87,13 @@ class BarSettings extends React.Component {
 
   render() {
     const { board, members, team } = this.props;
+
+    const membersWithActions = members.filter(member =>
+      member.actions && member.actions.filter(action =>
+        !action.finished && action.team.id === team.id
+      ).length > 0
+    );
+    console.log("actions:", membersWithActions);
     return (<div>
       {board && (
         <Tooltip title="Refresh board" placement="bottom">
@@ -136,11 +143,11 @@ class BarSettings extends React.Component {
         open={this.state.dialogOpen}
         onClose={this.handleDialogClose} >
         <DialogTitle>
-          {"Action items"}
+          {membersWithActions && membersWithActions.length > 0 ? "Actions" : "No Actions"}
         </DialogTitle>
         <DialogContent>
-          <Grid container justify="flex-start" spacing={32}>
-            {members.filter(m => m.actions && m.actions.filter(a => !a.finished).length > 0).map(member => (
+          <Grid container justify="flex-start" spacing={16}>
+            {membersWithActions.map(member => (
               <Grid item xs={12} key={"action" + member.userID}>
                 <List>
                   {member.actions && member.actions.filter(ac => ac.team.id === team.id && !ac.finished).map((a, idx) => (

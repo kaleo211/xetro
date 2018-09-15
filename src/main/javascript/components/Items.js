@@ -177,22 +177,17 @@ class Items extends React.Component {
   render() {
     const { selectedItem, pillar, board, members, classes } = this.props;
     const { newAction, ownerAnchorEl, switcher } = this.state;
-    return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
+    return (board && pillar && pillar.items && pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item.id}
         expanded={switcher && selectedItem.id === item.id}
-        onChange={this.handleItemSelect.bind(this, item)}
-      >
+        onChange={this.handleItemSelect.bind(this, item)}>
         <ExpansionPanelSummary>
           <Grid container>
-            {item.likes > 0 && (
-              <Grid item>
-                <Likes item={item} />
-              </Grid>
-            )}
+            {item.likes > 0 && <Grid item><Likes item={item} /></Grid>}
             <Grid item>
               <Typography noWrap variant="headline" className={item.checked ? classes.itemDone : null}>
-                {(item.action && item.action.member) ? item.action.title : item.title}
+                {item.title}
               </Typography>
             </Grid>
           </Grid>
@@ -271,7 +266,7 @@ class Items extends React.Component {
           </Grid>
         </ExpansionPanelActions>
       </ExpansionPanel >
-    ))} </div>);
+    )));
   }
 }
 
