@@ -78,4 +78,4 @@ export const updateSelectedMember = (memberID) => dispatch => {
       selectedMember
     });
   }));
-}
+};

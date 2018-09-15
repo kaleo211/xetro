@@ -15,7 +15,7 @@ import {
 } from '@material-ui/icons';
 
 import { patchBoard, selectBoard } from '../actions/boardActions';
-import { selectTeam } from '../actions/boardActions';
+import { selectTeam } from '../actions/teamActions';
 import { openSnackBar, closeSnackBar, showPage } from '../actions/localActions';
 
 const styles = theme => ({
@@ -102,7 +102,8 @@ class BarSettings extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  board: state.boards.board
+  board: state.boards.board,
+  team: state.teams.team
 });
 
 BarSettings.propTypes = {
