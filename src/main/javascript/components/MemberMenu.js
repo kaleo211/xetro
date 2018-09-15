@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Avatar, Badge } from '@material-ui/core';
 import deepPurple from '@material-ui/core/colors/deepPurple';
 import IconButton from '@material-ui/core/IconButton';
-import { KeyboardRounded, Add } from '@material-ui/icons';
+import { ChatRounded, Add } from '@material-ui/icons';
 import { List, ListItem, ListItemAvatar } from '@material-ui/core';
 import { Menu, MenuItem } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
@@ -49,7 +49,11 @@ class MemberMenu extends React.Component {
   }
 
   handleMemberSelect(memberID) {
-    this.props.updateSelectedMember(memberID);
+    if (this.props.team) {
+      this.props.updateSelectedMember(memberID);
+    } else {
+      this.props.showPage("");
+    }
   }
 
   render() {
@@ -72,12 +76,14 @@ class MemberMenu extends React.Component {
       <List component="nav" style={{ marginLeft: -6 }}>
         {usersToShow && usersToShow.map(m => (
           <Tooltip key={"side" + m.userID} title={m.firstName} placement="right">
-            <ListItem button
+            <ListItem
+              button
               onClick={this.handleMemberSelect.bind(this, m.id)}
               style={{ paddingTop: 16, paddingBottom: 16 }}>
               <ListItemAvatar>
                 {isSelected(m) ?
-                  <Badge badgeContent={<KeyboardRounded />}>
+                  <Badge
+                    badgeContent={<ChatRounded color="primary" style={{ fontSize: 20 }} />}>
                     <Avatar className={isFacilitator(m) ? classes.purpleAvatar : null}>{m.userID}</Avatar>
                   </Badge> :
                   <Avatar className={isFacilitator(m) ? classes.purpleAvatar : null}>{m.userID}</Avatar>}

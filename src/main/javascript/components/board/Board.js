@@ -4,9 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
+import { Card, CardHeader, CardContent } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { Add } from '@material-ui/icons';
@@ -48,8 +46,8 @@ class Board extends React.Component {
       if (this.props.selectedMember) {
         let newItem = {
           title: newItems[pillarID].capitalize(),
-          pillar: Utils.appendLink("pillars/" + pillarID),
-          owner: Utils.appendLink("members/" + this.props.selectedMember.id),
+          pillar: Utils.prepend("pillars/" + pillarID),
+          owner: Utils.prepend("members/" + this.props.selectedMember.id),
         };
 
         this.props.postItem(newItem).then(() => {

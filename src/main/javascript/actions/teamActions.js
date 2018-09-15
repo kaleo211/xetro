@@ -1,33 +1,57 @@
-import { FETCH_TEAMS, SELECT_TEAM, ADD_MEMBER_TO_TEAM } from './types';
+import { FETCH_TEAMS, SELECT_TEAM, ADD_MEMBER_TO_TEAM, POST_TEAM } from './types';
 import Utils from '../components/Utils';
 
 export const fetchTeams = () => dispatch => {
   Utils.fetchResource("teams", (body => {
+    let teams = body._embedded && body._embedded.teams || [];
     dispatch({
       type: FETCH_TEAMS,
-      payload: body._embedded.teams
+      teams,
     });
   }));
 };
 
-export const selectTeam = (teamID) => dispatch => {
-  Utils.fetchResource("teams/" + teamID, (body => {
-    let team = Utils.reformTeam(body);
-    Utils.fetchResource("teamMember/team/" + teamID, (body => {
-      let members = body._embedded && body._embedded.members || [];
+export const postTeam = (updatedTeam) => dispatch => {
+  Utils.postResource("teams", updatedTeam, (body1) => {
+    let team = Utils.reform(body1);
+    console.log("returned team", team);
+    Utils.fetchResource("teams", (body => {
+      let teams = body._embedded && body._embedded.teams || [];
       dispatch({
-        type: SELECT_TEAM,
+        type: POST_TEAM,
+        teams,
         team,
-        members
       });
     }));
-  }));
+  });
+}
+
+export const selectTeam = (teamID) => dispatch => {
+  if (teamID) {
+    Utils.fetchResource("teams/" + teamID, (body => {
+      let team = Utils.reformTeam(body);
+      Utils.fetchResource("teamMember/team/" + teamID, (body => {
+        let members = body._embedded && body._embedded.members || [];
+        dispatch({
+          type: SELECT_TEAM,
+          team,
+          members,
+        });
+      }));
+    }));
+  } else {
+    dispatch({
+      type: SELECT_TEAM,
+      team: null,
+      members: [],
+    })
+  }
 };
 
 export const addMemberToTeam = (teamID, memberID) => dispatch => {
   let teamMember = {
-    team: Utils.appendLink("teams/" + teamID),
-    member: Utils.appendLink("members/" + memberID),
+    team: Utils.prepend("teams/" + teamID),
+    member: Utils.prepend("members/" + memberID),
   }
 
   Utils.postTeamMember(teamMember, (body => {

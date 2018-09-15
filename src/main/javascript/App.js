@@ -4,16 +4,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import AppBar from '@material-ui/core/AppBar';
+import Drawer from '@material-ui/core/Drawer';
 import Snackbar from '@material-ui/core/Snackbar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Drawer from '@material-ui/core/Drawer';
 
 import BarSettings from './components/BarSettings';
 import Board from './components/board/Board';
 import BoardActiveList from './components/board/BoardActiveList';
 import MemberMenu from './components/MemberMenu';
 import NewBoard from './components/board/NewBoard';
+import NewTeam from './components/NewTeam';
 import NewUser from './components/NewUser';
 import TeamMenu from './components/TeamMenu';
 
@@ -67,8 +68,8 @@ class App extends React.Component {
   }
 
   render() {
-    const { page, board, classes, teams, team } = this.props;
-    return (teams && <div className={classes.root}>
+    const { page, board, classes } = this.props;
+    return (<div className={classes.root}>
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
           <div style={{ marginLeft: -20 }}>
@@ -98,6 +99,7 @@ class App extends React.Component {
         {page === "boardCreate" && <NewBoard />}
         {page === "activeBoards" && <BoardActiveList />}
         {page === "userCreate" && <NewUser />}
+        {page === "teamCreate" && <NewTeam />}
       </main>
 
       <Snackbar
@@ -113,8 +115,6 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  teams: state.teams.teams,
-  team: state.teams.team,
   board: state.boards.board,
   page: state.local.page,
   snackbarOpen: state.local.snackbarOpen,

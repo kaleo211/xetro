@@ -1,4 +1,4 @@
-import { FETCH_TEAMS, SELECT_TEAM, ADD_MEMBER_TO_TEAM } from '../actions/types';
+import { FETCH_TEAMS, SELECT_TEAM, ADD_MEMBER_TO_TEAM, POST_TEAM } from '../actions/types';
 
 const initialState = {
   teams: [],
@@ -11,20 +11,27 @@ export default function (state = initialState, action) {
     case FETCH_TEAMS:
       return {
         ...state,
-        teams: action.payload
+        teams: action.teams,
+      };
+
+    case POST_TEAM:
+      return {
+        ...state,
+        team: action.team,
+        teams: action.teams,
       };
 
     case SELECT_TEAM:
       return {
         ...state,
         team: action.team,
-        members: action.members
+        members: action.members,
       }
 
     case ADD_MEMBER_TO_TEAM:
       return {
         ...state,
-        members: action.members
+        members: action.members,
       }
 
     default:

@@ -24,7 +24,7 @@ export default class Board extends React.Component {
   }
 
 
-  static appendLink(path) {
+  static prepend(path) {
     return window.location.protocol + "//" + window.location.hostname + ":8080/api/" + path;
   }
 
@@ -46,7 +46,7 @@ export default class Board extends React.Component {
   }
 
   static delete(resource, callback) {
-    let url = this.appendLink(resource);
+    let url = this.prepend(resource);
     fetch(url, {
       method: 'delete',
     }).then(resp => {
@@ -117,7 +117,7 @@ export default class Board extends React.Component {
   }
 
   static patch(resource, updatedResource, callback) {
-    let url = this.appendLink(resource);
+    let url = this.prepend(resource);
     if (url) {
       fetch(url, {
         method: 'PATCH',

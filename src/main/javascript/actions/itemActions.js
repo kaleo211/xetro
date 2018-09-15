@@ -21,11 +21,14 @@ export const patchItem = (i, updatedItem) => dispatch => {
 };
 
 export const deleteItem = (itemID) => dispatch => {
-  Utils.delete("items/" + itemID, (() => {
-    dispatch({
-      type: DELETE_ITEM,
-    });
-  }));
+  return new Promise((resolve, reject) => {
+    Utils.delete("items/" + itemID, ((body) => {
+      dispatch({
+        type: DELETE_ITEM,
+      });
+      resolve(body);
+    }));
+  });
 };
 
 export const postAction = (updatedAction) => dispatch => {

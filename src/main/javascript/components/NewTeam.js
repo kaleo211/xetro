@@ -9,13 +9,13 @@ import { Card, CardActions, CardContent } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 import { Done, Close } from '@material-ui/icons';
 
-import { fetchUsers, postUser } from '../actions/userActions';
+import { fetchTeams, postTeam } from '../actions/teamActions';
 import { showPage } from '../actions/localActions';
 
 const styles = theme => ({
 });
 
-class NewUser extends React.Component {
+class NewTeam extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -30,15 +30,12 @@ class NewUser extends React.Component {
     this.props.showPage("");
   }
 
-  handleUserAdd() {
-    let user = {
-      email: this.state.email,
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      userID: this.state.userID,
+  handleTeamAdd() {
+    let team = {
+      name: this.state.name,
     }
-    this.props.postUser(user);
-    this.props.fetchUsers();
+    this.props.postTeam(team);
+    this.props.fetchTeams();
 
     this.handleClose();
   }
@@ -48,36 +45,15 @@ class NewUser extends React.Component {
       <CardContent>
         <Grid container
           direction="row"
-          justify="flex-start"
+          justify="flex-start" z
           alignItems="flex-start"
           spacing={16}
           style={{ padding: 16 }} >
           <Grid item xs={12} sm={6} md={4} lg={3}>
             <TextField
               fullWidth
-              label="User ID"
-              name="userID"
-              onChange={this.handleFieldChange.bind(this)} />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3} >
-            <TextField
-              fullWidth
-              label="First name"
-              name="firstName"
-              onChange={this.handleFieldChange.bind(this)} />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              fullWidth
-              label="Last name"
-              name="lastName"
-              onChange={this.handleFieldChange.bind(this)} />
-          </Grid>
-          <Grid item xs={12} sm={6} md={4} lg={3}>
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
+              label="name"
+              name="name"
               onChange={this.handleFieldChange.bind(this)} />
           </Grid>
         </Grid >
@@ -87,7 +63,7 @@ class NewUser extends React.Component {
           <IconButton onClick={this.handleClose.bind(this)}>
             <Close />
           </IconButton>
-          <IconButton onClick={this.handleUserAdd.bind(this)}>
+          <IconButton onClick={this.handleTeamAdd.bind(this)}>
             <Done />
           </IconButton>
         </div>
@@ -100,11 +76,11 @@ class NewUser extends React.Component {
 const mapStateToProps = state => ({
 });
 
-NewUser.propTypes = {
+NewTeam.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 export default connect(mapStateToProps, {
-  postUser,
   showPage,
-  fetchUsers,
-})(withStyles(styles)(NewUser));
+  fetchTeams,
+  postTeam,
+})(withStyles(styles)(NewTeam));
