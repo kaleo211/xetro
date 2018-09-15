@@ -41,8 +41,17 @@ class Board extends React.Component {
 
     this.state = {
       newItems: {},
-      newPillar: null,
     };
+  }
+
+
+  componentWillMount() {
+    let board = this.props.board;
+    board && board.pillars && board.pillars.map(pillar => {
+      this.setState({
+        ["pillarTitle" + pillar.id]: pillar.title,
+      });
+    });
   }
 
   handleNewItemSave(pillarID, event) {
@@ -72,28 +81,14 @@ class Board extends React.Component {
     this.setState({ newItems });
   }
 
-  handleNewPillarClick() {
-    this.setState({
-      newPillar: {
-        board: this.props.board._links.self.href,
-      },
-    });
-  }
-
-  handleNewPillarTitleChange(evt) {
-    let newPillar = this.state.newPillar;
-    newPillar.title = evt.target.value;
-    this.setState({ newPillar });
-  }
-
-  handleNewPillarAdd(evt) {
-    if (evt && evt.key === 'Enter' && this.state.newPillar.title != "") {
-      Utils.postPillar(this.state.newPillar, (body => {
-        console.log("#Board# posted new pillar:", body);
-        this.setState({ newPillar: null });
-        this.props.selectBoard(this.props.board.id);
-      }));
+  handlePillarAdd() {
+    let pillar = {
+      title: "ChangeTitle",
+      board: Utils.prepend("boards/" + this.props.board.id),
     }
+    Utils.postPillar(pillar, (() => {
+      this.props.selectBoard(this.props.board.id);
+    }));
   }
 
   handlePillarTitleChange(pillar, evt) {
@@ -119,7 +114,7 @@ class Board extends React.Component {
 
   render() {
     const { classes, board } = this.props;
-    const { newItems, newPillar } = this.state;
+    const { newItems } = this.state;
 
     const pillarTitle = (pillar) => {
       return (
@@ -133,9 +128,9 @@ class Board extends React.Component {
         </TextField >)
     }
 
-    board && board.pillars.sort((a, b) => {
-      return a.id < b.id;
-    })
+    board && board.pillars && board.pillars.sort((a, b) => {
+      return a.id > b.id;
+    });
 
     return (board && <div>
       <Grid container spacing={8}
@@ -162,25 +157,10 @@ class Board extends React.Component {
               </CardContent>
               <Items pillar={pillar} />
             </Card>
-          </Grid>
-        ))}
-        <Grid item xs={12} sm={12} md={4} >
-          {newPillar && (
-            <Card wrap='nowrap'>
-              <CardContent>
-                <TextField
-                  autoFocus
-                  fullWidth
-                  label="New title"
-                  value={newPillar.title}
-                  onChange={this.handleNewPillarTitleChange.bind(this)}
-                  onKeyPress={this.handleNewPillarAdd.bind(this)} />
-              </CardContent>
-            </Card>)}
-        </Grid>
+          </Grid>))}
       </Grid>
-      {newPillar === null && !board.locked && (!board.pillars || board.pillars.length < 3) &&
-        <Button variant="fab" className={classes.fab} onClick={this.handleNewPillarClick.bind(this)} >
+      {!board.locked && (!board.pillars || board.pillars.length < 3) &&
+        <Button variant="fab" className={classes.fab} onClick={this.handlePillarAdd.bind(this)} >
           <Add />
         </Button>}
     </div>);
