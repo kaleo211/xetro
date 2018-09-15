@@ -14,7 +14,6 @@ export const fetchTeams = () => dispatch => {
 export const postTeam = (updatedTeam) => dispatch => {
   Utils.postResource("teams", updatedTeam, (body1) => {
     let team = Utils.reform(body1);
-    console.log("returned team", team);
     Utils.fetchResource("teams", (body => {
       let teams = body._embedded && body._embedded.teams || [];
       dispatch({
@@ -32,10 +31,15 @@ export const selectTeam = (teamID) => dispatch => {
       let team = Utils.reformTeam(body);
       Utils.fetchResource("teamMember/team/" + teamID, (body => {
         let members = body._embedded && body._embedded.members || [];
+        let memberIDSet = new Set();
+        members.map(m => {
+          memberIDSet.add(m.id);
+        });
         dispatch({
           type: SELECT_TEAM,
           team,
           members,
+          memberIDSet,
         });
       }));
     }));
@@ -44,7 +48,7 @@ export const selectTeam = (teamID) => dispatch => {
       type: SELECT_TEAM,
       team: null,
       members: [],
-    })
+    });
   }
 };
 
@@ -57,9 +61,14 @@ export const addMemberToTeam = (teamID, memberID) => dispatch => {
   Utils.postTeamMember(teamMember, (body => {
     Utils.fetchResource("teamMember/team/" + teamID, body => {
       let members = body._embedded && body._embedded.members || [];
+      let memberIDSet = new Set();
+      members.map(m => {
+        memberIDSet.add(m.id);
+      });
       dispatch({
         type: ADD_MEMBER_TO_TEAM,
-        members
+        members,
+        memberIDSet,
       })
     })
   }));

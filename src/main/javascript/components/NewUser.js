@@ -91,7 +91,6 @@ class NewUser extends React.Component {
             <Done />
           </IconButton>
         </div>
-
       </CardActions>
     </Card>);
   }

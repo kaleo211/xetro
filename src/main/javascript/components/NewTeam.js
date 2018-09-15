@@ -45,7 +45,7 @@ class NewTeam extends React.Component {
       <CardContent>
         <Grid container
           direction="row"
-          justify="flex-start" z
+          justify="flex-start"
           alignItems="flex-start"
           spacing={16}
           style={{ padding: 16 }} >
@@ -67,7 +67,6 @@ class NewTeam extends React.Component {
             <Done />
           </IconButton>
         </div>
-
       </CardActions>
     </Card>);
   }

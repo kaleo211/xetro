@@ -57,7 +57,7 @@ class MemberMenu extends React.Component {
   }
 
   render() {
-    const { team, users, members, classes, selectedMember, board } = this.props;
+    const { team, users, members, classes, selectedMember, board, memberIDSet } = this.props;
     const { anchorEl } = this.state;
 
     let usersToShow = users;
@@ -75,7 +75,7 @@ class MemberMenu extends React.Component {
     return (<div>
       <List component="nav" style={{ marginLeft: -6 }}>
         {usersToShow && usersToShow.map(m => (
-          <Tooltip key={"side" + m.userID} title={m.firstName} placement="right">
+          < Tooltip key={"side" + m.userID} title={m.firstName} placement="right" >
             <ListItem
               button
               onClick={this.handleMemberSelect.bind(this, m.id)}
@@ -109,19 +109,20 @@ class MemberMenu extends React.Component {
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={this.handleMenuClose.bind(this)} >
-          {users && users.map(user => (
+          {users && users.map(user => (!memberIDSet.has(user.id) &&
             <MenuItem key={user.id} onClick={this.handleMemberToAdd.bind(this, user.id)}>
               {user.firstName + " " + user.lastName}
             </MenuItem>))}
         </Menu>
       </div>
-    </div >)
+    </div>)
   }
 }
 
 const mapStateToProps = state => ({
   team: state.teams.team,
   users: state.users.users,
+  memberIDSet: state.teams.memberIDSet,
   members: state.teams.members,
   selectedMember: state.boards.selectedMember,
   board: state.boards.board,

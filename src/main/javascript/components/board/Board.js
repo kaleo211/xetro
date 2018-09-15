@@ -95,13 +95,10 @@ class Board extends React.Component {
     const { classes, board } = this.props;
     const { newItems, newPillar } = this.state;
     return (board && <div>
-      <Grid
-        container
-        spacing={8}
+      <Grid container spacing={8}
         direction="row"
         justify="flex-start"
-        alignItems="stretch"
-      >
+        alignItems="stretch">
         {board.facilitator && board.pillars && board.pillars.map((pillar) => (
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card wrap='nowrap'>
@@ -113,16 +110,13 @@ class Board extends React.Component {
                 action={null}
               />
               <CardContent>
-                <TextField
-                  fullWidth
-                  key={"pillar" + pillar.id}
+                <TextField fullWidth
                   label={pillar.intro}
                   disabled={board && board.locked}
                   name={pillar.id}
                   value={newItems[pillar.id]}
                   onChange={this.handleNewItemChange.bind(this)}
-                  onKeyPress={this.handleNewItemSave.bind(this, pillar.id)}
-                />
+                  onKeyPress={this.handleNewItemSave.bind(this, pillar.id)} />
               </CardContent>
               <Items pillar={pillar} />
             </Card>
@@ -138,14 +132,11 @@ class Board extends React.Component {
                   label="New title"
                   value={newPillar.title}
                   onChange={this.handleNewPillarTitleChange.bind(this)}
-                  onKeyPress={this.handleNewPillarAdd.bind(this)}
-                />
+                  onKeyPress={this.handleNewPillarAdd.bind(this)} />
               </CardContent>
-            </Card>
-          )}
+            </Card>)}
         </Grid>
       </Grid>
-
       {newPillar === null && !board.locked && (!board.pillars || board.pillars.length < 3) &&
         <Button variant="fab" className={classes.fab} onClick={this.handleNewPillarClick.bind(this)} >
           <Add />
