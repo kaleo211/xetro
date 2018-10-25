@@ -1,6 +1,4 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
@@ -21,7 +19,7 @@ import {
 
 import { patchBoard, selectBoard } from '../actions/boardActions';
 import { selectTeam } from '../actions/teamActions';
-import { openSnackBar, closeSnackBar, showPage } from '../actions/localActions';
+import { openSnackBar, showPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';
 
 const styles = theme => ({
@@ -84,7 +82,6 @@ class BarSettings extends React.Component {
       });
   }
 
-
   render() {
     const { board, members, team } = this.props;
     const membersWithActions = members.filter(member =>
@@ -92,11 +89,13 @@ class BarSettings extends React.Component {
         !action.finished && action.team.id === team.id
       ).length > 0
     );
-    console.log("actions:", membersWithActions);
+
+    console.log("board", board);
+
     return (<div>
       {board && (
         <Tooltip title="Refresh board" placement="bottom">
-          <IconButton onClick={this.handleRefreshBoard.bind(this)} color="inherit">
+          <IconButton id="refreshButton" onClick={this.handleRefreshBoard.bind(this)} color="inherit">
             <RefreshRounded />
           </IconButton>
         </Tooltip>)}
@@ -163,21 +162,23 @@ class BarSettings extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   board: state.boards.board,
   team: state.teams.team,
   members: state.teams.members,
 });
 
-BarSettings.propTypes = {
-  classes: PropTypes.object.isRequired,
+const mapDispatchToProps = (dispatch) => {
+  return {
+    patchBoard: (board, updatedBoard) => disptach(patchBoard(board, updatedBoard)),
+    openSnackBar: (message) => dispatch(openSnackBar(message)),
+    selectBoard: (id) => dispatch(selectBoard(id)),
+    showPage: (page) => dispatch(showPage(page)),
+    selectTeam: (id) => dispatch(selectTeam(id)),
+    patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
+  }
 };
-export default connect(mapStateToProps, {
-  patchBoard,
-  openSnackBar,
-  closeSnackBar,
-  selectBoard,
-  showPage,
-  selectTeam,
-  patchAction,
-})(withStyles(styles)(BarSettings));
+
+BarSettings.propTypes = {
+};
+export default connect(mapStateToProps, mapDispatchToProps)(BarSettings);

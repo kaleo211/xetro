@@ -1,8 +1,5 @@
-import React from 'react';
-
-export default class Board extends React.Component {
-
-  static reformBoard(board) {
+export default {
+  reformBoard(board) {
     if (board._embedded) {
       board.facilitator = board._embedded.facilitator;
       board.selected = board._embedded.selected;
@@ -10,25 +7,24 @@ export default class Board extends React.Component {
       board.team = board._embedded.team;
     }
     return board;
-  }
+  },
 
-  static reformTeam(team) {
+  reformTeam(team) {
     if (team._embedded) {
       team.boards = team._embedded.boards;
     }
     return team;
-  }
+  },
 
-  static reform(resource) {
+  reform(resource) {
     return Object.assign(resource, resource._embedded);
-  }
+  },
 
-
-  static prepend(path) {
+  prepend(path) {
     return window.location.protocol + "//" + window.location.hostname + ":8080/api/" + path;
-  }
+  },
 
-  static get(url, callback) {
+  get(url, callback) {
     if (url) {
       fetch(url.replace('{?projection}', ''))
         .then(resp => {
@@ -43,9 +39,9 @@ export default class Board extends React.Component {
           console.log(error);
         });
     }
-  }
+  },
 
-  static delete(resource, callback) {
+  delete(resource, callback) {
     let url = this.prepend(resource);
     fetch(url, {
       method: 'delete',
@@ -58,9 +54,9 @@ export default class Board extends React.Component {
     }).catch(error => {
       console.log(error);
     });
-  }
+  },
 
-  static deleteResource(resource, callback) {
+  deleteResource(resource, callback) {
     let url = resource._links.self.href.replace('{?projection}', '');
     fetch(url, {
       method: 'delete',
@@ -73,29 +69,29 @@ export default class Board extends React.Component {
     }).catch(error => {
       console.log(error);
     });
-  }
+  },
 
-  static fetchResource(resourceType, callback) {
+  fetchResource(resourceType, callback) {
     let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
     this.get(url, callback);
-  }
+  },
 
-  static getSelfLink(resource) {
+  getSelfLink(resource) {
     if (resource && resource._links) {
       return resource._links.self.href.replace('{?projection}', '');
     }
     return null;
-  }
+  },
 
-  static postPillar(pillar, callback) {
+  postPillar(pillar, callback) {
     this.postResource("pillars", pillar, callback);
-  }
+  },
 
-  static postTeamMember(teamMember, callback) {
+  postTeamMember(teamMember, callback) {
     this.postResource("teamMember", teamMember, callback);
-  }
+  },
 
-  static postResource(resourceType, resource, callback) {
+  postResource(resourceType, resource, callback) {
     let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
     fetch(url, {
       method: 'POST',
@@ -114,9 +110,9 @@ export default class Board extends React.Component {
     }).catch(error => {
       console.log(error);
     });
-  }
+  },
 
-  static patch(resource, updatedResource, callback) {
+  patch(resource, updatedResource, callback) {
     let url = this.prepend(resource);
     if (url) {
       fetch(url, {
@@ -135,9 +131,9 @@ export default class Board extends React.Component {
         callback(data);
       });
     }
-  }
+  },
 
-  static patchResource(resource, updatedResource, callback) {
+  patchResource(resource, updatedResource, callback) {
     let url = this.getSelfLink(resource);
     if (url) {
       fetch(url, {
