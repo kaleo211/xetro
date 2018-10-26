@@ -90,8 +90,6 @@ class BarSettings extends React.Component {
       ).length > 0
     );
 
-    console.log("board", board);
-
     return (<div>
       {board && (
         <Tooltip title="Refresh board" placement="bottom">

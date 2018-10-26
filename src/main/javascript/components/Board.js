@@ -9,15 +9,15 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { Add } from '@material-ui/icons';
 
-import Items from '../Items';
-import Utils from '../Utils';
+import Items from './Items';
+import Utils from './Utils';
 import {
   fetchTeamActiveBoards,
   selectBoard
-} from '../../actions/boardActions';
-import { openSnackBar, closeSnackBar } from '../../actions/localActions';
-import { postItem } from '../../actions/itemActions';
-import { patchPillar } from '../../actions/pillarActions';
+} from '../actions/boardActions';
+import { openSnackBar, closeSnackBar } from '../actions/localActions';
+import { postItem } from '../actions/itemActions';
+import { patchPillar } from '../actions/pillarActions';
 
 const styles = theme => ({
   root: {

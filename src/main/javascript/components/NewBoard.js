@@ -28,10 +28,10 @@ import {
 } from '@material-ui/icons';
 
 
-import { postBoard } from '../../actions/boardActions';
-import { showPage } from '../../actions/localActions';
-import { patchAction } from '../../actions/itemActions';
-import { selectTeam } from '../../actions/teamActions';
+import { postBoard } from '../actions/boardActions';
+import { showPage } from '../actions/localActions';
+import { patchAction } from '../actions/itemActions';
+import { selectTeam } from '../actions/teamActions';
 
 
 const styles = theme => ({

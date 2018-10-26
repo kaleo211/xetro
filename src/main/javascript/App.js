@@ -12,10 +12,10 @@ import { FeedbackOutlined } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
 
 import BarSettings from './components/BarSettings';
-import Board from './components/board/Board';
-import BoardActiveList from './components/board/BoardActiveList';
+import Board from './components/Board';
+import BoardActiveList from './components/BoardActiveList';
 import MemberMenu from './components/MemberMenu';
-import NewBoard from './components/board/NewBoard';
+import NewBoard from './components/NewBoard';
 import NewTeam from './components/NewTeam';
 import NewUser from './components/NewUser';
 import TeamMenu from './components/TeamMenu';
