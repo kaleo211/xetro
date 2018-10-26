@@ -6,6 +6,7 @@ import {
   POST_BOARD,
   UPDATE_SELECTED_MEMBER,
   SHOW_PAGE,
+  FETCH_BOARDS,
 } from './types';
 import Utils from '../components/Utils';
 
@@ -20,7 +21,7 @@ export const fetchTeamActiveBoards = (teamID) => {
           dispatch(selectBoard(boards[0].id));
           page = "board";
         } if (boards.length > 1) {
-          page = "activeBoards";
+          page = "boardList";
         }
       }
 
@@ -56,6 +57,19 @@ export const postBoard = (board) => {
       dispatch({
         type: POST_BOARD,
         board
+      });
+    });
+  };
+};
+
+export const fetchBoards = () => {
+  return (dispatch) => {
+    return Utils.fetchResource("boards").then(body => {
+      console.log(body);
+      let boards = body._embedded.boards;
+      dispatch({
+        type: FETCH_BOARDS,
+        boards
       });
     });
   };

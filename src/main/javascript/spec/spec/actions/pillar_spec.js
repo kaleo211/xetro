@@ -4,27 +4,36 @@ import fetchMock from 'fetch-mock';
 import { JSDOM } from 'jsdom';
 
 import * as actions from '../../../actions/pillarActions';
-import { POST_PILLAR } from '../../../actions/types';
+
+import { POST_PILLAR, FETCH_BOARD } from '../../../actions/types';
 
 describe("pillarActions", () => {
-  it("postAction", () => {
-    const mockStore = configureStore([thunk]);
-    const store = mockStore();
+  afterEach(() => {
+    fetchMock.reset();
+  });
 
-    const expectedActions = [{
-      'pillar': {},
-      'type': POST_PILLAR,
-    }];
+  describe('when the board id is not presented', () => {
+    it("", () => {
+      const mockStore = configureStore([thunk]);
+      const store = mockStore();
 
-    global.window = new JSDOM('', {
-      url: 'http:test/'
-    }).window;
+      const expectedActions = [{
+        'pillar': {},
+        'type': POST_PILLAR,
+      },{
+        'type': FETCH_BOARD,
+        'board': null,
+      }];
 
-    fetchMock.postOnce('http://test:8080/api/pillars', {});
-    fetchMock.getOnce('http://test:8080/api/boards/1', {});
+      global.window = new JSDOM('', {
+        url: 'http:test/'
+      }).window;
 
-    store.dispatch(actions.postPillar({}, 1)).then(() => {
-      expect(store.getActions()).toEqual(expectedActions);
+      fetchMock.postOnce('http://test:8080/api/pillars', {});
+
+      store.dispatch(actions.postPillar({}, null)).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
     });
-  })
-})
+  });
+});

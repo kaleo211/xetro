@@ -13,7 +13,7 @@ import { IconButton } from '@material-ui/core';
 
 import BarSettings from './components/BarSettings';
 import Board from './components/Board';
-import BoardActiveList from './components/BoardActiveList';
+import BoardList from './components/BoardList';
 import MemberMenu from './components/MemberMenu';
 import NewBoard from './components/NewBoard';
 import NewTeam from './components/NewTeam';
@@ -105,7 +105,7 @@ class App extends React.Component {
         <div className={classes.toolbar} />
         {page === "board" && <Board />}
         {page === "boardCreate" && <NewBoard />}
-        {page === "activeBoards" && <BoardActiveList />}
+        {page === "boardList" && <BoardList />}
         {page === "userCreate" && <NewUser />}
         {page === "teamCreate" && <NewTeam />}
       </main>

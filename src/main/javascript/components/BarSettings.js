@@ -17,9 +17,10 @@ import {
   RefreshRounded,
   Assignment,
   CheckRounded,
+  HistoryRounded,
 } from '@material-ui/icons';
 
-import { patchBoard, selectBoard } from '../actions/boardActions';
+import { patchBoard, selectBoard, fetchBoards } from '../actions/boardActions';
 import { selectTeam } from '../actions/teamActions';
 import { openSnackBar, showPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';
@@ -60,6 +61,11 @@ class BarSettings extends React.Component {
     this.props.selectBoard(this.props.board.id);
   }
 
+  handleViewHistory() {
+    this.props.fetchBoards();
+    this.props.showPage("boardList");
+  }
+
   handleBoardFinish() {
     let updatedBoard = { finished: true };
     this.props.patchBoard(this.props.board, updatedBoard);
@@ -93,6 +99,11 @@ class BarSettings extends React.Component {
     );
 
     return (<div>
+      <Tooltip title="Show board history" placement="bottom">
+        <IconButton id="historyButton" onClick={this.handleViewHistory.bind(this)} color="inherit">
+          <HistoryRounded />
+        </IconButton>
+      </Tooltip>
       {board && (
         <Tooltip title="Refresh board" placement="bottom">
           <IconButton id="refreshButton" onClick={this.handleRefreshBoard.bind(this)} color="inherit">
@@ -172,6 +183,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     selectBoard: (id) => dispatch(selectBoard(id)),
     patchBoard: (board, updatedBoard) => dispatch(patchBoard(board, updatedBoard)),
+    fetchBoards: ()=> dispatch(fetchBoards()),
     selectTeam: (id) => dispatch(selectTeam(id)),
     patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
     openSnackBar: (message) => dispatch(openSnackBar(message)),

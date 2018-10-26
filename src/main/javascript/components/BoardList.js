@@ -18,7 +18,7 @@ import { selectBoard } from '../actions/boardActions';
 const styles = theme => ({
 });
 
-class ActiveBoardList extends React.Component {
+class BoardList extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -60,10 +60,10 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-ActiveBoardList.propTypes = {
+BoardList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles),
-)(ActiveBoardList);
+)(BoardList);
