@@ -15,9 +15,10 @@ export const fetchTeamActiveBoards = (teamID) => {
       let page = "boardCreate";
       let board = null;
       let boards = body._embedded && body._embedded.boards || [];
+
       if (boards) {
         if (boards.length === 1) {
-          board = boards[0].id;
+          board = boards[0];
           page = "board";
         } if (boards.length > 1) {
           page = "activeBoards";

@@ -178,7 +178,7 @@ class Items extends React.Component {
   render() {
     const { selectedItem, pillar, board, members, classes } = this.props;
     const { newAction, ownerAnchorEl, switcher } = this.state;
-    return (board && pillar && pillar.items && pillar.items.map(item => (
+    return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item.id}
         expanded={switcher && selectedItem.id === item.id}
@@ -267,7 +267,8 @@ class Items extends React.Component {
           </Grid>
         </ExpansionPanelActions>
       </ExpansionPanel >
-    )));
+    ))
+    }</div>);
   }
 }
 
