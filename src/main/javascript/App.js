@@ -88,7 +88,6 @@ class App extends React.Component {
           </Typography>
 
           <div style={{ flexGrow: 1 }}>
-            {/* {board && board.started && !board.finished && <Timer board={board} />} */}
           </div>
           <BarSettings />
         </Toolbar>
