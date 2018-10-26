@@ -7,11 +7,11 @@ import { selectBoard } from './boardActions';
 
 export const postPillar = (pillar, bID) => {
   return (dispatch) => {
-    Utils.postResource("pillars", pillar).then(body => {
+    return Utils.postResource("pillars", pillar).then(body => {
       let pillar = Utils.reform(body);
       dispatch({
         type: POST_PILLAR,
-        pillar
+        pillar,
       });
       dispatch(selectBoard(bID));
     });
@@ -26,7 +26,7 @@ export const patchPillar = (p, pillar, bID) => {
         type: PATCH_PILLAR,
         pillar,
       });
-      dispatch(selectBoard(bID))
+      dispatch(selectBoard(bID));
     });
   };
 };

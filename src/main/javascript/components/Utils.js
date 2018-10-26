@@ -1,3 +1,5 @@
+import "isomorphic-fetch";
+
 export default {
   reformBoard(board) {
     if (board._embedded) {
@@ -89,7 +91,7 @@ export default {
 
   postResource(resourceType, resource) {
     let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
-
+    console.log("url", url);
     return new Promise((resolve, reject) => {
       fetch(url, {
         method: 'POST',

@@ -51,10 +51,8 @@ export const postItem = (updatedItem, bID) => {
         type: POST_ITEM,
         item,
       });
+      dispatch(selectBoard(bID));
     });
-    console.log("i am here 3");
-    dispatch(selectBoard(bID));
-    console.log("i am here 4");
   };
 };
 

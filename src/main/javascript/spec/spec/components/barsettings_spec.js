@@ -4,9 +4,8 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { createShallow } from '@material-ui/core/test-utils';
 
-
-import BarSettings from '../components/BarSettings';
-import * as actions from "../actions/boardActions";
+import BarSettings from '../../../components/BarSettings';
+import * as actions from "../../../actions/boardActions";
 
 describe("BarSettings", () => {
   it("contains spec with an expectation", () => {
