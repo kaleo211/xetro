@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withStyles } from '@material-ui/core/styles';
+import { compose } from 'redux';
 
 import Button from '@material-ui/core/Button';
-import { Tooltip, Avatar } from '@material-ui/core';
-import { Grid, List, ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core';
+import { Tooltip, Avatar, Grid } from '@material-ui/core';
+import { List, ListItem, ListItemText, ListItemSecondaryAction } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
@@ -168,15 +170,18 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    patchBoard: (board, updatedBoard) => disptach(patchBoard(board, updatedBoard)),
+    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
+    patchBoard: (board, updatedBoard) => patchBoard(board, updatedBoard).then(r => dispatch(r)),
+    selectTeam: (id) => selectTeam(id).then(r => dispatch(r)),
+    patchAction: (link, updatedAction) => patchAction(link, updatedAction).then(r => dispatch(r)),
     openSnackBar: (message) => dispatch(openSnackBar(message)),
-    selectBoard: (id) => dispatch(selectBoard(id)),
     showPage: (page) => dispatch(showPage(page)),
-    selectTeam: (id) => dispatch(selectTeam(id)),
-    patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
   }
 };
 
 BarSettings.propTypes = {
 };
-export default connect(mapStateToProps, mapDispatchToProps)(BarSettings);
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles),
+)(BarSettings);

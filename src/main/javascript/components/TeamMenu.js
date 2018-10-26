@@ -10,6 +10,7 @@ import { Add } from '@material-ui/icons';
 import { selectTeam } from '../actions/teamActions';
 import { fetchTeamActiveBoards, selectBoard } from '../actions/boardActions';
 import { showPage } from '../actions/localActions';
+import { compose } from 'redux';
 
 const styles = theme => ({
 });
@@ -94,13 +95,19 @@ const mapStateToProps = state => ({
   team: state.teams.team,
   teams: state.teams.teams,
 });
+const mapDispatchToProps = (dispatch) => {
+  return {
+    selectTeam: (id) => selectTeam(id).then(r => dispatch(r)),
+    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
+    fetchTeamActiveBoards: (id) => fetchTeamActiveBoards(id).then(r => dispatch(r)),
+    showPage: (page) => dispatch(showPage(page)),
+  };
+};
 
 TeamMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, {
-  selectTeam,
-  selectBoard,
-  showPage,
-  fetchTeamActiveBoards
-})(withStyles(styles)(TeamMenu));
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles),
+)(TeamMenu);

@@ -11,6 +11,7 @@ import { Done, Close } from '@material-ui/icons';
 
 import { fetchUsers, postUser } from '../actions/userActions';
 import { showPage } from '../actions/localActions';
+import { compose } from 'redux';
 
 const styles = theme => ({
 });
@@ -99,12 +100,18 @@ class NewUser extends React.Component {
 
 const mapStateToProps = state => ({
 });
+const mapDispatchToProps = (dispatch) => {
+  return {
+    postUser: (user) => postUser(user).then(r => dispatch(r)),
+    fetchUsers: () => fetchUsers().then(r => dispatch(r)),
+    showPage: (page) => dispatch(showPage(page)),
+  };
+};
 
 NewUser.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, {
-  postUser,
-  showPage,
-  fetchUsers,
-})(withStyles(styles)(NewUser));
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles),
+)(NewUser);

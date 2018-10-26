@@ -24,56 +24,52 @@ export default {
     return window.location.protocol + "//" + window.location.hostname + ":8080/api/" + path;
   },
 
-  get(url, callback) {
-    if (url) {
-      fetch(url.replace('{?projection}', ''))
-        .then(resp => {
-          if (resp.ok) {
-            return resp.json();
-          } else {
-            throw new Error("failed to get:", url);
-          }
-        }).then(data => {
-          callback(data);
-        }).catch(error => {
-          console.log(error);
-        });
-    }
-  },
-
-  delete(resource, callback) {
-    let url = this.prepend(resource);
-    fetch(url, {
-      method: 'delete',
-    }).then(resp => {
-      if (!resp.ok) {
-        throw new Error("failed to delete:", url);
+  get(url) {
+    return new Promise((resolve, reject) => {
+      if (url) {
+        fetch(url.replace('{?projection}', ''))
+          .then(resp => {
+            if (resp.ok) {
+              resolve(resp.json());
+            } else {
+              reject(Error("failed to get:", url));
+            }
+          });
       }
-    }).then(data => {
-      callback(data);
-    }).catch(error => {
-      console.log(error);
     });
   },
 
-  deleteResource(resource, callback) {
+  delete(resource) {
+    let url = this.prepend(resource);
+    return new Promise((resolve, reject) => {
+      fetch(url, {
+        method: 'delete',
+      }).then(resp => {
+        if (resp.ok) {
+          resolve(resp);
+        } else {
+          resolve(Error("failed to delete:", url));
+        }
+      });
+    });
+  },
+
+  deleteResource(resource) {
     let url = resource._links.self.href.replace('{?projection}', '');
     fetch(url, {
       method: 'delete',
     }).then(resp => {
-      if (!resp.ok) {
-        throw new Error("failed to delete:", url);
+      if (resp.ok) {
+        resolve(resp);
+      } else {
+        reject(Error("failed to delete:", url));
       }
-    }).then(data => {
-      callback(data);
-    }).catch(error => {
-      console.log(error);
     });
   },
 
-  fetchResource(resourceType, callback) {
+  fetchResource(resourceType) {
     let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
-    this.get(url, callback);
+    return this.get(url);
   },
 
   getSelfLink(resource) {
@@ -83,74 +79,73 @@ export default {
     return null;
   },
 
-  postPillar(pillar, callback) {
-    this.postResource("pillars", pillar, callback);
+  postPillar(pillar) {
+    return this.postResource("pillars", pillar);
   },
 
-  postTeamMember(teamMember, callback) {
-    this.postResource("teamMember", teamMember, callback);
+  postTeamMember(teamMember) {
+    return this.postResource("teamMember", teamMember);
   },
 
-  postResource(resourceType, resource, callback) {
+  postResource(resourceType, resource) {
     let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
-    fetch(url, {
-      method: 'POST',
-      body: JSON.stringify(resource),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      })
-    }).then(resp => {
-      if (resp.ok) {
-        return resp.json();
-      } else {
-        throw new Error("failed to post:", resourceType, resource);
-      }
-    }).then(data => {
-      callback(data);
-    }).catch(error => {
-      console.log(error);
+
+    return new Promise((resolve, reject) => {
+      fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(resource),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        })
+      }).then(resp => {
+        if (resp.ok) {
+          resolve(resp.json());
+        } else {
+          reject(Error("failed to post:", resourceType, resource));
+        }
+      });
     });
   },
 
-  patch(resource, updatedResource, callback) {
+  patch(resource, updatedResource) {
     let url = this.prepend(resource);
     if (url) {
-      fetch(url, {
-        method: 'PATCH',
-        body: JSON.stringify(updatedResource),
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-      }).then(resp => {
-        if (resp.ok) {
-          return resp.json();
-        } else {
-          throw new Error("failed to patch:", resource, updatedResource);
-        }
-      }).then(data => {
-        callback(data);
+      return new Promise((resolve, reject) => {
+        fetch(url, {
+          method: 'PATCH',
+          body: JSON.stringify(updatedResource),
+          headers: new Headers({
+            'Content-Type': 'application/json',
+          }),
+        }).then(resp => {
+          if (resp.ok) {
+            resolve(resp.json());
+          } else {
+            reject(Error("failed to patch:", resource, updatedResource));
+          }
+        });
       });
     }
   },
 
-  patchResource(resource, updatedResource, callback) {
-    let url = this.getSelfLink(resource);
-    if (url) {
-      fetch(url, {
-        method: 'PATCH',
-        body: JSON.stringify(updatedResource),
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-      }).then(resp => {
-        if (resp.ok) {
-          return resp.json();
-        } else {
-          throw new Error("failed to patch:", resource, updatedResource);
-        }
-      }).then(data => {
-        callback(data);
-      });
-    }
+  patchResource(resource, updatedResource) {
+    return new Promise((resolve, reject) => {
+      let url = this.getSelfLink(resource);
+      if (url) {
+        fetch(url, {
+          method: 'PATCH',
+          body: JSON.stringify(updatedResource),
+          headers: new Headers({
+            'Content-Type': 'application/json',
+          }),
+        }).then(resp => {
+          if (resp.ok) {
+            resolve(resp.json());
+          } else {
+            reject(Error("failed to patch:", resource, updatedResource));
+          }
+        });
+      }
+    });
   }
 }

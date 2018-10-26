@@ -2,6 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 import Avatar from '@material-ui/core/Avatar';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -277,15 +278,22 @@ const mapStateToProps = state => ({
   selectedItem: state.local.selectedItem,
 });
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    patchItem: (i, item) => patchItem(i, item).then(r => dispatch(r)),
+    deleteItem: (id) => deleteItem(id).then(r => dispatch(r)),
+    postAction: (action) => postAction(action).then(r => dispatch(r)),
+    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
+    patchAction: (action) => patchAction(action).then(r => dispatch(r)),
+    selectItem: (item) => selectItem(item).then(r => dispatch(r)),
+    selectTeam: (id) => selectTeam(id).then(r => dispatch(r)),
+  };
+};
+
 Items.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, {
-  patchItem,
-  deleteItem,
-  postAction,
-  selectBoard,
-  patchAction,
-  selectItem,
-  selectTeam,
-})(withStyles(styles)(Items));
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles),
+)(Items);

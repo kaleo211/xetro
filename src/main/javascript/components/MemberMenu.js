@@ -14,6 +14,7 @@ import { Tooltip } from '@material-ui/core';
 import { addMemberToTeam } from '../actions/teamActions';
 import { updateSelectedMember } from '../actions/boardActions';
 import { showPage } from '../actions/localActions';
+import { compose } from 'redux';
 
 const styles = theme => ({
   purpleAvatar: {
@@ -128,11 +129,18 @@ const mapStateToProps = state => ({
   board: state.boards.board,
 });
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addMemberToTeam: (tID, mID) => addMemberToTeam(tID, mID).then(r => dispatch(r)),
+    updateSelectedMember: (id) => updateSelectedMember(id).then(r => dispatch(r)),
+    showPage: (page) => dispatch(showPage(page)),
+  };
+};
+
 MemberMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, {
-  addMemberToTeam,
-  updateSelectedMember,
-  showPage,
-})(withStyles(styles)(MemberMenu));
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles),
+)(MemberMenu);

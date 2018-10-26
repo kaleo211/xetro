@@ -2,6 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 import Avatar from '@material-ui/core/Avatar';
 import Badge from '@material-ui/core/Badge';
@@ -255,13 +256,19 @@ const mapStateToProps = state => ({
   members: state.teams.members,
   team: state.teams.team
 });
+const mapDispatchToProps = (dispatch) => {
+  return {
+    postBoard: (board) => postBoard(board).then(r => dispatch(r)),
+    patchAction: (a, action) => patchAction(a, action).then(r => dispatch(r)),
+    selectTeam: (id) => selectTeam(id).then(r => dispatch(r)),
+    showPage: (page) => dispatch(showPage(page)),
+  };
+};
 
 NewBoard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, {
-  postBoard,
-  showPage,
-  patchAction,
-  selectTeam,
-})(withStyles(styles)(NewBoard));
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles),
+)(NewBoard);

@@ -2,6 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -53,10 +54,16 @@ class ActiveBoardList extends React.Component {
 const mapStateToProps = state => ({
   boards: state.boards.boards,
 });
+const mapDispatchToProps = (dispatch) => {
+  return {
+    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
+  }
+}
 
 ActiveBoardList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, {
-  selectBoard,
-})(withStyles(styles)(ActiveBoardList));
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles),
+)(ActiveBoardList);

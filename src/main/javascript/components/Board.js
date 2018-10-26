@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 import Button from '@material-ui/core/Button';
 import { Card, CardHeader, CardContent } from '@material-ui/core';
@@ -173,15 +174,21 @@ const mapStateToProps = state => ({
   teams: state.teams.teams,
   team: state.teams.team,
 });
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchTeamActiveBoards: (id) => fetchTeamActiveBoards(id).then(r => dispatch(r)),
+    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
+    postItem: (item) => postItem(item).then(r => dispatch(r)),
+    patchPillar: (p, pillar) => patchPillar(p, pillar).then(r => dispatch(r)),
+    openSnackBar: () => dispatch(openSnackBar()),
+    closeSnackBar: () => dispatch(closeSnackBar()),
+  }
+}
 
 Board.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, {
-  fetchTeamActiveBoards,
-  selectBoard,
-  openSnackBar,
-  closeSnackBar,
-  postItem,
-  patchPillar,
-})(withStyles(styles)(Board));
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles)
+)(Board);

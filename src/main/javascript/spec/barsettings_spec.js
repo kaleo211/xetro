@@ -1,8 +1,9 @@
 import React from 'react';
 import thunk from 'redux-thunk';
 
-import { shallow } from 'enzyme';
 import configureStore from 'redux-mock-store';
+import { createShallow } from '@material-ui/core/test-utils';
+
 
 import BarSettings from '../components/BarSettings';
 import * as actions from "../actions/boardActions";
@@ -28,7 +29,9 @@ describe("BarSettings", () => {
     spyOn(actions, 'selectBoard').withArgs(0).and.returnValue("fakeReturn");
     spyOn(store, 'dispatch');
 
-    const wrapper = shallow(<BarSettings store={store} />).dive();
+    let shallow = createShallow();
+
+    const wrapper = shallow(<BarSettings store={store} />).dive().dive();
 
     expect(wrapper.find('#refreshButton').length).toEqual(1);
     wrapper.find('#refreshButton').simulate('click');

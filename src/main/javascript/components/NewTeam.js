@@ -11,6 +11,7 @@ import { Done, Close } from '@material-ui/icons';
 
 import { fetchTeams, postTeam } from '../actions/teamActions';
 import { showPage } from '../actions/localActions';
+import { compose } from 'redux';
 
 const styles = theme => ({
 });
@@ -75,11 +76,18 @@ class NewTeam extends React.Component {
 const mapStateToProps = state => ({
 });
 
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchTeams: () => fetchTeams().then(r => dispatch(r)),
+    postTeam: (team) => postTeam(team).then(r => dispatch(r)),
+    showPage: (page) => dispatch(showPage(page)),
+  };
+};
+
 NewTeam.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-export default connect(mapStateToProps, {
-  showPage,
-  fetchTeams,
-  postTeam,
-})(withStyles(styles)(NewTeam));
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withStyles(styles),
+)(NewTeam);
