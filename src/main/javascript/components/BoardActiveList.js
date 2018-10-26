@@ -56,7 +56,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
+    selectBoard: (id) => dispatch(selectBoard(id)),
   }
 }
 

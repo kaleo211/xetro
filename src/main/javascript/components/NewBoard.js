@@ -258,9 +258,9 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = (dispatch) => {
   return {
-    postBoard: (board) => postBoard(board).then(r => dispatch(r)),
-    patchAction: (a, action) => patchAction(a, action).then(r => dispatch(r)),
-    selectTeam: (id) => selectTeam(id).then(r => dispatch(r)),
+    postBoard: (board) => dispatch(postBoard(board)),
+    patchAction: (a, action) => dispatch(patchAction(a, action)),
+    selectTeam: (id) => dispatch(selectTeam(id)),
     showPage: (page) => dispatch(showPage(page)),
   };
 };

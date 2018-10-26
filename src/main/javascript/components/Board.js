@@ -13,7 +13,6 @@ import { Add } from '@material-ui/icons';
 import Items from './Items';
 import Utils from './Utils';
 import {
-  fetchTeamActiveBoards,
   selectBoard
 } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
@@ -176,10 +175,9 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchTeamActiveBoards: (id) => fetchTeamActiveBoards(id).then(r => dispatch(r)),
-    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
-    postItem: (item) => postItem(item).then(r => dispatch(r)),
-    patchPillar: (p, pillar) => patchPillar(p, pillar).then(r => dispatch(r)),
+    selectBoard: (id) => dispatch(selectBoard(id)),
+    postItem: (item) => dispatch(postItem(item)),
+    patchPillar: (p, pillar) => dispatch(patchPillar(p, pillar)),
     openSnackBar: () => dispatch(openSnackBar()),
     closeSnackBar: () => dispatch(closeSnackBar()),
   }

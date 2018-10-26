@@ -78,8 +78,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchTeams: () => fetchTeams().then(r => dispatch(r)),
-    postTeam: (team) => postTeam(team).then(r => dispatch(r)),
+    fetchTeams: () => dispatch(fetchTeams()),
+    postTeam: (team) => dispatch(postTeam(team)),
     showPage: (page) => dispatch(showPage(page)),
   };
 };

@@ -280,13 +280,13 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    patchItem: (i, item) => patchItem(i, item).then(r => dispatch(r)),
-    deleteItem: (id) => deleteItem(id).then(r => dispatch(r)),
-    postAction: (action) => postAction(action).then(r => dispatch(r)),
-    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
-    patchAction: (action) => patchAction(action).then(r => dispatch(r)),
-    selectItem: (item) => selectItem(item).then(r => dispatch(r)),
-    selectTeam: (id) => selectTeam(id).then(r => dispatch(r)),
+    patchItem: (i, item) => dispatch(patchItem(i, item)),
+    deleteItem: (id) => dispatch(deleteItem(id)),
+    postAction: (action) => dispatch(postAction(action)),
+    selectBoard: (id) => dispatch(selectBoard(id)),
+    patchAction: (action) => dispatch(patchAction(action)),
+    selectItem: (item) => dispatch(selectItem(item)),
+    selectTeam: (id) => dispatch(selectTeam(id)),
   };
 };
 

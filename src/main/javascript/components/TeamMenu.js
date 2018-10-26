@@ -38,21 +38,8 @@ class TeamMenu extends React.Component {
       this.props.selectBoard(null);
       this.props.showPage("");
     } else {
-      this.props.fetchTeamActiveBoards(teamID)
-        .then((boards) => {
-          if (boards) {
-            if (boards.length === 0) {
-              this.props.showPage("boardCreate");
-              this.props.selectBoard(null);
-            } else if (boards.length === 1) {
-              this.props.selectBoard(boards[0].id);
-              this.props.showPage("board");
-            } else {
-              this.props.selectBoard(null);
-              this.props.showPage("activeBoards");
-            }
-          }
-        });
+      console.log("i am here in component");
+      this.props.fetchTeamActiveBoards(teamID);
     }
     this.handleMenuClose();
   }
@@ -97,9 +84,9 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectTeam: (id) => selectTeam(id).then(r => dispatch(r)),
-    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
-    fetchTeamActiveBoards: (id) => fetchTeamActiveBoards(id).then(r => dispatch(r)),
+    selectTeam: (id) => dispatch(selectTeam(id)),
+    selectBoard: (id) => dispatch(selectBoard(id)),
+    fetchTeamActiveBoards: (id) => dispatch(fetchTeamActiveBoards(id)),
     showPage: (page) => dispatch(showPage(page)),
   };
 };

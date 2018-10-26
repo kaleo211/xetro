@@ -5,25 +5,25 @@ import {
 import Utils from '../components/Utils';
 
 export const postPillar = (pillar) => {
-  return new Promise((resolve, reject) => {
+  return (dispatch) => {
     Utils.postResource("pillars", pillar).then(body => {
       let pillar = Utils.reform(body);
-      resolve({
+      dispatch({
         type: POST_PILLAR,
         pillar
       });
     });
-  });
+  };
 };
 
 export const patchPillar = (p, pillar) => {
-  return new Promise((resolve, reject) => {
+  return (dispatch) => {
     Utils.patch(p, pillar, (body => {
       let pillar = Utils.reform(body);
-      resolve({
+      dispatch({
         type: PATCH_PILLAR,
         pillar,
       });
     }));
-  });
+  };
 };

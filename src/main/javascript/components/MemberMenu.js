@@ -131,8 +131,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addMemberToTeam: (tID, mID) => addMemberToTeam(tID, mID).then(r => dispatch(r)),
-    updateSelectedMember: (id) => updateSelectedMember(id).then(r => dispatch(r)),
+    addMemberToTeam: (tID, mID) => dispatch(addMemberToTeam(tID, mID)),
+    updateSelectedMember: (id) => dispatch(updateSelectedMember(id)),
     showPage: (page) => dispatch(showPage(page)),
   };
 };

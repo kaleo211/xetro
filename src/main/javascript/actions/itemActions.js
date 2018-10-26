@@ -8,60 +8,60 @@ import {
 import Utils from '../components/Utils';
 
 export const patchItem = (i, updatedItem) => {
-  return new Promise((resolve, reject) => {
+  return (dispatch) => {
     Utils.patchResource(i, updatedItem).then(body => {
       let item = Utils.reform(body);
-      resolve({
+      dispatch({
         type: PATCH_ITEM,
         item,
       });
     });
-  });
+  };
 };
 
 export const deleteItem = (itemID) => {
-  return new Promise((resolve, reject) => {
+  return (dispatch) => {
     Utils.delete("items/" + itemID).then(body => {
-      resolve({
+      dispatch({
         type: DELETE_ITEM,
       });
     });
-  });
+  };
 };
 
 export const postAction = (updatedAction) => dispatch => {
-  return new Promise((resolve, reject) => {
+  return (dispatch) => {
     Utils.postResource("actions", updatedAction).then(body => {
       let action = Utils.reform(body);
-      resolve({
+      dispatch({
         type: POST_ACTION,
         action,
       });
     });
-  });
+  };
 };
 
 
 export const postItem = (updatedItem) => {
-  return new Promise((resolve, reject) => {
+  return (dispatch) => {
     Utils.postResource("items", updatedItem).then(body => {
       let item = Utils.reform(body);
-      resolve({
+      dispatch({
         type: POST_ITEM,
         item,
       });
     });
-  });
+  };
 };
 
 export const patchAction = (path, updatedAction) => {
-  return new Promise((resolve, reject) => {
+  return (dispatch) => {
     Utils.patch(path, updatedAction).then(body => {
       let action = Utils.reform(body);
-      resolve({
+      dispatch({
         type: PATCH_ACTION,
         action,
       });
     });
-  });
+  };
 };

@@ -38,9 +38,7 @@ class NewUser extends React.Component {
       lastName: this.state.lastName,
       userID: this.state.userID,
     }
-    this.props.postUser(user).then(() => {
-      this.props.fetchUsers();
-    });
+    this.props.postUser(user);
 
     this.handleClose();
   }
@@ -102,8 +100,8 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = (dispatch) => {
   return {
-    postUser: (user) => postUser(user).then(r => dispatch(r)),
-    fetchUsers: () => fetchUsers().then(r => dispatch(r)),
+    postUser: (user) => dispatch(postUser(user)),
+    fetchUsers: () => dispatch(fetchUsers()),
     showPage: (page) => dispatch(showPage(page)),
   };
 };

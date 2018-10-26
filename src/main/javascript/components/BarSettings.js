@@ -170,10 +170,10 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectBoard: (id) => selectBoard(id).then(r => dispatch(r)),
-    patchBoard: (board, updatedBoard) => patchBoard(board, updatedBoard).then(r => dispatch(r)),
-    selectTeam: (id) => selectTeam(id).then(r => dispatch(r)),
-    patchAction: (link, updatedAction) => patchAction(link, updatedAction).then(r => dispatch(r)),
+    selectBoard: (id) => dispatch(selectBoard(id)),
+    patchBoard: (board, updatedBoard) => dispatch(patchBoard(board, updatedBoard)),
+    selectTeam: (id) => dispatch(selectTeam(id)),
+    patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
     openSnackBar: (message) => dispatch(openSnackBar(message)),
     showPage: (page) => dispatch(showPage(page)),
   }
