@@ -7,66 +7,61 @@ import {
 } from './types';
 import Utils from '../components/Utils';
 
-export const patchItem = (i, updatedItem) => dispatch => {
+export const patchItem = (i, updatedItem) => {
   return new Promise((resolve, reject) => {
-    Utils.patchResource(i, updatedItem, (body => {
+    Utils.patchResource(i, updatedItem).then(body => {
       let item = Utils.reform(body);
-      dispatch({
+      resolve({
         type: PATCH_ITEM,
         item,
       });
-      resolve(item);
-    }));
+    });
   });
 };
 
-export const deleteItem = (itemID) => dispatch => {
+export const deleteItem = (itemID) => {
   return new Promise((resolve, reject) => {
-    Utils.delete("items/" + itemID, ((body) => {
-      dispatch({
+    Utils.delete("items/" + itemID).then(body => {
+      resolve({
         type: DELETE_ITEM,
       });
-      resolve(body);
-    }));
+    });
   });
 };
 
 export const postAction = (updatedAction) => dispatch => {
   return new Promise((resolve, reject) => {
-    Utils.postResource("actions", updatedAction, (body => {
+    Utils.postResource("actions", updatedAction).then(body => {
       let action = Utils.reform(body);
-      dispatch({
+      resolve({
         type: POST_ACTION,
         action,
       });
-      resolve(action);
-    }));
+    });
   });
 };
 
 
-export const postItem = (updatedItem) => dispatch => {
+export const postItem = (updatedItem) => {
   return new Promise((resolve, reject) => {
-    Utils.postResource("items", updatedItem, (body => {
+    Utils.postResource("items", updatedItem).then(body => {
       let item = Utils.reform(body);
-      dispatch({
+      resolve({
         type: POST_ITEM,
         item,
       });
-      resolve(item);
-    }));
+    });
   });
 };
 
-export const patchAction = (path, updatedAction) => dispatch => {
+export const patchAction = (path, updatedAction) => {
   return new Promise((resolve, reject) => {
-    Utils.patch(path, updatedAction, (body => {
+    Utils.patch(path, updatedAction).then(body => {
       let action = Utils.reform(body);
-      dispatch({
+      resolve({
         type: PATCH_ACTION,
         action,
       });
-      resolve(action);
-    }));
+    });
   });
 };

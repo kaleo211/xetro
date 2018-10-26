@@ -1,31 +1,35 @@
-import { SHOW_PAGE, OPEN_SNACKBAR, CLOSE_SNACKBAR, SELECT_ITEM } from './types';
+import {
+  SHOW_PAGE,
+  OPEN_SNACKBAR,
+  CLOSE_SNACKBAR,
+  SELECT_ITEM,
+} from './types';
 
-export const showPage = (page) => dispatch => {
-  dispatch({
+export const showPage = (page) => {
+  return {
     type: SHOW_PAGE,
-    page
-  });
+    page,
+  };
 };
 
-export const openSnackBar = (snackbarMessage) => dispatch => {
-  dispatch({
+export const openSnackBar = (snackbarMessage) => {
+  return {
     type: OPEN_SNACKBAR,
     snackbarMessage,
-    snackbarOpen: true
-  });
+    snackbarOpen: true,
+  };
 }
 
-export const closeSnackBar = () => dispatch => {
-  console.log("closing snack bar");
-  dispatch({
+export const closeSnackBar = () => {
+  return {
     type: CLOSE_SNACKBAR,
-    snackbarOpen: false
-  });
+    snackbarOpen: false,
+  };
 }
 
-export const selectItem = (item) => dispatch => {
-  dispatch({
+export const selectItem = (item) => {
+  return {
     type: SELECT_ITEM,
-    selectedItem: item
-  })
+    selectedItem: item,
+  };
 }

@@ -4,25 +4,26 @@ import {
 } from './types';
 import Utils from '../components/Utils';
 
-export const fetchUsers = () => dispatch => {
-  Utils.fetchResource("members", (body => {
-    let users = body._embedded.members;
-    dispatch({
-      type: FETCH_USERS,
-      users
+export const fetchUsers = () => {
+  return new Promise((resolve, reject) => {
+    Utils.fetchResource("members").then(body => {
+      let users = body._embedded.members;
+      resolve({
+        type: FETCH_USERS,
+        users
+      });
     });
-  }));
+  });
 };
 
-export const postUser = (user) => dispatch => {
+export const postUser = (user) => {
   return new Promise((resolve, reject) => {
-    Utils.postResource("members", user, ((body) => {
+    Utils.postResource("members", user).then(body => {
       let user = Utils.reform(body);
-      dispatch({
+      resolve({
         type: POST_USER,
         user,
       });
-      resolve();
-    }));
+    });
   });
 }
