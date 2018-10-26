@@ -6,8 +6,9 @@ import {
   PATCH_ACTION
 } from './types';
 import Utils from '../components/Utils';
+import { selectBoard } from './boardActions';
 
-export const patchItem = (i, updatedItem) => {
+export const patchItem = (i, updatedItem, bID) => {
   return (dispatch) => {
     Utils.patchResource(i, updatedItem).then(body => {
       let item = Utils.reform(body);
@@ -15,6 +16,7 @@ export const patchItem = (i, updatedItem) => {
         type: PATCH_ITEM,
         item,
       });
+      dispatch(selectBoard(bID));
     });
   };
 };
@@ -41,8 +43,7 @@ export const postAction = (updatedAction) => dispatch => {
   };
 };
 
-
-export const postItem = (updatedItem) => {
+export const postItem = (updatedItem, bID) => {
   return (dispatch) => {
     Utils.postResource("items", updatedItem).then(body => {
       let item = Utils.reform(body);
@@ -51,6 +52,9 @@ export const postItem = (updatedItem) => {
         item,
       });
     });
+    console.log("i am here 3");
+    dispatch(selectBoard(bID));
+    console.log("i am here 4");
   };
 };
 

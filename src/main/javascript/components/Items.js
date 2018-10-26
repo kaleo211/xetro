@@ -133,9 +133,7 @@ class Items extends React.Component {
   // Like
   handleNewLikeSave(item, event) {
     event.stopPropagation();
-    this.props.patchItem(item, { likes: item.likes + 1, }).then(() => {
-      this.props.selectBoard(this.props.board.id);
-    });
+    this.props.patchItem(item, { likes: item.likes + 1, }, this.props.board.id);
   }
 
   // Action
@@ -178,6 +176,7 @@ class Items extends React.Component {
   render() {
     const { selectedItem, pillar, board, members, classes } = this.props;
     const { newAction, ownerAnchorEl, switcher } = this.state;
+    console.log("pilalr", pillar);
     return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item.id}
@@ -281,7 +280,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    patchItem: (i, item) => dispatch(patchItem(i, item)),
+    patchItem: (i, item, bID) => dispatch(patchItem(i, item, bID)),
     deleteItem: (id) => dispatch(deleteItem(id)),
     postAction: (action) => dispatch(postAction(action)),
     selectBoard: (id) => dispatch(selectBoard(id)),

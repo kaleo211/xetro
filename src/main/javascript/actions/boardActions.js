@@ -13,12 +13,11 @@ export const fetchTeamActiveBoards = (teamID) => {
   return (dispatch) => {
     Utils.fetchResource("boards/active/team/" + teamID).then(body => {
       let page = "boardCreate";
-      let board = null;
       let boards = body._embedded && body._embedded.boards || [];
 
       if (boards) {
         if (boards.length === 1) {
-          board = boards[0];
+          dispatch(selectBoard(boards[0].id));
           page = "board";
         } if (boards.length > 1) {
           page = "activeBoards";
@@ -28,10 +27,6 @@ export const fetchTeamActiveBoards = (teamID) => {
       dispatch({
         type: FETCH_TEAM_ACTIVE_BOARDS,
         boards
-      });
-      dispatch({
-        type: POST_BOARD,
-        board,
       });
       dispatch({
         type: SHOW_PAGE,

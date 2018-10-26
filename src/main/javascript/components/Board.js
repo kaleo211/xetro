@@ -17,7 +17,7 @@ import {
 } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
 import { postItem } from '../actions/itemActions';
-import { patchPillar } from '../actions/pillarActions';
+import { patchPillar, postPillar } from '../actions/pillarActions';
 
 const styles = theme => ({
   root: {
@@ -64,11 +64,9 @@ class Board extends React.Component {
           owner: Utils.prepend("members/" + this.props.selectedMember.id),
         };
 
-        this.props.postItem(newItem).then(() => {
-          this.props.selectBoard(this.props.board.id);
-          newItems[pillarID] = "";
-          this.setState({ newItems });
-        });
+        this.props.postItem(newItem, this.props.board.id);
+        newItems[pillarID] = "";
+        this.setState({ newItems });
       } else {
         this.props.openSnackBar("please select item owner");
       }
@@ -86,9 +84,7 @@ class Board extends React.Component {
       title: "ChangeTitle",
       board: Utils.prepend("boards/" + this.props.board.id),
     }
-    Utils.postPillar(pillar, (() => {
-      this.props.selectBoard(this.props.board.id);
-    }));
+    this.props.postPillar(pillar, this.props.board.id);
   }
 
   handlePillarTitleChange(pillar, evt) {
@@ -100,10 +96,7 @@ class Board extends React.Component {
   handlePillarTitleSubmit(pillar, evt) {
     if (evt && evt.key === 'Enter') {
       if (evt.target.value != "") {
-        this.props.patchPillar("pillars/" + pillar.id, { title: evt.target.value })
-          .then(() => {
-            this.props.selectBoard(this.props.board.id);
-          });
+        this.props.patchPillar("pillars/" + pillar.id, { title: evt.target.value }, this.props.board.id);
       } else {
         this.setState({
           ["pillarTitle" + pillar.id]: pillar.title,
@@ -131,6 +124,8 @@ class Board extends React.Component {
     board && board.pillars && board.pillars.sort((a, b) => {
       return a.id > b.id;
     });
+
+    console.log("board: ", board);
 
     return (board && <div>
       <Grid container spacing={8}
@@ -176,9 +171,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => {
   return {
     selectBoard: (id) => dispatch(selectBoard(id)),
-    postItem: (item) => dispatch(postItem(item)),
-    patchPillar: (p, pillar) => dispatch(patchPillar(p, pillar)),
-    openSnackBar: () => dispatch(openSnackBar()),
+    postItem: (item, bID) => dispatch(postItem(item, bID)),
+    patchPillar: (p, pillar, bID) => dispatch(patchPillar(p, pillar, bID)),
+    postPillar: (pillar, bID) => dispatch(postPillar(pillar, bID)),
+    openSnackBar: (msg) => dispatch(openSnackBar(msg)),
     closeSnackBar: () => dispatch(closeSnackBar()),
   }
 }

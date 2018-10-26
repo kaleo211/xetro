@@ -38,7 +38,6 @@ class TeamMenu extends React.Component {
       this.props.selectBoard(null);
       this.props.showPage("");
     } else {
-      console.log("i am here in component");
       this.props.fetchTeamActiveBoards(teamID);
     }
     this.handleMenuClose();
