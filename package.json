@@ -18,7 +18,7 @@
     "react-dom": "^16.4.2",
     "react-native-fetch": "^2.0.0",
     "react-redux": "^5.0.7",
-    "react-scripts": "1.1.4",
+    "react-scripts": "^2.1.1",
     "redux": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "sinon": "^7.1.0",
@@ -26,11 +26,12 @@
     "webpack-cli": "^3.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start:test": "mvn spring-boot:run > /dev/null",
     "build": "react-scripts build",
     "test": "jasmine --config=src/main/javascript/spec/config/jasmine.json",
     "eject": "react-scripts eject",
-    "start:dev": "webpack-dev-server --host 0.0.0.0"
+    "start:dev": "webpack-dev-server --host 0.0.0.0",
+    "feature": "start-server-and-test start:test http://localhost:8080 test"
   },
   "devDependencies": {
     "babel": "^6.23.0",
@@ -47,7 +48,9 @@
     "jasmine": "^3.2.0",
     "jasmine-enzyme": "^6.0.4",
     "jsdom": "^12.0.0",
+    "puppeteer": "^1.11.0",
     "redux-mock-store": "^1.5.3",
-    "webpack-dev-server": "^3.1.5"
+    "start-server-and-test": "^1.7.11",
+    "webpack-dev-server": "^3.1.10"
   }
 }
