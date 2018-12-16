@@ -31,8 +31,6 @@ export default function (state = initialState, action) {
       if (action.boards && action.boards.length === 1) {
         result.board = action.boards[0];
       }
-
-      console.log("fetch active board:", result);
       return result;
 
     case POST_BOARD:
@@ -49,7 +47,6 @@ export default function (state = initialState, action) {
       }
 
     case FETCH_BOARD:
-      console.log("board in reducer:", action.board)
       return {
         ...state,
         board: action.board

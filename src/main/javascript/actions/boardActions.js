@@ -53,7 +53,6 @@ export const postBoard = (board) => {
   return (dispatch) => {
     Utils.postResource("boards", board).then(body => {
       let board = Utils.reform(body);
-      console.log("posted new board in action:", body);
       dispatch({
         type: POST_BOARD,
         board
@@ -65,7 +64,6 @@ export const postBoard = (board) => {
 export const fetchBoards = () => {
   return (dispatch) => {
     return Utils.fetchResource("boards").then(body => {
-      console.log(body);
       let boards = body._embedded.boards;
       dispatch({
         type: FETCH_BOARDS,
@@ -79,7 +77,6 @@ export const patchBoard = (b, board) => {
   return (dispatch) => {
     Utils.patchResource(b, board).then(body => {
       let board = Utils.reform(body);
-      console.log("posted new board in action:", body);
       dispatch({
         type: PATCH_BOARD,
         board

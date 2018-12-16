@@ -125,8 +125,6 @@ class Board extends React.Component {
       return a.id > b.id;
     });
 
-    console.log("board: ", board);
-
     return (board && <div>
       <Grid container spacing={8}
         direction="row"

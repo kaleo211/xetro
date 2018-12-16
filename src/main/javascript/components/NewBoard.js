@@ -71,9 +71,6 @@ class NewBoard extends React.Component {
   }
 
   handleStepNext = () => {
-    if (this.state.activeStep === 0) {
-      console.log("NewBoard# time stap", this.state.endTime);
-    }
     this.setState(state => ({
       activeStep: state.activeStep + 1,
     }));

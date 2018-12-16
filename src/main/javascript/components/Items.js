@@ -176,7 +176,7 @@ class Items extends React.Component {
   render() {
     const { selectedItem, pillar, board, members, classes } = this.props;
     const { newAction, ownerAnchorEl, switcher } = this.state;
-    console.log("pilalr", pillar);
+
     return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item.id}
