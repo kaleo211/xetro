@@ -20,7 +20,7 @@ describe("pillarActions", () => {
       const expectedActions = [{
         'pillar': {},
         'type': POST_PILLAR,
-      },{
+      }, {
         'type': FETCH_BOARD,
         'board': null,
       }];

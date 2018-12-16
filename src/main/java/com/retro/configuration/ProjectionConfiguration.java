@@ -11,5 +11,4 @@ public class ProjectionConfiguration {
   public SpelAwareProxyProjectionFactory projectionFactory() {
     return new SpelAwareProxyProjectionFactory();
   }
-
 }

@@ -69,7 +69,7 @@ class App extends React.Component {
   }
 
   handleFeedbackClick() {
-    let win = window.open("https://github.com/kaleo211/retro-board/issues", '_blank');
+    let win = window.open("https://github.com/kaleo211/xetro-board/issues", '_blank');
     win.focus();
   }
 

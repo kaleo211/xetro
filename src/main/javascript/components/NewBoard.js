@@ -45,7 +45,7 @@ const styles = theme => ({
 function getSteps() {
   return [
     'Put a name',
-    'Pick time the retro meeting should end',
+    'Pick time the xetro meeting should end',
     'Check finished action items',
     'Pick facilitator'
   ];
