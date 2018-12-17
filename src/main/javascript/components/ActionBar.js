@@ -28,7 +28,7 @@ import { patchAction } from '../actions/itemActions';
 const styles = theme => ({
 });
 
-class BarSettings extends React.Component {
+class ActionBar extends React.Component {
   constructor(props) {
     super(props);
 
@@ -191,9 +191,9 @@ const mapDispatchToProps = (dispatch) => {
   }
 };
 
-BarSettings.propTypes = {
+ActionBar.propTypes = {
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles),
-)(BarSettings);
+)(ActionBar);

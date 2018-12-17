@@ -11,10 +11,10 @@ import Typography from '@material-ui/core/Typography';
 import { FeedbackOutlined } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
 
-import BarSettings from './components/BarSettings';
+import ActionBar from './components/ActionBar';
 import Board from './components/Board';
 import BoardList from './components/BoardList';
-import MemberMenu from './components/MemberMenu';
+import MemberList from './components/MemberList';
 import NewBoard from './components/NewBoard';
 import NewTeam from './components/NewTeam';
 import NewUser from './components/NewUser';
@@ -89,13 +89,13 @@ class App extends React.Component {
 
           <div style={{ flexGrow: 1 }}>
           </div>
-          <BarSettings />
+          <ActionBar />
         </Toolbar>
       </AppBar>
 
       <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
         <div className={classes.toolbar} />
-        <MemberMenu />
+        <MemberList />
         <IconButton className={classes.feedback} onClick={this.handleFeedbackClick.bind(this)} >
           <FeedbackOutlined />
         </IconButton>

@@ -23,7 +23,7 @@ const styles = theme => ({
   },
 });
 
-class MemberMenu extends React.Component {
+class MemberList extends React.Component {
   constructor(props) {
     super(props);
 
@@ -60,8 +60,6 @@ class MemberMenu extends React.Component {
   render() {
     const { team, users, members, classes, selectedMember, board, memberIDs } = this.props;
     const { anchorEl } = this.state;
-
-    console.log("member set", memberIDs);
 
     let usersToShow = users;
     if (team) {
@@ -139,10 +137,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-MemberMenu.propTypes = {
+MemberList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles),
-)(MemberMenu);
+)(MemberList);

@@ -4,11 +4,11 @@ import thunk from 'redux-thunk';
 import configureStore from 'redux-mock-store';
 import { createShallow } from '@material-ui/core/test-utils';
 
-import BarSettings from '../../../components/BarSettings';
+import ActionBar from '../../../components/ActionBar';
 import * as actions from "../../../actions/boardActions";
 import * as localActions from '../../../actions/localActions';
 
-describe("BarSettings", () => {
+describe("ActionBar", () => {
   const mockStore = configureStore([thunk]);
 
   beforeEach(() => {
@@ -35,7 +35,7 @@ describe("BarSettings", () => {
 
     let shallow = createShallow();
 
-    const wrapper = shallow(<BarSettings store={store} />).dive().dive();
+    const wrapper = shallow(<ActionBar store={store} />).dive().dive();
 
     expect(wrapper.find('#refreshButton').length).toEqual(1);
     wrapper.find('#refreshButton').simulate('click');
@@ -63,7 +63,7 @@ describe("BarSettings", () => {
     spyOn(store, 'dispatch');
 
     let shallow = createShallow();
-    const wrapper = shallow(<BarSettings store={store} />).dive().dive();
+    const wrapper = shallow(<ActionBar store={store} />).dive().dive();
 
     expect(wrapper.find('#historyButton').length).toEqual(1);
     wrapper.find('#historyButton').simulate('click');
