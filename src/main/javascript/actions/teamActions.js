@@ -36,15 +36,15 @@ export const selectTeam = (teamID) => {
         let team = Utils.reformTeam(body);
         Utils.fetchResource("teamMember/team/" + teamID).then(body => {
           let members = body._embedded && body._embedded.members || [];
-          let memberIDSet = new Set();
+          let memberIDs = [];
           members.map(m => {
-            memberIDSet.add(m.id);
+            memberIDs.push(m.id);
           });
           dispatch({
             type: SELECT_TEAM,
             team,
             members,
-            memberIDSet,
+            memberIDs,
           });
         });
       });
@@ -68,14 +68,14 @@ export const addMemberToTeam = (teamID, memberID) => {
     Utils.postTeamMember(teamMember).then(b => {
       Utils.fetchResource("teamMember/team/" + teamID).then(body => {
         let members = body._embedded && body._embedded.members || [];
-        let memberIDSet = new Set();
+        let memberIDs = [];
         members.map(m => {
-          memberIDSet.add(m.id);
+          memberIDs.push(m.id);
         });
         dispatch({
           type: ADD_MEMBER_TO_TEAM,
           members,
-          memberIDSet,
+          memberIDs,
         });
       });
     });

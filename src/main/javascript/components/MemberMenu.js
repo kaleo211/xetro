@@ -58,8 +58,10 @@ class MemberMenu extends React.Component {
   }
 
   render() {
-    const { team, users, members, classes, selectedMember, board, memberIDSet } = this.props;
+    const { team, users, members, classes, selectedMember, board, memberIDs } = this.props;
     const { anchorEl } = this.state;
+
+    console.log("member set", memberIDs);
 
     let usersToShow = users;
     if (team) {
@@ -110,7 +112,7 @@ class MemberMenu extends React.Component {
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={this.handleMenuClose.bind(this)} >
-          {team && users && users.map(user => (!memberIDSet.has(user.id) &&
+          {team && memberIDs && users && users.map(user => (!memberIDs.includes(user.id) &&
             <MenuItem key={user.id} onClick={this.handleMemberToAdd.bind(this, user.id)}>
               {user.firstName + " " + user.lastName}
             </MenuItem>))}
@@ -123,7 +125,7 @@ class MemberMenu extends React.Component {
 const mapStateToProps = state => ({
   team: state.teams.team,
   users: state.users.users,
-  memberIDSet: state.teams.memberIDSet,
+  memberIDs: state.teams.memberIDs,
   members: state.teams.members,
   selectedMember: state.boards.selectedMember,
   board: state.boards.board,

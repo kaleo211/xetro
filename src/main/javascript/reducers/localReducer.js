@@ -5,6 +5,16 @@ import {
   SELECT_ITEM,
 } from '../actions/types';
 
+import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
+import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
+
+const persistConfig = {
+  key: 'local',
+  storage: storage,
+  stateReconciler: autoMergeLevel2
+};
+
 const initialState = {
   page: "",
   snackbarOpen: false,
@@ -12,7 +22,7 @@ const initialState = {
   selectedItem: {},
 };
 
-export default function (state = initialState, action) {
+const localReducer = function (state = initialState, action) {
   switch (action.type) {
     case SHOW_PAGE:
       return {
@@ -42,4 +52,6 @@ export default function (state = initialState, action) {
     default:
       return state;
   }
-}
+};
+
+export default persistReducer(persistConfig, localReducer);

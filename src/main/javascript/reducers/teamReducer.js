@@ -4,7 +4,7 @@ const initialState = {
   teams: [],
   members: [],
   team: null,
-  memberIDSet: new Set(),
+  memberIDs: [],
 };
 
 export default function (state = initialState, action) {
@@ -27,14 +27,14 @@ export default function (state = initialState, action) {
         ...state,
         team: action.team,
         members: action.members,
-        memberIDSet: action.memberIDSet,
+        memberIDs: action.memberIDs,
       }
 
     case ADD_MEMBER_TO_TEAM:
       return {
         ...state,
         members: action.members,
-        memberIDSet: action.memberIDSet,
+        memberIDs: action.memberIDs,
       }
 
     default:
