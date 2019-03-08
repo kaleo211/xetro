@@ -3,5 +3,4 @@ applications:
 - name: xetro
   memory: 128M
   instances: 1
-  buildpacks: [java_buildpack]
-  path: target/retro-1.0-SNAPSHOT.jar
+  buildpacks: [nodejs_buildpack]
