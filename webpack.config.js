@@ -2,19 +2,17 @@ var webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-    entry: './src/main/javascript/index.js',
+    entry: './app/index.js',
     mode: 'development',
     output: {
-        path: __dirname,
-        filename: './src/main/resources/static/built/bundle.js'
+        path: __dirname + '/dist',
+        filename: 'bundle.js'
     },
     module: {
         rules: [{
             test: /\.js$/,
             exclude: /(node_modules)/,
-            use: {
-                loader: 'babel-loader'
-            }
+            use: { loader: 'babel-loader' }
         }, {
             test: /\.css$/,
             use: ['style-loader', 'css-loader']
@@ -25,7 +23,7 @@ module.exports = {
             "React": "react"
         }),
         new HtmlWebpackPlugin({
-            template: 'src/main/javascript/public/index.html'
+            template: 'app/public/index.html',
         })
     ]
 };
