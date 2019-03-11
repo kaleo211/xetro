@@ -1,6 +1,6 @@
 # Node
-node_modules
-dist
+/node_modules
+/dist
 
 # Database
 /seeders
@@ -12,3 +12,10 @@ dist
 # IDE
 .idea
 .vscode
+
+# Configuration
+/config/*
+!/config/test.json
+
+# Tmp
+chromedriver.log
