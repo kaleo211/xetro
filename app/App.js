@@ -59,13 +59,22 @@ class App extends React.Component {
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
     }
+
+    this.handleMicrosoftLogin = this.handleMicrosoftLogin.bind(this);
   }
 
   componentWillMount() {
     document.body.style.margin = 0;
 
-    this.props.fetchTeams();
-    this.props.fetchUsers();
+    // this.props.fetchTeams();
+    // this.props.fetchUsers();
+  }
+
+  handleMicrosoftLogin() {
+    window.open(
+      'https://login.microsoftonline.com/' + TENANT_ID + '/oauth2/authorize?client_id=' + CLIENT_ID + '&response_type=code&redirect_uri=' + REDIRECT_URL + '&response_mode=query',
+      'microsoft',
+      'height=500,width=620')
   }
 
   handleFeedbackClick() {

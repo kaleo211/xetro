@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "build": "webpack",
-    "test": "jasmine --config=src/main/javascript/spec/config/jasmine.json",
-    "eject": "react-scripts eject",
+    "test": "nightwatch",
     "start:dev": "webpack-dev-server --host 0.0.0.0",
-    "feature": "start-server-and-test start:test http://localhost:8080 test"
+    "feature": "start-test :8080 test"
   },
   "dependencies": {
     "@material-ui/core": "^1.5.0",
     "@material-ui/icons": "^2.0.3",
+    "@microsoft/microsoft-graph-client": "^1.5.2",
     "ajv": "^6.10.0",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
@@ -24,10 +24,16 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-react-app": "^3.1.2",
     "body-parser": "^1.18.3",
+    "config": "^3.0.1",
+    "cookie-parser": "^1.4.4",
     "css-loader": "^1.0.0",
     "es6-promise": "^4.2.5",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "html-webpack-plugin": "^3.2.0",
     "isomorphic-fetch": "^2.2.1",
+    "msal": "^0.2.4",
+    "passport-oauth2": "^1.4.0",
     "react": "^16.8.4",
     "react-dom": "^16.4.2",
     "react-native-fetch": "^2.0.0",
@@ -35,6 +41,7 @@
     "redux": "^4.0.0",
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
+    "request": "^2.88.0",
     "sequelize": "^4.43.0",
     "sequelize-cli": "^5.4.0",
     "sinon": "^7.1.0",
@@ -42,17 +49,20 @@
     "webpack-cli": "^3.1.0"
   },
   "devDependencies": {
+    "enzyme": "^3.6.0",
     "enzyme-adapter-react-16": "^1.4.0",
     "enzyme-to-json": "^3.3.4",
-    "enzyme": "^3.6.0",
     "fetch-mock": "^7.2.0",
     "ignore-styles": "^5.0.1",
-    "jasmine-enzyme": "^6.0.4",
     "jasmine": "^3.2.0",
+    "jasmine-enzyme": "^6.0.4",
     "jsdom": "^12.0.0",
+    "mocha": "^6.0.2",
+    "nightwatch": "^1.0.19",
     "puppeteer": "^1.11.0",
     "redux-mock-store": "^1.5.3",
     "start-server-and-test": "^1.7.11",
+    "webdriver": "^5.7.1",
     "webpack-dev-server": "^3.2.1"
   }
 }
