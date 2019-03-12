@@ -36,14 +36,15 @@ routes.get('/', function (req, res) {
             microsoftID: user.id,
           }
         }).spread((user, created) => {
-          req.session.user = created;
+          req.session.user = user;
           req.session.save();
         });
       })
       .catch(err => console.log('error getting user profile', err));
   });
 
-  res.sendStatus(200);
+  res.set('Content-Type', 'text/html');
+  res.send(Buffer.from('<html><head><script>window.close();</script></head></html>'));
 });
 
 module.exports = routes;

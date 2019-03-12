@@ -56,6 +56,10 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      signedIn: false,
+    }
+
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
     }
@@ -65,16 +69,41 @@ class App extends React.Component {
 
   componentWillMount() {
     document.body.style.margin = 0;
+    fetch('/me')
+      .then(resp => {
+        if (resp.status === 403) {
+          this.handleMicrosoftLogin();
+        }
+        resp.json();
+      })
+      .then(me => {
+
+      });
 
     // this.props.fetchTeams();
     // this.props.fetchUsers();
   }
 
   handleMicrosoftLogin() {
-    window.open(
+    var microsoft = window.open(
       'https://login.microsoftonline.com/' + TENANT_ID + '/oauth2/authorize?client_id=' + CLIENT_ID + '&response_type=code&redirect_uri=' + REDIRECT_URL + '&response_mode=query',
       'microsoft',
-      'height=500,width=620')
+      'height=500,width=620');
+
+    var loginChecker = setInterval(() => {
+      if (microsoft.closed) {
+        fetch('/me')
+          .then(resp => {
+            if (resp.ok) {
+              this.setState({
+                me: resp.json(),
+                signedIn: true,
+              });
+              clearInterval(loginChecker)
+            }
+          })
+      }
+    }, 200);
   }
 
   handleFeedbackClick() {
@@ -102,22 +131,26 @@ class App extends React.Component {
         </Toolbar>
       </AppBar>
 
-      <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
-        <div className={classes.toolbar} />
-        <MemberList />
-        <IconButton className={classes.feedback} onClick={this.handleFeedbackClick.bind(this)} >
-          <FeedbackOutlined />
-        </IconButton>
-      </Drawer>
+      {this.state.signedIn &&
+        <div>
+          <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
+            <div className={classes.toolbar} />
+            <MemberList />
+            <IconButton className={classes.feedback} onClick={this.handleFeedbackClick.bind(this)} >
+              <FeedbackOutlined />
+            </IconButton>
+          </Drawer>
 
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        {page === "board" && <Board />}
-        {page === "boardCreate" && <NewBoard />}
-        {page === "boardList" && <BoardList />}
-        {page === "userCreate" && <NewUser />}
-        {page === "teamCreate" && <NewTeam />}
-      </main>
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            {page === "board" && <Board />}
+            {page === "boardCreate" && <NewBoard />}
+            {page === "boardList" && <BoardList />}
+            {page === "userCreate" && <NewUser />}
+            {page === "teamCreate" && <NewTeam />}
+          </main>
+        </div>
+      }
 
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
