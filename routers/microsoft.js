@@ -2,6 +2,7 @@ const request = require('request');
 const config = require('config');
 const routes = require('express').Router();
 const graph = require('@microsoft/microsoft-graph-client');
+const model = require('../models');
 
 routes.get('/', function (req, res) {
   var tenantID = config.get('microsoft.tenant_id');
@@ -23,9 +24,21 @@ routes.get('/', function (req, res) {
       authProvider: (done) => { done(null, parsedBody.access_token) },
     });
 
-    client.api('/me').get()
+    client
+      .api('/me')
+      .get()
       .then(user => {
-        console.log('user', user);
+        model.User.findOrCreate({
+          where: { email: user.mail.toLowerCase() },
+          defaults: {
+            firstName: user.givenName,
+            lastName: user.surname,
+            microsoftID: user.id,
+          }
+        }).spread((user, created) => {
+          req.session.user = created;
+          req.session.save();
+        });
       })
       .catch(err => console.log('error getting user profile', err));
   });

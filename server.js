@@ -5,32 +5,43 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var path = require('path');
 var session = require('express-session');
-
+var config = require('config');
 var microsoftRouter = require('./routers/microsoft');
+var teamRouter = require('./routers/team');
 
 server.use(session({
-  secret: 'Xetro',
+  secret: config.get('server.session_secret'),
   resave: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,
   },
   saveUninitialized: true,
 }));
+
+var isAuthenticated = (req, res, next) => {
+  if (!req.session.user) {
+    res.send('You are not authorized to view this page');
+  } else {
+    next();
+  }
+}
+
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(cookieParser())
 
 server.use('/callback', microsoftRouter);
+server.use('/teams', isAuthenticated, teamRouter);
 
 server.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-})
-server.use(express.static('dist'))
+});
+server.use(express.static('dist'));
 
 
 var port = process.env.PORT || 8080;
 server.listen(port, () => {
-  console.log('Magic happens on port ' + port);
+  console.log('Xetro is listenning on port ' + port);
 });
 
 module.exports = server;
