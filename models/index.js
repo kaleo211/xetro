@@ -8,11 +8,13 @@ const config = require('config');
 const db = {};
 
 let sequelize = new Sequelize(
-  config.get('database.name'),
+  config.get('database.database'),
   config.get('database.username'),
   config.get('database.password'), {
     host: config.get('database.host'),
     dialect: config.get('database.dialect'),
+    operatorsAliases: false,
+    logging: false,
   },
 );
 
@@ -23,6 +25,7 @@ fs.readdirSync(__dirname)
   .forEach(file => {
     const model = sequelize['import'](path.join(__dirname, file));
     db[model.name] = model;
+    model.sync({ force: true });
   });
 
 Object.keys(db).forEach(modelName => {
