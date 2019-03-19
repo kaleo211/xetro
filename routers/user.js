@@ -3,7 +3,11 @@ const model = require('../models');
 
 routes.get('/', (req, res) => {
   model.User.findAll({
-    attributes: ['firstName', 'id'],
+    include: [{
+      model: model.Group,
+      as: 'groups',
+      through: {},
+    }],
   }).then(users => {
     res.json(users);
   });

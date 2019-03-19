@@ -69,16 +69,11 @@ class App extends React.Component {
 
   componentWillMount() {
     document.body.style.margin = 0;
-    // this.props.fetchGroups();
-  }
-
-  componentDidMount() {
     fetch('/me')
       .then(resp => {
         if (resp.status === 403) {
           this.handleMicrosoftLogin();
         } else {
-          this.props.fetchUsers();
           this.setState({
             signedIn: true,
             me: resp.json(),
@@ -86,8 +81,12 @@ class App extends React.Component {
         }
       })
       .then(me => {
-
       });
+  }
+
+  componentDidUpdate() {
+    this.props.fetchUsers();
+    this.props.fetchGroups();
   }
 
   handleMicrosoftLogin() {
@@ -180,6 +179,7 @@ const mapStateToProps = state => ({
 App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
+
 export default connect(mapStateToProps, {
   fetchGroups,
   closeSnackBar,

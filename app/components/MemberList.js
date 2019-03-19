@@ -57,6 +57,9 @@ class MemberList extends React.Component {
     const { group, users, members, classes, activeMember, board, memberIDs } = this.props;
     const { anchorEl } = this.state;
 
+    console.log('users:', users);
+    console.log('group:', group);
+
     let usersToShow = users;
     if (group) {
       usersToShow = members;
@@ -102,10 +105,12 @@ class MemberList extends React.Component {
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={this.handleMenuClose.bind(this)} >
-          {group && memberIDs && users && users.map(user => (!memberIDs.includes(user.id) &&
-            <MenuItem key={user.id} onClick={this.handleUserToAdd.bind(this, user.id)}>
-              {user.firstName + " " + user.lastName}
-            </MenuItem>))}
+          {group && users && users.map(u =>
+            (group.members || group.members.map(m => { return u.id !== m.id; })) &&
+            <MenuItem key={u.id} onClick={this.handleUserToAdd.bind(this, u.id)}>
+              {u.firstName + " " + u.lastName}
+            </MenuItem>
+          )}
         </Menu>
       </div>
     </div>)

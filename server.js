@@ -34,7 +34,6 @@ server.use(cookieParser())
 server.use('/me', isAuthenticated, (req, res) => { res.json(req.session.user); });
 server.use('/callback', microsoftRouter);
 server.use('/groups', isAuthenticated, groupRouter);
-server.use('/group', isAuthenticated, groupRouter);
 server.use('/users', isAuthenticated, userRouter);
 
 server.get('/', (req, res) => {

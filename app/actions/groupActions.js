@@ -7,7 +7,7 @@ import Utils from '../components/Utils';
 
 export const fetchGroups = () => {
   return (dispatch) => {
-    Utils.list('group').then(groups => {
+    Utils.list('groups').then(groups => {
       dispatch({
         type: FETCH_GROUPS,
         groups,
@@ -18,8 +18,8 @@ export const fetchGroups = () => {
 
 export const postGroup = (updatedGroup) => {
   return (dispatch) => {
-    Utils.post('group', updatedGroup).then(group => {
-      Utils.list('group').then(groups => {
+    Utils.post('groups', updatedGroup).then(group => {
+      Utils.list('groups').then(groups => {
         dispatch({
           type: POST_GROUP,
           groups,
@@ -33,8 +33,8 @@ export const postGroup = (updatedGroup) => {
 export const setGroup = (groupID) => {
   return (dispatch) => {
     if (groupID) {
-      Utils.get(`group`, groupID).then(group => {
-        let members = group.members || [];
+      Utils.get(`groups`, groupID).then(group => {
+        console.log('setGroup:', group);
         dispatch({
           type: SET_GROUP,
           group,
@@ -53,7 +53,7 @@ export const addUserToGroup = (groupID, userID) => {
   return (dispatch) => {
     console.log('addUserToGroup:', groupID, userID);
     let group = { id: groupID, userID: userID }
-    Utils.patch('group', group).then(body => {
+    Utils.patch('groups', group).then(body => {
       dispatch({
         type: SET_GROUP,
         group: body,

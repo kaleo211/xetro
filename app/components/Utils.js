@@ -77,7 +77,7 @@ export default {
 
   list(type) {
     return new Promise((resolve, reject) => {
-      fetch(`/${type}s`)
+      fetch(`/${type}`)
         .then(resp => {
           if (resp.ok) {
             resolve(resp.json());
@@ -90,7 +90,7 @@ export default {
 
   post(type, body) {
     return new Promise((resolve, reject) => {
-      fetch(`/${type}s`, {
+      fetch(`/${type}`, {
         method: 'POST',
         body: JSON.stringify(body),
         headers: new Headers({

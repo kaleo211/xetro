@@ -51,7 +51,7 @@ class GroupMenu extends React.Component {
     const { anchorEl } = this.state;
 
     return (<div>
-      <Button fullWidth variant="flat" style={{ color: "white" }}
+      <Button fullWidth variant="text" style={{ color: "white" }}
         onClick={this.handleClick.bind(this)} >
         {group ? group.name : "GROUPS"}
       </Button>

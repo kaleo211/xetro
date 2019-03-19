@@ -17,9 +17,9 @@ module.exports = (sequelize, DataTypes) => {
     microsoftID: DataTypes.STRING,
   }, {});
 
-  // User.associate = function (models) {
-  //   User.belongsToMany(models.Group, { through: 'GroupUser' });
-  // };
+  User.associate = function (models) {
+    User.belongsToMany(models.Group, { as: 'groups', through: 'GroupUser' });
+  };
 
   return User;
 };

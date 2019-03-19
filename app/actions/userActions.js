@@ -5,7 +5,7 @@ import Utils from '../components/Utils';
 
 export const fetchUsers = () => {
   return (dispatch) => {
-    Utils.list('user').then(users => {
+    Utils.list('users').then(users => {
       console.log('fetchUsers:', users);
       dispatch({
         type: FETCH_USERS,

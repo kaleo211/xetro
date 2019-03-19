@@ -3,7 +3,11 @@ const model = require('../models');
 
 routes.get('/:id', (req, res) => {
   model.Group.findOne({
-    attributes: ['name', 'id'],
+    include: [{
+      model: model.User,
+      as: 'members',
+      through: {},
+    }],
     where: { id: req.params.id },
   }).then(result => {
     if (result) {
@@ -28,7 +32,11 @@ routes.delete('/:id', (req, res) => {
 
 routes.get('/', (req, res) => {
   model.Group.findAll({
-    attributes: ['name', 'id'],
+    include: [{
+      model: model.User,
+      as: 'members',
+      through: {},
+    }],
   }).then(groups => {
     res.json(groups);
   });
@@ -39,9 +47,21 @@ routes.post('/', (req, res) => {
   model.Group.create({
     name: group.name,
   }).then((result) => {
-    res.json({
-      id: result.id,
-      name: result.name,
+    model.Group.findOne({
+      include: [{
+        model: model.User,
+        as: 'members',
+        through: {},
+      }],
+      where: { id: result.id },
+    }).then(result => {
+      if (result) {
+        res.json(result);
+      } else {
+        res.sendStatus(404);
+      }
+    }).catch(err => {
+      res.sendStatus(500);
     });
   }).catch(err => {
     res.sendStatus(422);
@@ -53,12 +73,29 @@ routes.patch('/:id', (req, res) => {
     where: { id: req.params.id },
   }).then(result => {
     if (result) {
-      result.addUser(req.body.userID);
-      res.json(result);
+      result.addMembers(req.body.userID).then(() => {
+        model.Group.findOne({
+          include: [{
+            model: model.User,
+            as: 'members',
+            through: {},
+          }],
+          where: { id: req.params.id },
+        }).then(result => {
+          if (result) {
+            res.json(result);
+          } else {
+            res.sendStatus(404);
+          }
+        }).catch(err => {
+          res.sendStatus(500);
+        });
+      });
     } else {
       res.sendStatus(404);
     }
   }).catch(err => {
+    console.log('error patch group:', err);
     res.sendStatus(500);
   });
 });
