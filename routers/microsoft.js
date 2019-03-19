@@ -5,18 +5,19 @@ const graph = require('@microsoft/microsoft-graph-client');
 const model = require('../models');
 
 routes.get('/', function (req, res) {
-  var tenantID = config.get('microsoft.tenant_id');
-  const tokenURL = `https://login.microsoftonline.com/${tenantID}/oauth2/v2.0/token`
+  var address = config.get('sso.address')
+  var tenantID = config.get('sso.tenant_id');
+  const tokenURL = `${address}/${tenantID}/oauth2/v2.0/token`
 
   request.post({
     url: tokenURL,
     headers: { 'Content-Type': 'application/x-www-form-urlencoded', },
     form: {
       grant_type: 'authorization_code',
-      client_id: config.get('microsoft.client_id'),
-      client_secret: config.get('microsoft.client_secret'),
+      client_id: config.get('sso.client_id'),
+      client_secret: config.get('sso.client_secret'),
       code: req.query.code,
-      redirect_uri: config.get('microsoft.redirect_uri'),
+      redirect_uri: config.get('sso.redirect_uri'),
     },
   }, (error, res, body) => {
     const parsedBody = JSON.parse(body);
@@ -24,9 +25,7 @@ routes.get('/', function (req, res) {
       authProvider: (done) => { done(null, parsedBody.access_token) },
     });
 
-    client
-      .api('/me')
-      .get()
+    client.api('/me').get()
       .then(user => {
         model.User.findOrCreate({
           where: { email: user.mail.toLowerCase() },

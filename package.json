@@ -9,8 +9,8 @@
     "feature": "start-test :8080 test"
   },
   "dependencies": {
-    "@material-ui/core": "^1.5.0",
-    "@material-ui/icons": "^2.0.3",
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
     "@microsoft/microsoft-graph-client": "^1.5.2",
     "ajv": "^6.10.0",
     "babel-core": "^6.26.3",
@@ -34,6 +34,7 @@
     "isomorphic-fetch": "^2.2.1",
     "msal": "^0.2.4",
     "passport-oauth2": "^1.4.0",
+    "pg": "^7.8.2",
     "react": "^16.8.4",
     "react-dom": "^16.4.2",
     "react-native-fetch": "^2.0.0",
@@ -45,6 +46,7 @@
     "sequelize": "^4.43.0",
     "sequelize-cli": "^5.4.0",
     "sinon": "^7.1.0",
+    "uuid": "^3.3.2",
     "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0"
   },

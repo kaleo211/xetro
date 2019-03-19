@@ -15,6 +15,7 @@ let sequelize = new Sequelize(
     dialect: config.get('database.dialect'),
     operatorsAliases: false,
     logging: false,
+    syncOnAssociation: true,
   },
 );
 
@@ -32,6 +33,10 @@ Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
+});
+
+sequelize.sync({ force: true }).then(() => {
+  console.log('database tables are created')
 });
 
 db.sequelize = sequelize;

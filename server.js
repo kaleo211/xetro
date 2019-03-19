@@ -7,7 +7,8 @@ var path = require('path');
 var session = require('express-session');
 var config = require('config');
 var microsoftRouter = require('./routers/microsoft');
-var teamRouter = require('./routers/team');
+var groupRouter = require('./routers/group');
+var userRouter = require('./routers/user');
 
 server.use(session({
   secret: config.get('server.session_secret'),
@@ -32,13 +33,14 @@ server.use(cookieParser())
 
 server.use('/me', isAuthenticated, (req, res) => { res.json(req.session.user); });
 server.use('/callback', microsoftRouter);
-server.use('/teams', isAuthenticated, teamRouter);
+server.use('/groups', isAuthenticated, groupRouter);
+server.use('/group', isAuthenticated, groupRouter);
+server.use('/users', isAuthenticated, userRouter);
 
 server.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 server.use(express.static('dist'));
-
 
 var port = process.env.PORT || 8080;
 server.listen(port, () => {
