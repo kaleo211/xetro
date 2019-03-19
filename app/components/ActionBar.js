@@ -20,8 +20,8 @@ import {
   HistoryRounded,
 } from '@material-ui/icons';
 
-import { patchBoard, selectBoard, fetchBoards } from '../actions/boardActions';
-import { selectTeam } from '../actions/teamActions';
+import { patchBoard, setBoard, fetchBoards } from '../actions/boardActions';
+import { setGroup } from '../actions/groupActions';
 import { openSnackBar, showPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';
 
@@ -58,7 +58,7 @@ class ActionBar extends React.Component {
   }
 
   handleRefreshBoard() {
-    this.props.selectBoard(this.props.board.id);
+    this.props.setBoard(this.props.board.id);
   }
 
   handleViewHistory() {
@@ -71,8 +71,8 @@ class ActionBar extends React.Component {
     this.props.patchBoard(this.props.board, updatedBoard);
     this.props.showPage("boardCreate");
     this.props.openSnackBar("Board is ARCHIVED.");
-    this.props.selectTeam(this.props.team.id);
-    this.props.selectBoard(null);
+    this.props.setGroup(this.props.group.id);
+    this.props.setBoard(null);
   }
 
   handleDialogClose() {
@@ -86,15 +86,15 @@ class ActionBar extends React.Component {
   handleActionCheck(action) {
     this.props.patchAction("actions/" + action.id, { finished: true })
       .then(() => {
-        this.props.selectTeam(this.props.team.id);
+        this.props.setGroup(this.props.group.id);
       });
   }
 
   render() {
-    const { board, members, team } = this.props;
+    const { board, members, group } = this.props;
     const membersWithActions = members.filter(member =>
       member.actions && member.actions.filter(action =>
-        !action.finished && action.team.id === team.id
+        !action.finished && action.group.id === group.id
       ).length > 0
     );
 
@@ -153,7 +153,7 @@ class ActionBar extends React.Component {
             {membersWithActions.map(member => (
               <Grid item xs={12} key={"action" + member.userID}>
                 <List>
-                  {member.actions && member.actions.filter(ac => ac.team.id === team.id && !ac.finished).map((a, idx) => (
+                  {member.actions && member.actions.filter(ac => ac.group.id === group.id && !ac.finished).map((a, idx) => (
                     <ListItem divider key={"actionToCheck" + a.id} button >
                       <Avatar style={{ backgroundColor: idx === 0 || 'rgba(0, 0, 0, 0)' }}>{member.userID}</Avatar>
                       <ListItemText primary={a.title} />
@@ -175,16 +175,16 @@ class ActionBar extends React.Component {
 
 const mapStateToProps = (state) => ({
   board: state.boards.board,
-  team: state.teams.team,
-  members: state.teams.members,
+  group: state.groups.group,
+  members: state.groups.members,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectBoard: (id) => dispatch(selectBoard(id)),
+    setBoard: (id) => dispatch(setBoard(id)),
     patchBoard: (board, updatedBoard) => dispatch(patchBoard(board, updatedBoard)),
-    fetchBoards: ()=> dispatch(fetchBoards()),
-    selectTeam: (id) => dispatch(selectTeam(id)),
+    fetchBoards: () => dispatch(fetchBoards()),
+    setGroup: (id) => dispatch(setGroup(id)),
     patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
     openSnackBar: (message) => dispatch(openSnackBar(message)),
     showPage: (page) => dispatch(showPage(page)),

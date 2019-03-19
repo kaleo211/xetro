@@ -1,24 +1,24 @@
 import {
   FETCH_ACTIVE_BOARDS,
   FETCH_BOARD,
-  FETCH_TEAM_ACTIVE_BOARDS,
+  FETCH_GROUP_ACTIVE_BOARDS,
   PATCH_BOARD,
   POST_BOARD,
-  UPDATE_SELECTED_MEMBER,
+  SET_ACTIVE_MEMBER,
   SHOW_PAGE,
   FETCH_BOARDS,
 } from './types';
 import Utils from '../components/Utils';
 
-export const fetchTeamActiveBoards = (teamID) => {
+export const fetchGroupActiveBoards = (groupID) => {
   return (dispatch) => {
-    Utils.fetchResource("boards/active/team/" + teamID).then(body => {
+    Utils.fetch(`/group/${groupID}/active`).then(body => {
       let page = "boardCreate";
-      let boards = body._embedded && body._embedded.boards || [];
+      let boards = body || [];
 
       if (boards) {
         if (boards.length === 1) {
-          dispatch(selectBoard(boards[0].id));
+          dispatch(setBoard(boards[0].id));
           page = "board";
         } if (boards.length > 1) {
           page = "boardList";
@@ -26,7 +26,7 @@ export const fetchTeamActiveBoards = (teamID) => {
       }
 
       dispatch({
-        type: FETCH_TEAM_ACTIVE_BOARDS,
+        type: FETCH_GROUP_ACTIVE_BOARDS,
         boards
       });
       dispatch({
@@ -39,11 +39,10 @@ export const fetchTeamActiveBoards = (teamID) => {
 
 export const fetchActiveBoards = () => {
   return (dispatch) => {
-    Utils.fetchResource("boards/active").then(body => {
-      let boards = body._embedded.boards;
+    Utils.fetch('/boards/active').then(boards => {
       dispatch({
         type: FETCH_ACTIVE_BOARDS,
-        boards
+        boards,
       });
     });
   };
@@ -51,11 +50,10 @@ export const fetchActiveBoards = () => {
 
 export const postBoard = (board) => {
   return (dispatch) => {
-    Utils.postResource("boards", board).then(body => {
-      let board = Utils.reform(body);
+    Utils.post('board', board).then(board => {
       dispatch({
         type: POST_BOARD,
-        board
+        board,
       });
     });
   };
@@ -63,11 +61,10 @@ export const postBoard = (board) => {
 
 export const fetchBoards = () => {
   return (dispatch) => {
-    return Utils.fetchResource("boards").then(body => {
-      let boards = body._embedded.boards;
+    return Utils.list("board").then(boards => {
       dispatch({
         type: FETCH_BOARDS,
-        boards
+        boards,
       });
     });
   };
@@ -85,7 +82,7 @@ export const patchBoard = (b, board) => {
   };
 };
 
-export const selectBoard = (boardID) => {
+export const setBoard = (boardID) => {
   return (dispatch) => {
     if (boardID === null || boardID === "") {
       dispatch({
@@ -93,25 +90,21 @@ export const selectBoard = (boardID) => {
         board: null
       });
     } else {
-      Utils.fetchResource("boards/" + boardID).then(body => {
-        let board = Utils.reformBoard(body);
+      Utils.get('board', boardID).then(board => {
         dispatch({
           type: FETCH_BOARD,
-          board
+          board,
         });
       });
     }
   };
 };
 
-export const updateSelectedMember = (memberID) => {
+export const setActiveMember = (user) => {
   return (dispatch) => {
-    Utils.fetchResource("members/" + memberID).then(body => {
-      let selectedMember = body;
-      dispatch({
-        type: UPDATE_SELECTED_MEMBER,
-        selectedMember
-      });
+    dispatch({
+      type: SET_ACTIVE_MEMBER,
+      activeMember,
     });
   };
 };

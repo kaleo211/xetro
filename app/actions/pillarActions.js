@@ -3,7 +3,7 @@ import {
   POST_PILLAR,
 } from './types';
 import Utils from '../components/Utils';
-import { selectBoard } from './boardActions';
+import { setBoard } from './boardActions';
 
 export const postPillar = (pillar, bID) => {
   return (dispatch) => {
@@ -13,7 +13,7 @@ export const postPillar = (pillar, bID) => {
         type: POST_PILLAR,
         pillar,
       });
-      dispatch(selectBoard(bID));
+      dispatch(setBoard(bID));
     });
   };
 };
@@ -26,7 +26,7 @@ export const patchPillar = (p, pillar, bID) => {
         type: PATCH_PILLAR,
         pillar,
       });
-      dispatch(selectBoard(bID));
+      dispatch(setBoard(bID));
     });
   };
 };

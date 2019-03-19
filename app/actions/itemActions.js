@@ -6,7 +6,7 @@ import {
   PATCH_ACTION
 } from './types';
 import Utils from '../components/Utils';
-import { selectBoard } from './boardActions';
+import { setBoard } from './boardActions';
 
 export const patchItem = (i, updatedItem, bID) => {
   return (dispatch) => {
@@ -16,7 +16,7 @@ export const patchItem = (i, updatedItem, bID) => {
         type: PATCH_ITEM,
         item,
       });
-      dispatch(selectBoard(bID));
+      dispatch(setBoard(bID));
     });
   };
 };
@@ -51,7 +51,7 @@ export const postItem = (updatedItem, bID) => {
         type: POST_ITEM,
         item,
       });
-      dispatch(selectBoard(bID));
+      dispatch(setBoard(bID));
     });
   };
 };

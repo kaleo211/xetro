@@ -9,14 +9,14 @@ import { Card, CardActions, CardContent } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 import { Done, Close } from '@material-ui/icons';
 
-import { fetchTeams, postTeam } from '../actions/teamActions';
+import { fetchGroups, postGroup } from '../actions/groupActions';
 import { showPage } from '../actions/localActions';
 import { compose } from 'redux';
 
 const styles = theme => ({
 });
 
-class NewTeam extends React.Component {
+class NewGroup extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -28,15 +28,15 @@ class NewTeam extends React.Component {
   }
 
   handleClose() {
-    this.props.showPage("");
+    this.props.showPage('');
   }
 
-  handleTeamAdd() {
-    let team = {
+  handleGroupAdd() {
+    let group = {
       name: this.state.name,
     }
-    this.props.postTeam(team);
-    this.props.fetchTeams();
+    this.props.postGroup(group);
+    this.props.fetchGroups();
 
     this.handleClose();
   }
@@ -64,7 +64,7 @@ class NewTeam extends React.Component {
           <IconButton onClick={this.handleClose.bind(this)}>
             <Close />
           </IconButton>
-          <IconButton onClick={this.handleTeamAdd.bind(this)}>
+          <IconButton onClick={this.handleGroupAdd.bind(this)}>
             <Done />
           </IconButton>
         </div>
@@ -78,16 +78,16 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchTeams: () => dispatch(fetchTeams()),
-    postTeam: (team) => dispatch(postTeam(team)),
+    fetchGroups: () => dispatch(fetchGroups()),
+    postGroup: (group) => dispatch(postGroup(group)),
     showPage: (page) => dispatch(showPage(page)),
   };
 };
 
-NewTeam.propTypes = {
+NewGroup.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles),
-)(NewTeam);
+)(NewGroup);

@@ -12,9 +12,7 @@ import { Add } from '@material-ui/icons';
 
 import Items from './Items';
 import Utils from './Utils';
-import {
-  selectBoard
-} from '../actions/boardActions';
+import { setBoard } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
 import { postItem } from '../actions/itemActions';
 import { patchPillar, postPillar } from '../actions/pillarActions';
@@ -57,11 +55,11 @@ class Board extends React.Component {
   handleNewItemSave(pillarID, event) {
     let newItems = this.state.newItems;
     if (event && event.key === 'Enter' && newItems[pillarID] !== "") {
-      if (this.props.selectedMember) {
+      if (this.props.activeMember) {
         let newItem = {
           title: newItems[pillarID].capitalize(),
           pillar: Utils.prepend("pillars/" + pillarID),
-          owner: Utils.prepend("members/" + this.props.selectedMember.id),
+          owner: Utils.prepend("members/" + this.props.activeMember.id),
         };
 
         this.props.postItem(newItem, this.props.board.id);
@@ -162,13 +160,13 @@ class Board extends React.Component {
 
 const mapStateToProps = state => ({
   board: state.boards.board,
-  selectedMember: state.boards.selectedMember,
-  teams: state.teams.teams,
-  team: state.teams.team,
+  activeMember: state.boards.activeMember,
+  groups: state.groups.groups,
+  group: state.groups.group,
 });
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectBoard: (id) => dispatch(selectBoard(id)),
+    setBoard: (id) => dispatch(setBoard(id)),
     postItem: (item, bID) => dispatch(postItem(item, bID)),
     patchPillar: (p, pillar, bID) => dispatch(patchPillar(p, pillar, bID)),
     postPillar: (pillar, bID) => dispatch(postPillar(pillar, bID)),

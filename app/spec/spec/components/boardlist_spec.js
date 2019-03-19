@@ -18,14 +18,14 @@ describe("BoardList", () => {
             locked: false,
             finished: false,
             facilitator: { video: "fakeURL" },
-            team: {name: "fakeTeam0"},
+            group: { name: "fakeGroup0" },
           },
           {
             id: 1,
             locked: false,
             finsihed: false,
-            facilitator: {video: "fakeURL"},
-            team: {name: "fakeTeam1"},
+            facilitator: { video: "fakeURL" },
+            group: { name: "fakeGroup1" },
           },
         ]
       },

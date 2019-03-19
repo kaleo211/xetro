@@ -24,13 +24,13 @@ describe("ActionBar", () => {
           facilitator: { video: "fakeURL" },
         },
       },
-      teams: {
+      groups: {
         members: [{ userID: "fakeID" }],
-        team: { name: "fakeTeam" },
+        group: { name: "fakeGroup" },
       },
     });
 
-    spyOn(actions, 'selectBoard').withArgs(0).and.returnValue("fakeReturn");
+    spyOn(actions, 'setBoard').withArgs(0).and.returnValue("fakeReturn");
     spyOn(store, 'dispatch');
 
     let shallow = createShallow();
@@ -48,13 +48,13 @@ describe("ActionBar", () => {
     let store = mockStore({
       boards: {
         boards: [
-          {id:0, name: "fakeBoard0"},
-          {id:1, name: "fakeBoard1"},
+          { id: 0, name: "fakeBoard0" },
+          { id: 1, name: "fakeBoard1" },
         ],
       },
-      teams: {
+      groups: {
         members: [{ userID: "fakeID" }],
-        team: { name: "fakeTeam" },
+        group: { name: "fakeGroup" },
       },
     });
 

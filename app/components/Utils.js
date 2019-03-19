@@ -1,59 +1,23 @@
-import "isomorphic-fetch";
-
 export default {
   reformBoard(board) {
     if (board._embedded) {
       board.facilitator = board._embedded.facilitator;
       board.selected = board._embedded.selected;
       board.pillars = board._embedded.pillars;
-      board.team = board._embedded.team;
+      board.group = board._embedded.group;
     }
     return board;
   },
 
-  reformTeam(team) {
-    if (team._embedded) {
-      team.boards = team._embedded.boards;
+  reformGroup(group) {
+    if (group._embedded) {
+      group.boards = group._embedded.boards;
     }
-    return team;
+    return group;
   },
 
   reform(resource) {
     return Object.assign(resource, resource._embedded);
-  },
-
-  prepend(path) {
-    return window.location.protocol + "//" + window.location.hostname + ":8080/api/" + path;
-  },
-
-  get(url) {
-    return new Promise((resolve, reject) => {
-      if (url) {
-        fetch(url.replace('{?projection}', ''))
-          .then(resp => {
-            if (resp.ok) {
-              resolve(resp.json());
-            } else {
-              reject(Error("failed to get:", url));
-            }
-          });
-      }
-    });
-  },
-
-  delete(resource) {
-    let url = this.prepend(resource);
-    return new Promise((resolve, reject) => {
-      fetch(url, {
-        method: 'delete',
-      }).then(resp => {
-        if (resp.ok) {
-          resolve(resp);
-        } else {
-          resolve(Error("failed to delete:", url));
-        }
-      });
-    });
   },
 
   deleteResource(resource) {
@@ -85,68 +49,92 @@ export default {
     return this.postResource("pillars", pillar);
   },
 
-  postTeamMember(teamMember) {
-    return this.postResource("teamMember", teamMember);
+  fetch(url) {
+    return new Promise((resolve, reject) => {
+      fetch(url)
+        .then(resp => {
+          if (resp.ok) {
+            resolve(resp.json());
+          } else {
+            reject(Error("failed to fetch:", url));
+          }
+        });
+    });
   },
 
-  postResource(resourceType, resource) {
-    let url = window.location.protocol + "//" + window.location.hostname + ":8080/api/" + resourceType;
+  get(type, id) {
     return new Promise((resolve, reject) => {
-      fetch(url, {
+      fetch(`/${type}/${id}`)
+        .then(resp => {
+          if (resp.ok) {
+            resolve(resp.json());
+          } else {
+            reject(Error("failed to get:", type, id));
+          }
+        });
+    });
+  },
+
+  list(type) {
+    return new Promise((resolve, reject) => {
+      fetch(`/${type}s`)
+        .then(resp => {
+          if (resp.ok) {
+            resolve(resp.json());
+          } else {
+            reject(Error("failed to get:", type));
+          }
+        });
+    });
+  },
+
+  post(type, body) {
+    return new Promise((resolve, reject) => {
+      fetch(`/${type}s`, {
         method: 'POST',
-        body: JSON.stringify(resource),
+        body: JSON.stringify(body),
         headers: new Headers({
           'Content-Type': 'application/json',
-        })
+        }),
       }).then(resp => {
         if (resp.ok) {
           resolve(resp.json());
         } else {
-          reject(Error("failed to post:", resourceType, resource));
+          reject(Error("failed to post:", type, body));
         }
       });
     });
   },
 
-  patch(resource, updatedResource) {
-    let url = this.prepend(resource);
-    if (url) {
-      return new Promise((resolve, reject) => {
-        fetch(url, {
-          method: 'PATCH',
-          body: JSON.stringify(updatedResource),
-          headers: new Headers({
-            'Content-Type': 'application/json',
-          }),
-        }).then(resp => {
-          if (resp.ok) {
-            resolve(resp.json());
-          } else {
-            reject(Error("failed to patch:", resource, updatedResource));
-          }
-        });
+  patch(type, body) {
+    return new Promise((resolve, reject) => {
+      fetch(`/${type}/${body.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(body),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+      }).then(resp => {
+        if (resp.ok) {
+          resolve(resp.json());
+        } else {
+          reject(Error("failed to patch:", type, body));
+        }
       });
-    }
+    });
   },
 
-  patchResource(resource, updatedResource) {
+  delete(resource, id) {
     return new Promise((resolve, reject) => {
-      let url = this.getSelfLink(resource);
-      if (url) {
-        fetch(url, {
-          method: 'PATCH',
-          body: JSON.stringify(updatedResource),
-          headers: new Headers({
-            'Content-Type': 'application/json',
-          }),
-        }).then(resp => {
-          if (resp.ok) {
-            resolve(resp.json());
-          } else {
-            reject(Error("failed to patch:", resource, updatedResource));
-          }
-        });
-      }
+      fetch(`/${resource}/${id}`, {
+        method: 'DELETE',
+      }).then(resp => {
+        if (resp.ok) {
+          resolve(resp);
+        } else {
+          reject(Error("failed to delete:", url));
+        }
+      });
     });
-  }
+  },
 }

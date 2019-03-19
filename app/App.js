@@ -16,10 +16,9 @@ import Board from './components/Board';
 import BoardList from './components/BoardList';
 import MemberList from './components/MemberList';
 import NewBoard from './components/NewBoard';
-import NewTeam from './components/NewTeam';
-import NewUser from './components/NewUser';
-import TeamMenu from './components/TeamMenu';
-import { fetchTeams } from './actions/teamActions';
+import NewGroup from './components/NewGroup';
+import GroupMenu from './components/GroupMenu';
+import { fetchGroups } from './actions/groupActions';
 import { closeSnackBar } from './actions/localActions';
 import { fetchUsers } from './actions/userActions';
 
@@ -58,6 +57,7 @@ class App extends React.Component {
 
     this.state = {
       signedIn: false,
+      me: {},
     }
 
     String.prototype.capitalize = function () {
@@ -69,26 +69,34 @@ class App extends React.Component {
 
   componentWillMount() {
     document.body.style.margin = 0;
+    // this.props.fetchGroups();
+  }
+
+  componentDidMount() {
     fetch('/me')
       .then(resp => {
         if (resp.status === 403) {
           this.handleMicrosoftLogin();
+        } else {
+          this.props.fetchUsers();
+          this.setState({
+            signedIn: true,
+            me: resp.json(),
+          })
         }
-        resp.json();
       })
       .then(me => {
 
       });
-
-    // this.props.fetchTeams();
-    // this.props.fetchUsers();
   }
 
   handleMicrosoftLogin() {
-    var microsoft = window.open(
-      'https://login.microsoftonline.com/' + TENANT_ID + '/oauth2/authorize?client_id=' + CLIENT_ID + '&response_type=code&redirect_uri=' + REDIRECT_URL + '&response_mode=query',
-      'microsoft',
-      'height=500,width=620');
+    var uri = `${SSO_ADDRESS}/${SSO_TENANT_ID}/oauth2/authorize
+                  ?client_id=${SSO_CLIENT_ID}
+                  &response_type=code
+                  &redirect_uri=${SSO_REDIRECT_URL}
+                  &response_mode=query`;
+    var microsoft = window.open(uri, 'microsoft', 'height=500,width=620');
 
     var loginChecker = setInterval(() => {
       if (microsoft.closed) {
@@ -117,7 +125,7 @@ class App extends React.Component {
       <AppBar position="absolute" className={classes.appBar}>
         <Toolbar>
           <div style={{ marginLeft: -20 }}>
-            <TeamMenu />
+            <GroupMenu />
           </div>
           <div style={{ flexGrow: 2 }} />
 
@@ -127,7 +135,7 @@ class App extends React.Component {
 
           <div style={{ flexGrow: 1 }}>
           </div>
-          <ActionBar />
+          {/* <ActionBar /> */}
         </Toolbar>
       </AppBar>
 
@@ -136,9 +144,9 @@ class App extends React.Component {
           <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
             <div className={classes.toolbar} />
             <MemberList />
-            <IconButton className={classes.feedback} onClick={this.handleFeedbackClick.bind(this)} >
+            {/* <IconButton className={classes.feedback} onClick={this.handleFeedbackClick.bind(this)} >
               <FeedbackOutlined />
-            </IconButton>
+            </IconButton> */}
           </Drawer>
 
           <main className={classes.content}>
@@ -146,8 +154,7 @@ class App extends React.Component {
             {page === "board" && <Board />}
             {page === "boardCreate" && <NewBoard />}
             {page === "boardList" && <BoardList />}
-            {page === "userCreate" && <NewUser />}
-            {page === "teamCreate" && <NewTeam />}
+            {page === "groupCreate" && <NewGroup />}
           </main>
         </div>
       }
@@ -174,7 +181,7 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 export default connect(mapStateToProps, {
-  fetchTeams,
+  fetchGroups,
   closeSnackBar,
   fetchUsers,
 })(withStyles(styles)(App));

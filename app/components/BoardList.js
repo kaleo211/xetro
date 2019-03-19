@@ -13,7 +13,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import { Forum } from '@material-ui/icons';
 
-import { selectBoard } from '../actions/boardActions';
+import { setBoard } from '../actions/boardActions';
 
 const styles = theme => ({
 });
@@ -24,7 +24,7 @@ class BoardList extends React.Component {
   }
 
   handleBoardSelect(boardID) {
-    this.props.selectBoard(boardID);
+    this.props.setBoard(boardID);
   }
 
   render() {
@@ -35,7 +35,7 @@ class BoardList extends React.Component {
           <List>
             {boards && boards.map(board => (
               <ListItem key={"activeBoard" + board.id} dense divider button >
-                <Avatar>{board.team.name || "Unknow"}</Avatar>
+                <Avatar>{board.group.name || "Unknow"}</Avatar>
                 <ListItemText primary={board.name} />
                 <ListItemSecondaryAction onClick={this.handleBoardSelect.bind(this, board.id)}>
                   <IconButton>
@@ -56,7 +56,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectBoard: (id) => dispatch(selectBoard(id)),
+    setBoard: (id) => dispatch(setBoard(id)),
   }
 }
 

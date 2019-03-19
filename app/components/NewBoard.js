@@ -32,7 +32,7 @@ import {
 import { postBoard } from '../actions/boardActions';
 import { showPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';
-import { selectTeam } from '../actions/teamActions';
+import { setGroup } from '../actions/groupActions';
 
 
 const styles = theme => ({
@@ -118,7 +118,7 @@ class NewBoard extends React.Component {
   handleActionCheck(action) {
     this.props.patchAction("actions/" + action.id, { finished: true })
       .then(() => {
-        this.props.selectTeam(this.props.team.id);
+        this.props.setGroup(this.props.group.id);
       });
   }
 
@@ -126,7 +126,7 @@ class NewBoard extends React.Component {
     let newBoard = this.state.newBoard;
     newBoard.endTime = this.getDate();
     newBoard.started = true;
-    newBoard.team = this.props.team._links.self.href;
+    newBoard.group = this.props.group._links.self.href;
     newBoard.name = this.state.name;
     newBoard.facilitator = this.state.facilitator._links.self.href;
 
@@ -250,14 +250,14 @@ class NewBoard extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  members: state.teams.members,
-  team: state.teams.team
+  members: state.groups.members,
+  group: state.groups.group
 });
 const mapDispatchToProps = (dispatch) => {
   return {
     postBoard: (board) => dispatch(postBoard(board)),
     patchAction: (a, action) => dispatch(patchAction(a, action)),
-    selectTeam: (id) => dispatch(selectTeam(id)),
+    setGroup: (id) => dispatch(setGroup(id)),
     showPage: (page) => dispatch(showPage(page)),
   };
 };

@@ -21,8 +21,8 @@ import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-u
 import Likes from './Likes';
 import { selectItem } from '../actions/localActions';
 import { patchItem, deleteItem, postAction, patchAction } from '../actions/itemActions';
-import { selectBoard } from '../actions/boardActions';
-import { selectTeam } from '../actions/teamActions';
+import { setBoard } from '../actions/boardActions';
+import { setGroup } from '../actions/groupActions';
 
 const styles = theme => ({
   item: {
@@ -78,13 +78,13 @@ class Items extends React.Component {
     }
     this.props.patchItem(item, { checked: true })
       .then(() => {
-        this.props.selectBoard(this.props.board.id);
+        this.props.setBoard(this.props.board.id);
       });
   }
 
   handleItemDelete(itemID) {
     this.props.deleteItem(itemID).then(() => {
-      this.props.selectBoard(this.props.board.id);
+      this.props.setBoard(this.props.board.id);
     });
   }
 
@@ -99,7 +99,7 @@ class Items extends React.Component {
       .then((item) => {
         this.setState({ switcher: true });
 
-        this.props.selectBoard(this.props.board.id);
+        this.props.setBoard(this.props.board.id);
         this.props.selectItem(item);
       });
   }
@@ -112,8 +112,8 @@ class Items extends React.Component {
     if (action && action._links) {
       this.props.patchAction("actions/" + action.id, { member: owner._links.self.href, })
         .then(() => {
-          this.props.selectBoard(this.props.board.id);
-          this.props.selectTeam(this.props.team.id);
+          this.props.setBoard(this.props.board.id);
+          this.props.setGroup(this.props.group.id);
         });
     }
   }
@@ -141,12 +141,12 @@ class Items extends React.Component {
     let newAction = {
       title: this.state.newAction.capitalize(),
       item: item._links.self.href,
-      team: this.props.board.team._links.self.href,
+      group: this.props.board.group._links.self.href,
     }
 
     this.props.postAction(newAction)
       .then(() => {
-        this.props.selectBoard(this.props.board.id);
+        this.props.setBoard(this.props.board.id);
         this.setState({ newAction: "" });
       })
   }
@@ -273,8 +273,8 @@ class Items extends React.Component {
 
 const mapStateToProps = state => ({
   board: state.boards.board,
-  members: state.teams.members,
-  team: state.teams.team,
+  members: state.groups.members,
+  group: state.groups.group,
   selectedItem: state.local.selectedItem,
 });
 
@@ -283,10 +283,10 @@ const mapDispatchToProps = (dispatch) => {
     patchItem: (i, item, bID) => dispatch(patchItem(i, item, bID)),
     deleteItem: (id) => dispatch(deleteItem(id)),
     postAction: (action) => dispatch(postAction(action)),
-    selectBoard: (id) => dispatch(selectBoard(id)),
+    setBoard: (id) => dispatch(setBoard(id)),
     patchAction: (action) => dispatch(patchAction(action)),
     selectItem: (item) => dispatch(selectItem(item)),
-    selectTeam: (id) => dispatch(selectTeam(id)),
+    setGroup: (id) => dispatch(setGroup(id)),
   };
 };
 

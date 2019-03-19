@@ -1,22 +1,22 @@
 import {
   FETCH_ACTIVE_BOARDS,
   FETCH_BOARD,
-  FETCH_TEAM_ACTIVE_BOARDS,
+  FETCH_GROUP_ACTIVE_BOARDS,
   PATCH_BOARD,
   POST_BOARD,
-  UPDATE_SELECTED_MEMBER,
+  SET_ACTIVE_MEMBER,
   FETCH_BOARDS,
 } from '../actions/types';
 
 const initialState = {
   boards: [],
   board: null,
-  selectedMember: null,
+  activeMember: null,
 };
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case FETCH_TEAM_ACTIVE_BOARDS:
+    case FETCH_GROUP_ACTIVE_BOARDS:
     case FETCH_BOARDS:
       return {
         ...state,
@@ -52,10 +52,10 @@ export default function (state = initialState, action) {
         board: action.board
       }
 
-    case UPDATE_SELECTED_MEMBER:
+    case SET_ACTIVE_MEMBER:
       return {
         ...state,
-        selectedMember: action.selectedMember
+        activeMember: action.activeMember
       }
 
     default:

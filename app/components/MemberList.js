@@ -11,8 +11,8 @@ import { List, ListItem, ListItemAvatar } from '@material-ui/core';
 import { Menu, MenuItem } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
 
-import { addMemberToTeam } from '../actions/teamActions';
-import { updateSelectedMember } from '../actions/boardActions';
+import { addUserToGroup } from '../actions/groupActions';
+import { setActiveMember } from '../actions/boardActions';
 import { showPage } from '../actions/localActions';
 import { compose } from 'redux';
 
@@ -36,33 +36,29 @@ class MemberList extends React.Component {
     this.setState({ anchorEl: evt.currentTarget });
   }
 
-  handleUserAddClick() {
-    this.props.showPage("userCreate");
-  }
-
   handleMenuClose() {
     this.setState({ anchorEl: null });
   }
 
-  handleMemberToAdd(memberID) {
-    this.props.addMemberToTeam(this.props.team.id, memberID);
+  handleUserToAdd(userID) {
+    this.props.addUserToGroup(this.props.group.id, userID);
     this.handleMenuClose();
   }
 
   handleMemberSelect(memberID) {
-    if (this.props.team) {
-      this.props.updateSelectedMember(memberID);
+    if (this.props.group) {
+      this.props.setActiveMember(memberID);
     } else {
       this.props.showPage("");
     }
   }
 
   render() {
-    const { team, users, members, classes, selectedMember, board, memberIDs } = this.props;
+    const { group, users, members, classes, activeMember, board, memberIDs } = this.props;
     const { anchorEl } = this.state;
 
     let usersToShow = users;
-    if (team) {
+    if (group) {
       usersToShow = members;
     }
 
@@ -70,7 +66,7 @@ class MemberList extends React.Component {
       return board && board.facilitator && board.facilitator.userID === m.userID;
     }
     const isSelected = (m) => {
-      return team && selectedMember && selectedMember.userID === m.userID;
+      return group && activeMember && activeMember.userID === m.userID;
     }
 
     return (<div>
@@ -95,23 +91,19 @@ class MemberList extends React.Component {
       </List>
 
       <div style={{ marginLeft: 13 }}>
-        {team ?
-          <Tooltip title="Add an team member" placement="right">
+        {group ?
+          <Tooltip title="Add an user to group" placement="right">
             <IconButton onClick={this.handleMemberAddClick.bind(this)}>
               <Add />
             </IconButton>
-          </Tooltip> :
-          <Tooltip title="Add an user" placement="right">
-            <IconButton onClick={this.handleUserAddClick.bind(this)}>
-              <Add />
-            </IconButton>
-          </Tooltip>}
+          </Tooltip> : <div></div>
+        }
         <Menu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={this.handleMenuClose.bind(this)} >
-          {team && memberIDs && users && users.map(user => (!memberIDs.includes(user.id) &&
-            <MenuItem key={user.id} onClick={this.handleMemberToAdd.bind(this, user.id)}>
+          {group && memberIDs && users && users.map(user => (!memberIDs.includes(user.id) &&
+            <MenuItem key={user.id} onClick={this.handleUserToAdd.bind(this, user.id)}>
               {user.firstName + " " + user.lastName}
             </MenuItem>))}
         </Menu>
@@ -121,18 +113,17 @@ class MemberList extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  team: state.teams.team,
+  group: state.groups.group,
   users: state.users.users,
-  memberIDs: state.teams.memberIDs,
-  members: state.teams.members,
-  selectedMember: state.boards.selectedMember,
+  members: state.groups.members,
+  activeMember: state.boards.activeMember,
   board: state.boards.board,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addMemberToTeam: (tID, mID) => dispatch(addMemberToTeam(tID, mID)),
-    updateSelectedMember: (id) => dispatch(updateSelectedMember(id)),
+    addUserToGroup: (tID, mID) => dispatch(addUserToGroup(tID, mID)),
+    setActiveMember: (id) => dispatch(setActiveMember(id)),
     showPage: (page) => dispatch(showPage(page)),
   };
 };

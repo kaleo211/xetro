@@ -7,15 +7,15 @@ import { Button, Divider } from '@material-ui/core';
 import { Menu, MenuItem } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 
-import { selectTeam } from '../actions/teamActions';
-import { fetchTeamActiveBoards, selectBoard } from '../actions/boardActions';
+import { setGroup } from '../actions/groupActions';
+import { setBoard } from '../actions/boardActions';
 import { showPage } from '../actions/localActions';
 import { compose } from 'redux';
 
 const styles = theme => ({
 });
 
-class TeamMenu extends React.Component {
+class GroupMenu extends React.Component {
   constructor(props) {
     super(props);
 
@@ -32,44 +32,42 @@ class TeamMenu extends React.Component {
     this.setState({ anchorEl: null });
   };
 
-  handleTeamSelect(teamID) {
-    this.props.selectTeam(teamID);
-    if (teamID === null) {
-      this.props.selectBoard(null);
+  handleGroupSelect(groupID) {
+    this.props.setGroup(groupID);
+    if (groupID === null) {
+      this.props.setBoard(null);
       this.props.showPage("");
-    } else {
-      this.props.fetchTeamActiveBoards(teamID);
     }
     this.handleMenuClose();
   }
 
-  handleTeamCreate() {
-    this.props.showPage("teamCreate");
+  handleGroupCreate() {
+    this.props.showPage("groupCreate");
     this.handleMenuClose();
   }
 
   render() {
-    const { team, teams } = this.props;
+    const { group, groups } = this.props;
     const { anchorEl } = this.state;
 
     return (<div>
       <Button fullWidth variant="flat" style={{ color: "white" }}
         onClick={this.handleClick.bind(this)} >
-        {team ? team.name : "TEAMS"}
+        {group ? group.name : "GROUPS"}
       </Button>
       <Menu anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={this.handleMenuClose.bind(this)}>
-        <MenuItem onClick={this.handleTeamSelect.bind(this, null)}>
-          {'TEAMS'}
+        <MenuItem onClick={this.handleGroupSelect.bind(this, null)}>
+          {'GROUPS'}
         </MenuItem>
         <Divider />
-        {teams.map(t => (
-          <MenuItem key={t.id} onClick={this.handleTeamSelect.bind(this, t.id)}>
+        {groups.map(t => (
+          <MenuItem key={t.id} onClick={this.handleGroupSelect.bind(this, t.id)}>
             {t.name}
           </MenuItem>
         ))}
-        <MenuItem onClick={this.handleTeamCreate.bind(this)}>
+        <MenuItem onClick={this.handleGroupCreate.bind(this)}>
           <Add />
         </MenuItem>
       </Menu>
@@ -78,22 +76,22 @@ class TeamMenu extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  team: state.teams.team,
-  teams: state.teams.teams,
+  group: state.groups.group,
+  groups: state.groups.groups,
 });
 const mapDispatchToProps = (dispatch) => {
   return {
-    selectTeam: (id) => dispatch(selectTeam(id)),
-    selectBoard: (id) => dispatch(selectBoard(id)),
-    fetchTeamActiveBoards: (id) => dispatch(fetchTeamActiveBoards(id)),
+    setGroup: (id) => dispatch(setGroup(id)),
+    setBoard: (id) => dispatch(setBoard(id)),
+    fetchGroupActiveBoards: (id) => dispatch(fetchGroupActiveBoards(id)),
     showPage: (page) => dispatch(showPage(page)),
   };
 };
 
-TeamMenu.propTypes = {
+GroupMenu.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles),
-)(TeamMenu);
+)(GroupMenu);
