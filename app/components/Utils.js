@@ -1,4 +1,8 @@
 export default {
+  async sleep(second) {
+    return new Promise(resolve => setTimeout(resolve, second * 1000));
+  },
+
   reformBoard(board) {
     if (board._embedded) {
       board.facilitator = board._embedded.facilitator;

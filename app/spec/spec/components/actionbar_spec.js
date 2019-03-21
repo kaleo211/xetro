@@ -59,7 +59,7 @@ describe("ActionBar", () => {
     });
 
     spyOn(actions, 'fetchBoards').and.returnValue("fakeFetchBoardsReturn");
-    spyOn(localActions, 'showPage').withArgs('boardList').and.returnValue("fakeShowPageReturn");
+    spyOn(localActions, 'setPage').withArgs('boardList').and.returnValue("fakeShowPageReturn");
     spyOn(store, 'dispatch');
 
     let shallow = createShallow();

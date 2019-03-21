@@ -10,7 +10,7 @@ import { IconButton } from '@material-ui/core';
 import { Done, Close } from '@material-ui/icons';
 
 import { fetchGroups, postGroup } from '../actions/groupActions';
-import { showPage } from '../actions/localActions';
+import { setPage } from '../actions/localActions';
 import { compose } from 'redux';
 
 const styles = theme => ({
@@ -28,7 +28,7 @@ class NewGroup extends React.Component {
   }
 
   handleClose() {
-    this.props.showPage('');
+    this.props.setPage('');
   }
 
   handleGroupAdd() {
@@ -80,7 +80,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchGroups: () => dispatch(fetchGroups()),
     postGroup: (group) => dispatch(postGroup(group)),
-    showPage: (page) => dispatch(showPage(page)),
+    setPage: (page) => dispatch(setPage(page)),
   };
 };
 

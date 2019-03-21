@@ -22,7 +22,7 @@ import {
 
 import { patchBoard, setBoard, fetchBoards } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
-import { openSnackBar, showPage } from '../actions/localActions';
+import { openSnackBar, setPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';
 
 const styles = theme => ({
@@ -63,13 +63,13 @@ class ActionBar extends React.Component {
 
   handleViewHistory() {
     this.props.fetchBoards();
-    this.props.showPage("boardList");
+    this.props.setPage('boardList');
   }
 
   handleBoardFinish() {
     let updatedBoard = { finished: true };
     this.props.patchBoard(this.props.board, updatedBoard);
-    this.props.showPage("boardCreate");
+    this.props.setPage('createBoard');
     this.props.openSnackBar("Board is ARCHIVED.");
     this.props.setGroup(this.props.group.id);
     this.props.setBoard(null);
@@ -187,7 +187,7 @@ const mapDispatchToProps = (dispatch) => {
     setGroup: (id) => dispatch(setGroup(id)),
     patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
     openSnackBar: (message) => dispatch(openSnackBar(message)),
-    showPage: (page) => dispatch(showPage(page)),
+    setPage: (page) => dispatch(setPage(page)),
   }
 };
 

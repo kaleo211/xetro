@@ -13,7 +13,7 @@ import { Tooltip } from '@material-ui/core';
 
 import { addUserToGroup } from '../actions/groupActions';
 import { setActiveMember } from '../actions/boardActions';
-import { showPage } from '../actions/localActions';
+import { setPage } from '../actions/localActions';
 import { compose } from 'redux';
 
 const styles = theme => ({
@@ -49,12 +49,12 @@ class MemberList extends React.Component {
     if (this.props.group) {
       this.props.setActiveMember(memberID);
     } else {
-      this.props.showPage("");
+      this.props.setPage("");
     }
   }
 
   render() {
-    const { group, users, members, classes, activeMember, board, memberIDs } = this.props;
+    const { group, users, classes, activeMember, board } = this.props;
     const { anchorEl } = this.state;
 
     console.log('users:', users);
@@ -62,7 +62,7 @@ class MemberList extends React.Component {
 
     let usersToShow = users;
     if (group) {
-      usersToShow = members;
+      usersToShow = group.members;
     }
 
     const isFacilitator = (m) => {
@@ -76,8 +76,7 @@ class MemberList extends React.Component {
       <List component="nav" style={{ marginLeft: -6 }}>
         {usersToShow && usersToShow.map(m => (
           < Tooltip key={"side" + m.userID} title={m.firstName} placement="right" >
-            <ListItem
-              button
+            <ListItem button
               onClick={this.handleMemberSelect.bind(this, m.id)}
               style={{ paddingTop: 16, paddingBottom: 16 }}>
               <ListItemAvatar>
@@ -94,12 +93,12 @@ class MemberList extends React.Component {
       </List>
 
       <div style={{ marginLeft: 13 }}>
-        {group ?
+        {group &&
           <Tooltip title="Add an user to group" placement="right">
             <IconButton onClick={this.handleMemberAddClick.bind(this)}>
               <Add />
             </IconButton>
-          </Tooltip> : <div></div>
+          </Tooltip>
         }
         <Menu
           anchorEl={anchorEl}
@@ -129,7 +128,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     addUserToGroup: (tID, mID) => dispatch(addUserToGroup(tID, mID)),
     setActiveMember: (id) => dispatch(setActiveMember(id)),
-    showPage: (page) => dispatch(showPage(page)),
+    setPage: (page) => dispatch(setPage(page)),
   };
 };
 

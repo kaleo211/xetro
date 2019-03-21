@@ -30,7 +30,7 @@ import {
 
 
 import { postBoard } from '../actions/boardActions';
-import { showPage } from '../actions/localActions';
+import { setPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';
 import { setGroup } from '../actions/groupActions';
 
@@ -131,7 +131,7 @@ class NewBoard extends React.Component {
     newBoard.facilitator = this.state.facilitator._links.self.href;
 
     this.props.postBoard(newBoard);
-    this.props.showPage("board");
+    this.props.setPage("board");
   }
 
   getStepContent(step, members, facilitator) {
@@ -258,7 +258,7 @@ const mapDispatchToProps = (dispatch) => {
     postBoard: (board) => dispatch(postBoard(board)),
     patchAction: (a, action) => dispatch(patchAction(a, action)),
     setGroup: (id) => dispatch(setGroup(id)),
-    showPage: (page) => dispatch(showPage(page)),
+    setPage: (page) => dispatch(setPage(page)),
   };
 };
 

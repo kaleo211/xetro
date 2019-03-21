@@ -5,7 +5,7 @@ import {
   SELECT_ITEM,
 } from './types';
 
-export const showPage = (page) => {
+export const setPage = (page) => {
   return {
     type: SHOW_PAGE,
     page,

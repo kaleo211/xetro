@@ -39,7 +39,6 @@ export default function (state = initialState, action) {
         board: action.board
       }
 
-
     case PATCH_BOARD:
       return {
         ...state,

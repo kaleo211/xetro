@@ -3,6 +3,10 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import classNames from 'classnames';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { withTheme } from '@material-ui/core/styles';
+
 import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -10,6 +14,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { FeedbackOutlined } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
+import Divider from '@material-ui/core/Divider';
+import { ChevronLeft, Inbox } from '@material-ui/icons';
 
 import ActionBar from './components/ActionBar';
 import Board from './components/Board';
@@ -17,37 +24,73 @@ import BoardList from './components/BoardList';
 import MemberList from './components/MemberList';
 import NewBoard from './components/NewBoard';
 import NewGroup from './components/NewGroup';
-import GroupMenu from './components/GroupMenu';
+import GroupList from './components/GroupList';
 import { fetchGroups } from './actions/groupActions';
 import { closeSnackBar } from './actions/localActions';
-import { fetchUsers } from './actions/userActions';
+import { fetchUsers, getMe } from './actions/userActions';
+import Utils from './components/Utils';
+
+const drawerWidth = 240;
 
 const styles = theme => ({
   root: {
-    flexGrow: 1,
-    zIndex: 1,
-    overflow: 'hidden',
-    position: 'relative',
     display: 'flex',
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
-  drawerPaper: {
-    position: 'relative',
-    width: 82,
+  appBarShift: {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  menuButton: {
+    marginLeft: 12,
+    marginRight: 36,
+  },
+  hide: {
+    display: 'none',
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+  },
+  drawerOpen: {
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  drawerClose: {
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: 'hidden',
+    width: theme.spacing.unit * 7 + 1,
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing.unit * 7 + 1,
+    },
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
   },
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 1,
-    minWidth: 0,
-  },
-  toolbar: theme.mixins.toolbar,
-  feedback: {
-    position: 'absolute',
-    bottom: theme.spacing.unit * 1,
-    left: theme.spacing.unit * 2,
+    padding: theme.spacing.unit * 3,
   },
 });
 
@@ -56,40 +99,29 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      signedIn: false,
-      me: {},
+      open: false,
     }
 
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
     }
-
-    this.handleMicrosoftLogin = this.handleMicrosoftLogin.bind(this);
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     document.body.style.margin = 0;
-    fetch('/me')
-      .then(resp => {
-        if (resp.status === 403) {
-          this.handleMicrosoftLogin();
-        } else {
-          this.setState({
-            signedIn: true,
-            me: resp.json(),
-          })
-        }
-      })
-      .then(me => {
-      });
-  }
-
-  componentDidUpdate() {
+    await this.handleMicrosoftLogin();
     this.props.fetchUsers();
     this.props.fetchGroups();
   }
 
-  handleMicrosoftLogin() {
+  componentDidUpdate() {
+  }
+
+  async handleMicrosoftLogin() {
+    if (this.props.me.id) {
+      return;
+    }
+
     var uri = `${SSO_ADDRESS}/${SSO_TENANT_ID}/oauth2/authorize
                   ?client_id=${SSO_CLIENT_ID}
                   &response_type=code
@@ -97,20 +129,13 @@ class App extends React.Component {
                   &response_mode=query`;
     var microsoft = window.open(uri, 'microsoft', 'height=500,width=620');
 
-    var loginChecker = setInterval(() => {
+    while (true) {
       if (microsoft.closed) {
-        fetch('/me')
-          .then(resp => {
-            if (resp.ok) {
-              this.setState({
-                me: resp.json(),
-                signedIn: true,
-              });
-              clearInterval(loginChecker)
-            }
-          })
+        this.props.getMe();
+        break;
       }
-    }, 200);
+      await Utils.sleep(1);
+    }
   }
 
   handleFeedbackClick() {
@@ -118,70 +143,86 @@ class App extends React.Component {
     win.focus();
   }
 
+  handleDrawerOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleDrawerClose = () => {
+    this.setState({ open: false });
+  };
+
   render() {
     const { page, board, classes } = this.props;
+    const { open } = this.state;
+
     return (<div className={classes.root}>
-      <AppBar position="absolute" className={classes.appBar}>
-        <Toolbar>
-          <div style={{ marginLeft: -20 }}>
-            <GroupMenu />
-          </div>
-          <div style={{ flexGrow: 2 }} />
-
-          <Typography variant="title" color="inherit" noWrap style={{ flexGrow: 1 }}>
-            {board && board.name && board.name.toUpperCase()}
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        className={classNames(classes.appBar, { [classes.appBarShift]: open })}
+      >
+        <Toolbar disableGutters={!open}>
+          <IconButton
+            color="inherit"
+            aria-label="Open drawer"
+            onClick={this.handleDrawerOpen}
+            className={classNames(classes.menuButton, { [classes.hide]: open })}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" color="inherit" noWrap>
+            Mini variant drawer
           </Typography>
-
-          <div style={{ flexGrow: 1 }}>
-          </div>
-          {/* <ActionBar /> */}
         </Toolbar>
       </AppBar>
-
-      {this.state.signedIn &&
-        <div>
-          <Drawer variant="permanent" classes={{ paper: classes.drawerPaper }}>
-            <div className={classes.toolbar} />
-            <MemberList />
-            {/* <IconButton className={classes.feedback} onClick={this.handleFeedbackClick.bind(this)} >
-              <FeedbackOutlined />
-            </IconButton> */}
-          </Drawer>
-
-          <main className={classes.content}>
-            <div className={classes.toolbar} />
-            {page === "board" && <Board />}
-            {page === "boardCreate" && <NewBoard />}
-            {page === "boardList" && <BoardList />}
-            {page === "groupCreate" && <NewGroup />}
-          </main>
+      <Drawer variant="permanent" open={open}
+        className={classNames(classes.drawer, {
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+        })}
+        classes={{
+          paper: classNames({
+            [classes.drawerOpen]: open,
+            [classes.drawerClose]: !open,
+          }),
+        }}
+      >
+        <div className={classes.toolbar}>
+          <IconButton onClick={this.handleDrawerClose}>
+            <ChevronLeft />
+          </IconButton>
         </div>
-      }
+        <Divider />
+        <GroupList />
+      </Drawer>
 
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={this.props.snackbarOpen}
-        message={this.props.snackbarMessage}
-        onClose={this.props.closeSnackBar}
-        autoHideDuration={1500}
-        transitionDuration={400} />
-    </div >);
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        {page === "board" && <Board />}
+        {page === 'createBoard' && <NewBoard />}
+        {page === 'boardList' && <BoardList />}
+        {page === 'createGroup' && <NewGroup />}
+      </main>
+    </div>);
   }
 }
 
 const mapStateToProps = state => ({
   board: state.boards.board,
   page: state.local.page,
+  me: state.users.me,
   snackbarOpen: state.local.snackbarOpen,
   snackbarMessage: state.local.snackbarMessage,
 });
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
 };
 
 export default connect(mapStateToProps, {
   fetchGroups,
   closeSnackBar,
   fetchUsers,
-})(withStyles(styles)(App));
+  getMe,
+})(withStyles(styles, { withTheme: true })(App));

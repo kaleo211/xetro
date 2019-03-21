@@ -13,7 +13,7 @@ import Utils from '../components/Utils';
 export const fetchGroupActiveBoards = (groupID) => {
   return (dispatch) => {
     Utils.fetch(`/group/${groupID}/active`).then(body => {
-      let page = "boardCreate";
+      let page = 'createBoard';
       let boards = body || [];
 
       if (boards) {

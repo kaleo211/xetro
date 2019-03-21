@@ -24,6 +24,7 @@ export const PATCH_ACTION = 'PATCH_ACTION'
 export const SELECT_ITEM = 'SELECT_ITEM'
 
 export const FETCH_USERS = 'FETCH_USERS'
+export const GET_ME = 'GET_ME'
 
 export const POST_PILLAR = 'POST_PILLAR'
 export const PATCH_PILLAR = 'PATCH_PILLAR'

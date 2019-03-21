@@ -1,4 +1,9 @@
-import { FETCH_GROUPS, SET_GROUP, ADD_MEMBER_TO_GROUP, POST_GROUP } from '../actions/types';
+import {
+  FETCH_GROUPS,
+  SET_GROUP,
+  ADD_MEMBER_TO_GROUP,
+  POST_GROUP,
+} from '../actions/types';
 
 const initialState = {
   groups: [],
