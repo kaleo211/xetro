@@ -4,6 +4,7 @@ import {
   POST_GROUP,
   SEARCH_GROUPS,
 } from './types';
+import { getMe } from './userActions';
 import Utils from '../components/Utils';
 
 export const getGroup = (name) => {
@@ -28,11 +29,11 @@ export const fetchGroups = () => {
   };
 };
 
-export const postGroup = (updatedGroup) => {
+export const postGroup = (newGroup) => {
   return (dispatch) => {
-    Utils.post('groups', updatedGroup).then(group => {
+    Utils.post('groups', newGroup).then(group => {
       Utils.list('groups').then(groups => {
-        console.log('groups:', groups);
+        dispatch(getMe());
         dispatch({
           type: POST_GROUP,
           groups,

@@ -22,15 +22,13 @@ routes.get('/me', (req, res) => {
       as: 'groups',
       through: {},
     }],
-    where: {
-      id: me.id,
-    }
+    where: { id: me.id },
   }).then(user => {
     res.json(user);
   }).catch(err => {
     console.log('error get me:', err);
     res.sendStatus(500);
-  })
-})
+  });
+});
 
 module.exports = routes;

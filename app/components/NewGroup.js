@@ -12,7 +12,7 @@ import { Done, Close } from '@material-ui/icons';
 import Typography from '@material-ui/core/Typography';
 
 import { getMe } from '../actions/userActions';
-import { fetchGroups, postGroup } from '../actions/groupActions';
+import { fetchGroups, postGroup, setGroup } from '../actions/groupActions';
 import { setPage } from '../actions/localActions';
 import AsyncCreatableSelect from 'react-select/lib/AsyncCreatable';
 import { emphasize } from '@material-ui/core/styles/colorManipulator';
@@ -173,8 +173,6 @@ class NewGroup extends React.Component {
       members: [this.props.me.id],
     }
     await this.props.postGroup(group);
-    this.props.fetchGroups();
-    this.props.getMe();
     this.props.setPage('');
   }
 
@@ -230,6 +228,7 @@ const mapDispatchToProps = (dispatch) => {
     postGroup: (group) => dispatch(postGroup(group)),
     setPage: (page) => dispatch(setPage(page)),
     getMe: () => dispatch(getMe()),
+    setGroup: () => dispatch(setGroup()),
   };
 };
 

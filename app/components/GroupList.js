@@ -47,9 +47,16 @@ class GroupList extends React.Component {
 
   render() {
     const { group, me, drawOpened } = this.props;
-
+    console.log('group list:', me);
     return (
       <List>
+        <ListItem button onClick={this.handleCreateGroup.bind(this)}>
+          <ListItemIcon>
+            <Add />
+          </ListItemIcon>
+          <ListItemText primary={'Add/Join A Group'} />
+        </ListItem>
+
         {drawOpened && (<div>
           <ListItem button onClick={this.handleClick}>
             <ListItemText primary={'My groups'} />
@@ -67,13 +74,6 @@ class GroupList extends React.Component {
             ))}
           </Collapse>
         </div>)}
-
-        <ListItem button onClick={this.handleCreateGroup.bind(this)}>
-          <ListItemIcon>
-            <Add />
-          </ListItemIcon>
-          <ListItemText primary={'Add/Join A Group'} />
-        </ListItem>
 
         {group && group.members.map(m => {
           <ListItem>

@@ -73,16 +73,14 @@ routes.post('/search', (req, res) => {
 routes.post('/', async (req, res) => {
   var group = req.body;
   const newGroups = await model.Group.findOrCreate({
-    where: {
-      name: group.name,
-    },
+    where: { name: group.name },
   });
 
   if (newGroups.length != 1) {
-    console.log('newGroups', newGroups);
+    console.log('error finding unique group.');
   }
-  let newGroup = newGroups[0];
 
+  let newGroup = newGroups[0];
   group.members.map(async id => {
     await newGroup.addMembers(id);
   });

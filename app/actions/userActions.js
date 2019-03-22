@@ -19,7 +19,7 @@ export const getMe = () => {
         });
       });
   };
-}
+};
 
 export const fetchUsers = () => {
   return (dispatch) => {
