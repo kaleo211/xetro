@@ -134,7 +134,7 @@ class App extends React.Component {
         this.props.getMe();
         break;
       }
-      await Utils.sleep(1);
+      await Utils.sleep(1000);
     }
   }
 
@@ -175,6 +175,7 @@ class App extends React.Component {
           </Typography>
         </Toolbar>
       </AppBar>
+
       <Drawer variant="permanent" open={open}
         className={classNames(classes.drawer, {
           [classes.drawerOpen]: open,
@@ -193,12 +194,12 @@ class App extends React.Component {
           </IconButton>
         </div>
         <Divider />
-        <GroupList />
+        <GroupList drawOpened={open} />
       </Drawer>
 
       <main className={classes.content}>
         <div className={classes.toolbar} />
-        {page === "board" && <Board />}
+        {page === 'board' && <Board />}
         {page === 'createBoard' && <NewBoard />}
         {page === 'boardList' && <BoardList />}
         {page === 'createGroup' && <NewGroup />}

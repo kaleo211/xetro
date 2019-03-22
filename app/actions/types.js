@@ -5,7 +5,8 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 export const FETCH_GROUPS = 'FETCH_GROUPS';
 export const SET_GROUP = 'SET_GROUP';
 export const ADD_MEMBER_TO_GROUP = 'ADD_MEMBER_TO_GROUP';
-export const POST_GROUP = 'POST_GROUP'
+export const POST_GROUP = 'POST_GROUP';
+export const SEARCH_GROUPS = 'SEARCH_GROUPS';
 
 export const POST_BOARD = 'POST_BOARD';
 export const PATCH_BOARD = 'PATCH_BOARD';

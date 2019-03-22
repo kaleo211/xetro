@@ -3,6 +3,7 @@ import {
   SET_GROUP,
   ADD_MEMBER_TO_GROUP,
   POST_GROUP,
+  SEARCH_GROUPS,
 } from '../actions/types';
 
 const initialState = {
@@ -37,6 +38,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         members: action.members,
+      }
+
+    case SEARCH_GROUPS:
+      return {
+        ...state,
+        matchedGroup: action.matchedGroup,
       }
 
     default:

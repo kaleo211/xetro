@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { Add, Inbox } from '@material-ui/icons';
+import { Add, Inbox, ExpandLess, ExpandMore } from '@material-ui/icons';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Collapse from '@material-ui/core/Collapse';
 
 import { setGroup } from '../actions/groupActions';
 import { setBoard } from '../actions/boardActions';
@@ -22,7 +23,9 @@ const styles = theme => ({
 class GroupList extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
+      open: true,
     };
   }
 
@@ -38,26 +41,32 @@ class GroupList extends React.Component {
     this.props.setPage('createGroup');
   }
 
+  handleClick = () => {
+    this.setState(state => ({ open: !state.open }));
+  };
+
   render() {
-    const { group, groups, me } = this.props;
+    const { group, me, drawOpened } = this.props;
 
     return (
       <List>
-        <ListItem>
-          <ListItemText primary={'MY GROUPs'} />
-        </ListItem>
-
-        {groups.map(g => (
-          <ListItem button key={g.id}
-            selected={group && group.id === g.id}
-            onClick={this.handleSetGroup.bind(this, g.id)}
-          >
-            <ListItemIcon>
-              <Inbox />
-            </ListItemIcon>
-            <ListItemText primary={g.name} />
+        {drawOpened && (<div>
+          <ListItem button onClick={this.handleClick}>
+            <ListItemText primary={'My groups'} />
+            {this.state.open ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
-        ))}
+          <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+            {me.groups && me.groups.map(g => (
+              <ListItem button key={g.id}
+                selected={group && group.id === g.id}
+                onClick={this.handleSetGroup.bind(this, g.id)}
+              >
+                <ListItemIcon><Inbox /></ListItemIcon>
+                <ListItemText primary={g.name} />
+              </ListItem>
+            ))}
+          </Collapse>
+        </div>)}
 
         <ListItem button onClick={this.handleCreateGroup.bind(this)}>
           <ListItemIcon>
@@ -66,17 +75,14 @@ class GroupList extends React.Component {
           <ListItemText primary={'Add a new group'} />
         </ListItem>
 
-        {groups.map(g => (
-          <ListItem button key={g.id}
-            selected={group && group.id === g.id}
-            onClick={this.handleSetGroup.bind(this, g.id)}
-          >
+        {group && group.members.map(m => {
+          <ListItem>
             <ListItemIcon>
-              <Inbox />
+              <Add />
             </ListItemIcon>
-            <ListItemText primary={g.name} />
+            <ListItemText primary={m.firstName} />
           </ListItem>
-        ))}
+        })}
       </List>
     )
   }
@@ -85,6 +91,7 @@ class GroupList extends React.Component {
 const mapStateToProps = state => ({
   groups: state.groups.groups,
   group: state.groups.group,
+  me: state.users.me,
 });
 const mapDispatchToProps = (dispatch) => {
   return {

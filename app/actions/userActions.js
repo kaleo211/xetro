@@ -4,17 +4,20 @@ import {
 } from './types';
 import Utils from '../components/Utils';
 
-
 export const getMe = () => {
   return (dispatch) => {
-    Utils.get('me').then(me => {
-      console.log('getMe:', me);
-      dispatch({
-        type: GET_ME,
-        me,
+    fetch('/users/me')
+      .then(resp => {
+        if (resp.ok) {
+          return resp.json();
+        }
+      }).then(me => {
+        console.log('getMe:', me);
+        dispatch({
+          type: GET_ME,
+          me,
+        });
       });
-    });
-
   };
 }
 
