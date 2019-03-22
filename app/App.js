@@ -152,7 +152,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { page, board, classes } = this.props;
+    const { page, board, group, classes } = this.props;
     const { open } = this.state;
 
     return (<div className={classes.root}>
@@ -171,7 +171,7 @@ class App extends React.Component {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" noWrap>
-            Mini variant drawer
+            {group ? group.name : 'Xetro'}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -211,6 +211,7 @@ class App extends React.Component {
 const mapStateToProps = state => ({
   board: state.boards.board,
   page: state.local.page,
+  group: state.groups.group,
   me: state.users.me,
   snackbarOpen: state.local.snackbarOpen,
   snackbarMessage: state.local.snackbarMessage,

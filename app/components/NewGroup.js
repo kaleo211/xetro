@@ -144,20 +144,6 @@ function ValueContainer(props) {
   return <div className={props.selectProps.classes.valueContainer}>{props.children}</div>;
 }
 
-function MultiValue(props) {
-  return (
-    <Chip
-      tabIndex={-1}
-      label={props.children}
-      className={classNames(props.selectProps.classes.chip, {
-        [props.selectProps.classes.chipFocused]: props.isFocused,
-      })}
-      onDelete={props.removeProps.onClick}
-      deleteIcon={<CancelIcon {...props.removeProps} />}
-    />
-  );
-}
-
 function Menu(props) {
   return (
     <Paper square className={props.selectProps.classes.paper} {...props.innerProps}>
@@ -169,7 +155,6 @@ function Menu(props) {
 const components = {
   Control,
   Menu,
-  MultiValue,
   NoOptionsMessage,
   Option,
   Placeholder,
@@ -194,8 +179,16 @@ class NewGroup extends React.Component {
   }
 
   async handleSearchGroup(searchText) {
-    const groups = await Utils.search('groups', { name: searchText })
-    resolve(groups);
+    console.log('search text', searchText);
+    const groups = await Utils.search('groups', { name: searchText });
+    let result = [];
+    groups.map(g => {
+      result.push({
+        value: g.name,
+        label: `Join: ${g.name}`,
+      });
+    })
+    return result;
   }
 
   render() {
@@ -219,6 +212,7 @@ class NewGroup extends React.Component {
             loadOptions={this.handleSearchGroup.bind(this)}
             components={components}
             onChange={this.handleCreateGroup.bind(this)}
+            formatCreateLabel={(g) => { return `Create: ${g}` }}
           />
         </NoSsr>
       </div>
@@ -227,6 +221,7 @@ class NewGroup extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  me: state.users.me,
 });
 
 const mapDispatchToProps = (dispatch) => {

@@ -72,7 +72,7 @@ class GroupList extends React.Component {
           <ListItemIcon>
             <Add />
           </ListItemIcon>
-          <ListItemText primary={'Add a new group'} />
+          <ListItemText primary={'Add/Join A Group'} />
         </ListItem>
 
         {group && group.members.map(m => {
