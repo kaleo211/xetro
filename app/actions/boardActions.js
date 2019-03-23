@@ -48,9 +48,9 @@ export const fetchActiveBoards = () => {
   };
 };
 
-export const postBoard = (board) => {
+export const postBoard = (newBoard) => {
   return (dispatch) => {
-    Utils.post('board', board).then(board => {
+    Utils.post('boards', newBoard).then(board => {
       dispatch({
         type: POST_BOARD,
         board,

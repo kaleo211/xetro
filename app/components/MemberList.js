@@ -1,21 +1,18 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 
-import { Avatar, Badge } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import deepPurple from '@material-ui/core/colors/deepPurple';
-import IconButton from '@material-ui/core/IconButton';
-import { ChatRounded, Add, Clear } from '@material-ui/icons';
+
+import { Avatar, Tooltip } from '@material-ui/core';
 import { List, ListItem, ListItemText, ListItemAvatar } from '@material-ui/core';
-import { Menu, MenuItem } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import { addUserToGroup } from '../actions/groupActions';
 import { setActiveMember } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
-import { compose } from 'redux';
 
 const styles = theme => ({
   avatar: {
@@ -30,14 +27,10 @@ const styles = theme => ({
 class MemberList extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-    };
   }
 
   handleUserToAdd(userID) {
     this.props.addUserToGroup(this.props.group.id, userID);
-    this.handleMenuClose();
   }
 
   handleMemberSelect(memberID) {
@@ -49,19 +42,12 @@ class MemberList extends React.Component {
   }
 
   render() {
-    const { group, users, classes, board } = this.props;
-
-    console.log('users:', users);
-    console.log('group in MemberList:', group);
-
-    let usersToShow = users;
-    if (group) {
-      usersToShow = group.members;
-    }
+    const { group, classes } = this.props;
+    let members = group ? group.members : [];
 
     return (
       <List dense>
-        {usersToShow && usersToShow.map(m => (
+        {members && members.map(m => (
           < Tooltip key={"side" + m.userID} title={m.firstName} placement="right" >
             <ListItem button onClick={this.handleMemberSelect.bind(this, m.id)} >
               <ListItemAvatar>
@@ -82,9 +68,6 @@ class MemberList extends React.Component {
 
 const mapStateToProps = state => ({
   group: state.groups.group,
-  users: state.users.users,
-  members: state.groups.members,
-  board: state.boards.board,
 });
 
 const mapDispatchToProps = (dispatch) => {

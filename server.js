@@ -9,6 +9,7 @@ var config = require('config');
 var microsoftRouter = require('./routers/microsoft');
 var groupRouter = require('./routers/group');
 var userRouter = require('./routers/user');
+var boardRouter = require('./routers/board');
 
 server.use(session({
   secret: config.get('server.session_secret'),
@@ -34,6 +35,7 @@ server.use(cookieParser())
 server.use('/callback', microsoftRouter);
 server.use('/groups', isAuthenticated, groupRouter);
 server.use('/users', isAuthenticated, userRouter);
+server.use('/boards', isAuthenticated, boardRouter);
 
 server.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));

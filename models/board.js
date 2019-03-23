@@ -16,7 +16,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   Board.associate = function (models) {
-    Board.belongsTo(models.Group)
+    Board.belongsTo(models.Group, { as: 'group' });
+    Board.belongsTo(models.User, { as: 'facilitator' });
   };
 
   return Board;

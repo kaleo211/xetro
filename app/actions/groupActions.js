@@ -5,6 +5,7 @@ import {
   SEARCH_GROUPS,
 } from './types';
 import { getMe } from './userActions';
+import { setPage } from './localActions';
 import Utils from '../components/Utils';
 
 export const getGroup = (name) => {
@@ -49,6 +50,10 @@ export const setGroup = (groupID) => {
     console.log('setGroup:', groupID);
     if (groupID) {
       Utils.get(`groups`, groupID).then(group => {
+        console.log('group in setGroup:', group);
+        if (group.boards.length == 0) {
+          dispatch(setPage('createBoard'));
+        }
         dispatch({
           type: SET_GROUP,
           group,

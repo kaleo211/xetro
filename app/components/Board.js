@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import { Card, CardHeader, CardContent } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -150,9 +150,9 @@ class Board extends React.Component {
           </Grid>))}
       </Grid>
       {!board.locked && (!board.pillars || board.pillars.length < 3) &&
-        <Button variant="fab" className={classes.fab} onClick={this.handlePillarAdd.bind(this)} >
+        <Fab className={classes.fab} onClick={this.handlePillarAdd.bind(this)} >
           <Add />
-        </Button>}
+        </Fab>}
     </div>);
   }
 }

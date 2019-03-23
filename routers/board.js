@@ -1,54 +1,92 @@
 const routes = require('express').Router();
 const model = require('../models');
 
-routes.get('/:id', (req, res) => {
-  model.Board.findOne({
-    attributes: ['name', 'id'],
-    where: { id: req.params.id },
-  }).then(result => {
-    if (result) {
-      res.json(result);
+var respondWithBoard = async (res, id) => {
+  try {
+    const board = await model.Board.findOne({
+      include: [{
+        model: model.User,
+        as: 'facilitator',
+      }, {
+        model: model.Group,
+        as: 'group',
+      }],
+      where: { id: id },
+    });
+    if (board) {
+      res.json(board);
     } else {
       res.sendStatus(404);
     }
-  }).catch(err => {
+  } catch (err) {
+    console.log('error get board', err);
     res.sendStatus(500);
-  });
+  };
+}
+
+routes.get('/:id', async (req, res) => {
+  await respondWithBoard(res, req.params.id);
 });
 
-routes.delete('/:id', (req, res) => {
-  model.Board.destroy({
-    where: { id: req.params.id },
-  }).then(result => {
-    res.sendStatus(204);
-  }).catch(err => {
-    res.sendStatus(404);
-  });
-});
-
-routes.get('/', (req, res) => {
-  model.Board.findAll({
-    attributes: ['name', 'id'],
-  }).then(boards => {
-    res.json(boards);
-  });
-});
-
-routes.post('/', (req, res) => {
-  var board = req.body;
-  model.Board.create({
-    name: board.name,
-    group: {
-      id: req.body.groupID,
-    }
-  }).then((result) => {
-    res.json({
-      id: result.id,
-      name: result.name,
+routes.delete('/:id', async (req, res) => {
+  try {
+    await model.Group.destroy({
+      where: { id: req.params.id },
     });
-  }).catch(err => {
-    res.sendStatus(422);
-  });
+    res.sendStatus(204);
+  } catch (err) {
+    console.log('error delete group', err);
+    res.sendStatus(500);
+  };
+});
+
+routes.get('/', async (req, res) => {
+  try {
+    const groups = await model.Group.findAll({
+      include: [{
+        model: model.User,
+        as: 'facilitator',
+      }, {
+        model: model.Board,
+        as: 'board',
+      }],
+    });
+    res.json(groups);
+  } catch (err) {
+    console.log('error delete group', err);
+    res.sendStatus(500);
+  };
+});
+
+routes.post('/', async (req, res) => {
+  var board = req.body;
+  console.log('new board:', board);
+
+  try {
+    const newBoard = await model.Board.create({
+      name: board.name
+    });
+    await newBoard.setFacilitator(board.facilitatorID);
+    await newBoard.setGroup(board.groupID);
+
+    await respondWithBoard(res, newBoard.id);
+  } catch (err) {
+    console.log('error post board:', err);
+    res.sendStatus(500);
+  };
+});
+
+routes.patch('/:id', async (req, res) => {
+  try {
+    const board = await model.Board.findOne({
+      where: { id: req.params.id },
+    });
+    await board.addFacilitator(req.body.facilitatorID);
+    await respondWithBoard(res, board.id);
+  } catch (err) {
+    console.log('error patch board:', err);
+    res.sendStatus(500);
+  };
 });
 
 module.exports = routes;

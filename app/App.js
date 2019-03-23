@@ -202,8 +202,7 @@ class App extends React.Component {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {page === 'board' && <Board />}
-        {/* <NewBoard /> */}
-        {/* {page === 'createBoard' && <NewBoard />} */}
+        {page === 'createBoard' && <NewBoard />}
         {page === 'boardList' && <BoardList />}
         {page === 'createGroup' && <NewGroup />}
       </main>

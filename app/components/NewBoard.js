@@ -19,6 +19,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Stepper from '@material-ui/core/Stepper';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
+import Fab from '@material-ui/core/Fab';
 
 import {
   ArrowDownwardRounded,
@@ -44,19 +45,15 @@ const styles = theme => ({
 
 function getSteps() {
   return [
-    'Put a name',
-    'Pick time the xetro meeting should end',
-    'Check finished action items',
-    'Pick facilitator'
+    'Set End Time of Xetro Meeting',
+    'Check Finished Action Items',
+    'Choose a Facilitator'
   ];
 }
 
 class NewBoard extends React.Component {
   constructor(props) {
     super(props);
-
-    let now = new Date();
-    let boardName = now.getMonth() + "-" + now.getDate() + "-" + now.getFullYear();
 
     this.state = {
       open: true,
@@ -66,7 +63,6 @@ class NewBoard extends React.Component {
       newBoard: {},
       boards: [],
       endTime: "17:00",
-      name: boardName,
     };
   }
 
@@ -83,16 +79,16 @@ class NewBoard extends React.Component {
   };
 
   handleFacilitatorRandomPick() {
-    let upLimit = this.props.members.length;
+    let upLimit = this.props.group.members.length;
     let randomIndex = Math.floor(Math.random() * (upLimit));
     this.setState({
-      facilitator: this.props.members[randomIndex],
+      facilitator: this.props.group.members[randomIndex],
     })
   }
 
-  handleFacilitatorPick(idx) {
+  handleSetFacilitator(idx) {
     this.setState({
-      facilitator: this.props.members[idx],
+      facilitator: this.props.group.members[idx],
     })
   }
 
@@ -109,12 +105,6 @@ class NewBoard extends React.Component {
     });
   }
 
-  handleBoardNameChange(event) {
-    this.setState({
-      name: event.target.value,
-    });
-  }
-
   handleActionCheck(action) {
     this.props.patchAction("actions/" + action.id, { finished: true })
       .then(() => {
@@ -122,29 +112,24 @@ class NewBoard extends React.Component {
       });
   }
 
-  handleBoardCreate() {
+  handleCreateBoard() {
+    let now = new Date();
+    let boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
+
     let newBoard = this.state.newBoard;
     newBoard.endTime = this.getDate();
     newBoard.started = true;
-    newBoard.group = this.props.group._links.self.href;
-    newBoard.name = this.state.name;
-    newBoard.facilitator = this.state.facilitator._links.self.href;
+    newBoard.groupID = this.props.group.id;
+    newBoard.name = boardName;
+    newBoard.facilitatorID = this.state.facilitator.id;
 
     this.props.postBoard(newBoard);
-    this.props.setPage("board");
+    this.props.setPage('board');
   }
 
   getStepContent(step, members, facilitator) {
     switch (step) {
       case 0:
-        return (
-          <TextField
-            autoFocus
-            value={this.state.name}
-            onChange={this.handleBoardNameChange.bind(this)}
-          />
-        )
-      case 1:
         return (
           <form noValidate>
             <TextField id="endTime" type="time"
@@ -155,7 +140,7 @@ class NewBoard extends React.Component {
             />
           </form>
         );
-      case 2:
+      case 1:
         return (
           <Grid style={{ paddingTop: 20 }} container justify="flex-start" spacing={32}>
             {members.filter(m => m.actions && m.actions.filter(a => !a.finished).length > 0).map(member => (
@@ -177,26 +162,21 @@ class NewBoard extends React.Component {
             ))}
           </Grid>
         );
-      case 3:
+      case 2:
         return (
           <Grid container justify="flex-start" spacing={16}>
             <Grid item style={{ paddingTop: 12, paddingLeft: 24 }}>
               <Tooltip title="Random pick" placement="left">
-                <Button mini variant="fab" color="primary" onClick={this.handleFacilitatorRandomPick.bind(this)}>
+                <Fab size="small" color="primary" onClick={this.handleFacilitatorRandomPick.bind(this)}>
                   <Casino />
-                </Button>
+                </Fab>
               </Tooltip>
             </Grid>
-
             {members.map((member, idx) => (
               <Grid item key={"facilitator" + member.userID} >
-                <IconButton onClick={this.handleFacilitatorPick.bind(this, idx)} >
-                  {facilitator && facilitator.id === member.id ? (
-                    <Badge badgeContent={<TransitEnterexitRounded />}>
-                      <Avatar>{member.userID}</Avatar>
-                    </Badge>
-                  ) : (<Avatar>{member.userID}</Avatar>)}
-                </IconButton>
+                <Fab size="small" onClick={this.handleSetFacilitator.bind(this, idx)} >
+                  <Avatar>{member.firstName}</Avatar>
+                </Fab>
               </Grid>
             ))}
           </Grid>
@@ -206,37 +186,42 @@ class NewBoard extends React.Component {
     }
   }
 
+  getStepButton(step, facilitator) {
+    return (<div>
+      <IconButton disabled={step === 0} onClick={this.handleStepBack}>
+        <ArrowUpwardRounded />
+      </IconButton>
+      {(step === 0 || step === 1) && (
+        <IconButton variant="contained" color="primary" onClick={this.handleStepNext}>
+          <ArrowDownwardRounded />
+        </IconButton>
+      )}
+      {(step === 2) && (
+        <IconButton disabled={facilitator === null} variant="contained" color="primary"
+          onClick={this.handleCreateBoard.bind(this)}>
+          <CheckRounded />
+        </IconButton>
+      )}
+    </div>)
+  }
+
   render() {
-    const { members, classes } = this.props;
+    const { group, classes } = this.props;
     const { activeStep, facilitator } = this.state;
     const steps = getSteps();
 
-    return (members && (
+    return (group &&
       <Grid container className={classes.root}>
-        <Grid item xs={1}></Grid>
-        <Grid item xs={10}>
+        <Grid item xs={12}>
           <Stepper activeStep={activeStep} orientation="vertical">
             {steps.map((label, index) => {
               return (
                 <Step key={label}>
                   <StepLabel>{label}</StepLabel>
                   <StepContent>
-                    {this.getStepContent(index, members, facilitator)}
+                    {this.getStepContent(index, group.members, facilitator)}
                     <div style={{ paddingTop: 20 }} >
-                      <IconButton disabled={activeStep === 0} onClick={this.handleStepBack}>
-                        <ArrowUpwardRounded />
-                      </IconButton>
-                      {(activeStep === 0 || activeStep === 1 || activeStep === 2) && (
-                        <IconButton variant="contained" color="primary" onClick={this.handleStepNext}>
-                          <ArrowDownwardRounded />
-                        </IconButton>
-                      )}
-                      {(activeStep === 3) && (
-                        <IconButton disabled={facilitator === null} variant="contained" color="primary"
-                          onClick={this.handleBoardCreate.bind(this)}>
-                          <CheckRounded />
-                        </IconButton>
-                      )}
+                      {this.getStepButton(index, facilitator)}
                     </div>
                   </StepContent>
                 </Step>
@@ -245,12 +230,11 @@ class NewBoard extends React.Component {
           </Stepper>
         </Grid>
       </Grid>
-    ));
+    );
   }
 }
 
 const mapStateToProps = state => ({
-  members: state.groups.members,
   group: state.groups.group
 });
 const mapDispatchToProps = (dispatch) => {
@@ -267,5 +251,5 @@ NewBoard.propTypes = {
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles),
+  withStyles(styles, { withTheme: true }),
 )(NewBoard);

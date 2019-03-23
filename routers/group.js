@@ -9,7 +9,9 @@ var respondWithGroup = async (res, id) => {
       include: [{
         model: model.User,
         as: 'members',
-        through: {},
+      }, {
+        model: model.Board,
+        as: 'boards',
       }],
       where: { id: id },
     });
@@ -99,6 +101,7 @@ routes.post('/', async (req, res) => {
       await newGroup.addMembers(id);
     });
     await respondWithGroup(res, newGroup.id);
+
   } catch (err) {
     console.log('error post group:', err);
     res.sendStatus(500);
