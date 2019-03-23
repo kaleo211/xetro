@@ -194,13 +194,16 @@ class App extends React.Component {
           </IconButton>
         </div>
         <Divider />
-        <GroupList drawOpened={open} />
+        {open === true && < GroupList />}
+        <Divider />
+        <MemberList />
       </Drawer>
 
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {page === 'board' && <Board />}
-        {page === 'createBoard' && <NewBoard />}
+        {/* <NewBoard /> */}
+        {/* {page === 'createBoard' && <NewBoard />} */}
         {page === 'boardList' && <BoardList />}
         {page === 'createGroup' && <NewGroup />}
       </main>

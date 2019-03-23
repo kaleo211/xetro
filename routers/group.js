@@ -3,49 +3,60 @@ const model = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
-routes.get('/:id', (req, res) => {
-  model.Group.findOne({
-    include: [{
-      model: model.User,
-      as: 'members',
-      through: {},
-    }],
-    where: { id: req.params.id },
-  }).then(result => {
-    if (result) {
-      res.json(result);
+var respondWithGroup = async (res, id) => {
+  try {
+    const group = await model.Group.findOne({
+      include: [{
+        model: model.User,
+        as: 'members',
+        through: {},
+      }],
+      where: { id: id },
+    });
+    if (group) {
+      res.json(group);
     } else {
       res.sendStatus(404);
     }
-  }).catch(err => {
+  } catch (err) {
+    console.log('error get group', err);
     res.sendStatus(500);
-  });
+  };
+}
+
+routes.get('/:id', async (req, res) => {
+  respondWithGroup(res, req.params.id);
 });
 
-routes.delete('/:id', (req, res) => {
-  model.Group.destroy({
-    where: { id: req.params.id },
-  }).then(result => {
+routes.delete('/:id', async (req, res) => {
+  try {
+    await model.Group.destroy({
+      where: { id: req.params.id },
+    });
     res.sendStatus(204);
-  }).catch(err => {
-    res.sendStatus(404);
-  });
+  } catch (err) {
+    console.log('error delete group', err);
+    res.sendStatus(500);
+  };
 });
 
-routes.get('/', (req, res) => {
-  model.Group.findAll({
-    include: [{
-      model: model.User,
-      as: 'members',
-      through: {},
-    }],
-  }).then(groups => {
+routes.get('/', async (req, res) => {
+  try {
+    const groups = await model.Group.findAll({
+      include: [{
+        model: model.User,
+        as: 'members',
+        through: {},
+      }],
+    });
     res.json(groups);
-  });
+  } catch (err) {
+    console.log('error delete group', err);
+    res.sendStatus(500);
+  };
 });
 
-
-routes.post('/search', (req, res) => {
+routes.post('/search', async (req, res) => {
   console.log('req:', req.body);
   var name = req.body.name;
 
@@ -56,7 +67,7 @@ routes.post('/search', (req, res) => {
       through: {},
     }],
     where: {
-      name: { [Op.like]: `%${name}%` }
+      name: { [Op.iLike]: `%${name}%` },
     },
   }).then(results => {
     if (results) {
@@ -72,67 +83,39 @@ routes.post('/search', (req, res) => {
 
 routes.post('/', async (req, res) => {
   var group = req.body;
-  const newGroups = await model.Group.findOrCreate({
-    where: { name: group.name },
-  });
 
-  if (newGroups.length != 1) {
-    console.log('error finding unique group.');
-  }
-
-  let newGroup = newGroups[0];
-  group.members.map(async id => {
-    await newGroup.addMembers(id);
-  });
-
-  model.Group.findOne({
-    include: [{
-      model: model.User,
-      as: 'members',
-      through: {},
-    }],
-    where: { id: newGroup.id },
-  }).then(result => {
-    if (result) {
-      res.json(result);
-    } else {
-      res.sendStatus(404);
+  try {
+    const newGroups = await model.Group.findOrCreate({
+      where: { name: group.name },
+    });
+    if (newGroups.length != 2) {
+      console.log('error finding unique group:');
+      res.sendStatus(500);
+      return;
     }
-  }).catch(err => {
+
+    let newGroup = newGroups[0];
+    group.members.map(async id => {
+      await newGroup.addMembers(id);
+    });
+    await respondWithGroup(res, newGroup.id);
+  } catch (err) {
+    console.log('error post group:', err);
     res.sendStatus(500);
-  });
+  };
 });
 
-routes.patch('/:id', (req, res) => {
-  model.Group.findOne({
-    where: { id: req.params.id },
-  }).then(result => {
-    if (result) {
-      result.addMembers(req.body.userID).then(() => {
-        model.Group.findOne({
-          include: [{
-            model: model.User,
-            as: 'members',
-            through: {},
-          }],
-          where: { id: req.params.id },
-        }).then(result => {
-          if (result) {
-            res.json(result);
-          } else {
-            res.sendStatus(404);
-          }
-        }).catch(err => {
-          res.sendStatus(500);
-        });
-      });
-    } else {
-      res.sendStatus(404);
-    }
-  }).catch(err => {
+routes.patch('/:id', async (req, res) => {
+  try {
+    const group = await model.Group.findOne({
+      where: { id: req.params.id },
+    });
+    await group.addMembers(req.body.userID)
+    await respondWithGroup(res, group.id);
+  } catch (err) {
     console.log('error patch group:', err);
     res.sendStatus(500);
-  });
+  };
 });
 
 module.exports = routes;

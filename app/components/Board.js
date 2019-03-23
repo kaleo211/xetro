@@ -42,8 +42,7 @@ class Board extends React.Component {
     };
   }
 
-
-  componentWillMount() {
+  componentDidMount() {
     let board = this.props.board;
     board && board.pillars && board.pillars.map(pillar => {
       this.setState({

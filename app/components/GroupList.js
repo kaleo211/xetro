@@ -5,17 +5,20 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { Add, Inbox, ExpandLess, ExpandMore } from '@material-ui/icons';
+import { Add, Inbox, ExpandLess, ExpandMore, Clear } from '@material-ui/icons';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/IconButton';
 
 import { setGroup } from '../actions/groupActions';
 import { setBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
+import { Typography, withTheme } from '@material-ui/core';
 
 const styles = theme => ({
 });
@@ -41,39 +44,35 @@ class GroupList extends React.Component {
     this.props.setPage('createGroup');
   }
 
+  handleLeaveGroup() {
+  }
+
   handleClick = () => {
     this.setState(state => ({ open: !state.open }));
   };
 
   render() {
-    const { group, me, drawOpened } = this.props;
-    console.log('group list:', me);
+    const { group, me } = this.props;
     return (
       <List>
-        <ListItem button onClick={this.handleCreateGroup.bind(this)}>
-          <ListItemIcon>
-            <Add />
-          </ListItemIcon>
-          <ListItemText primary={'Add/Join A Group'} />
+        <ListItem button onClick={this.handleClick}>
+          <ListItemText disableTypography primary={<Typography variant="h6">My Groups</Typography>} />
+          <ListItemSecondaryAction>
+            <IconButton onClick={this.handleCreateGroup.bind(this)}>
+              <Add />
+            </IconButton>
+          </ListItemSecondaryAction>
         </ListItem>
-
-        {drawOpened && (<div>
-          <ListItem button onClick={this.handleClick}>
-            <ListItemText primary={'My groups'} />
-            {this.state.open ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={this.state.open} timeout="auto" unmountOnExit>
-            {me.groups && me.groups.map(g => (
-              <ListItem button key={g.id}
-                selected={group && group.id === g.id}
-                onClick={this.handleSetGroup.bind(this, g.id)}
-              >
-                <ListItemIcon><Inbox /></ListItemIcon>
-                <ListItemText primary={g.name} />
-              </ListItem>
-            ))}
-          </Collapse>
-        </div>)}
+        <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+          {me.groups && me.groups.map(g => (
+            <ListItem button key={g.id}
+              selected={group && group.id === g.id}
+              onClick={this.handleSetGroup.bind(this, g.id)}
+            >
+              <ListItemText primary={g.name} />
+            </ListItem>
+          ))}
+        </Collapse>
 
         {group && group.members.map(m => {
           <ListItem>
@@ -106,5 +105,5 @@ GroupList.propTypes = {
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles),
+  withStyles(styles, { withTheme: true }),
 )(GroupList);

@@ -46,9 +46,9 @@ export const postGroup = (newGroup) => {
 
 export const setGroup = (groupID) => {
   return (dispatch) => {
+    console.log('setGroup:', groupID);
     if (groupID) {
       Utils.get(`groups`, groupID).then(group => {
-        console.log('setGroup:', group);
         dispatch({
           type: SET_GROUP,
           group,

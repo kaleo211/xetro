@@ -6,10 +6,11 @@ import { connect } from 'react-redux';
 import { Avatar, Badge } from '@material-ui/core';
 import deepPurple from '@material-ui/core/colors/deepPurple';
 import IconButton from '@material-ui/core/IconButton';
-import { ChatRounded, Add } from '@material-ui/icons';
-import { List, ListItem, ListItemAvatar } from '@material-ui/core';
+import { ChatRounded, Add, Clear } from '@material-ui/icons';
+import { List, ListItem, ListItemText, ListItemAvatar } from '@material-ui/core';
 import { Menu, MenuItem } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 import { addUserToGroup } from '../actions/groupActions';
 import { setActiveMember } from '../actions/boardActions';
@@ -17,9 +18,12 @@ import { setPage } from '../actions/localActions';
 import { compose } from 'redux';
 
 const styles = theme => ({
-  purpleAvatar: {
+  avatar: {
     color: '#fff',
     backgroundColor: deepPurple[300],
+    width: 30,
+    height: 30,
+    marginLeft: -3,
   },
 });
 
@@ -28,16 +32,7 @@ class MemberList extends React.Component {
     super(props);
 
     this.state = {
-      anchorEl: null,
     };
-  }
-
-  handleMemberAddClick(evt) {
-    this.setState({ anchorEl: evt.currentTarget });
-  }
-
-  handleMenuClose() {
-    this.setState({ anchorEl: null });
   }
 
   handleUserToAdd(userID) {
@@ -54,65 +49,34 @@ class MemberList extends React.Component {
   }
 
   render() {
-    const { group, users, classes, activeMember, board } = this.props;
-    const { anchorEl } = this.state;
+    const { group, users, classes, board } = this.props;
 
     console.log('users:', users);
-    console.log('group:', group);
+    console.log('group in MemberList:', group);
 
     let usersToShow = users;
     if (group) {
       usersToShow = group.members;
     }
 
-    const isFacilitator = (m) => {
-      return board && board.facilitator && board.facilitator.userID === m.userID;
-    }
-    const isSelected = (m) => {
-      return group && activeMember && activeMember.userID === m.userID;
-    }
-
-    return (<div>
-      <List component="nav" style={{ marginLeft: -6 }}>
+    return (
+      <List dense>
         {usersToShow && usersToShow.map(m => (
           < Tooltip key={"side" + m.userID} title={m.firstName} placement="right" >
-            <ListItem button
-              onClick={this.handleMemberSelect.bind(this, m.id)}
-              style={{ paddingTop: 16, paddingBottom: 16 }}>
+            <ListItem button onClick={this.handleMemberSelect.bind(this, m.id)} >
               <ListItemAvatar>
-                {isSelected(m) ?
-                  <Badge
-                    badgeContent={<ChatRounded color="primary" style={{ fontSize: 20 }} />}>
-                    <Avatar className={isFacilitator(m) ? classes.purpleAvatar : null}>{m.userID}</Avatar>
-                  </Badge> :
-                  <Avatar className={isFacilitator(m) ? classes.purpleAvatar : null}>{m.userID}</Avatar>}
+                <Avatar className={classes.avatar}>
+                  {`${m.firstName.substring(0, 1).toUpperCase()}${m.lastName.substring(0, 1).toUpperCase()}`}
+                </Avatar>
               </ListItemAvatar>
+              <ListItemText primary={m.firstName} />
+              <ListItemSecondaryAction>
+              </ListItemSecondaryAction>
             </ListItem>
           </Tooltip>
         ))}
       </List>
-
-      <div style={{ marginLeft: 13 }}>
-        {group &&
-          <Tooltip title="Add an user to group" placement="right">
-            <IconButton onClick={this.handleMemberAddClick.bind(this)}>
-              <Add />
-            </IconButton>
-          </Tooltip>
-        }
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={this.handleMenuClose.bind(this)} >
-          {group && users && users.map(u =>
-            (group.members || group.members.map(m => { return u.id !== m.id; })) &&
-            <MenuItem key={u.id} onClick={this.handleUserToAdd.bind(this, u.id)}>
-              {u.firstName + " " + u.lastName}
-            </MenuItem>
-          )}
-        </Menu>
-      </div>
-    </div>)
+    )
   }
 }
 
@@ -120,7 +84,6 @@ const mapStateToProps = state => ({
   group: state.groups.group,
   users: state.users.users,
   members: state.groups.members,
-  activeMember: state.boards.activeMember,
   board: state.boards.board,
 });
 

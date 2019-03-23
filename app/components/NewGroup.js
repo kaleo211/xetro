@@ -109,6 +109,7 @@ function Option(props) {
     <MenuItem
       buttonRef={props.innerRef}
       selected={props.isFocused}
+      disabled={props.data.disabled}
       component="div"
       style={{
         fontWeight: props.isSelected ? 500 : 400,
@@ -144,6 +145,14 @@ function ValueContainer(props) {
   return <div className={props.selectProps.classes.valueContainer}>{props.children}</div>;
 }
 
+function DropdownIndicator(props) {
+  return null;
+}
+
+function IndicatorSeparator(props) {
+  return null;
+}
+
 function Menu(props) {
   return (
     <Paper square className={props.selectProps.classes.paper} {...props.innerProps}>
@@ -160,6 +169,8 @@ const components = {
   Placeholder,
   SingleValue,
   ValueContainer,
+  DropdownIndicator,
+  IndicatorSeparator,
 };
 
 class NewGroup extends React.Component {
@@ -168,24 +179,40 @@ class NewGroup extends React.Component {
   }
 
   async handleCreateGroup(search) {
-    let group = {
-      name: search.value,
-      members: [this.props.me.id],
+    console.log('search:', search.id);
+    if (search.disabled) {
+      await this.props.setGroup(search.id);
+    } else {
+      let group = {
+        name: search.value,
+        members: [this.props.me.id],
+      }
+      await this.props.postGroup(group);
     }
-    await this.props.postGroup(group);
+
     this.props.setPage('');
   }
 
   async handleSearchGroup(searchText) {
-    console.log('search text', searchText);
     const groups = await Utils.search('groups', { name: searchText });
     let result = [];
+
     groups.map(g => {
-      result.push({
+      let option = {
         value: g.name,
+        id: g.id,
         label: `Join: ${g.name}`,
-      });
-    })
+      };
+      for (let mg of this.props.me.groups) {
+        if (g.id === mg.id) {
+          option.disabled = true;
+          option.label = `Select: ${g.name}`;
+          break;
+        }
+      }
+      result.push(option);
+    });
+
     return result;
   }
 
@@ -228,7 +255,7 @@ const mapDispatchToProps = (dispatch) => {
     postGroup: (group) => dispatch(postGroup(group)),
     setPage: (page) => dispatch(setPage(page)),
     getMe: () => dispatch(getMe()),
-    setGroup: () => dispatch(setGroup()),
+    setGroup: (id) => dispatch(setGroup(id)),
   };
 };
 
