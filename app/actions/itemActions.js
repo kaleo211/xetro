@@ -43,15 +43,10 @@ export const postAction = (updatedAction) => dispatch => {
   };
 };
 
-export const postItem = (updatedItem, bID) => {
+export const postItem = (item) => {
   return (dispatch) => {
-    Utils.post('items', updatedItem).then(body => {
-      let item = Utils.reform(body);
-      dispatch({
-        type: POST_ITEM,
-        item,
-      });
-      dispatch(setBoard(bID));
+    Utils.post('items', item).then(() => {
+      dispatch(setBoard(item.boardId));
     });
   };
 };

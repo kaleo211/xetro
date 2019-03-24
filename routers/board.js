@@ -99,7 +99,7 @@ routes.post('/', async (req, res) => {
       name: board.name,
       stage: board.stage,
     });
-    await newBoard.setFacilitator(board.facilitatorID);
+    await newBoard.setFacilitator(board.facilitatorId);
     await newBoard.setGroup(board.groupId);
 
     await respondWithBoard(res, newBoard.id);
@@ -114,7 +114,7 @@ routes.patch('/:id', async (req, res) => {
     const board = await model.Board.findOne({
       where: { id: req.params.id },
     });
-    await board.setFacilitator(req.body.facilitatorID);
+    await board.setFacilitator(req.body.facilitatorId);
     await respondWithBoard(res, board.id);
   } catch (err) {
     console.log('error patch board:', err);

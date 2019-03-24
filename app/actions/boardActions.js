@@ -1,11 +1,11 @@
 import {
   FETCH_ACTIVE_BOARDS,
-  FETCH_BOARD,
+  SET_BOARD,
   FETCH_GROUP_ACTIVE_BOARDS,
   PATCH_BOARD,
   POST_BOARD,
   SET_ACTIVE_MEMBER,
-  FETCH_BOARDS,
+  SET_BOARDS,
 } from './types';
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
@@ -62,7 +62,7 @@ export const fetchBoards = () => {
   return (dispatch) => {
     return Utils.list("boards").then(boards => {
       dispatch({
-        type: FETCH_BOARDS,
+        type: SET_BOARDS,
         boards,
       });
     });
@@ -71,13 +71,6 @@ export const fetchBoards = () => {
 
 export const patchBoard = (b, board) => {
   return (dispatch) => {
-    Utils.patchResource(b, board).then(body => {
-      let board = Utils.reform(body);
-      dispatch({
-        type: PATCH_BOARD,
-        board
-      });
-    });
   };
 };
 
@@ -85,13 +78,13 @@ export const setBoard = (boardId) => {
   return (dispatch) => {
     if (boardId == null || boardId === '') {
       dispatch({
-        type: FETCH_BOARD,
+        type: SET_BOARD,
         board: null
       });
     } else {
       Utils.get('boards', boardId).then(board => {
         dispatch({
-          type: FETCH_BOARD,
+          type: SET_BOARD,
           board,
         });
       });

@@ -5,7 +5,7 @@ import { JSDOM } from 'jsdom';
 
 import * as actions from '../../../actions/pillarActions';
 
-import { POST_PILLAR, FETCH_BOARD } from '../../../actions/types';
+import { POST_PILLAR, SET_BOARD } from '../../../actions/types';
 
 describe("pillarActions", () => {
   afterEach(() => {
@@ -21,7 +21,7 @@ describe("pillarActions", () => {
         'pillar': {},
         'type': POST_PILLAR,
       }, {
-        'type': FETCH_BOARD,
+        'type': SET_BOARD,
         'board': null,
       }];
 

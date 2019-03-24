@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const uuid = require('uuid/v4');
 
 module.exports = (sequelize, DataTypes) => {
-  const Pillar = sequelize.define('Pillar', {
+  const Item = sequelize.define('Item', {
     id: {
       allowNull: false,
       primaryKey: true,
@@ -14,10 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
   }, {});
 
-  Pillar.associate = function (models) {
-    Pillar.belongsTo(models.Board, { as: 'board' });
-    Pillar.hasMany(models.Item, { as: 'items', foreignKey: 'pillarId' });
+  Item.associate = function (models) {
+    Item.belongsTo(models.Group, { as: 'group' });
+    Item.belongsTo(models.Pillar, { as: 'pillar' });
+    Item.belongsTo(models.User, { as: 'owner' });
   };
 
-  return Pillar;
+  return Item;
 };

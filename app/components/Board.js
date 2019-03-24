@@ -37,9 +37,18 @@ class Board extends React.Component {
   constructor(props) {
     super(props);
 
+    let board = this.props.board;
+
+    let newItemInPillar = [];
+    let titleOfPillar = [];
+    board && board.pillars && board.pillars.map(pillar => {
+      newItemInPillar.push(pillar.id, '');
+      titleOfPillar.push(pillar.id, pillar.title);
+    });
+
     this.state = {
-      newItemInPillar: [],
-      titleOfPillar: [],
+      newItemInPillar: newItemInPillar,
+      titleOfPillar: titleOfPillar,
     };
   }
 
@@ -50,31 +59,28 @@ class Board extends React.Component {
     });
   }
 
-  componentDidMount() {
-    let board = this.props.board;
-    board && board.pillars && board.pillars.map(pillar => {
-      this.changePillarTitle(pillar.id, pillar.title);
+  changeItemTitle(id, title) {
+    this.setState(state => {
+      state.newItemInPillar[id] = title;
+      return state;
     });
   }
 
-  handleNewItemSave(pillarId, event) {
-    let newItemInPillar = this.state.newItemInPillar;
-    if (event && event.key === 'Enter' && newItemInPillar[pillarId] !== '') {
+  handleAddItem(pillarId, event) {
+    let newItemTitle = this.state.newItemInPillar[pillarId];
+    if (event && event.key === 'Enter' && newItemTitle !== '') {
       let newItem = {
-        title: newItemInPillar[pillarId].capitalize(),
+        title: newItemTitle,
         pillarId: pillarId,
+        boardId: this.props.board.id,
       };
-
-      this.props.postItem(newItem, this.props.board.id);
-      newItemInPillar[pillarId] = '';
-      this.setState({ newItemInPillar });
+      this.props.postItem(newItem);
+      this.changeItemTitle(pillarId, '');
     }
   }
 
-  handleChangeNewItem(e) {
-    let newItemInPillar = this.state.newItemInPillar;
-    newItemInPillar[e.target.name] = e.target.value;
-    this.setState({ newItemInPillar });
+  handleChangeNewItemTitle(pillarId, evt) {
+    this.changeItemTitle(pillarId, evt.target.value);
   }
 
   handleAddPillar() {
@@ -110,7 +116,6 @@ class Board extends React.Component {
       return (
         <TextField fullWidth
           defaultValue={pillar.title}
-          // value={titleOfPillar[pillar.id]}
           InputProps={{ disableUnderline: true, }}
           inputProps={{ className: classes.title, }}
           onChange={this.handleChangePillarTitle.bind(this, pillar)}
@@ -139,16 +144,16 @@ class Board extends React.Component {
                 subheaderTypographyProps={{ align: 'center' }}
                 action={null}
               />
-              {/* <CardContent>
+              <CardContent>
                 <TextField fullWidth
                   label={pillar.intro}
+                  value={newItemInPillar[pillar.id]}
                   disabled={board && board.locked}
                   name={pillar.id}
-                  value={newItemInPillar[pillar.id]}
-                  onChange={this.handleChangeNewItem.bind(this)}
-                  onKeyPress={this.handleNewItemSave.bind(this, pillar.id)}
+                  onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
+                  onKeyPress={this.handleAddItem.bind(this, pillar.id)}
                 />
-              </CardContent> */}
+              </CardContent>
               <Items pillar={pillar} />
             </Card>
           </Grid>))}
@@ -163,7 +168,6 @@ class Board extends React.Component {
 
 const mapStateToProps = state => ({
   board: state.boards.board,
-  activeMember: state.boards.activeMember,
   groups: state.groups.groups,
   group: state.groups.group,
 });

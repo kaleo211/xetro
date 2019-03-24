@@ -121,7 +121,7 @@ class NewBoard extends React.Component {
     newBoard.stage = 'active';
     newBoard.groupId = this.props.group.id;
     newBoard.name = boardName;
-    newBoard.facilitatorID = this.state.facilitator.id;
+    newBoard.facilitatorId = this.state.facilitator.id;
 
     this.props.postBoard(newBoard);
     this.props.setPage('board');

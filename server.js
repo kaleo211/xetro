@@ -11,6 +11,7 @@ var groupRouter = require('./routers/group');
 var userRouter = require('./routers/user');
 var boardRouter = require('./routers/board');
 var pillarRouter = require('./routers/pillar');
+var itemRouter = require('./routers/item');
 
 server.use(session({
   secret: config.get('server.session_secret'),
@@ -38,6 +39,7 @@ server.use('/groups', isAuthenticated, groupRouter);
 server.use('/users', isAuthenticated, userRouter);
 server.use('/boards', isAuthenticated, boardRouter);
 server.use('/pillars', isAuthenticated, pillarRouter);
+server.use('/items', isAuthenticated, itemRouter);
 
 server.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));

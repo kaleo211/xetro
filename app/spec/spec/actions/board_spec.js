@@ -1,6 +1,6 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { FETCH_BOARDS } from '../../../actions/types';
+import { SET_BOARDS } from '../../../actions/types';
 import fetchMock from 'fetch-mock';
 import { JSDOM } from 'jsdom';
 
@@ -18,7 +18,7 @@ describe("fetchBoards", () => {
 
     const expectedActions = [{
       'boards': fakeBoards,
-      'type': FETCH_BOARDS,
+      'type': SET_BOARDS,
     }];
 
     global.window = new JSDOM('', {
