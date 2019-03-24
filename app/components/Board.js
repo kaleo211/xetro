@@ -10,12 +10,12 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { Add } from '@material-ui/icons';
 
-import Items from './Items';
-import Utils from './Utils';
 import { setBoard } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
 import { postItem } from '../actions/itemActions';
 import { patchPillar, postPillar } from '../actions/pillarActions';
+
+import Items from './Items';
 
 const styles = theme => ({
   root: {
@@ -38,84 +38,85 @@ class Board extends React.Component {
     super(props);
 
     this.state = {
-      newItems: {},
+      newItemInPillar: [],
+      titleOfPillar: [],
     };
+  }
+
+  changePillarTitle(id, title) {
+    this.setState(state => {
+      state.titleOfPillar[id] = title;
+      return state;
+    });
   }
 
   componentDidMount() {
     let board = this.props.board;
     board && board.pillars && board.pillars.map(pillar => {
-      this.setState({
-        ["pillarTitle" + pillar.id]: pillar.title,
-      });
+      this.changePillarTitle(pillar.id, pillar.title);
     });
   }
 
-  handleNewItemSave(pillarID, event) {
-    let newItems = this.state.newItems;
-    if (event && event.key === 'Enter' && newItems[pillarID] !== "") {
-      if (this.props.activeMember) {
-        let newItem = {
-          title: newItems[pillarID].capitalize(),
-          pillar: Utils.prepend("pillars/" + pillarID),
-          owner: Utils.prepend("members/" + this.props.activeMember.id),
-        };
+  handleNewItemSave(pillarId, event) {
+    let newItemInPillar = this.state.newItemInPillar;
+    if (event && event.key === 'Enter' && newItemInPillar[pillarId] !== '') {
+      let newItem = {
+        title: newItemInPillar[pillarId].capitalize(),
+        pillarId: pillarId,
+      };
 
-        this.props.postItem(newItem, this.props.board.id);
-        newItems[pillarID] = "";
-        this.setState({ newItems });
-      } else {
-        this.props.openSnackBar("please select item owner");
-      }
+      this.props.postItem(newItem, this.props.board.id);
+      newItemInPillar[pillarId] = '';
+      this.setState({ newItemInPillar });
     }
   }
 
-  handleNewItemChange(e) {
-    let newItems = this.state.newItems;
-    newItems[e.target.name] = e.target.value;
-    this.setState({ newItems });
+  handleChangeNewItem(e) {
+    let newItemInPillar = this.state.newItemInPillar;
+    newItemInPillar[e.target.name] = e.target.value;
+    this.setState({ newItemInPillar });
   }
 
-  handlePillarAdd() {
+  handleAddPillar() {
     let pillar = {
-      title: "ChangeTitle",
-      board: Utils.prepend("boards/" + this.props.board.id),
+      title: 'ChangeTitle',
+      boardId: this.props.board.id,
     }
-    this.props.postPillar(pillar, this.props.board.id);
+    this.props.postPillar(pillar);
   }
 
-  handlePillarTitleChange(pillar, evt) {
-    this.setState({
-      ["pillarTitle" + pillar.id]: evt.target.value,
-    });
+  handleChangePillarTitle(pillar, evt) {
+    this.changePillarTitle(pillar.id, evt.target.value);
   }
 
-  handlePillarTitleSubmit(pillar, evt) {
+  handleSetPillarTitle(pillar, evt) {
     if (evt && evt.key === 'Enter') {
-      if (evt.target.value != "") {
-        this.props.patchPillar("pillars/" + pillar.id, { title: evt.target.value }, this.props.board.id);
+      if (evt.target.value != '') {
+        pillar.title = evt.target.value;
+        this.props.patchPillar(pillar);
       } else {
-        this.setState({
-          ["pillarTitle" + pillar.id]: pillar.title,
-        });
+        this.changePillarTitle(pillar.id, pillar.title);
       }
     }
   }
 
   render() {
     const { classes, board } = this.props;
-    const { newItems } = this.state;
+    const { newItemInPillar, titleOfPillar } = this.state;
+
+    console.log('board in board:', board);
 
     const pillarTitle = (pillar) => {
       return (
         <TextField fullWidth
           defaultValue={pillar.title}
-          value={this.state["pillarTitle" + pillar.id]}
+          // value={titleOfPillar[pillar.id]}
           InputProps={{ disableUnderline: true, }}
           inputProps={{ className: classes.title, }}
-          onChange={this.handlePillarTitleChange.bind(this, pillar)}
-          onKeyPress={this.handlePillarTitleSubmit.bind(this, pillar)} >
-        </TextField >)
+          onChange={this.handleChangePillarTitle.bind(this, pillar)}
+          onKeyPress={this.handleSetPillarTitle.bind(this, pillar)} >
+        </TextField >
+      )
     }
 
     board && board.pillars && board.pillars.sort((a, b) => {
@@ -126,7 +127,8 @@ class Board extends React.Component {
       <Grid container spacing={8}
         direction="row"
         justify="flex-start"
-        alignItems="stretch">
+        alignItems="stretch"
+      >
         {board.facilitator && board.pillars && board.pillars.map((pillar) => (
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card wrap='nowrap'>
@@ -135,24 +137,26 @@ class Board extends React.Component {
                 subheader={pillar.subheader}
                 titleTypographyProps={{ align: 'center' }}
                 subheaderTypographyProps={{ align: 'center' }}
-                action={null} />
-              <CardContent>
+                action={null}
+              />
+              {/* <CardContent>
                 <TextField fullWidth
                   label={pillar.intro}
                   disabled={board && board.locked}
                   name={pillar.id}
-                  value={newItems[pillar.id]}
-                  onChange={this.handleNewItemChange.bind(this)}
-                  onKeyPress={this.handleNewItemSave.bind(this, pillar.id)} />
-              </CardContent>
+                  value={newItemInPillar[pillar.id]}
+                  onChange={this.handleChangeNewItem.bind(this)}
+                  onKeyPress={this.handleNewItemSave.bind(this, pillar.id)}
+                />
+              </CardContent> */}
               <Items pillar={pillar} />
             </Card>
           </Grid>))}
       </Grid>
-      {!board.locked && (!board.pillars || board.pillars.length < 3) &&
-        <Fab className={classes.fab} onClick={this.handlePillarAdd.bind(this)} >
-          <Add />
-        </Fab>}
+
+      <Fab className={classes.fab} onClick={this.handleAddPillar.bind(this)} >
+        <Add />
+      </Fab>
     </div>);
   }
 }
@@ -179,5 +183,5 @@ Board.propTypes = {
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles)
+  withStyles(styles, { withTheme: true })
 )(Board);

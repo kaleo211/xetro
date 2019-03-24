@@ -45,7 +45,7 @@ export const postAction = (updatedAction) => dispatch => {
 
 export const postItem = (updatedItem, bID) => {
   return (dispatch) => {
-    Utils.postResource("items", updatedItem).then(body => {
+    Utils.post('items', updatedItem).then(body => {
       let item = Utils.reform(body);
       dispatch({
         type: POST_ITEM,

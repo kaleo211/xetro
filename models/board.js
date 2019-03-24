@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   Board.associate = function (models) {
     Board.belongsTo(models.Group, { as: 'group' });
     Board.belongsTo(models.User, { as: 'facilitator' });
+    Board.hasMany(models.Pillar, { as: 'pillars', foreignKey: 'boardId' });
   };
 
   return Board;

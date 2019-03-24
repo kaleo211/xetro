@@ -59,9 +59,7 @@ routes.get('/', async (req, res) => {
 });
 
 routes.post('/search', async (req, res) => {
-  console.log('req:', req.body);
   var name = req.body.name;
-
   model.Group.findAll({
     include: [{
       model: model.User,
@@ -113,7 +111,7 @@ routes.patch('/:id', async (req, res) => {
     const group = await model.Group.findOne({
       where: { id: req.params.id },
     });
-    await group.addMembers(req.body.userID)
+    await group.addMembers(req.body.userId)
     await respondWithGroup(res, group.id);
   } catch (err) {
     console.log('error patch group:', err);

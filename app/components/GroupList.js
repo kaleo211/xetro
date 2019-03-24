@@ -32,12 +32,8 @@ class GroupList extends React.Component {
     };
   }
 
-  handleSetGroup(groupID) {
-    this.props.setGroup(groupID);
-    if (groupID === null) {
-      this.props.setBoard(null);
-      this.props.setPage('');
-    }
+  handleSetGroup(groupId) {
+    this.props.setGroup(groupId);
   }
 
   handleCreateGroup() {

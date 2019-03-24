@@ -5,8 +5,8 @@ import {
   SEARCH_GROUPS,
 } from './types';
 import { getMe } from './userActions';
-import { setPage } from './localActions';
 import Utils from '../components/Utils';
+import { fetchGroupActiveBoards } from './boardActions';
 
 export const getGroup = (name) => {
   return (dispatch) => {
@@ -45,33 +45,32 @@ export const postGroup = (newGroup) => {
   };
 };
 
-export const setGroup = (groupID) => {
+export const setGroup = (groupId) => {
   return (dispatch) => {
-    console.log('setGroup:', groupID);
-    if (groupID) {
-      Utils.get(`groups`, groupID).then(group => {
-        console.log('group in setGroup:', group);
-        if (group.boards.length == 0) {
-          dispatch(setPage('createBoard'));
-        }
+    if (groupId === null) {
+      this.props.setBoard(null);
+      this.props.setPage('');
+    }
+
+    if (groupId) {
+      Utils.get(`groups`, groupId).then(body => {
         dispatch({
           type: SET_GROUP,
-          group,
+          group: body,
         });
-      });
-    } else {
-      dispatch({
-        type: SET_GROUP,
-        group: null,
+        dispatch(fetchGroupActiveBoards(groupId));
       });
     }
+    dispatch({
+      type: SET_GROUP,
+      group: null,
+    });
   };
 };
 
-export const addUserToGroup = (groupID, userID) => {
+export const addUserToGroup = (groupId, userId) => {
   return (dispatch) => {
-    console.log('addUserToGroup:', groupID, userID);
-    let group = { id: groupID, userID: userID }
+    let group = { id: groupId, userId: userId }
     Utils.patch('groups', group).then(body => {
       dispatch({
         type: SET_GROUP,

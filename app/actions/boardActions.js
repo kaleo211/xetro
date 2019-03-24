@@ -5,34 +5,31 @@ import {
   PATCH_BOARD,
   POST_BOARD,
   SET_ACTIVE_MEMBER,
-  SHOW_PAGE,
   FETCH_BOARDS,
 } from './types';
 import Utils from '../components/Utils';
+import { setPage } from './localActions';
 
-export const fetchGroupActiveBoards = (groupID) => {
+export const fetchGroupActiveBoards = (groupId) => {
   return (dispatch) => {
-    Utils.fetch(`/group/${groupID}/active`).then(body => {
-      let page = 'createBoard';
+    Utils.fetch(`/boards/active/${groupId}`).then(body => {
+      let page;
       let boards = body || [];
 
-      if (boards) {
-        if (boards.length === 1) {
-          dispatch(setBoard(boards[0].id));
-          page = "board";
-        } if (boards.length > 1) {
-          page = "boardList";
-        }
+      if (boards.length === 0) {
+        page = 'createBoard';
+      } else if (boards.length === 1) {
+        dispatch(setBoard(boards[0].id));
+        page = "board";
+      } else if (boards.length > 1) {
+        page = "boardList";
       }
 
       dispatch({
         type: FETCH_GROUP_ACTIVE_BOARDS,
         boards
       });
-      dispatch({
-        type: SHOW_PAGE,
-        page,
-      });
+      dispatch(setPage(page));
     });
   };
 };
@@ -51,6 +48,8 @@ export const fetchActiveBoards = () => {
 export const postBoard = (newBoard) => {
   return (dispatch) => {
     Utils.post('boards', newBoard).then(board => {
+      console.log('board', newBoard);
+
       dispatch({
         type: POST_BOARD,
         board,
@@ -61,7 +60,7 @@ export const postBoard = (newBoard) => {
 
 export const fetchBoards = () => {
   return (dispatch) => {
-    return Utils.list("board").then(boards => {
+    return Utils.list("boards").then(boards => {
       dispatch({
         type: FETCH_BOARDS,
         boards,
@@ -82,15 +81,15 @@ export const patchBoard = (b, board) => {
   };
 };
 
-export const setBoard = (boardID) => {
+export const setBoard = (boardId) => {
   return (dispatch) => {
-    if (boardID === null || boardID === "") {
+    if (boardId == null || boardId === '') {
       dispatch({
         type: FETCH_BOARD,
         board: null
       });
     } else {
-      Utils.get('board', boardID).then(board => {
+      Utils.get('boards', boardId).then(board => {
         dispatch({
           type: FETCH_BOARD,
           board,

@@ -29,8 +29,8 @@ class MemberList extends React.Component {
     super(props);
   }
 
-  handleUserToAdd(userID) {
-    this.props.addUserToGroup(this.props.group.id, userID);
+  handleUserToAdd(userId) {
+    this.props.addUserToGroup(this.props.group.id, userId);
   }
 
   handleMemberSelect(memberID) {
@@ -48,7 +48,7 @@ class MemberList extends React.Component {
     return (
       <List dense>
         {members && members.map(m => (
-          < Tooltip key={"side" + m.userID} title={m.firstName} placement="right" >
+          < Tooltip key={"side" + m.userId} title={m.firstName} placement="right" >
             <ListItem button onClick={this.handleMemberSelect.bind(this, m.id)} >
               <ListItemAvatar>
                 <Avatar className={classes.avatar}>

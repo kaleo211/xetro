@@ -25,7 +25,7 @@ describe("ActionBar", () => {
         },
       },
       groups: {
-        members: [{ userID: "fakeID" }],
+        members: [{ userId: "fakeID" }],
         group: { name: "fakeGroup" },
       },
     });
@@ -53,7 +53,7 @@ describe("ActionBar", () => {
         ],
       },
       groups: {
-        members: [{ userID: "fakeID" }],
+        members: [{ userId: "fakeID" }],
         group: { name: "fakeGroup" },
       },
     });

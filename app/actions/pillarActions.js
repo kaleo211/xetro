@@ -1,32 +1,18 @@
-import {
-  PATCH_PILLAR,
-  POST_PILLAR,
-} from './types';
 import Utils from '../components/Utils';
 import { setBoard } from './boardActions';
 
-export const postPillar = (pillar, bID) => {
+export const postPillar = (pillar) => {
   return (dispatch) => {
-    return Utils.postResource("pillars", pillar).then(body => {
-      let pillar = Utils.reform(body);
-      dispatch({
-        type: POST_PILLAR,
-        pillar,
-      });
-      dispatch(setBoard(bID));
+    return Utils.post('pillars', pillar).then(() => {
+      dispatch(setBoard(pillar.boardId));
     });
   };
 };
 
-export const patchPillar = (p, pillar, bID) => {
+export const patchPillar = (pillar) => {
   return (dispatch) => {
-    Utils.patch(p, pillar).then(body => {
-      let pillar = Utils.reform(body);
-      dispatch({
-        type: PATCH_PILLAR,
-        pillar,
-      });
-      dispatch(setBoard(bID));
+    Utils.patch('pillars', pillar).then(() => {
+      dispatch(setBoard(pillar.boardId));
     });
   };
 };

@@ -151,11 +151,11 @@ class ActionBar extends React.Component {
         <DialogContent>
           <Grid container justify="flex-start" spacing={16}>
             {membersWithActions.map(member => (
-              <Grid item xs={12} key={"action" + member.userID}>
+              <Grid item xs={12} key={"action" + member.userId}>
                 <List>
                   {member.actions && member.actions.filter(ac => ac.group.id === group.id && !ac.finished).map((a, idx) => (
                     <ListItem divider key={"actionToCheck" + a.id} button >
-                      <Avatar style={{ backgroundColor: idx === 0 || 'rgba(0, 0, 0, 0)' }}>{member.userID}</Avatar>
+                      <Avatar style={{ backgroundColor: idx === 0 || 'rgba(0, 0, 0, 0)' }}>{member.userId}</Avatar>
                       <ListItemText primary={a.title} />
                       <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, a)}>
                         <IconButton><CheckRounded /></IconButton>

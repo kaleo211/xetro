@@ -25,6 +25,7 @@ const initialState = {
 const localReducer = function (state = initialState, action) {
   switch (action.type) {
     case SHOW_PAGE:
+      console.log('page:', action.page);
       return {
         ...state,
         page: action.page

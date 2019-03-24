@@ -154,6 +154,7 @@ class App extends React.Component {
   render() {
     const { page, board, group, classes } = this.props;
     const { open } = this.state;
+    console.log('page in app', page);
 
     return (<div className={classes.root}>
       <CssBaseline />

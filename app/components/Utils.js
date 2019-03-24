@@ -3,14 +3,6 @@ export default {
     return new Promise(resolve => setTimeout(resolve, ms));
   },
 
-  reform(resource) {
-    return Object.assign(resource, resource._embedded);
-  },
-
-  postPillar(pillar) {
-    return this.postResource("pillars", pillar);
-  },
-
   search(type, body) {
     return new Promise((resolve, reject) => {
       fetch(`/${type}/search`, {
@@ -26,6 +18,19 @@ export default {
           reject(Error("failed to search:", type, body));
         }
       });
+    });
+  },
+
+  fetch(uri) {
+    return new Promise((resolve, reject) => {
+      fetch(uri)
+        .then(resp => {
+          if (resp.ok) {
+            resolve(resp.json());
+          } else {
+            reject(Error("failed to fetch:", uri));
+          }
+        });
     });
   },
 

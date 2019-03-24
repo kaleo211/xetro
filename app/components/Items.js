@@ -203,7 +203,7 @@ class Items extends React.Component {
                 <PlayArrowRounded />
               </IconButton>
             )}
-            {item.action && item.action.member && (<Avatar>{item.action.member.userID}</Avatar>)}
+            {item.action && item.action.member && (<Avatar>{item.action.member.userId}</Avatar>)}
             {board.locked && selectedItem.id === item.id && !item.checked && item.started && !item.action && (
               <CircularProgress variant="static" value={this.state.itemProgress} />
             )}
@@ -233,10 +233,10 @@ class Items extends React.Component {
                   {members && members.map(member => (
                     <MenuItem
                       style={{ paddingTop: 20, paddingBottom: 20 }}
-                      key={"owner" + member.userID}
+                      key={"owner" + member.userId}
                       onClick={this.handleActionOwnerAdd.bind(this, item, member)}
                     >
-                      <Avatar>{member.userID}</Avatar>
+                      <Avatar>{member.userId}</Avatar>
                     </MenuItem>
                   ))}
                 </Menu>

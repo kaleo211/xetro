@@ -118,8 +118,8 @@ class NewBoard extends React.Component {
 
     let newBoard = this.state.newBoard;
     newBoard.endTime = this.getDate();
-    newBoard.started = true;
-    newBoard.groupID = this.props.group.id;
+    newBoard.stage = 'active';
+    newBoard.groupId = this.props.group.id;
     newBoard.name = boardName;
     newBoard.facilitatorID = this.state.facilitator.id;
 
@@ -144,12 +144,12 @@ class NewBoard extends React.Component {
         return (
           <Grid style={{ paddingTop: 20 }} container justify="flex-start" spacing={32}>
             {members.filter(m => m.actions && m.actions.filter(a => !a.finished).length > 0).map(member => (
-              <Grid item xs={12} md={6} lg={4} key={"action" + member.userID}>
+              <Grid item xs={12} md={6} lg={4} key={"action" + member.userId}>
                 <List>
                   {member.actions && member.actions.map((action) => (!action.finished &&
                     <ListItem divider key={"actionToCheck" + action.id} dense button >
                       <Avatar style={{ marginLeft: -15 }}>
-                        {member.userID}
+                        {member.userId}
                       </Avatar>
                       <ListItemText primary={action.title} />
                       <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, action)}>
@@ -173,7 +173,7 @@ class NewBoard extends React.Component {
               </Tooltip>
             </Grid>
             {members.map((member, idx) => (
-              <Grid item key={"facilitator" + member.userID} >
+              <Grid item key={"facilitator" + member.userId} >
                 <Fab size="small" onClick={this.handleSetFacilitator.bind(this, idx)} >
                   <Avatar>{member.firstName}</Avatar>
                 </Fab>

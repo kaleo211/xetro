@@ -10,6 +10,9 @@ var respondWithBoard = async (res, id) => {
       }, {
         model: model.Group,
         as: 'group',
+      }, {
+        model: model.Pillar,
+        as: 'pillars',
       }],
       where: { id: id },
     });
@@ -24,50 +27,80 @@ var respondWithBoard = async (res, id) => {
   };
 }
 
+var respondWithActiveBoards = async (res, groupId) => {
+  try {
+    const board = await model.Board.findAll({
+      include: [{
+        model: model.User,
+        as: 'facilitator',
+      }, {
+        model: model.Group,
+        as: 'group',
+      }],
+      where: {
+        groupId: groupId,
+        stage: 'active',
+      },
+    });
+    if (board) {
+      res.json(board);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.log('error get active board', err);
+    res.sendStatus(500);
+  };
+}
+
 routes.get('/:id', async (req, res) => {
   await respondWithBoard(res, req.params.id);
 });
 
+routes.get('/active/:id', async (req, res) => {
+  await respondWithActiveBoards(res, req.params.id);
+});
+
 routes.delete('/:id', async (req, res) => {
   try {
-    await model.Group.destroy({
+    await model.Board.destroy({
       where: { id: req.params.id },
     });
     res.sendStatus(204);
   } catch (err) {
-    console.log('error delete group', err);
+    console.log('error delete board', err);
     res.sendStatus(500);
   };
 });
 
 routes.get('/', async (req, res) => {
   try {
-    const groups = await model.Group.findAll({
+    const boards = await model.Board.findAll({
       include: [{
         model: model.User,
         as: 'facilitator',
       }, {
-        model: model.Board,
-        as: 'board',
+        model: model.Group,
+        as: 'group',
       }],
     });
-    res.json(groups);
+    res.json(boards);
   } catch (err) {
-    console.log('error delete group', err);
+    console.log('error list boards', err);
     res.sendStatus(500);
   };
 });
 
 routes.post('/', async (req, res) => {
   var board = req.body;
-  console.log('new board:', board);
-
+  console.log('board', board);
   try {
     const newBoard = await model.Board.create({
-      name: board.name
+      name: board.name,
+      stage: board.stage,
     });
     await newBoard.setFacilitator(board.facilitatorID);
-    await newBoard.setGroup(board.groupID);
+    await newBoard.setGroup(board.groupId);
 
     await respondWithBoard(res, newBoard.id);
   } catch (err) {
@@ -81,7 +114,7 @@ routes.patch('/:id', async (req, res) => {
     const board = await model.Board.findOne({
       where: { id: req.params.id },
     });
-    await board.addFacilitator(req.body.facilitatorID);
+    await board.setFacilitator(req.body.facilitatorID);
     await respondWithBoard(res, board.id);
   } catch (err) {
     console.log('error patch board:', err);

@@ -31,7 +31,6 @@ export default function (state = initialState, action) {
       return {
         ...state,
         group: action.group,
-        members: action.members,
       }
 
     case ADD_MEMBER_TO_GROUP:

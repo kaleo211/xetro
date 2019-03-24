@@ -23,8 +23,8 @@ class BoardList extends React.Component {
     super(props);
   }
 
-  handleBoardSelect(boardID) {
-    this.props.setBoard(boardID);
+  handleBoardSelect(boardId) {
+    this.props.setBoard(boardId);
   }
 
   render() {
