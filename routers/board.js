@@ -93,7 +93,6 @@ routes.get('/', async (req, res) => {
 
 routes.post('/', async (req, res) => {
   var board = req.body;
-  console.log('board', board);
   try {
     const newBoard = await model.Board.create({
       name: board.name,

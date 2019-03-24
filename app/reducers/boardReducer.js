@@ -6,6 +6,7 @@ import {
   POST_BOARD,
   SET_ACTIVE_MEMBER,
   SET_BOARDS,
+  SET_PILLARS,
 } from '../actions/types';
 
 const initialState = {
@@ -55,6 +56,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         activeMember: action.activeMember
+      }
+
+    case SET_PILLARS:
+      return {
+        ...state,
+        pillars: action.pillars,
       }
 
     default:

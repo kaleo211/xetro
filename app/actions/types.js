@@ -29,3 +29,4 @@ export const GET_ME = 'GET_ME'
 
 export const POST_PILLAR = 'POST_PILLAR'
 export const PATCH_PILLAR = 'PATCH_PILLAR'
+export const SET_PILLARS = 'SET_PILLARS';

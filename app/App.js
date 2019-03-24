@@ -152,7 +152,7 @@ class App extends React.Component {
   };
 
   render() {
-    const { page, board, group, classes } = this.props;
+    const { page, group, classes } = this.props;
     const { open } = this.state;
     console.log('page in app', page);
 
@@ -212,7 +212,6 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  board: state.boards.board,
   page: state.local.page,
   group: state.groups.group,
   me: state.users.me,

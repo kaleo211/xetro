@@ -2,13 +2,13 @@ import {
   FETCH_ACTIVE_BOARDS,
   SET_BOARD,
   FETCH_GROUP_ACTIVE_BOARDS,
-  PATCH_BOARD,
   POST_BOARD,
   SET_ACTIVE_MEMBER,
   SET_BOARDS,
 } from './types';
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
+import { setPillars } from './pillarActions';
 
 export const fetchGroupActiveBoards = (groupId) => {
   return (dispatch) => {
@@ -48,8 +48,6 @@ export const fetchActiveBoards = () => {
 export const postBoard = (newBoard) => {
   return (dispatch) => {
     Utils.post('boards', newBoard).then(board => {
-      console.log('board', newBoard);
-
       dispatch({
         type: POST_BOARD,
         board,
@@ -83,6 +81,7 @@ export const setBoard = (boardId) => {
       });
     } else {
       Utils.get('boards', boardId).then(board => {
+        dispatch(setPillars(boardId));
         dispatch({
           type: SET_BOARD,
           board,

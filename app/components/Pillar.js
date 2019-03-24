@@ -34,7 +34,7 @@ const styles = theme => ({
   },
 });
 
-class Items extends React.Component {
+class Pillar extends React.Component {
   constructor(props) {
     super(props);
 
@@ -48,7 +48,6 @@ class Items extends React.Component {
     }
   }
 
-  // Timer
   componentDidMount() {
     this.progressTimer = setInterval(this.updateItemProgress, 1000);
   }
@@ -174,10 +173,12 @@ class Items extends React.Component {
   }
 
   render() {
-    const { selectedItem, pillar, board, members, classes } = this.props;
+    const { selectedItem, pillar, group, board, classes } = this.props;
     const { newAction, ownerAnchorEl, switcher } = this.state;
 
-    return (<div>{board && pillar && pillar.items && pillar.items.map(item => (
+    const members = group.members;
+
+    return (board && pillar && pillar.items ? pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item.id}
         expanded={switcher && selectedItem.id === item.id}
@@ -211,9 +212,8 @@ class Items extends React.Component {
         </ExpansionPanelSummary>
 
         <ExpansionPanelDetails>
-          <TextField
-            label="Action item"
-            fullWidth
+          <TextField fullWidth
+            label='Action item'
             disabled={item.action !== null}
             value={item.action ? item.action.title : newAction}
             onChange={this.handleNewActionChange.bind(this)}
@@ -266,14 +266,12 @@ class Items extends React.Component {
           </Grid>
         </ExpansionPanelActions>
       </ExpansionPanel >
-    ))
-    }</div>);
+    )) : <div></div>);
   }
 }
 
 const mapStateToProps = state => ({
   board: state.boards.board,
-  members: state.groups.members,
   group: state.groups.group,
   selectedItem: state.local.selectedItem,
 });
@@ -290,10 +288,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-Items.propTypes = {
+Pillar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles),
-)(Items);
+  withStyles(styles, { withTheme: true }),
+)(Pillar);

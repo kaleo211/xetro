@@ -7,6 +7,9 @@ var respondWithPillar = async (res, id) => {
       include: [{
         model: model.Board,
         as: 'board',
+      }, {
+        model: model.Item,
+        as: 'items',
       }],
       where: { id: id },
     });
@@ -40,15 +43,18 @@ routes.delete('/:id', async (req, res) => {
 routes.get('/board/:id', async (req, res) => {
   try {
     const pillars = await model.Pillar.findAll({
-      where: { boardId: id },
+      where: { boardId: req.params.id },
       include: [{
         model: model.Board,
         as: 'board',
+      }, {
+        model: model.Item,
+        as: 'items',
       }],
     });
     res.json(pillars);
   } catch (err) {
-    console.log('error delete group', err);
+    console.log('error list pillars for board', err);
     res.sendStatus(500);
   };
 });

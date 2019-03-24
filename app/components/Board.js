@@ -15,7 +15,7 @@ import { openSnackBar, closeSnackBar } from '../actions/localActions';
 import { postItem } from '../actions/itemActions';
 import { patchPillar, postPillar } from '../actions/pillarActions';
 
-import Items from './Items';
+import Pillar from './Pillar';
 
 const styles = theme => ({
   root: {
@@ -37,11 +37,11 @@ class Board extends React.Component {
   constructor(props) {
     super(props);
 
-    let board = this.props.board;
+    let pillars = this.props.pillars;
 
     let newItemInPillar = [];
     let titleOfPillar = [];
-    board && board.pillars && board.pillars.map(pillar => {
+    pillars && pillars.map(pillar => {
       newItemInPillar.push(pillar.id, '');
       titleOfPillar.push(pillar.id, pillar.title);
     });
@@ -107,10 +107,8 @@ class Board extends React.Component {
   }
 
   render() {
-    const { classes, board } = this.props;
-    const { newItemInPillar, titleOfPillar } = this.state;
-
-    console.log('board in board:', board);
+    const { classes, board, pillars } = this.props;
+    const { newItemInPillar } = this.state;
 
     const pillarTitle = (pillar) => {
       return (
@@ -124,7 +122,7 @@ class Board extends React.Component {
       )
     }
 
-    board && board.pillars && board.pillars.sort((a, b) => {
+    pillars && pillars.sort((a, b) => {
       return a.id > b.id;
     });
 
@@ -134,7 +132,7 @@ class Board extends React.Component {
         justify="flex-start"
         alignItems="stretch"
       >
-        {board.facilitator && board.pillars && board.pillars.map((pillar) => (
+        {board.facilitator && pillars && pillars.map(pillar => (
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card wrap='nowrap'>
               <CardHeader
@@ -154,7 +152,7 @@ class Board extends React.Component {
                   onKeyPress={this.handleAddItem.bind(this, pillar.id)}
                 />
               </CardContent>
-              <Items pillar={pillar} />
+              <Pillar pillar={pillar} />
             </Card>
           </Grid>))}
       </Grid>
@@ -170,6 +168,7 @@ const mapStateToProps = state => ({
   board: state.boards.board,
   groups: state.groups.groups,
   group: state.groups.group,
+  pillars: state.boards.pillars,
 });
 const mapDispatchToProps = (dispatch) => {
   return {
