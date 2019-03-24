@@ -20,7 +20,7 @@ import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-u
 
 import Likes from './Likes';
 import { selectItem } from '../actions/localActions';
-import { patchItem, deleteItem, postAction, patchAction } from '../actions/itemActions';
+import { patchItem, deleteItem, postAction, patchAction, likeItem, finishItem } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 
@@ -71,15 +71,7 @@ class Pillar extends React.Component {
   };
 
   // Item
-  handleItemDone(item) {
-    if (this.state.newAction !== "") {
-      this.saveAction(item);
-    }
-    this.props.patchItem(item, { checked: true })
-      .then(() => {
-        this.props.setBoard(this.props.board.id);
-      });
-  }
+
 
   handleItemDelete(itemID) {
     this.props.deleteItem(itemID).then(() => {
@@ -129,12 +121,6 @@ class Pillar extends React.Component {
     this.setState({ ownerAnchorEl });
   }
 
-  // Like
-  handleNewLikeSave(item, event) {
-    event.stopPropagation();
-    this.props.patchItem(item, { likes: item.likes + 1, }, this.props.board.id);
-  }
-
   // Action
   saveAction(item) {
     let newAction = {
@@ -146,12 +132,12 @@ class Pillar extends React.Component {
     this.props.postAction(newAction)
       .then(() => {
         this.props.setBoard(this.props.board.id);
-        this.setState({ newAction: "" });
+        this.setState({ newAction: '' });
       })
   }
 
   handleNewActionSave(item, event) {
-    if (event && event.key === 'Enter' && this.state.newAction !== "") {
+    if (event && event.key === 'Enter' && this.state.newAction !== '') {
       this.saveAction(item);
     }
   }
@@ -172,6 +158,21 @@ class Pillar extends React.Component {
     }
   }
 
+
+  handleLikeItem(item, event) {
+    event.stopPropagation();
+    item.boardId = this.props.board.id;
+    this.props.likeItem(item);
+  }
+
+  handleFinishItem(item) {
+    if (this.state.newAction !== "") {
+      this.saveAction(item);
+    }
+    item.boardId = this.props.board.id;
+    this.props.finishItem(item);
+  }
+
   render() {
     const { selectedItem, pillar, group, board, classes } = this.props;
     const { newAction, ownerAnchorEl, switcher } = this.state;
@@ -187,25 +188,25 @@ class Pillar extends React.Component {
           <Grid container>
             {item.likes > 0 && <Grid item><Likes item={item} /></Grid>}
             <Grid item>
-              <Typography noWrap variant="headline" className={item.checked ? classes.itemDone : null}>
+              <Typography noWrap variant="headline" className={item.done ? classes.itemDone : null}>
                 {item.title}
               </Typography>
             </Grid>
           </Grid>
 
           <div style={{ marginTop: -5, marginBottom: -20, marginRight: -48 }}>
-            {board && !board.locked && !item.checked && !item.started && !item.action && (
-              <IconButton onClick={this.handleNewLikeSave.bind(this, item)}>
+            {board && !board.locked && !item.done && !item.started && !item.action && (
+              <IconButton onClick={this.handleLikeItem.bind(this, item)}>
                 <PlusOne />
               </IconButton>
             )}
-            {board && board.locked && !item.checked && !item.started && !item.action && (
+            {board && board.locked && !item.done && !item.started && !item.action && (
               <IconButton onClick={this.handleStartItem.bind(this, item)}>
                 <PlayArrowRounded />
               </IconButton>
             )}
             {item.action && item.action.member && (<Avatar>{item.action.member.userId}</Avatar>)}
-            {board.locked && selectedItem.id === item.id && !item.checked && item.started && !item.action && (
+            {board.locked && selectedItem.id === item.id && !item.done && item.started && !item.action && (
               <CircularProgress variant="static" value={this.state.itemProgress} />
             )}
           </div>
@@ -249,9 +250,9 @@ class Pillar extends React.Component {
           <Grid container direction="column">
             <Grid item>
               <Grid container justify="flex-end">
-                {!item.action && !item.checked && (
+                {!item.action && !item.done && (
                   <Grid item>
-                    <IconButton disabled={item.checked} onClick={this.handleItemDone.bind(this, item)}>
+                    <IconButton disabled={item.done} onClick={this.handleFinishItem.bind(this, item)}>
                       <Done />
                     </IconButton>
                     {board && !board.locked && (
@@ -285,6 +286,8 @@ const mapDispatchToProps = (dispatch) => {
     patchAction: (action) => dispatch(patchAction(action)),
     selectItem: (item) => dispatch(selectItem(item)),
     setGroup: (id) => dispatch(setGroup(id)),
+    likeItem: (id) => dispatch(likeItem(id)),
+    finishItem: (id) => dispatch(finishItem(id)),
   };
 };
 

@@ -1,5 +1,6 @@
 const routes = require('express').Router();
 const model = require('../models');
+const sequelize = require('sequelize');
 
 var respondWithItem = async (res, id) => {
   try {
@@ -60,6 +61,22 @@ routes.get('/:id', async (req, res) => {
   await respondWithItem(res, req.params.id);
 });
 
+routes.get('/:id/like', async (req, res) => {
+  await model.Item.update(
+    { likes: sequelize.literal('likes + 1'), },
+    { where: { id: req.params.id } }
+  );
+  await respondWithItem(res, req.params.id);
+});
+
+routes.get('/:id/done', async (req, res) => {
+  await model.Item.update(
+    { done: true, },
+    { where: { id: req.params.id } }
+  );
+  await respondWithItem(res, req.params.id);
+});
+
 routes.get('/group/:id', async (req, res) => {
   await respondWithActiveItems(res, { groupId: req.params.id });
 });
@@ -117,11 +134,13 @@ routes.post('/', async (req, res) => {
 
 routes.patch('/:id', async (req, res) => {
   try {
-    const item = await model.Item.findOne({
-      where: { id: req.params.id },
-    });
-    await item.setFacilitator(req.body.ownerId);
-    await respondWithItem(res, item.id);
+    await model.Item.update({
+      likes: req.body.likes,
+    },
+      {
+        where: { id: req.params.id },
+      });
+    await respondWithItem(res, req.params.id);
   } catch (err) {
     console.log('error patch item:', err);
     res.sendStatus(500);

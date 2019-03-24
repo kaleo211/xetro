@@ -12,6 +12,14 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: () => uuid(),
     },
     title: DataTypes.STRING,
+    likes: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    done: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   }, {});
 
   Item.associate = function (models) {

@@ -1,6 +1,4 @@
 import {
-  POST_ITEM,
-  PATCH_ITEM,
   DELETE_ITEM,
   POST_ACTION,
   PATCH_ACTION
@@ -8,15 +6,26 @@ import {
 import Utils from '../components/Utils';
 import { setBoard } from './boardActions';
 
-export const patchItem = (i, updatedItem, bID) => {
+export const patchItem = (item) => {
   return (dispatch) => {
-    Utils.patchResource(i, updatedItem).then(body => {
-      let item = Utils.reform(body);
-      dispatch({
-        type: PATCH_ITEM,
-        item,
-      });
-      dispatch(setBoard(bID));
+    Utils.patch('items', item).then(body => {
+      dispatch(setBoard(boardId));
+    });
+  };
+};
+
+export const likeItem = (item) => {
+  return (dispatch) => {
+    Utils.fetch(`/items/${item.id}/like`).then(() => {
+      dispatch(setBoard(item.boardId));
+    });
+  };
+};
+
+export const finishItem = (item) => {
+  return (dispatch) => {
+    Utils.fetch(`/items/${item.id}/done`).then(() => {
+      dispatch(setBoard(item.boardId));
     });
   };
 };
