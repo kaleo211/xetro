@@ -131,9 +131,14 @@ class App extends React.Component {
 
     while (true) {
       if (microsoft.closed) {
-        this.props.getMe();
-        break;
+        try {
+          this.props.getMe();
+          break;
+        } catch (err) {
+          console.log('error login microsoft:', err);
+        }
       }
+      console.log('wait 1s for sso login');
       await Utils.sleep(1000);
     }
   }
