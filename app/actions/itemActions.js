@@ -23,7 +23,7 @@ export const likeItem = (item) => {
 
 export const finishItem = (item) => {
   return (dispatch) => {
-    Utils.fetch(`/items/${item.id}/done`).then(() => {
+    Utils.fetch(`/items/${item.id}/finish`).then(() => {
       dispatch(setBoard(item.boardId));
     });
   };
@@ -41,18 +41,6 @@ export const deleteItem = (item) => {
   return (dispatch) => {
     Utils.delete("items", item.id);
     dispatch(setBoard(item.boardId));
-  };
-};
-
-export const postAction = (updatedAction) => dispatch => {
-  return (dispatch) => {
-    Utils.postResource("actions", updatedAction).then(body => {
-      let action = Utils.reform(body);
-      dispatch({
-        type: POST_ACTION,
-        action,
-      });
-    });
   };
 };
 

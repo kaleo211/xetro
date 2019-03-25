@@ -20,12 +20,17 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'created',
     },
+    type: {
+      type: DataTypes.STRING,
+      defaultValue: 'item',
+    },
   }, {});
 
   Item.associate = function (models) {
     Item.belongsTo(models.Group, { as: 'group' });
     Item.belongsTo(models.Pillar, { as: 'pillar' });
     Item.belongsTo(models.User, { as: 'owner' });
+    Item.hasMany(Item, { as: 'actions' })
   };
 
   return Item;

@@ -20,7 +20,7 @@ import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-u
 
 import Likes from './Likes';
 import { selectItem } from '../actions/localActions';
-import { patchItem, deleteItem, postAction, patchAction, likeItem, finishItem } from '../actions/itemActions';
+import { patchItem, deleteItem, patchAction, likeItem, finishItem } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 
@@ -40,7 +40,7 @@ class Pillar extends React.Component {
 
     this.state = {
       ownerAnchorEl: {},
-      newAction: "",
+      newAction: '',
       progressTimer: null,
       itemProgress: 0,
       secondsPerItem: 300,
@@ -112,8 +112,8 @@ class Pillar extends React.Component {
   saveAction(item) {
     let newAction = {
       title: this.state.newAction.capitalize(),
-      item: item._links.self.href,
-      group: this.props.board.group._links.self.href,
+      item: item.id,
+      group: this.props.board.id,
     }
 
     this.props.postAction(newAction)
@@ -145,7 +145,6 @@ class Pillar extends React.Component {
     }
   }
 
-
   handleLikeItem(item, event) {
     event.stopPropagation();
     item.boardId = this.props.board.id;
@@ -153,9 +152,6 @@ class Pillar extends React.Component {
   }
 
   handleFinishItem(item) {
-    if (this.state.newAction !== "") {
-      this.saveAction(item);
-    }
     item.boardId = this.props.board.id;
     this.props.finishItem(item);
   }
@@ -175,25 +171,25 @@ class Pillar extends React.Component {
           <Grid container>
             {item.likes > 0 && <Grid item><Likes item={item} /></Grid>}
             <Grid item>
-              <Typography noWrap variant="headline" className={item.done ? classes.itemDone : null}>
+              <Typography noWrap variant="headline" className={item.stage === 'done' ? classes.itemDone : null}>
                 {item.title}
               </Typography>
             </Grid>
           </Grid>
 
           <div style={{ marginTop: -5, marginBottom: -20, marginRight: -48 }}>
-            {!board.locked && !item.done && !item.started && !item.action && (
+            {!board.locked && item.stage !== 'done' && !item.started && !item.action && (
               <IconButton onClick={this.handleLikeItem.bind(this, item)}>
                 <PlusOne />
               </IconButton>
             )}
-            {board.locked && !item.done && !item.started && !item.action && (
+            {board.locked && item.stage !== 'done' && !item.started && !item.action && (
               <IconButton onClick={this.handleStartItem.bind(this, item)}>
                 <PlayArrowRounded />
               </IconButton>
             )}
             {item.action && item.action.member && (<Avatar>{item.action.member.userId}</Avatar>)}
-            {board.locked && activeItem.id === item.id && !item.done && item.started && !item.action && (
+            {board.locked && activeItem.id === item.id && item.stage !== 'done' && item.started && !item.action && (
               <CircularProgress variant="static" value={this.state.itemProgress} />
             )}
           </div>
@@ -237,9 +233,9 @@ class Pillar extends React.Component {
           <Grid container direction="column">
             <Grid item>
               <Grid container justify="flex-end">
-                {!item.action && !item.done && (
+                {!item.action && item.stage !== 'done' && (
                   <Grid item>
-                    <IconButton disabled={item.done} onClick={this.handleFinishItem.bind(this, item)}>
+                    <IconButton disabled={item.stage === 'done'} onClick={this.handleFinishItem.bind(this, item)}>
                       <Done />
                     </IconButton>
                     {!board.locked && (
@@ -268,9 +264,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     patchItem: (i, item, bId) => dispatch(patchItem(i, item, bId)),
     deleteItem: (item) => dispatch(deleteItem(item)),
-    postAction: (action) => dispatch(postAction(action)),
     setBoard: (id) => dispatch(setBoard(id)),
-    patchAction: (action) => dispatch(patchAction(action)),
     selectItem: (item) => dispatch(selectItem(item)),
     setGroup: (id) => dispatch(setGroup(id)),
     likeItem: (id) => dispatch(likeItem(id)),

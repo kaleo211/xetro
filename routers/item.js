@@ -2,19 +2,24 @@ const routes = require('express').Router();
 const model = require('../models');
 const sequelize = require('sequelize');
 
+var associations = [{
+  model: model.User,
+  as: 'owner',
+}, {
+  model: model.Group,
+  as: 'group',
+}, {
+  model: model.Pillar,
+  as: 'pillar',
+}, {
+  model: model.Item,
+  as: 'actions',
+}];
+
 var respondWithItem = async (res, id) => {
   try {
     const item = await model.Item.findOne({
-      include: [{
-        model: model.User,
-        as: 'owner',
-      }, {
-        model: model.Group,
-        as: 'group',
-      }, {
-        model: model.Pillar,
-        as: 'pillar',
-      }],
+      include: associations,
       where: { id: id },
     });
     if (item) {
@@ -31,16 +36,7 @@ var respondWithItem = async (res, id) => {
 var respondWithActiveItems = async (res, query) => {
   try {
     const item = await model.Item.findAll({
-      include: [{
-        model: model.User,
-        as: 'owner',
-      }, {
-        model: model.Group,
-        as: 'group',
-      }, {
-        model: model.Pillar,
-        as: 'pillar',
-      }],
+      include: associations,
       where: {
         ...query,
         stage: 'active',
@@ -81,7 +77,7 @@ routes.get('/:id/like', async (req, res) => {
 });
 
 // Finish
-routes.get('/:id/done', async (req, res) => {
+routes.get('/:id/finish', async (req, res) => {
   await updateItem(res, req.params.id, { stage: 'done' })
 });
 
