@@ -2,25 +2,29 @@ const routes = require('express').Router();
 const model = require('../models');
 const sequelize = require('sequelize');
 
-var associations = [{
-  model: model.User,
-  as: 'owner',
-}, {
-  model: model.Group,
-  as: 'group',
-}, {
-  model: model.Pillar,
-  as: 'pillar',
-}, {
-  model: model.Item,
-  as: 'actions',
-}];
+var associations = [
+  {
+    model: model.User,
+    as: 'owner',
+  }, {
+    model: model.Group,
+    as: 'group',
+  }, {
+    model: model.Pillar,
+    as: 'pillar',
+  }, {
+    model: model.Item,
+    as: 'item',
+  }
+];
 
 var respondWithItem = async (res, id) => {
   try {
     const item = await model.Item.findOne({
       include: associations,
-      where: { id: id },
+      where: {
+        id: id,
+      },
     });
     if (item) {
       res.json(item);
@@ -83,7 +87,8 @@ routes.get('/:id/finish', async (req, res) => {
 
 // Group Active Items
 routes.get('/group/:id', async (req, res) => {
-  await respondWithActiveItems(res, { groupId: req.params.id });
+  let query = { groupId: req.params.id };
+  await respondWithActiveItems(res, query);
 });
 
 // User Items
@@ -126,14 +131,16 @@ routes.get('/', async (req, res) => {
 // Create
 routes.post('/', async (req, res) => {
   var item = req.body;
-  console.log('item', item);
+  console.log('item in route:', item);
   try {
     const newItem = await model.Item.create({
       title: item.title,
+      type: item.type,
     });
     await newItem.setOwner(item.ownerId);
     await newItem.setPillar(item.pillarId)
     await newItem.setGroup(item.groupId);
+    await newItem.setItem(item.itemId);
     await respondWithItem(res, newItem.id);
   } catch (err) {
     console.log('error post item:', err);

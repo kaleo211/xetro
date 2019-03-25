@@ -16,11 +16,12 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { List, ListItem, ListItemText } from '@material-ui/core';
 import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-ui/icons';
 
 import Likes from './Likes';
 import { selectItem } from '../actions/localActions';
-import { patchItem, deleteItem, patchAction, likeItem, finishItem } from '../actions/itemActions';
+import { postItem, deleteItem, likeItem, finishItem } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 
@@ -108,27 +109,6 @@ class Pillar extends React.Component {
     this.setState({ ownerAnchorEl });
   }
 
-  // Action
-  saveAction(item) {
-    let newAction = {
-      title: this.state.newAction.capitalize(),
-      item: item.id,
-      group: this.props.board.id,
-    }
-
-    this.props.postAction(newAction)
-      .then(() => {
-        this.props.setBoard(this.props.board.id);
-        this.setState({ newAction: '' });
-      })
-  }
-
-  handleNewActionSave(item, event) {
-    if (event && event.key === 'Enter' && this.state.newAction !== '') {
-      this.saveAction(item);
-    }
-  }
-
   handleNewActionChange(event) {
     this.setState({
       newAction: event.target.value,
@@ -142,6 +122,21 @@ class Pillar extends React.Component {
       this.setState({ switcher: false })
     } else {
       this.setState({ switcher: true })
+    }
+  }
+
+  handleSaveAction(item, event) {
+    if (event && event.key === 'Enter' && this.state.newAction !== '') {
+      let newAction = {
+        title: this.state.newAction.capitalize(),
+        itemId: item.id,
+        type: 'action',
+        pillarId: item.pillarId,
+        groupId: this.props.group.id,
+      };
+
+      this.props.postItem(newAction);
+      this.setState({ newAction: '' });
     }
   }
 
@@ -162,7 +157,7 @@ class Pillar extends React.Component {
 
     const members = group.members;
 
-    return (board && pillar && pillar.items ? pillar.items.map(item => (
+    return (board && pillar && pillar.items ? pillar.items.map(item => (item.type === 'item' &&
       <ExpansionPanel
         key={"item-" + item.id}
         expanded={switcher && activeItem.id === item.id}
@@ -196,13 +191,30 @@ class Pillar extends React.Component {
         </ExpansionPanelSummary>
 
         <ExpansionPanelDetails>
-          <TextField fullWidth
-            label='Action item'
-            disabled={item.action !== null}
-            value={item.action ? item.action.title : newAction}
-            onChange={this.handleNewActionChange.bind(this)}
-            onKeyPress={this.handleNewActionSave.bind(this, item)}
-          />
+          <Grid container direction="column">
+            <Grid item>
+              <TextField fullWidth
+                label='Action Item'
+                disabled={item.stage === 'done'}
+                value={item.action ? item.action.title : newAction}
+                onChange={this.handleNewActionChange.bind(this)}
+                onKeyPress={this.handleSaveAction.bind(this, item)}
+              />
+            </Grid>
+            <Grid item>
+              <List disablePadding>
+                {pillar.items.map(i => i.itemId === item.id &&
+                  <ListItem disablePadding key={'action' + i.id} dense button>
+                    <ListItemText primary={i.title} />
+                  </ListItem>
+                )}
+              </List>
+            </Grid>
+          </Grid>
+
+
+
+
           {item.action && item.action.title !== "" && (
             <div style={{ marginRight: -17, marginTop: 10 }}>
               {!item.action.member && (<div>
@@ -262,7 +274,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    patchItem: (i, item, bId) => dispatch(patchItem(i, item, bId)),
+    postItem: (i, item, bId) => dispatch(postItem(i, item, bId)),
     deleteItem: (item) => dispatch(deleteItem(item)),
     setBoard: (id) => dispatch(setBoard(id)),
     selectItem: (item) => dispatch(selectItem(item)),

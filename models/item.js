@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     Item.belongsTo(models.Group, { as: 'group' });
     Item.belongsTo(models.Pillar, { as: 'pillar' });
     Item.belongsTo(models.User, { as: 'owner' });
-    Item.hasMany(Item, { as: 'actions' })
+    Item.belongsTo(Item, { as: 'item' })
   };
 
   return Item;
