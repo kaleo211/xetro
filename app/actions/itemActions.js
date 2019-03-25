@@ -29,9 +29,18 @@ export const finishItem = (item) => {
   };
 };
 
-export const deleteItem = (itemID) => {
+export const startItem = (item) => {
   return (dispatch) => {
-    Utils.delete("items/" + itemID);
+    Utils.fetch(`/items/${item.id}/start`).then(() => {
+      dispatch(setBoard(item.boardId));
+    });
+  };
+};
+
+export const deleteItem = (item) => {
+  return (dispatch) => {
+    Utils.delete("items", item.id);
+    dispatch(setBoard(item.boardId));
   };
 };
 

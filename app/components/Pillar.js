@@ -70,26 +70,16 @@ class Pillar extends React.Component {
     }
   };
 
-  handleItemDelete(itemID) {
-    this.props.deleteItem(itemID).then(() => {
-      this.props.setBoard(this.props.board.id);
-    });
-  }
+  handleDeleteItem(item) {
+    item.boardId = this.props.board.id;
+    this.props.deleteItem(item);
+  };
 
   handleStartItem(item, evt) {
     evt.stopPropagation();
-    let updatedItem = {
-      started: true,
-      startTime: new Date(),
-    };
-
-    this.props.patchItem(item, updatedItem)
-      .then((item) => {
-        this.setState({ switcher: true });
-
-        this.props.setBoard(this.props.board.id);
-        this.props.selectItem(item);
-      });
+    item.boardId = this.props.board.id;
+    this.props.startItem(item);
+    this.setState({ switcher: true });
   }
 
   // Owner
@@ -252,8 +242,8 @@ class Pillar extends React.Component {
                     <IconButton disabled={item.done} onClick={this.handleFinishItem.bind(this, item)}>
                       <Done />
                     </IconButton>
-                    {board && !board.locked && (
-                      <IconButton onClick={this.handleItemDelete.bind(this, item.id)}>
+                    {!board.locked && (
+                      <IconButton onClick={this.handleDeleteItem.bind(this, item)}>
                         <DeleteOutline />
                       </IconButton>
                     )}
@@ -276,8 +266,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    patchItem: (i, item, bID) => dispatch(patchItem(i, item, bID)),
-    deleteItem: (id) => dispatch(deleteItem(id)),
+    patchItem: (i, item, bId) => dispatch(patchItem(i, item, bId)),
+    deleteItem: (item) => dispatch(deleteItem(item)),
     postAction: (action) => dispatch(postAction(action)),
     setBoard: (id) => dispatch(setBoard(id)),
     patchAction: (action) => dispatch(patchAction(action)),
@@ -285,6 +275,7 @@ const mapDispatchToProps = (dispatch) => {
     setGroup: (id) => dispatch(setGroup(id)),
     likeItem: (id) => dispatch(likeItem(id)),
     finishItem: (id) => dispatch(finishItem(id)),
+    startItem: (item) => dispatch(startItem(item)),
   };
 };
 
