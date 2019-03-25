@@ -2,7 +2,7 @@ import {
   SHOW_PAGE,
   OPEN_SNACKBAR,
   CLOSE_SNACKBAR,
-  SELECT_ITEM,
+  SET_ITEM,
 } from './types';
 
 export const setPage = (page) => {
@@ -29,7 +29,7 @@ export const closeSnackBar = () => {
 
 export const selectItem = (item) => {
   return {
-    type: SELECT_ITEM,
-    selectedItem: item,
+    type: SET_ITEM,
+    activeItem: item,
   };
 }

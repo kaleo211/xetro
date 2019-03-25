@@ -1,6 +1,6 @@
 import {
-  FETCH_USERS,
-  GET_ME,
+  SET_USERS,
+  SET_ME,
 } from '../actions/types';
 
 const initialState = {
@@ -10,13 +10,13 @@ const initialState = {
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case FETCH_USERS:
+    case SET_USERS:
       return {
         ...state,
         users: action.users,
       };
 
-    case GET_ME:
+    case SET_ME:
       return {
         ...state,
         me: action.me,

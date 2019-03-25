@@ -1,6 +1,6 @@
 import {
-  FETCH_USERS,
-  GET_ME,
+  SET_USERS,
+  SET_ME,
 } from './types';
 import Utils from '../components/Utils';
 
@@ -14,7 +14,7 @@ export const getMe = () => {
       }).then(me => {
         console.log('getMe:', me);
         dispatch({
-          type: GET_ME,
+          type: SET_ME,
           me,
         });
       });
@@ -26,7 +26,7 @@ export const fetchUsers = () => {
     Utils.list('users').then(users => {
       console.log('fetchUsers:', users);
       dispatch({
-        type: FETCH_USERS,
+        type: SET_USERS,
         users,
       });
     });

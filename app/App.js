@@ -58,6 +58,9 @@ const styles = theme => ({
   hide: {
     display: 'none',
   },
+  grow: {
+    flexGrow: 1,
+  },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
@@ -112,9 +115,6 @@ class App extends React.Component {
     await this.handleMicrosoftLogin();
     this.props.fetchUsers();
     this.props.fetchGroups();
-  }
-
-  componentDidUpdate() {
   }
 
   async handleMicrosoftLogin() {
@@ -179,6 +179,8 @@ class App extends React.Component {
           <Typography variant="h6" color="inherit" noWrap>
             {group ? group.name : 'Xetro'}
           </Typography>
+
+          <ActionBar />
         </Toolbar>
       </AppBar>
 

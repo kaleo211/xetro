@@ -1,9 +1,5 @@
 import {
-  FETCH_ACTIVE_BOARDS,
   SET_BOARD,
-  FETCH_GROUP_ACTIVE_BOARDS,
-  POST_BOARD,
-  SET_ACTIVE_MEMBER,
   SET_BOARDS,
 } from './types';
 import Utils from '../components/Utils';
@@ -26,7 +22,7 @@ export const fetchGroupActiveBoards = (groupId) => {
       }
 
       dispatch({
-        type: FETCH_GROUP_ACTIVE_BOARDS,
+        type: SET_BOARDS,
         boards
       });
       dispatch(setPage(page));
@@ -34,23 +30,12 @@ export const fetchGroupActiveBoards = (groupId) => {
   };
 };
 
-export const fetchActiveBoards = () => {
-  return (dispatch) => {
-    Utils.fetch('/boards/active').then(boards => {
-      dispatch({
-        type: FETCH_ACTIVE_BOARDS,
-        boards,
-      });
-    });
-  };
-};
-
 export const postBoard = (newBoard) => {
   return (dispatch) => {
-    Utils.post('boards', newBoard).then(board => {
+    Utils.post('boards', newBoard).then(body => {
       dispatch({
-        type: POST_BOARD,
-        board,
+        type: SET_BOARD,
+        board: body
       });
     });
   };
@@ -58,17 +43,12 @@ export const postBoard = (newBoard) => {
 
 export const fetchBoards = () => {
   return (dispatch) => {
-    return Utils.list("boards").then(boards => {
+    return Utils.list("boards").then(body => {
       dispatch({
         type: SET_BOARDS,
-        boards,
+        boards: body,
       });
     });
-  };
-};
-
-export const patchBoard = (b, board) => {
-  return (dispatch) => {
   };
 };
 
@@ -80,22 +60,13 @@ export const setBoard = (boardId) => {
         board: null
       });
     } else {
-      Utils.get('boards', boardId).then(board => {
+      Utils.get('boards', boardId).then(body => {
         dispatch(setPillars(boardId));
         dispatch({
           type: SET_BOARD,
-          board,
+          board: body,
         });
       });
     }
-  };
-};
-
-export const setActiveMember = (user) => {
-  return (dispatch) => {
-    dispatch({
-      type: SET_ACTIVE_MEMBER,
-      activeMember,
-    });
   };
 };

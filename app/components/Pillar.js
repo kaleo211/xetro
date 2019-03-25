@@ -57,7 +57,7 @@ class Pillar extends React.Component {
   }
 
   updateItemProgress = () => {
-    let item = this.props.selectedItem;
+    let item = this.props.activeItem;
     if (item && item.startTime) {
       let seconds = Math.floor((new Date().getTime() - new Date(item.startTime).getTime()) / 1000);
       if (seconds > this.state.secondsPerItem) {
@@ -151,7 +151,7 @@ class Pillar extends React.Component {
   handleItemSelect(item) {
     this.props.selectItem(item);
 
-    if (this.props.selectedItem.id === item.id && this.state.switcher) {
+    if (this.props.activeItem.id === item.id && this.state.switcher) {
       this.setState({ switcher: false })
     } else {
       this.setState({ switcher: true })
@@ -174,7 +174,7 @@ class Pillar extends React.Component {
   }
 
   render() {
-    const { selectedItem, pillar, group, board, classes } = this.props;
+    const { activeItem, pillar, group, board, classes } = this.props;
     const { newAction, ownerAnchorEl, switcher } = this.state;
 
     const members = group.members;
@@ -182,7 +182,7 @@ class Pillar extends React.Component {
     return (board && pillar && pillar.items ? pillar.items.map(item => (
       <ExpansionPanel
         key={"item-" + item.id}
-        expanded={switcher && selectedItem.id === item.id}
+        expanded={switcher && activeItem.id === item.id}
         onChange={this.handleItemSelect.bind(this, item)}>
         <ExpansionPanelSummary>
           <Grid container>
@@ -206,7 +206,7 @@ class Pillar extends React.Component {
               </IconButton>
             )}
             {item.action && item.action.member && (<Avatar>{item.action.member.userId}</Avatar>)}
-            {board.locked && selectedItem.id === item.id && !item.done && item.started && !item.action && (
+            {board.locked && activeItem.id === item.id && !item.done && item.started && !item.action && (
               <CircularProgress variant="static" value={this.state.itemProgress} />
             )}
           </div>
@@ -274,7 +274,7 @@ class Pillar extends React.Component {
 const mapStateToProps = state => ({
   board: state.boards.board,
   group: state.groups.group,
-  selectedItem: state.local.selectedItem,
+  activeItem: state.local.activeItem,
 });
 
 const mapDispatchToProps = (dispatch) => {

@@ -1,5 +1,4 @@
 import {
-  DELETE_ITEM,
   POST_ACTION,
   PATCH_ACTION
 } from './types';
@@ -32,11 +31,7 @@ export const finishItem = (item) => {
 
 export const deleteItem = (itemID) => {
   return (dispatch) => {
-    Utils.delete("items/" + itemID).then(body => {
-      dispatch({
-        type: DELETE_ITEM,
-      });
-    });
+    Utils.delete("items/" + itemID);
   };
 };
 

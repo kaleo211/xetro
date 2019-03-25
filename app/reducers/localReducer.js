@@ -2,7 +2,7 @@ import {
   SHOW_PAGE,
   CLOSE_SNACKBAR,
   OPEN_SNACKBAR,
-  SELECT_ITEM,
+  SET_ITEM,
 } from '../actions/types';
 
 import storage from 'redux-persist/lib/storage';
@@ -19,7 +19,7 @@ const initialState = {
   page: "",
   snackbarOpen: false,
   snackbarMessage: "",
-  selectedItem: {},
+  activeItem: {},
 };
 
 const localReducer = function (state = initialState, action) {
@@ -43,10 +43,10 @@ const localReducer = function (state = initialState, action) {
         snackbarOpen: action.snackbarOpen
       };
 
-    case SELECT_ITEM:
+    case SET_ITEM:
       return {
         ...state,
-        selectedItem: action.selectedItem
+        activeItem: action.activeItem
       };
 
     default:

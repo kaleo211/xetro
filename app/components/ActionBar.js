@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
 import { compose } from 'redux';
+import { withStyles } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
 import { Tooltip, Avatar, Grid } from '@material-ui/core';
@@ -70,7 +70,7 @@ class ActionBar extends React.Component {
     let updatedBoard = { finished: true };
     this.props.patchBoard(this.props.board, updatedBoard);
     this.props.setPage('createBoard');
-    this.props.openSnackBar("Board is ARCHIVED.");
+    this.props.openSnackBar('Board is ARCHIVED.');
     this.props.setGroup(this.props.group.id);
     this.props.setBoard(null);
   }
@@ -91,7 +91,10 @@ class ActionBar extends React.Component {
   }
 
   render() {
-    const { board, members, group } = this.props;
+    const { board, group } = this.props;
+
+    const members = group ? group.members : [];
+
     const membersWithActions = members.filter(member =>
       member.actions && member.actions.filter(action =>
         !action.finished && action.group.id === group.id
@@ -141,10 +144,10 @@ class ActionBar extends React.Component {
           </IconButton>
         </Tooltip>)}
 
-      <Dialog
-        fullWidth
+      <Dialog fullWidth
         open={this.state.dialogOpen}
-        onClose={this.handleDialogClose} >
+        onClose={this.handleDialogClose}
+      >
         <DialogTitle>
           {membersWithActions && membersWithActions.length > 0 ? "Actions" : "No Actions"}
         </DialogTitle>
@@ -176,7 +179,6 @@ class ActionBar extends React.Component {
 const mapStateToProps = (state) => ({
   board: state.boards.board,
   group: state.groups.group,
-  members: state.groups.members,
 });
 
 const mapDispatchToProps = (dispatch) => {
@@ -188,7 +190,7 @@ const mapDispatchToProps = (dispatch) => {
     patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
     openSnackBar: (message) => dispatch(openSnackBar(message)),
     setPage: (page) => dispatch(setPage(page)),
-  }
+  };
 };
 
 ActionBar.propTypes = {

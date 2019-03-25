@@ -2,30 +2,14 @@ export const SHOW_PAGE = 'SHOW_PAGE';
 export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
-export const FETCH_GROUPS = 'FETCH_GROUPS';
 export const SET_GROUP = 'SET_GROUP';
-export const ADD_MEMBER_TO_GROUP = 'ADD_MEMBER_TO_GROUP';
-export const POST_GROUP = 'POST_GROUP';
-export const SEARCH_GROUPS = 'SEARCH_GROUPS';
+export const SET_GROUPS = 'SET_GROUPS';
 
-export const POST_BOARD = 'POST_BOARD';
-export const PATCH_BOARD = 'PATCH_BOARD';
 export const SET_BOARD = 'SET_BOARD';
 export const SET_BOARDS = 'SET_BOARDS';
-export const FETCH_ACTIVE_BOARDS = 'FETCH_ACTIVE_BOARDS';
-export const FETCH_GROUP_ACTIVE_BOARDS = 'FETCH_GROUP_ACTIVE_BOARDS';
-export const SET_ACTIVE_MEMBER = 'SET_ACTIVE_MEMBER';
-
-export const POST_ITEM = 'POST_ITEM'
-export const DELETE_ITEM = 'DELETE_ITEM'
-export const POST_ACTION = 'POST_ACTION'
-export const PATCH_ACTION = 'PATCH_ACTION'
-
-export const SELECT_ITEM = 'SELECT_ITEM'
-
-export const FETCH_USERS = 'FETCH_USERS'
-export const GET_ME = 'GET_ME'
-
-export const POST_PILLAR = 'POST_PILLAR'
-export const PATCH_PILLAR = 'PATCH_PILLAR'
 export const SET_PILLARS = 'SET_PILLARS';
+
+export const SET_USERS = 'SET_USERS'
+export const SET_ME = 'SET_ME'
+
+export const SET_ITEM = 'SET_ITEM'

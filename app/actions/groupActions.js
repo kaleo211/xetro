@@ -1,30 +1,17 @@
 import {
-  FETCH_GROUPS,
+  SET_GROUPS,
   SET_GROUP,
-  POST_GROUP,
-  SEARCH_GROUPS,
 } from './types';
 import { getMe } from './userActions';
 import Utils from '../components/Utils';
 import { fetchGroupActiveBoards } from './boardActions';
 
-export const getGroup = (name) => {
-  return (dispatch) => {
-    Utils.search('groups', { name: name }).then(groups => {
-      dispatch({
-        type: SEARCH_GROUPS,
-        matchedGroups: groups,
-      })
-    });
-  }
-}
-
 export const fetchGroups = () => {
   return (dispatch) => {
-    Utils.list('groups').then(groups => {
+    Utils.list('groups').then(body => {
       dispatch({
-        type: FETCH_GROUPS,
-        groups,
+        type: SET_GROUPS,
+        groups: body,
       });
     });
   };
@@ -36,8 +23,11 @@ export const postGroup = (newGroup) => {
       Utils.list('groups').then(groups => {
         dispatch(getMe());
         dispatch({
-          type: POST_GROUP,
+          type: SET_GROUPS,
           groups,
+        });
+        dispatch({
+          type: SET_GROUP,
           group,
         });
       });
@@ -47,24 +37,22 @@ export const postGroup = (newGroup) => {
 
 export const setGroup = (groupId) => {
   return (dispatch) => {
-    if (groupId === null) {
-      this.props.setBoard(null);
-      this.props.setPage('');
-    }
-
-    if (groupId) {
+    if (groupId == null) {
+      dispatch(setBoard(null));
+      dispacth(setPage(''));
+      dispatch({
+        type: SET_GROUP,
+        group: null,
+      });
+    } else {
       Utils.get(`groups`, groupId).then(body => {
+        dispatch(fetchGroupActiveBoards(groupId));
         dispatch({
           type: SET_GROUP,
           group: body,
         });
-        dispatch(fetchGroupActiveBoards(groupId));
       });
     }
-    dispatch({
-      type: SET_GROUP,
-      group: null,
-    });
   };
 };
 
