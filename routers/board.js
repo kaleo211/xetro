@@ -61,14 +61,15 @@ routes.get('/active/:id', async (req, res) => {
   await respondWithActiveBoards(res, req.params.id);
 });
 
-routes.delete('/:id', async (req, res) => {
+routes.get('/:id/archive', async (req, res) => {
   try {
-    await model.Board.destroy({
-      where: { id: req.params.id },
-    });
+    await model.Board.update(
+      { stage: 'archived' },
+      { where: { id: req.params.id } }
+    );
     res.sendStatus(204);
   } catch (err) {
-    console.log('error delete board', err);
+    console.log('error archive board', err);
     res.sendStatus(500);
   };
 });

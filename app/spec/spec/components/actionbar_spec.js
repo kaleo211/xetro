@@ -58,7 +58,7 @@ describe("ActionBar", () => {
       },
     });
 
-    spyOn(actions, 'fetchBoards').and.returnValue("fakeFetchBoardsReturn");
+    spyOn(actions, 'setBoards').and.returnValue("fakeFetchBoardsReturn");
     spyOn(localActions, 'setPage').withArgs('boardList').and.returnValue("fakeShowPageReturn");
     spyOn(store, 'dispatch');
 

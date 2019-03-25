@@ -10,6 +10,8 @@ export const getMe = () => {
       .then(resp => {
         if (resp.ok) {
           return resp.json();
+        } else {
+          throw 'error get me';
         }
       }).then(me => {
         console.log('getMe:', me);

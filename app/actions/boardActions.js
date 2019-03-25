@@ -4,7 +4,7 @@ import {
 } from './types';
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
-import { setPillars } from './pillarActions';
+import { setPillars, postPillar } from './pillarActions';
 
 export const fetchGroupActiveBoards = (groupId) => {
   return (dispatch) => {
@@ -37,16 +37,21 @@ export const postBoard = (newBoard) => {
         type: SET_BOARD,
         board: body
       });
+
+      dispatch(postPillar({ title: ':)', boardId: body.id }))
+      dispatch(postPillar({ title: ':|', boardId: body.id }))
+      dispatch(postPillar({ title: ':(', boardId: body.id }))
     });
   };
 };
 
-export const fetchBoards = () => {
+export const setBoards = () => {
   return (dispatch) => {
     return Utils.list("boards").then(body => {
+      let boards = body || [];
       dispatch({
         type: SET_BOARDS,
-        boards: body,
+        boards,
       });
     });
   };
@@ -70,3 +75,9 @@ export const setBoard = (boardId) => {
     }
   };
 };
+
+export const archiveBoard = (boardId) => {
+  return (dispatch) => {
+    Utils.fetch(`/boards/${boardId}/archive`);
+  }
+}

@@ -123,7 +123,7 @@ class Board extends React.Component {
     }
 
     pillars && pillars.sort((a, b) => {
-      return a.id > b.id;
+      return a.createdAt > b.createdAt;
     });
 
     return (board && <div>

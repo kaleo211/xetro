@@ -20,7 +20,7 @@ import {
   HistoryRounded,
 } from '@material-ui/icons';
 
-import { patchBoard, setBoard, fetchBoards } from '../actions/boardActions';
+import { patchBoard, setBoard, setBoards, archiveBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 import { openSnackBar, setPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';
@@ -62,13 +62,12 @@ class ActionBar extends React.Component {
   }
 
   handleViewHistory() {
-    this.props.fetchBoards();
+    this.props.setBoards();
     this.props.setPage('boardList');
   }
 
-  handleBoardFinish() {
-    let updatedBoard = { finished: true };
-    this.props.patchBoard(this.props.board, updatedBoard);
+  handleArchiveBoard() {
+    this.props.archiveBoard(this.props.board.id);
     this.props.setPage('createBoard');
     this.props.openSnackBar('Board is ARCHIVED.');
     this.props.setGroup(this.props.group.id);
@@ -137,9 +136,9 @@ class ActionBar extends React.Component {
             <VpnKeyOutlined />
           </IconButton>
         </Tooltip>)}
-      {board && !board.finished && (
-        <Tooltip title="Archive board" placement="bottom">
-          <IconButton onClick={this.handleBoardFinish.bind(this)} color="inherit">
+      {board && board.stage === 'active' && (
+        <Tooltip title="Archive Board" placement="bottom">
+          <IconButton onClick={this.handleArchiveBoard.bind(this)} color="inherit">
             <SaveOutlined />
           </IconButton>
         </Tooltip>)}
@@ -185,11 +184,12 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setBoard: (id) => dispatch(setBoard(id)),
     patchBoard: (board, updatedBoard) => dispatch(patchBoard(board, updatedBoard)),
-    fetchBoards: () => dispatch(fetchBoards()),
+    setBoards: () => dispatch(setBoards()),
     setGroup: (id) => dispatch(setGroup(id)),
     patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
     openSnackBar: (message) => dispatch(openSnackBar(message)),
     setPage: (page) => dispatch(setPage(page)),
+    archiveBoard: (id) => dispatch(archiveBoard(id)),
   };
 };
 

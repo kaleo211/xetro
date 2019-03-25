@@ -6,7 +6,7 @@ import { JSDOM } from 'jsdom';
 
 import * as actions from '../../../actions/boardActions';
 
-describe("fetchBoards", () => {
+describe("setBoards", () => {
   afterEach(() => {
     fetchMock.reset();
   });
@@ -14,7 +14,7 @@ describe("fetchBoards", () => {
   it("fetch all boards", () => {
     const mockStore = configureStore([thunk]);
     const store = mockStore();
-    let fakeBoards = [{name: "fakeBoard", id: 0}];
+    let fakeBoards = [{ name: "fakeBoard", id: 0 }];
 
     const expectedActions = [{
       'boards': fakeBoards,
@@ -25,9 +25,9 @@ describe("fetchBoards", () => {
       url: 'http:test/'
     }).window;
 
-    fetchMock.getOnce('http://test:8080/api/boards', {_embedded: {boards: fakeBoards}});
+    fetchMock.getOnce('http://test:8080/api/boards', { _embedded: { boards: fakeBoards } });
 
-    store.dispatch(actions.fetchBoards()).then(() => {
+    store.dispatch(actions.setBoards()).then(() => {
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
