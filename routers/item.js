@@ -57,34 +57,45 @@ var respondWithActiveItems = async (res, query) => {
   };
 };
 
+var updateItem = async (res, id, fields) => {
+  try {
+    await model.Item.update(
+      fields,
+      { where: { id: id } }
+    );
+    res.json({});
+  } catch (err) {
+    console.log('error update board', err);
+    res.sendStatus(500);
+  };
+}
+
+// Get
 routes.get('/:id', async (req, res) => {
   await respondWithItem(res, req.params.id);
 });
 
+// Like
 routes.get('/:id/like', async (req, res) => {
-  await model.Item.update(
-    { likes: sequelize.literal('likes + 1'), },
-    { where: { id: req.params.id } }
-  );
-  await respondWithItem(res, req.params.id);
+  updateItem(res, req.params.id, { likes: sequelize.literal('likes + 1') })
 });
 
+// Finish
 routes.get('/:id/done', async (req, res) => {
-  await model.Item.update(
-    { done: true, },
-    { where: { id: req.params.id } }
-  );
-  await respondWithItem(res, req.params.id);
+  await updateItem(res, req.params.id, { stage: 'done' })
 });
 
+// Group Active Items
 routes.get('/group/:id', async (req, res) => {
   await respondWithActiveItems(res, { groupId: req.params.id });
 });
 
+// User Items
 routes.get('/user/:id', async (req, res) => {
   await respondWithUserItems(res, { ownerId: req.params.id });
 });
 
+// Delete
 routes.delete('/:id', async (req, res) => {
   try {
     await model.Item.destroy({
@@ -97,6 +108,7 @@ routes.delete('/:id', async (req, res) => {
   };
 });
 
+// List
 routes.get('/', async (req, res) => {
   try {
     const items = await model.Item.findAll({
@@ -115,6 +127,7 @@ routes.get('/', async (req, res) => {
   };
 });
 
+// Create
 routes.post('/', async (req, res) => {
   var item = req.body;
   console.log('item', item);
@@ -132,6 +145,7 @@ routes.post('/', async (req, res) => {
   };
 });
 
+// Update
 routes.patch('/:id', async (req, res) => {
   try {
     await model.Item.update({

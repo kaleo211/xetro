@@ -16,9 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
-    done: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    stage: {
+      type: DataTypes.STRING,
+      defaultValue: 'created',
     },
   }, {});
 

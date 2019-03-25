@@ -5,7 +5,7 @@ import {
 
 const initialState = {
   users: [],
-  me: {},
+  me: null,
 };
 
 export default function (state = initialState, action) {

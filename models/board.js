@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     name: DataTypes.STRING,
     stage: DataTypes.STRING,
+    chat: DataTypes.STRING,
+    locked: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   }, {});
 
   Board.associate = function (models) {

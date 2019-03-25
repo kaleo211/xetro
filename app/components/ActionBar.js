@@ -20,7 +20,7 @@ import {
   HistoryRounded,
 } from '@material-ui/icons';
 
-import { patchBoard, setBoard, setBoards, archiveBoard } from '../actions/boardActions';
+import { patchBoard, setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 import { openSnackBar, setPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';
@@ -45,16 +45,14 @@ class ActionBar extends React.Component {
     win.focus();
   }
 
-  handleBoardLock() {
-    let updatedBoard = { locked: true };
-    this.props.patchBoard(this.props.board, updatedBoard);
-    this.props.openSnackBar("Board is LOCKED.")
+  handleLockBoard() {
+    this.props.lockBoard(this.props.board.id);
+    this.props.openSnackBar('Board is LOCKED.')
   }
 
-  handleBoardUnlock() {
-    let updatedBoard = { locked: false };
-    this.props.patchBoard(this.props.board, updatedBoard);
-    this.props.openSnackBar("Board is UNLOCKED.");
+  handleUnlockBoard() {
+    this.props.unlockBoard(this.props.board.id);
+    this.props.openSnackBar('Board is UNLOCKED.');
   }
 
   handleRefreshBoard() {
@@ -112,27 +110,27 @@ class ActionBar extends React.Component {
             <RefreshRounded />
           </IconButton>
         </Tooltip>)}
-      {board && board.facilitator && board.facilitator.video && (
-        <Tooltip title="Open video chat" placement="bottom">
+      {board && board.video && (
+        <Tooltip title="Open Video Chat" placement="bottom">
           <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
             <VoiceChat />
           </IconButton>
         </Tooltip>)}
       {board && (
-        <Tooltip title="Show actions" placement="bottom">
+        <Tooltip title="Show Actions" placement="bottom">
           <IconButton onClick={this.handleDialogOpen} color="inherit">
             <Assignment />
           </IconButton>
         </Tooltip>)}
       {board && !board.locked && (
-        <Tooltip title="Lock board" placement="bottom">
-          <IconButton onClick={this.handleBoardLock.bind(this)} color="inherit">
+        <Tooltip title="Lock Board" placement="bottom">
+          <IconButton onClick={this.handleLockBoard.bind(this)} color="inherit">
             <LockOutlined />
           </IconButton>
         </Tooltip>)}
       {board && board.locked && (
-        <Tooltip title="Unlock board" placement="bottom">
-          <IconButton onClick={this.handleBoardUnlock.bind(this)} color="inherit">
+        <Tooltip title="Unlock Board" placement="bottom">
+          <IconButton onClick={this.handleUnlockBoard.bind(this)} color="inherit">
             <VpnKeyOutlined />
           </IconButton>
         </Tooltip>)}
@@ -183,13 +181,14 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => {
   return {
     setBoard: (id) => dispatch(setBoard(id)),
-    patchBoard: (board, updatedBoard) => dispatch(patchBoard(board, updatedBoard)),
     setBoards: () => dispatch(setBoards()),
     setGroup: (id) => dispatch(setGroup(id)),
     patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
     openSnackBar: (message) => dispatch(openSnackBar(message)),
     setPage: (page) => dispatch(setPage(page)),
     archiveBoard: (id) => dispatch(archiveBoard(id)),
+    lockBoard: (id) => dispatch(lockBoard(id)),
+    unlockBoard: (id) => dispatch(unlockBoard(id)),
   };
 };
 

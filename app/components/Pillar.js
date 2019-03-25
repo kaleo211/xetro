@@ -70,9 +70,6 @@ class Pillar extends React.Component {
     }
   };
 
-  // Item
-
-
   handleItemDelete(itemID) {
     this.props.deleteItem(itemID).then(() => {
       this.props.setBoard(this.props.board.id);
@@ -195,12 +192,12 @@ class Pillar extends React.Component {
           </Grid>
 
           <div style={{ marginTop: -5, marginBottom: -20, marginRight: -48 }}>
-            {board && !board.locked && !item.done && !item.started && !item.action && (
+            {!board.locked && !item.done && !item.started && !item.action && (
               <IconButton onClick={this.handleLikeItem.bind(this, item)}>
                 <PlusOne />
               </IconButton>
             )}
-            {board && board.locked && !item.done && !item.started && !item.action && (
+            {board.locked && !item.done && !item.started && !item.action && (
               <IconButton onClick={this.handleStartItem.bind(this, item)}>
                 <PlayArrowRounded />
               </IconButton>

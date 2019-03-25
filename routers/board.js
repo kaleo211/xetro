@@ -53,27 +53,45 @@ var respondWithActiveBoards = async (res, groupId) => {
   };
 }
 
+var updateBoard = async (res, id, fields) => {
+  try {
+    await model.Board.update(
+      fields,
+      { where: { id: id } }
+    );
+    res.json({});
+  } catch (err) {
+    console.log('error update board', err);
+    res.sendStatus(500);
+  };
+};
+
+// Get
 routes.get('/:id', async (req, res) => {
   await respondWithBoard(res, req.params.id);
 });
 
+// List Active
 routes.get('/active/:id', async (req, res) => {
   await respondWithActiveBoards(res, req.params.id);
 });
 
+// Archive
 routes.get('/:id/archive', async (req, res) => {
-  try {
-    await model.Board.update(
-      { stage: 'archived' },
-      { where: { id: req.params.id } }
-    );
-    res.sendStatus(204);
-  } catch (err) {
-    console.log('error archive board', err);
-    res.sendStatus(500);
-  };
+  await updateBoard(res, req.params.id, { archived: true });
 });
 
+// Lock
+routes.get('/:id/lock', async (req, res) => {
+  await updateBoard(res, req.params.id, { locked: true });
+});
+
+// Unlock
+routes.get('/:id/unlock', async (req, res) => {
+  await updateBoard(res, req.params.id, { locked: false });
+});
+
+// List
 routes.get('/', async (req, res) => {
   try {
     const boards = await model.Board.findAll({
@@ -92,6 +110,7 @@ routes.get('/', async (req, res) => {
   };
 });
 
+// Create
 routes.post('/', async (req, res) => {
   var board = req.body;
   try {
@@ -109,6 +128,7 @@ routes.post('/', async (req, res) => {
   };
 });
 
+// Update
 routes.patch('/:id', async (req, res) => {
   try {
     const board = await model.Board.findOne({

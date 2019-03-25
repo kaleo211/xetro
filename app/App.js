@@ -5,18 +5,16 @@ import { connect } from 'react-redux';
 
 import classNames from 'classnames';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { withTheme } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
 import Snackbar from '@material-ui/core/Snackbar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { FeedbackOutlined } from '@material-ui/icons';
 import { IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import Divider from '@material-ui/core/Divider';
-import { ChevronLeft, Inbox } from '@material-ui/icons';
+import { ChevronLeft } from '@material-ui/icons';
 
 import ActionBar from './components/ActionBar';
 import Board from './components/Board';
@@ -118,7 +116,7 @@ class App extends React.Component {
   }
 
   async handleMicrosoftLogin() {
-    if (this.props.me.id) {
+    if (this.props.me) {
       return;
     }
 
@@ -127,18 +125,14 @@ class App extends React.Component {
                   &response_type=code
                   &redirect_uri=${SSO_REDIRECT_URL}
                   &response_mode=query`;
-    var microsoft = window.open(uri, 'microsoft', 'height=500,width=620');
+    window.open(uri, 'microsoft', 'height=500,width=620');
 
-    while (true) {
-      if (microsoft.closed) {
-        try {
-          this.props.getMe();
-          break;
-        } catch (err) {
-          console.log('error login microsoft:', err);
-        }
+    while (this.props.me == null) {
+      try {
+        await this.props.getMe();
+      } catch (err) {
+        console.log('error login microsoft:', err);
       }
-      console.log('wait 1s for sso login');
       await Utils.sleep(1000);
     }
   }

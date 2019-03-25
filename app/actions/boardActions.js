@@ -81,3 +81,18 @@ export const archiveBoard = (boardId) => {
     Utils.fetch(`/boards/${boardId}/archive`);
   }
 }
+
+
+export const lockBoard = (boardId) => {
+  return (dispatch) => {
+    Utils.fetch(`/boards/${boardId}/lock`);
+    dispatch(setBoard(boardId));
+  }
+}
+
+export const unlockBoard = (boardId) => {
+  return (dispatch) => {
+    Utils.fetch(`/boards/${boardId}/unlock`);
+    dispatch(setBoard(boardId));
+  }
+}
