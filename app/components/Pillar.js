@@ -19,7 +19,6 @@ import Typography from '@material-ui/core/Typography';
 import { List, ListItem, ListItemText } from '@material-ui/core';
 import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-ui/icons';
 
-import Likes from './Likes';
 import { selectItem } from '../actions/localActions';
 import { postItem, deleteItem, likeItem, finishItem } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
@@ -27,11 +26,27 @@ import { setGroup } from '../actions/groupActions';
 
 const styles = theme => ({
   item: {
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 1,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   itemDone: {
     textDecoration: "line-through",
+  },
+  summaryGrid: {
+    marginRight: - theme.spacing.unit * 5,
+  },
+  panelSummay: {
+    height: theme.spacing.unit * 6,
+    paddingLeft: theme.spacing.unit * 2,
+    paddingRight: theme.spacing.unit * 1,
+  },
+  panelDetail: {
+    paddingBottom: 0,
+    paddingLeft: theme.spacing.unit * 2,
+    paddingRight: theme.spacing.unit * 2,
+  },
+  panelAction: {
+    padding: 0,
   },
 });
 
@@ -133,6 +148,7 @@ class Pillar extends React.Component {
         type: 'action',
         pillarId: item.pillarId,
         groupId: this.props.group.id,
+        boardId: this.props.board.id,
       };
 
       this.props.postItem(newAction);
@@ -161,36 +177,39 @@ class Pillar extends React.Component {
       <ExpansionPanel
         key={"item-" + item.id}
         expanded={switcher && activeItem.id === item.id}
-        onChange={this.handleItemSelect.bind(this, item)}>
-        <ExpansionPanelSummary>
-          <Grid container>
-            {item.likes > 0 && <Grid item><Likes item={item} /></Grid>}
+        onChange={this.handleItemSelect.bind(this, item)}
+      >
+        <ExpansionPanelSummary className={classes.panelSummay}>
+          <Grid container
+            justify="space-between"
+            alignItems="center"
+
+          >
             <Grid item>
               <Typography noWrap variant="headline" className={item.stage === 'done' ? classes.itemDone : null}>
                 {item.title}
               </Typography>
             </Grid>
+            <Grid item className={classes.summaryGrid}>
+              {!board.locked && item.stage !== 'done' && !item.started && !item.action && (
+                <IconButton onClick={this.handleLikeItem.bind(this, item)}>
+                  <PlusOne />
+                </IconButton>
+              )}
+              {board.locked && item.stage !== 'done' && !item.started && !item.action && (
+                <IconButton onClick={this.handleStartItem.bind(this, item)}>
+                  <PlayArrowRounded />
+                </IconButton>
+              )}
+              {item.action && item.action.member && (<Avatar>{item.action.member.userId}</Avatar>)}
+              {board.locked && activeItem.id === item.id && item.stage !== 'done' && item.started && !item.action && (
+                <CircularProgress variant="static" value={this.state.itemProgress} />
+              )}
+            </Grid>
           </Grid>
-
-          <div style={{ marginTop: -5, marginBottom: -20, marginRight: -48 }}>
-            {!board.locked && item.stage !== 'done' && !item.started && !item.action && (
-              <IconButton onClick={this.handleLikeItem.bind(this, item)}>
-                <PlusOne />
-              </IconButton>
-            )}
-            {board.locked && item.stage !== 'done' && !item.started && !item.action && (
-              <IconButton onClick={this.handleStartItem.bind(this, item)}>
-                <PlayArrowRounded />
-              </IconButton>
-            )}
-            {item.action && item.action.member && (<Avatar>{item.action.member.userId}</Avatar>)}
-            {board.locked && activeItem.id === item.id && item.stage !== 'done' && item.started && !item.action && (
-              <CircularProgress variant="static" value={this.state.itemProgress} />
-            )}
-          </div>
         </ExpansionPanelSummary>
 
-        <ExpansionPanelDetails>
+        <ExpansionPanelDetails className={classes.panelDetail}>
           <Grid container direction="column">
             <Grid item>
               <TextField fullWidth
@@ -202,9 +221,9 @@ class Pillar extends React.Component {
               />
             </Grid>
             <Grid item>
-              <List disablePadding>
+              <List>
                 {pillar.items.map(i => i.itemId === item.id &&
-                  <ListItem disablePadding key={'action' + i.id} dense button>
+                  <ListItem key={'action' + i.id} className={classes.item}>
                     <ListItemText primary={i.title} />
                   </ListItem>
                 )}
@@ -241,26 +260,23 @@ class Pillar extends React.Component {
           )}
         </ExpansionPanelDetails>
 
-        <ExpansionPanelActions>
-          <Grid container direction="column">
-            <Grid item>
-              <Grid container justify="flex-end">
-                {!item.action && item.stage !== 'done' && (
-                  <Grid item>
-                    <IconButton disabled={item.stage === 'done'} onClick={this.handleFinishItem.bind(this, item)}>
-                      <Done />
-                    </IconButton>
-                    {!board.locked && (
-                      <IconButton onClick={this.handleDeleteItem.bind(this, item)}>
-                        <DeleteOutline />
-                      </IconButton>
-                    )}
-                  </Grid>
+        <ExpansionPanelActions className={classes.panelAction}>
+          <Grid container justify="flex-end" >
+            {!item.action && item.stage !== 'done' && (
+              <Grid item>
+                <IconButton disabled={item.stage === 'done'} onClick={this.handleFinishItem.bind(this, item)}>
+                  <Done />
+                </IconButton>
+                {!board.locked && (
+                  <IconButton onClick={this.handleDeleteItem.bind(this, item)}>
+                    <DeleteOutline />
+                  </IconButton>
                 )}
               </Grid>
-            </Grid>
+            )}
           </Grid>
-        </ExpansionPanelActions>
+
+        </ExpansionPanelActions >
       </ExpansionPanel >
     )) : <div></div>);
   }
