@@ -8,7 +8,7 @@ import { setBoard } from './boardActions';
 export const patchItem = (item) => {
   return (dispatch) => {
     Utils.patch('items', item).then(body => {
-      dispatch(setBoard(boardId));
+      dispatch(setBoard(item.boardId));
     });
   };
 };

@@ -37,7 +37,7 @@ class MemberList extends React.Component {
     if (this.props.group) {
       this.props.setActiveMember(memberID);
     } else {
-      this.props.setPage("");
+      this.props.setPage('');
     }
   }
 

@@ -85,6 +85,11 @@ routes.get('/:id/finish', async (req, res) => {
   await updateItem(res, req.params.id, { stage: 'done' })
 });
 
+// Start
+routes.get('/:id/start', async (req, res) => {
+  await updateItem(res, req.params.id, { stage: 'active' })
+});
+
 // Group Active Items
 routes.get('/group/:id', async (req, res) => {
   let query = { groupId: req.params.id };
@@ -151,12 +156,17 @@ routes.post('/', async (req, res) => {
 // Update
 routes.patch('/:id', async (req, res) => {
   try {
-    await model.Item.update({
-      likes: req.body.likes,
-    },
-      {
-        where: { id: req.params.id },
-      });
+    const item = await model.Item.findOne({
+      include: associations,
+      where: {
+        id: req.params.id,
+      },
+    });
+    if (item) {
+      item.setOwner(req.body.ownerId);
+    } else {
+      res.sendStatus(404);
+    }
     await respondWithItem(res, req.params.id);
   } catch (err) {
     console.log('error patch item:', err);

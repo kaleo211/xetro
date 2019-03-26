@@ -179,7 +179,6 @@ class NewGroup extends React.Component {
   }
 
   async handleCreateGroup(search) {
-    console.log('search:', search.id);
     if (search.disabled) {
       await this.props.setGroup(search.id);
     } else {

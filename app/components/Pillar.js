@@ -19,8 +19,8 @@ import Typography from '@material-ui/core/Typography';
 import { List, ListItem, ListItemText } from '@material-ui/core';
 import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-ui/icons';
 
-import { selectItem } from '../actions/localActions';
-import { postItem, deleteItem, likeItem, finishItem } from '../actions/itemActions';
+import { setItem } from '../actions/localActions';
+import { postItem, deleteItem, likeItem, finishItem, startItem, patchItem } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 
@@ -31,6 +31,10 @@ const styles = theme => ({
   },
   itemDone: {
     textDecoration: "line-through",
+  },
+  title: {
+    textOverflow: "ellipsis",
+    overflow: "hidden",
   },
   summaryGrid: {
     marginRight: - theme.spacing.unit * 5,
@@ -43,7 +47,7 @@ const styles = theme => ({
   panelDetail: {
     paddingBottom: 0,
     paddingLeft: theme.spacing.unit * 2,
-    paddingRight: theme.spacing.unit * 2,
+    paddingRight: theme.spacing.unit * 0.5,
   },
   panelAction: {
     padding: 0,
@@ -86,31 +90,22 @@ class Pillar extends React.Component {
     }
   };
 
-  handleDeleteItem(item) {
+  handleAddActionOwner(item, owner) {
+    this.handleOwerListClose(item.id)
+    item.ownerId = owner.id;
     item.boardId = this.props.board.id;
-    this.props.deleteItem(item);
-  };
-
-  handleStartItem(item, evt) {
-    evt.stopPropagation();
-    item.boardId = this.props.board.id;
-    this.props.startItem(item);
-    this.setState({ switcher: true });
+    this.props.patchItem(item);
   }
 
-  // Owner
-  handleActionOwnerAdd(item, owner) {
-    this.handleOwerListClose(item.id)
-
-    let action = item.action;
-    if (action && action._links) {
-      this.props.patchAction("actions/" + action.id, { member: owner._links.self.href, })
-        .then(() => {
-          this.props.setBoard(this.props.board.id);
-          this.props.setGroup(this.props.group.id);
-        });
+  handleActivateItem(item) {
+    this.props.setItem(item);
+    if (this.props.activeItem.id === item.id && this.state.switcher) {
+      this.setState({ switcher: false })
+    } else {
+      this.setState({ switcher: true })
     }
   }
+
 
   handleOwerListClose(itemID) {
     let ownerAnchorEl = this.state.ownerAnchorEl;
@@ -130,14 +125,16 @@ class Pillar extends React.Component {
     });
   }
 
-  handleItemSelect(item) {
-    this.props.selectItem(item);
+  handleDeleteItem(item) {
+    item.boardId = this.props.board.id;
+    this.props.deleteItem(item);
+  };
 
-    if (this.props.activeItem.id === item.id && this.state.switcher) {
-      this.setState({ switcher: false })
-    } else {
-      this.setState({ switcher: true })
-    }
+  handleStartItem(item, evt) {
+    evt.stopPropagation();
+    item.boardId = this.props.board.id;
+    this.props.startItem(item);
+    this.setState({ switcher: true });
   }
 
   handleSaveAction(item, event) {
@@ -177,18 +174,20 @@ class Pillar extends React.Component {
       <ExpansionPanel
         key={"item-" + item.id}
         expanded={switcher && activeItem.id === item.id}
-        onChange={this.handleItemSelect.bind(this, item)}
+        onChange={this.handleActivateItem.bind(this, item)}
       >
         <ExpansionPanelSummary className={classes.panelSummay}>
           <Grid container
             justify="space-between"
             alignItems="center"
-
+            spacing="0"
           >
-            <Grid item>
-              <Typography noWrap variant="headline" className={item.stage === 'done' ? classes.itemDone : null}>
-                {item.title}
-              </Typography>
+            <Grid item xs="10" sm="11">
+              <TextField fullWidth
+                value={item.title}
+                InputProps={{ disableUnderline: true, readOnly: true }}
+                className={item.stage === 'done' ? classes.itemDone : classes.title}
+              />
             </Grid>
             <Grid item className={classes.summaryGrid}>
               {!board.locked && item.stage !== 'done' && !item.started && !item.action && (
@@ -225,39 +224,32 @@ class Pillar extends React.Component {
                 {pillar.items.map(i => i.itemId === item.id &&
                   <ListItem key={'action' + i.id} className={classes.item}>
                     <ListItemText primary={i.title} />
+
+                    {!i.ownerId && (<div>
+                      <IconButton onClick={this.handleOwerListOpen.bind(this, i.id)}>
+                        <Add fontSize='inherit' />
+                      </IconButton>
+                      <Menu
+                        anchorEl={ownerAnchorEl[i.id]}
+                        open={Boolean(ownerAnchorEl[i.id])}
+                        onClose={this.handleOwerListClose.bind(this, i.id)}
+                      >
+                        {members && members.map(member => (
+                          <MenuItem
+                            style={{ paddingTop: 20, paddingBottom: 20 }}
+                            key={"owner" + member.userId}
+                            onClick={this.handleAddActionOwner.bind(this, i, member)}
+                          >
+                            <Avatar>{member.firstName}</Avatar>
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </div>)}
                   </ListItem>
                 )}
               </List>
             </Grid>
           </Grid>
-
-
-
-
-          {item.action && item.action.title !== "" && (
-            <div style={{ marginRight: -17, marginTop: 10 }}>
-              {!item.action.member && (<div>
-                <IconButton onClick={this.handleOwerListOpen.bind(this, item.id)}>
-                  <Add fontSize='inherit' />
-                </IconButton>
-                <Menu
-                  anchorEl={ownerAnchorEl[item.id]}
-                  open={Boolean(ownerAnchorEl[item.id])}
-                  onClose={this.handleOwerListClose.bind(this, item.id)}
-                >
-                  {members && members.map(member => (
-                    <MenuItem
-                      style={{ paddingTop: 20, paddingBottom: 20 }}
-                      key={"owner" + member.userId}
-                      onClick={this.handleActionOwnerAdd.bind(this, item, member)}
-                    >
-                      <Avatar>{member.userId}</Avatar>
-                    </MenuItem>
-                  ))}
-                </Menu>
-              </div>)}
-            </div>
-          )}
         </ExpansionPanelDetails>
 
         <ExpansionPanelActions className={classes.panelAction}>
@@ -293,11 +285,12 @@ const mapDispatchToProps = (dispatch) => {
     postItem: (i, item, bId) => dispatch(postItem(i, item, bId)),
     deleteItem: (item) => dispatch(deleteItem(item)),
     setBoard: (id) => dispatch(setBoard(id)),
-    selectItem: (item) => dispatch(selectItem(item)),
+    setItem: (item) => dispatch(setItem(item)),
     setGroup: (id) => dispatch(setGroup(id)),
     likeItem: (id) => dispatch(likeItem(id)),
     finishItem: (id) => dispatch(finishItem(id)),
     startItem: (item) => dispatch(startItem(item)),
+    patchItem: (item) => dispatch(patchItem(item)),
   };
 };
 

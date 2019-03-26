@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { Add, Inbox, ExpandLess, ExpandMore, Clear } from '@material-ui/icons';
+import { Add } from '@material-ui/icons';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -14,11 +14,11 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
 
 import { setGroup } from '../actions/groupActions';
 import { setBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
-import { Typography, withTheme } from '@material-ui/core';
 
 const styles = theme => ({
 });

@@ -117,10 +117,10 @@ class Board extends React.Component {
           InputProps={{ disableUnderline: true, }}
           inputProps={{ className: classes.title, }}
           onChange={this.handleChangePillarTitle.bind(this, pillar)}
-          onKeyPress={this.handleSetPillarTitle.bind(this, pillar)} >
-        </TextField >
-      )
-    }
+          onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
+        ></TextField >
+      );
+    };
 
     pillars && pillars.sort((a, b) => {
       return a.createdAt < b.createdAt;
