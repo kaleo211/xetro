@@ -63,7 +63,7 @@ var updateItem = async (res, id, fields) => {
       fields,
       { where: { id: id } }
     );
-    res.json({});
+    respondWithItem(res, id);
   } catch (err) {
     console.log('error update board', err);
     res.sendStatus(500);
@@ -82,12 +82,14 @@ routes.get('/:id/like', async (req, res) => {
 
 // Finish
 routes.get('/:id/finish', async (req, res) => {
-  await updateItem(res, req.params.id, { stage: 'done' })
+  await updateItem(res, req.params.id, { stage: 'done' });
 });
 
 // Start
 routes.get('/:id/start', async (req, res) => {
-  await updateItem(res, req.params.id, { stage: 'active' })
+  var now = new Date();
+  now.setMinutes(now.getMinutes() + 5);
+  await updateItem(res, req.params.id, { stage: 'active', end: new Date(now) });
 });
 
 // Group Active Items

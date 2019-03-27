@@ -27,7 +27,7 @@ export const closeSnackBar = () => {
   };
 }
 
-export const setItem = (item) => {
+export const setActiveItem = (item) => {
   return {
     type: SET_ITEM,
     activeItem: item,

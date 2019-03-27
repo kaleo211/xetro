@@ -49,8 +49,35 @@ class Board extends React.Component {
     this.state = {
       newItemInPillar: newItemInPillar,
       titleOfPillar: titleOfPillar,
+      progressTimer: null,
+      itemProgress: 0,
+      secondsPerItem: 300,
     };
   }
+
+  componentDidMount() {
+    this.state.progressTimer = setInterval(this.updateItemProgress, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.progressTimer);
+  }
+
+  updateItemProgress = () => {
+    let item = this.props.activeItem;
+    if (item && item.end) {
+      let difference = Math.floor((new Date(item.end).getTime() - new Date().getTime()) / 1000);
+      if (difference > 0 && difference < this.state.secondsPerItem) {
+        this.setState({
+          itemProgress: Math.floor((this.state.secondsPerItem - difference) * 100 / this.state.secondsPerItem),
+        });
+      } else {
+        this.setState({
+          itemProgress: 100,
+        });
+      }
+    }
+  };
 
   changePillarTitle(id, title) {
     this.setState(state => {
@@ -107,8 +134,8 @@ class Board extends React.Component {
   }
 
   render() {
-    const { classes, board, pillars } = this.props;
-    const { newItemInPillar } = this.state;
+    const { classes, board, pillars, activeItem } = this.props;
+    const { newItemInPillar, itemProgress } = this.state;
 
     const pillarTitle = (pillar) => {
       return (
@@ -152,7 +179,7 @@ class Board extends React.Component {
                   onKeyPress={this.handleAddItem.bind(this, pillar.id)}
                 />
               </CardContent>
-              <Pillar pillar={pillar} />
+              <Pillar pillar={pillar} itemProgress={itemProgress} />
             </Card>
           </Grid>))}
       </Grid>
@@ -169,6 +196,7 @@ const mapStateToProps = state => ({
   groups: state.groups.groups,
   group: state.groups.group,
   pillars: state.boards.pillars,
+  activeItem: state.local.activeItem,
 });
 const mapDispatchToProps = (dispatch) => {
   return {

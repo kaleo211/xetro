@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'item',
     },
+    end: DataTypes.DATE,
   }, {});
 
   Item.associate = function (models) {

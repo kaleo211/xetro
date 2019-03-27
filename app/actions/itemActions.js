@@ -4,6 +4,7 @@ import {
 } from './types';
 import Utils from '../components/Utils';
 import { setBoard } from './boardActions';
+import { setActiveItem } from './localActions';
 
 export const patchItem = (item) => {
   return (dispatch) => {
@@ -31,8 +32,9 @@ export const finishItem = (item) => {
 
 export const startItem = (item) => {
   return (dispatch) => {
-    Utils.fetch(`/items/${item.id}/start`).then(() => {
+    Utils.fetch(`/items/${item.id}/start`).then(body => {
       dispatch(setBoard(item.boardId));
+      dispatch(setActiveItem(body));
     });
   };
 };
