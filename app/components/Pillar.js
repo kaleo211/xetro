@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import Avatar from '@material-ui/core/Avatar';
+import Badge from '@material-ui/core/Badge';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -15,9 +16,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import { List, ListItem, ListItemText } from '@material-ui/core';
-import { PlusOne, Done, Add, DeleteOutline, PlayArrowRounded } from '@material-ui/icons';
+import { Done, Add, DeleteOutline, PlayArrowRounded, ThumbUpOutlined } from '@material-ui/icons';
 
 import { setItem } from '../actions/localActions';
 import { postItem, deleteItem, likeItem, finishItem, startItem, patchItem } from '../actions/itemActions';
@@ -51,6 +51,11 @@ const styles = theme => ({
   },
   panelAction: {
     padding: 0,
+  },
+  badge: {
+    top: '10%',
+    right: '10%',
+    border: `2px solid ${theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[900]}`,
   },
 });
 
@@ -192,7 +197,9 @@ class Pillar extends React.Component {
             <Grid item className={classes.summaryGrid}>
               {!board.locked && item.stage !== 'done' && !item.started && !item.action && (
                 <IconButton onClick={this.handleLikeItem.bind(this, item)}>
-                  <PlusOne />
+                  <Badge badgeContent={item.likes} color="primary" invisible={item.likes === 0} classes={{ badge: classes.badge }}>
+                    <ThumbUpOutlined />
+                  </Badge>
                 </IconButton>
               )}
               {board.locked && item.stage !== 'done' && !item.started && !item.action && (
