@@ -78,7 +78,7 @@ routes.get('/active/:id', async (req, res) => {
 
 // Archive
 routes.get('/:id/archive', async (req, res) => {
-  await updateBoard(res, req.params.id, { archived: true });
+  await updateBoard(res, req.params.id, { stage: 'archived' });
 });
 
 // Lock

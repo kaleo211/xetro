@@ -33,8 +33,7 @@ const styles = theme => ({
     textDecoration: "line-through",
   },
   title: {
-    textOverflow: "ellipsis",
-    overflow: "hidden",
+    fontSize: 22,
   },
   summaryGrid: {
     marginRight: - theme.spacing.unit * 5,
@@ -166,13 +165,13 @@ class Pillar extends React.Component {
           <Grid container
             justify="space-between"
             alignItems="center"
-            spacing="0"
+            spacing={0}
           >
-            <Grid item xs="10" sm="11">
+            <Grid item xs={10} sm={11}>
               <TextField fullWidth
                 value={item.title}
-                InputProps={{ disableUnderline: true, readOnly: true }}
-                className={item.stage === 'done' ? classes.itemDone : classes.title}
+                InputProps={{ disableUnderline: true, readOnly: true, classes: { input: classes.title } }}
+                className={item.stage === 'done' ? classes.itemDone : null}
               />
             </Grid>
             <Grid item className={classes.summaryGrid}>

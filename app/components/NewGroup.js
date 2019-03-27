@@ -26,6 +26,9 @@ const styles = theme => ({
   root: {
     flexGrow: 1,
     height: 250,
+    paddingTop: 60,
+    paddingLeft: 50,
+    paddingRight: 50,
   },
   input: {
     display: 'flex',
@@ -128,7 +131,7 @@ function Placeholder(props) {
       className={props.selectProps.classes.placeholder}
       {...props.innerProps}
     >
-      {props.children}
+      Group to Create/Join
     </Typography>
   );
 }
@@ -228,7 +231,8 @@ class NewGroup extends React.Component {
     };
 
     return (
-      <div className={classes.root}>
+      <Card className={classes.root}>
+
         <NoSsr>
           <AsyncCreatableSelect
             classes={classes}
@@ -239,7 +243,7 @@ class NewGroup extends React.Component {
             formatCreateLabel={(g) => { return `Create: ${g}` }}
           />
         </NoSsr>
-      </div>
+      </Card>
     );
   }
 }

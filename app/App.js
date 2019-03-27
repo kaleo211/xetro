@@ -1,20 +1,19 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import classNames from 'classnames';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { withStyles } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
-import Snackbar from '@material-ui/core/Snackbar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { IconButton } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Divider from '@material-ui/core/Divider';
-import { ChevronLeft } from '@material-ui/icons';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
 
 import ActionBar from './components/ActionBar';
 import Board from './components/Board';
@@ -91,7 +90,7 @@ const styles = theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing.unit * 1,
   },
 });
 
@@ -119,7 +118,6 @@ class App extends React.Component {
     if (this.props.me) {
       return;
     }
-
     var uri = `${SSO_ADDRESS}/${SSO_TENANT_ID}/oauth2/authorize
                   ?client_id=${SSO_CLIENT_ID}
                   &response_type=code

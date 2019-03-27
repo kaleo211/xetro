@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { Add } from '@material-ui/icons';
+import { Add, Search } from '@material-ui/icons';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -55,7 +55,7 @@ class GroupList extends React.Component {
           <ListItemText disableTypography primary={<Typography variant="h6">My Groups</Typography>} />
           <ListItemSecondaryAction>
             <IconButton onClick={this.handleCreateGroup.bind(this)}>
-              <Add />
+              <Search />
             </IconButton>
           </ListItemSecondaryAction>
         </ListItem>
