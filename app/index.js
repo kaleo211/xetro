@@ -12,7 +12,7 @@ import { store } from './store';
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: blueGrey[900],
+      main: blueGrey[600],
     },
     secondary: {
       main: indigo[900],

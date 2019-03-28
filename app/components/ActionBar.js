@@ -20,7 +20,7 @@ import {
   HistoryRounded,
 } from '@material-ui/icons';
 
-import { patchBoard, setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
+import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 import { openSnackBar, setPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';

@@ -8,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
+import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -26,6 +27,7 @@ import { fetchGroups } from './actions/groupActions';
 import { closeSnackBar } from './actions/localActions';
 import { fetchUsers, getMe } from './actions/userActions';
 import Utils from './components/Utils';
+import { ArrowForwardIosOutlined } from '@material-ui/icons';
 
 const drawerWidth = 240;
 
@@ -49,8 +51,7 @@ const styles = theme => ({
     }),
   },
   menuButton: {
-    marginLeft: 12,
-    marginRight: 36,
+    marginLeft: theme.spacing.unit * 1,
   },
   hide: {
     display: 'none',
@@ -85,12 +86,19 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    padding: '0 8px',
+    // padding: '0 8px',
     ...theme.mixins.toolbar,
   },
   content: {
     flexGrow: 1,
     padding: theme.spacing.unit * 1,
+  },
+  arrow: {
+    margin: theme.spacing.unit,
+  },
+  bar: {
+    marginLeft: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2,
   },
 });
 
@@ -115,6 +123,7 @@ class App extends React.Component {
   }
 
   async handleMicrosoftLogin() {
+    await this.props.getMe();
     if (this.props.me) {
       return;
     }
@@ -126,6 +135,7 @@ class App extends React.Component {
     window.open(uri, 'microsoft', 'height=500,width=620');
 
     while (this.props.me == null) {
+      console.log("i am here", this.props.me);
       try {
         await this.props.getMe();
       } catch (err) {
@@ -149,9 +159,9 @@ class App extends React.Component {
   };
 
   render() {
-    const { page, group, classes } = this.props;
+    const { page, group, board, classes } = this.props;
     const { open } = this.state;
-    console.log('page in app', page);
+    console.log('page in app', page, this.props.me);
 
     return (<div className={classes.root}>
       <CssBaseline />
@@ -159,7 +169,7 @@ class App extends React.Component {
         position="fixed"
         className={classNames(classes.appBar, { [classes.appBarShift]: open })}
       >
-        <Toolbar disableGutters={!open}>
+        <Toolbar disableGutters>
           <IconButton
             color="inherit"
             aria-label="Open drawer"
@@ -168,11 +178,35 @@ class App extends React.Component {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" color="inherit" noWrap>
-            {group ? group.name : 'Xetro'}
-          </Typography>
-
-          <ActionBar />
+          <Grid container
+            alignItems="center"
+            justify="space-between"
+            direction="row"
+            className={classes.bar}
+          >
+            <Grid container alignItems="center" item md={6}>
+              <Grid item>
+                <Typography variant="h6" color="inherit" noWrap>
+                  {group ? group.name : 'Xetro'}
+                </Typography>
+              </Grid>
+              {board &&
+                <Grid xs={1}>
+                  <ArrowForwardIosOutlined className={classes.arrow} />
+                </Grid>
+              }
+              {board &&
+                <Grid item>
+                  <Typography variant="h6" color="inherit" noWrap>
+                    {board.name}
+                  </Typography>
+                </Grid>
+              }
+            </Grid>
+            <Grid container item justify="flex-end" md={6}>
+              <ActionBar />
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
 
@@ -206,7 +240,7 @@ class App extends React.Component {
         {page === 'boardList' && <BoardList />}
         {page === 'createGroup' && <NewGroup />}
       </main>
-    </div>);
+    </div >);
   }
 }
 
@@ -214,6 +248,7 @@ const mapStateToProps = state => ({
   page: state.local.page,
   group: state.groups.group,
   me: state.users.me,
+  board: state.boards.board,
   snackbarOpen: state.local.snackbarOpen,
   snackbarMessage: state.local.snackbarMessage,
 });
