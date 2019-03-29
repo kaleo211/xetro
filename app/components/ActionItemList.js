@@ -5,15 +5,15 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { Add, Search } from '@material-ui/icons';
+import { CheckRounded } from '@material-ui/icons';
 
+import Collapse from '@material-ui/core/Collapse';
+import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Typography from '@material-ui/core/Typography';
 
 import { setGroup } from '../actions/groupActions';
@@ -26,7 +26,7 @@ const styles = theme => ({
   },
 });
 
-class GroupList extends React.Component {
+class ActionItemList extends React.Component {
   constructor(props) {
     super(props);
 
@@ -48,42 +48,29 @@ class GroupList extends React.Component {
 
   handleClick = () => {
     this.setState(state => ({ open: !state.open }));
-  };
+  }
 
   render() {
     const { group, me, classes } = this.props;
     return (
       <List>
         <ListItem button onClick={this.handleClick}>
-          <ListItemText disableTypography primary={<Typography variant="h6">My Groups</Typography>} />
-          <ListItemSecondaryAction>
-            <IconButton onClick={this.handleCreateGroup.bind(this)}>
-              <Search />
-            </IconButton>
-          </ListItemSecondaryAction>
+          <ListItemText disableTypography primary={<Typography variant="h6">My Actions</Typography>} />
         </ListItem>
         <Collapse in={this.state.open} timeout="auto" unmountOnExit>
-          {me.groups && me.groups.map(g => (
-            <ListItem button key={g.id}
-              className={classes.nested}
-              selected={group && group.id === g.id}
-              onClick={this.handleSetGroup.bind(this, g.id)}
-            >
-              <ListItemText primary={g.name} />
+          {me.actions && me.actions.map(action =>
+            <ListItem button key={action.id} className={classes.nested} >
+              <ListItemText primary={action.title} />
+              <ListItemSecondaryAction>
+                <IconButton aria-label="Delete">
+                  <CheckRounded />
+                </IconButton>
+              </ListItemSecondaryAction>
             </ListItem>
-          ))}
+          )}
         </Collapse>
-
-        {group && group.members.map(m => {
-          <ListItem>
-            <ListItemIcon>
-              <Add />
-            </ListItemIcon>
-            <ListItemText primary={m.firstName} />
-          </ListItem>
-        })}
       </List>
-    )
+    );
   }
 }
 
@@ -100,10 +87,10 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-GroupList.propTypes = {
+ActionItemList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles, { withTheme: true }),
-)(GroupList);
+)(ActionItemList);

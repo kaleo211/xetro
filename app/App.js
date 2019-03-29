@@ -15,6 +15,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Divider from '@material-ui/core/Divider';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import { ArrowForwardIosOutlined } from '@material-ui/icons';
 
 import ActionBar from './components/ActionBar';
 import Board from './components/Board';
@@ -23,11 +24,12 @@ import MemberList from './components/MemberList';
 import NewBoard from './components/NewBoard';
 import NewGroup from './components/NewGroup';
 import GroupList from './components/GroupList';
+import ActionItemList from './components/ActionItemList';
+import Utils from './components/Utils';
+
 import { fetchGroups } from './actions/groupActions';
 import { closeSnackBar } from './actions/localActions';
 import { fetchUsers, getMe } from './actions/userActions';
-import Utils from './components/Utils';
-import { ArrowForwardIosOutlined } from '@material-ui/icons';
 
 const drawerWidth = 240;
 
@@ -197,9 +199,7 @@ class App extends React.Component {
               }
               {board &&
                 <Grid item>
-                  <Typography variant="h6" color="inherit" noWrap>
-                    {board.name}
-                  </Typography>
+                  <BoardList />
                 </Grid>
               }
             </Grid>
@@ -228,7 +228,9 @@ class App extends React.Component {
           </IconButton>
         </div>
         <Divider />
-        {open === true && < GroupList />}
+        {open === true && <GroupList />}
+        <Divider />
+        {open === true && <ActionItemList />}
         <Divider />
         <MemberList />
       </Drawer>

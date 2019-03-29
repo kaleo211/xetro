@@ -34,6 +34,7 @@ import { postBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
 import { patchAction } from '../actions/itemActions';
 import { setGroup } from '../actions/groupActions';
+import { Paper } from '@material-ui/core';
 
 
 const styles = theme => ({
@@ -211,25 +212,27 @@ class NewBoard extends React.Component {
     const steps = getSteps();
 
     return (group &&
-      <Grid container className={classes.root}>
-        <Grid item xs={12}>
-          <Stepper activeStep={activeStep} orientation="vertical">
-            {steps.map((label, index) => {
-              return (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                  <StepContent>
-                    {this.getStepContent(index, group.members, facilitator)}
-                    <div style={{ paddingTop: 20 }} >
-                      {this.getStepButton(index, facilitator)}
-                    </div>
-                  </StepContent>
-                </Step>
-              );
-            })}
-          </Stepper>
+      <Paper>
+        <Grid container justify="flex-end" className={classes.root}>
+          <Grid item xs={11}>
+            <Stepper activeStep={activeStep} orientation="vertical">
+              {steps.map((label, index) => {
+                return (
+                  <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                    <StepContent>
+                      {this.getStepContent(index, group.members, facilitator)}
+                      <div style={{ paddingTop: 20 }} >
+                        {this.getStepButton(index, facilitator)}
+                      </div>
+                    </StepContent>
+                  </Step>
+                );
+              })}
+            </Stepper>
+          </Grid>
         </Grid>
-      </Grid>
+      </Paper>
     );
   }
 }

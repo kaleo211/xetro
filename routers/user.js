@@ -21,9 +21,18 @@ routes.get('/me', (req, res) => {
       model: model.Group,
       as: 'groups',
       through: {},
+    }, {
+      model: model.Item,
+      as: 'actions',
+      where: {
+        type: 'action',
+        stage: 'created',
+      },
+      required: false,
     }],
     where: { id: me.id },
   }).then(user => {
+    console.log('user:', user);
     res.json(user);
   }).catch(err => {
     console.log('error get me:', err);

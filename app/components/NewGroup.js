@@ -232,7 +232,6 @@ class NewGroup extends React.Component {
 
     return (
       <Card className={classes.root}>
-
         <NoSsr>
           <AsyncCreatableSelect
             classes={classes}
