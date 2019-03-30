@@ -11,7 +11,6 @@ import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Typography from '@material-ui/core/Typography';
@@ -19,6 +18,7 @@ import Typography from '@material-ui/core/Typography';
 import { setGroup } from '../actions/groupActions';
 import { setBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
+import { finishItem } from '../actions/itemActions';
 
 const styles = theme => ({
   nested: {
@@ -35,15 +35,8 @@ class ActionItemList extends React.Component {
     };
   }
 
-  handleSetGroup(groupId) {
-    this.props.setGroup(groupId);
-  }
-
-  handleCreateGroup() {
-    this.props.setPage('createGroup');
-  }
-
-  handleLeaveGroup() {
+  handleFinishAction(action) {
+    this.props.finishItem(action);
   }
 
   handleClick = () => {
@@ -62,7 +55,7 @@ class ActionItemList extends React.Component {
             <ListItem button key={action.id} className={classes.nested} >
               <ListItemText primary={action.title} />
               <ListItemSecondaryAction>
-                <IconButton aria-label="Delete">
+                <IconButton aria-label="Delete" onClick={this.handleFinishAction.bind(this, action)}>
                   <CheckRounded />
                 </IconButton>
               </ListItemSecondaryAction>
@@ -84,6 +77,7 @@ const mapDispatchToProps = (dispatch) => {
     setGroup: (id) => dispatch(setGroup(id)),
     setBoard: (id) => dispatch(setBoard(id)),
     setPage: (page) => dispatch(setPage(page)),
+    finishItem: (item) => dispatch(finishItem(item)),
   };
 };
 

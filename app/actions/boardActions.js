@@ -1,6 +1,7 @@
 import {
   SET_BOARD,
   SET_BOARDS,
+  SET_HISTORY_BOARDS,
 } from './types';
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
@@ -45,6 +46,18 @@ export const postBoard = (newBoard) => {
   };
 };
 
+export const listBoards = (groupId) => {
+  return (dispatch) => {
+    Utils.fetch(`/boards/group/${groupId}`).then(body => {
+      let historyBoards = body || [];
+      dispatch({
+        type: SET_HISTORY_BOARDS,
+        historyBoards,
+      });
+    });
+  };
+}
+
 export const setBoards = () => {
   return (dispatch) => {
     return Utils.list("boards").then(body => {
@@ -81,7 +94,6 @@ export const archiveBoard = (boardId) => {
     Utils.fetch(`/boards/${boardId}/archive`);
   }
 }
-
 
 export const lockBoard = (boardId) => {
   return (dispatch) => {

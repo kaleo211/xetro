@@ -92,7 +92,7 @@ routes.get('/:id/unlock', async (req, res) => {
 });
 
 // List
-routes.get('/', async (req, res) => {
+routes.get('/group/:id', async (req, res) => {
   try {
     const boards = await model.Board.findAll({
       include: [{
@@ -102,6 +102,9 @@ routes.get('/', async (req, res) => {
         model: model.Group,
         as: 'group',
       }],
+      where: {
+        groupId: req.params.id,
+      },
     });
     res.json(boards);
   } catch (err) {

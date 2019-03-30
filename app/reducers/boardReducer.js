@@ -2,11 +2,13 @@ import {
   SET_BOARD,
   SET_BOARDS,
   SET_PILLARS,
+  SET_HISTORY_BOARDS,
 } from '../actions/types';
 
 const initialState = {
   boards: [],
   board: null,
+  historyBoards: [],
 };
 
 export default function (state = initialState, action) {
@@ -27,6 +29,12 @@ export default function (state = initialState, action) {
       return {
         ...state,
         pillars: action.pillars,
+      }
+
+    case SET_HISTORY_BOARDS:
+      return {
+        ...state,
+        historyBoards: action.historyBoards,
       }
 
     default:

@@ -13,3 +13,4 @@ export const SET_USERS = 'SET_USERS'
 export const SET_ME = 'SET_ME'
 
 export const SET_ITEM = 'SET_ITEM'
+export const SET_HISTORY_BOARDS = 'SET_HISTORY_BOARDS';

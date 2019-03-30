@@ -32,7 +32,6 @@ routes.get('/me', (req, res) => {
     }],
     where: { id: me.id },
   }).then(user => {
-    console.log('user:', user);
     res.json(user);
   }).catch(err => {
     console.log('error get me:', err);

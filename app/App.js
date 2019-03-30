@@ -163,7 +163,7 @@ class App extends React.Component {
   render() {
     const { page, group, board, classes } = this.props;
     const { open } = this.state;
-    console.log('page in app', page, this.props.me);
+    console.log('page in app', page);
 
     return (<div className={classes.root}>
       <CssBaseline />
@@ -193,12 +193,12 @@ class App extends React.Component {
                 </Typography>
               </Grid>
               {board &&
-                <Grid xs={1}>
+                <Grid item xs={1}>
                   <ArrowForwardIosOutlined className={classes.arrow} />
                 </Grid>
               }
               {board &&
-                <Grid item>
+                <Grid item md={3}>
                   <BoardList />
                 </Grid>
               }
