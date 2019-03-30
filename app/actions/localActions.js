@@ -3,6 +3,7 @@ import {
   OPEN_SNACKBAR,
   CLOSE_SNACKBAR,
   SET_ITEM,
+  SET_DRAW,
 } from './types';
 
 export const setPage = (page) => {
@@ -32,4 +33,18 @@ export const setActiveItem = (item) => {
     type: SET_ITEM,
     activeItem: item,
   };
+}
+
+export const openDraw = () => {
+  return {
+    type: SET_DRAW,
+    drawOpen: true,
+  }
+}
+
+export const closeDraw = () => {
+  return {
+    type: SET_DRAW,
+    drawOpen: false,
+  }
 }

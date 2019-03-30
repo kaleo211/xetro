@@ -3,6 +3,7 @@ import {
   CLOSE_SNACKBAR,
   OPEN_SNACKBAR,
   SET_ITEM,
+  SET_DRAW,
 } from '../actions/types';
 
 import storage from 'redux-persist/lib/storage';
@@ -12,7 +13,7 @@ import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 const persistConfig = {
   key: 'local',
   storage: storage,
-  stateReconciler: autoMergeLevel2
+  stateReconciler: autoMergeLevel2,
 };
 
 const initialState = {
@@ -20,6 +21,7 @@ const initialState = {
   snackbarOpen: false,
   snackbarMessage: "",
   activeItem: {},
+  drawOpen: true,
 };
 
 const localReducer = function (state = initialState, action) {
@@ -48,6 +50,12 @@ const localReducer = function (state = initialState, action) {
         ...state,
         activeItem: action.activeItem
       };
+
+    case SET_DRAW:
+      return {
+        ...state,
+        drawOpen: action.drawOpen,
+      }
 
     default:
       return state;

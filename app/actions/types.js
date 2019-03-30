@@ -1,6 +1,7 @@
 export const SHOW_PAGE = 'SHOW_PAGE';
 export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
+export const SET_DRAW = 'SET_DRAW';
 
 export const SET_GROUP = 'SET_GROUP';
 export const SET_GROUPS = 'SET_GROUPS';

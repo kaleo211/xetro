@@ -9,11 +9,11 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import Divider from '@material-ui/core/Divider';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
 import { ArrowForwardIosOutlined } from '@material-ui/icons';
 
@@ -28,8 +28,9 @@ import ActionItemList from './components/ActionItemList';
 import Utils from './components/Utils';
 
 import { fetchGroups } from './actions/groupActions';
-import { closeSnackBar } from './actions/localActions';
+import { closeSnackBar, openDraw, closeDraw } from './actions/localActions';
 import { fetchUsers, getMe } from './actions/userActions';
+import Sidebar from './components/Sidebar';
 
 const drawerWidth = 240;
 
@@ -108,10 +109,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      open: false,
-    }
-
     String.prototype.capitalize = function () {
       return this.charAt(0).toUpperCase() + this.slice(1);
     }
@@ -153,30 +150,29 @@ class App extends React.Component {
   }
 
   handleDrawerOpen = () => {
-    this.setState({ open: true });
+    this.props.openDraw();
   };
 
   handleDrawerClose = () => {
-    this.setState({ open: false });
+    this.props.closeDraw();
   };
 
   render() {
-    const { page, group, board, classes } = this.props;
-    const { open } = this.state;
+    const { page, group, board, drawOpen, classes } = this.props;
     console.log('page in app', page);
 
     return (<div className={classes.root}>
       <CssBaseline />
       <AppBar
         position="fixed"
-        className={classNames(classes.appBar, { [classes.appBarShift]: open })}
+        className={classNames(classes.appBar, { [classes.appBarShift]: drawOpen })}
       >
         <Toolbar disableGutters>
           <IconButton
             color="inherit"
             aria-label="Open drawer"
             onClick={this.handleDrawerOpen}
-            className={classNames(classes.menuButton, { [classes.hide]: open })}
+            className={classNames(classes.menuButton, { [classes.hide]: drawOpen })}
           >
             <MenuIcon />
           </IconButton>
@@ -210,15 +206,15 @@ class App extends React.Component {
         </Toolbar>
       </AppBar>
 
-      <Drawer variant="permanent" open={open}
+      <Drawer variant="permanent" open={drawOpen}
         className={classNames(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
+          [classes.drawerOpen]: drawOpen,
+          [classes.drawerClose]: !drawOpen,
         })}
         classes={{
           paper: classNames({
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
+            [classes.drawerOpen]: drawOpen,
+            [classes.drawerClose]: !drawOpen,
           }),
         }}
       >
@@ -228,11 +224,7 @@ class App extends React.Component {
           </IconButton>
         </div>
         <Divider />
-        {open === true && <GroupList />}
-        <Divider />
-        {open === true && <ActionItemList />}
-        <Divider />
-        <MemberList />
+        {drawOpen && <Sidebar />}
       </Drawer>
 
       <main className={classes.content}>
@@ -253,6 +245,7 @@ const mapStateToProps = state => ({
   board: state.boards.board,
   snackbarOpen: state.local.snackbarOpen,
   snackbarMessage: state.local.snackbarMessage,
+  drawOpen: state.local.drawOpen,
 });
 
 App.propTypes = {
@@ -265,4 +258,6 @@ export default connect(mapStateToProps, {
   closeSnackBar,
   fetchUsers,
   getMe,
+  openDraw,
+  closeDraw,
 })(withStyles(styles, { withTheme: true })(App));

@@ -39,29 +39,20 @@ class ActionItemList extends React.Component {
     this.props.finishItem(action);
   }
 
-  handleClick = () => {
-    this.setState(state => ({ open: !state.open }));
-  }
-
   render() {
-    const { group, me, classes } = this.props;
-    return (
+    const { me, classes } = this.props;
+    return (me &&
       <List>
-        <ListItem button onClick={this.handleClick}>
-          <ListItemText disableTypography primary={<Typography variant="h6">My Actions</Typography>} />
-        </ListItem>
-        <Collapse in={this.state.open} timeout="auto" unmountOnExit>
-          {me.actions && me.actions.map(action =>
-            <ListItem button key={action.id} className={classes.nested} >
-              <ListItemText primary={action.title} />
-              <ListItemSecondaryAction>
-                <IconButton aria-label="Delete" onClick={this.handleFinishAction.bind(this, action)}>
-                  <CheckRounded />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          )}
-        </Collapse>
+        {me.actions && me.actions.map(action =>
+          <ListItem button key={action.id} className={classes.nested} >
+            <ListItemText primary={action.title} />
+            <ListItemSecondaryAction>
+              <IconButton aria-label="Delete" onClick={this.handleFinishAction.bind(this, action)}>
+                <CheckRounded />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        )}
       </List>
     );
   }
