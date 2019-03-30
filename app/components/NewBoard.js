@@ -25,14 +25,12 @@ import {
   ArrowDownwardRounded,
   ArrowUpwardRounded,
   CheckRounded,
-  TransitEnterexitRounded,
   Casino,
 } from '@material-ui/icons';
 
 
 import { postBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
-import { patchAction } from '../actions/itemActions';
 import { setGroup } from '../actions/groupActions';
 import { Paper } from '@material-ui/core';
 
@@ -107,10 +105,7 @@ class NewBoard extends React.Component {
   }
 
   handleActionCheck(action) {
-    this.props.patchAction("actions/" + action.id, { finished: true })
-      .then(() => {
-        this.props.setGroup(this.props.group.id);
-      });
+    this.props.finishItem(action);
   }
 
   handleCreateBoard() {
@@ -243,9 +238,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => {
   return {
     postBoard: (board) => dispatch(postBoard(board)),
-    patchAction: (a, action) => dispatch(patchAction(a, action)),
     setGroup: (id) => dispatch(setGroup(id)),
     setPage: (page) => dispatch(setPage(page)),
+    finishItem: (item) => dispatch(finishItem(item)),
   };
 };
 

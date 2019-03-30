@@ -1,10 +1,7 @@
-import {
-  POST_ACTION,
-  PATCH_ACTION
-} from './types';
 import Utils from '../components/Utils';
 import { setBoard } from './boardActions';
 import { setActiveItem } from './localActions';
+import { getMe } from './userActions';
 
 export const patchItem = (item) => {
   return (dispatch) => {
@@ -25,7 +22,7 @@ export const likeItem = (item) => {
 export const finishItem = (item) => {
   return (dispatch) => {
     Utils.fetch(`/items/${item.id}/finish`).then(() => {
-      dispatch(setBoard(item.boardId));
+      dispatch(getMe());
     });
   };
 };
@@ -50,18 +47,6 @@ export const postItem = (item) => {
   return (dispatch) => {
     Utils.post('items', item).then(() => {
       dispatch(setBoard(item.boardId));
-    });
-  };
-};
-
-export const patchAction = (path, updatedAction) => {
-  return (dispatch) => {
-    Utils.patch(path, updatedAction).then(body => {
-      let action = Utils.reform(body);
-      dispatch({
-        type: PATCH_ACTION,
-        action,
-      });
     });
   };
 };

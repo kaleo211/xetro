@@ -23,7 +23,6 @@ import {
 import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 import { openSnackBar, setPage } from '../actions/localActions';
-import { patchAction } from '../actions/itemActions';
 
 const styles = theme => ({
 });
@@ -81,10 +80,7 @@ class ActionBar extends React.Component {
   }
 
   handleActionCheck(action) {
-    this.props.patchAction("actions/" + action.id, { finished: true })
-      .then(() => {
-        this.props.setGroup(this.props.group.id);
-      });
+    this.props.finishItem(action);
   }
 
   render() {
@@ -183,12 +179,12 @@ const mapDispatchToProps = (dispatch) => {
     setBoard: (id) => dispatch(setBoard(id)),
     setBoards: () => dispatch(setBoards()),
     setGroup: (id) => dispatch(setGroup(id)),
-    patchAction: (link, updatedAction) => dispatch(patchAction(link, updatedAction)),
     openSnackBar: (message) => dispatch(openSnackBar(message)),
     setPage: (page) => dispatch(setPage(page)),
     archiveBoard: (id) => dispatch(archiveBoard(id)),
     lockBoard: (id) => dispatch(lockBoard(id)),
     unlockBoard: (id) => dispatch(unlockBoard(id)),
+    finishItem: (item) => dispatch(finishItem(item)),
   };
 };
 
