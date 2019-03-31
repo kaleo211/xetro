@@ -42,7 +42,7 @@ class ActionItemList extends React.Component {
   render() {
     const { me, classes } = this.props;
     return (me &&
-      <List>
+      <List disablePadding>
         {me.actions && me.actions.map(action =>
           <ListItem button key={action.id} className={classes.nested} >
             <ListItemText primary={action.title} />

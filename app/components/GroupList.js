@@ -15,9 +15,6 @@ const styles = theme => ({
   nested: {
     marginLeft: theme.spacing.unit * 1,
   },
-  list: {
-    paddintTop: 0,
-  },
 });
 
 class GroupList extends React.Component {
@@ -44,7 +41,7 @@ class GroupList extends React.Component {
     const { groups, group, classes } = this.props;
 
     return (
-      <List>
+      <List disablePadding>
         {groups && groups.map(g =>
           <ListItem button key={g.id}
             className={classes.nested}

@@ -53,15 +53,18 @@ class Sidebar extends React.Component {
   };
 
   render() {
-    const { group, classes } = this.props;
+    const { group, groups, me, classes } = this.props;
     const { expand } = this.state;
 
-    console.log('members:', group && group.members);
+    console.log('members:', group && group.members, groups);
 
-    return (
-      <List>
-        <ListItem button onClick={this.handleClick.bind(this, 'group')}>
-          <ListItemText disableTypography primary={<Typography variant="h6">My Groups</Typography>} />
+    return (me &&
+      <List disablePadding>
+        <ListItem button selected={expand === 'group'} onClick={this.handleClick.bind(this, 'group')}>
+          <ListItemText
+            primary={<Typography variant="h6">My Groups</Typography>}
+            secondary={groups.length === 0 ? 'click magnifier to join a group' : ''}
+          />
           <ListItemSecondaryAction>
             <IconButton onClick={this.handleCreateGroup.bind(this)}>
               <Search />
@@ -72,13 +75,15 @@ class Sidebar extends React.Component {
           <GroupList />
         </Collapse>
         <Divider />
-        <ListItem button onClick={this.handleClick.bind(this, 'action')}>
-          <ListItemText disableTypography primary={<Typography variant="h6">My Actions</Typography>} />
+        <ListItem button selected={expand === 'action'} onClick={this.handleClick.bind(this, 'action')}>
+          <ListItemText
+            primary={<Typography variant="h6">My Actions</Typography>}
+            secondary={me.actions.length === 0 ? 'no actions' : ''}
+          />
         </ListItem>
         <Collapse in={expand === 'action'} timeout="auto" unmountOnExit>
           <ActionItemList />
         </Collapse>
-        <Divider />
       </List>
     )
   }
