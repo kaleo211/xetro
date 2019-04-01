@@ -16,3 +16,11 @@ export const patchPillar = (pillar) => {
     });
   };
 };
+
+export const deletePillar = (pillar) => {
+  return (dispatch) => {
+    Utils.delete('pillars', pillar.id).then(() => {
+      dispatch(setBoard(pillar.boardId));
+    });
+  };
+};

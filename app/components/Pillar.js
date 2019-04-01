@@ -23,6 +23,7 @@ import { setActiveItem } from '../actions/localActions';
 import { postItem, deleteItem, likeItem, finishItem, startItem, patchItem } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
+import Utils from './Utils';
 
 const styles = theme => ({
   item: {
@@ -155,15 +156,7 @@ class Pillar extends React.Component {
 
     const members = group.members;
 
-    const items = pillar.items.sort((a, b) => {
-      let comparison = 0;
-      if (a.createdAt > b.createdAt) {
-        comparison = 1;
-      } else {
-        comparison = -1;
-      }
-      return comparison;
-    });
+    const items = pillar.items.sort(Utils.createdAt);
 
     console.log('items:', items);
 

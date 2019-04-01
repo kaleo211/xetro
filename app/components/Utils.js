@@ -3,6 +3,18 @@ export default {
     return new Promise(resolve => setTimeout(resolve, ms));
   },
 
+  createdAt() {
+    return (a, b) => {
+      let comparison = 0;
+      if (a.createdAt > b.createdAt) {
+        comparison = 1;
+      } else {
+        comparison = -1;
+      }
+      return comparison;
+    }
+  },
+
   search(type, body) {
     return new Promise((resolve, reject) => {
       fetch(`/${type}/search`, {

@@ -8,14 +8,16 @@ import Fab from '@material-ui/core/Fab';
 import { Card, CardHeader, CardContent } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
-import { Add } from '@material-ui/icons';
+import IconButton from '@material-ui/core/IconButton';
+import { Add, DeleteOutlineRounded } from '@material-ui/icons';
 
 import { setBoard } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
 import { postItem } from '../actions/itemActions';
-import { patchPillar, postPillar } from '../actions/pillarActions';
+import { patchPillar, postPillar, deletePillar } from '../actions/pillarActions';
 
 import Pillar from './Pillar';
+import Utils from './Utils';
 
 const styles = theme => ({
   root: {
@@ -109,6 +111,10 @@ class Board extends React.Component {
     this.props.postPillar(pillar);
   }
 
+  handleDeletePillar(pillar) {
+    this.props.deletePillar(pillar);
+  }
+
   handleChangePillarTitle(pillar, evt) {
     this.changePillarTitle(pillar.id, evt.target.value);
   }
@@ -129,7 +135,7 @@ class Board extends React.Component {
     const { newItemInPillar, itemProgress } = this.state;
 
     let facilitator = board.facilitator;
-    let pillars = board.pillars;
+    let pillars = board.pillars.sort(Utils.createdAt);
 
     const pillarTitle = (pillar) => {
       return (
@@ -157,7 +163,11 @@ class Board extends React.Component {
                 subheader={pillar.subheader}
                 titleTypographyProps={{ align: 'center' }}
                 subheaderTypographyProps={{ align: 'center' }}
-                action={null}
+                action={
+                  <IconButton onClick={this.handleDeletePillar.bind(this, pillar)}>
+                    <DeleteOutlineRounded fontSize="small" />
+                  </IconButton>
+                }
               />
               <CardContent>
                 <TextField fullWidth
@@ -193,8 +203,9 @@ const mapDispatchToProps = (dispatch) => {
     postPillar: (pillar, bID) => dispatch(postPillar(pillar, bID)),
     openSnackBar: (msg) => dispatch(openSnackBar(msg)),
     closeSnackBar: () => dispatch(closeSnackBar()),
-  }
-}
+    deletePillar: (pillar) => dispatch(deletePillar(pillar)),
+  };
+};
 
 Board.propTypes = {
   classes: PropTypes.object.isRequired,
