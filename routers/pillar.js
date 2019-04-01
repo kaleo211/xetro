@@ -10,6 +10,7 @@ var respondWithPillar = async (res, id) => {
       }, {
         model: model.Item,
         as: 'items',
+        order: [['createdAt', 'ASC']],
       }],
       where: { id: id },
     });
@@ -24,10 +25,6 @@ var respondWithPillar = async (res, id) => {
   };
 }
 
-routes.get('/:id', async (req, res) => {
-  await respondWithPillar(res, req.params.id);
-});
-
 routes.delete('/:id', async (req, res) => {
   try {
     await model.Pillar.destroy({
@@ -36,25 +33,6 @@ routes.delete('/:id', async (req, res) => {
     res.sendStatus(204);
   } catch (err) {
     console.log('error delete pillar', err);
-    res.sendStatus(500);
-  };
-});
-
-routes.get('/board/:id', async (req, res) => {
-  try {
-    const pillars = await model.Pillar.findAll({
-      where: { boardId: req.params.id },
-      include: [{
-        model: model.Board,
-        as: 'board',
-      }, {
-        model: model.Item,
-        as: 'items',
-      }],
-    });
-    res.json(pillars);
-  } catch (err) {
-    console.log('error list pillars for board', err);
     res.sendStatus(500);
   };
 });

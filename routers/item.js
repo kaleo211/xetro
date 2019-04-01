@@ -45,6 +45,7 @@ var respondWithActiveItems = async (res, query) => {
         ...query,
         stage: 'active',
       },
+      order: [['createdAt', 'DESC']],
     });
     if (item) {
       res.json(item);
@@ -138,7 +139,6 @@ routes.get('/', async (req, res) => {
 // Create
 routes.post('/', async (req, res) => {
   var item = req.body;
-  console.log('item in route:', item);
   try {
     const newItem = await model.Item.create({
       title: item.title,

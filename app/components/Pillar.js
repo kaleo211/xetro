@@ -155,7 +155,19 @@ class Pillar extends React.Component {
 
     const members = group.members;
 
-    return (board && pillar && pillar.items ? pillar.items.map(item => (item.type === 'item' &&
+    const items = pillar.items.sort((a, b) => {
+      let comparison = 0;
+      if (a.createdAt > b.createdAt) {
+        comparison = 1;
+      } else {
+        comparison = -1;
+      }
+      return comparison;
+    });
+
+    console.log('items:', items);
+
+    return (items ? items.map(item => (item.type === 'item' &&
       <ExpansionPanel
         key={"item-" + item.id}
         expanded={switcher && activeItem.id === item.id}
@@ -200,7 +212,7 @@ class Pillar extends React.Component {
             </Grid>
             <Grid item>
               <List>
-                {pillar.items.map(i => i.itemId === item.id &&
+                {items.map(i => i.itemId === item.id &&
                   <ListItem divider key={'action' + i.id} className={classes.item}>
                     <ListItemText primary={i.title} />
                     {i.ownerId && <Avatar className={classes.owner}>{i.ownerId}</Avatar>}

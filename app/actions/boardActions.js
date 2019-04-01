@@ -5,7 +5,7 @@ import {
 } from './types';
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
-import { setPillars, postPillar } from './pillarActions';
+import { postPillar } from './pillarActions';
 
 export const fetchGroupActiveBoards = (groupId) => {
   return (dispatch) => {
@@ -79,7 +79,6 @@ export const setBoard = (boardId) => {
       });
     } else {
       Utils.get('boards', boardId).then(body => {
-        dispatch(setPillars(boardId));
         dispatch({
           type: SET_BOARD,
           board: body,

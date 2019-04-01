@@ -85,9 +85,9 @@ class Sidebar extends React.Component {
           <ActionItemList />
         </Collapse>
       </List>
-    )
-  }
-}
+    );
+  };
+};
 
 const mapStateToProps = state => ({
   groups: state.groups.groups,

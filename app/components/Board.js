@@ -37,18 +37,9 @@ class Board extends React.Component {
   constructor(props) {
     super(props);
 
-    let pillars = this.props.pillars;
-
-    let newItemInPillar = [];
-    let titleOfPillar = [];
-    pillars && pillars.map(pillar => {
-      newItemInPillar.push(pillar.id, '');
-      titleOfPillar.push(pillar.id, pillar.title);
-    });
-
     this.state = {
-      newItemInPillar: newItemInPillar,
-      titleOfPillar: titleOfPillar,
+      newItemInPillar: [],
+      titleOfPillar: [],
       progressTimer: null,
       itemProgress: 0,
       secondsPerItem: 300,
@@ -134,8 +125,11 @@ class Board extends React.Component {
   }
 
   render() {
-    const { classes, board, pillars, activeItem } = this.props;
+    const { classes, board } = this.props;
     const { newItemInPillar, itemProgress } = this.state;
+
+    let facilitator = board.facilitator;
+    let pillars = board.pillars;
 
     const pillarTitle = (pillar) => {
       return (
@@ -149,17 +143,13 @@ class Board extends React.Component {
       );
     };
 
-    pillars && pillars.sort((a, b) => {
-      return a.createdAt < b.createdAt;
-    });
-
-    return (board && <div>
+    return (<div>
       <Grid container spacing={8}
         direction="row"
         justify="flex-start"
         alignItems="stretch"
       >
-        {board.facilitator && pillars && pillars.map(pillar => (
+        {facilitator && pillars && pillars.map(pillar => (
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
             <Card wrap='nowrap'>
               <CardHeader
@@ -193,9 +183,6 @@ class Board extends React.Component {
 
 const mapStateToProps = state => ({
   board: state.boards.board,
-  groups: state.groups.groups,
-  group: state.groups.group,
-  pillars: state.boards.pillars,
   activeItem: state.local.activeItem,
 });
 const mapDispatchToProps = (dispatch) => {

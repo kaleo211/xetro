@@ -13,6 +13,12 @@ var respondWithBoard = async (res, id) => {
       }, {
         model: model.Pillar,
         as: 'pillars',
+        order: [['createdAt', 'ASC']],
+        include: [{
+          model: model.Item,
+          as: 'items',
+          order: [['createdAt', 'ASC']],
+        }],
       }],
       where: { id: id },
     });

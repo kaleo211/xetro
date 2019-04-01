@@ -84,7 +84,6 @@ function inputComponent({ inputRef, ...props }) {
 }
 
 function Control(props) {
-  console.log('controlerrr:', props.selectProps.classes.input.color)
   return (
     <TextField fullWidth
       InputProps={{
