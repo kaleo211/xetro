@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import Fab from '@material-ui/core/Fab';
-import { Card, CardHeader, CardContent } from '@material-ui/core';
+import { Card, CardHeader, CardContent, Badge } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
-import { Add, DeleteOutlineRounded } from '@material-ui/icons';
+import { Add, ClearRounded } from '@material-ui/icons';
 
 import { setBoard } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
@@ -32,6 +32,9 @@ const styles = theme => ({
     position: 'absolute',
     bottom: theme.spacing.unit * 3,
     right: theme.spacing.unit * 3,
+  },
+  badge: {
+    padding: 0,
   },
 });
 
@@ -149,6 +152,18 @@ class Board extends React.Component {
       );
     };
 
+    let badge = (pillar) => {
+      return (board.locked ? null :
+        <IconButton disableRipple
+          color="primary"
+          className={classes.badge}
+          onClick={this.handleDeletePillar.bind(this, pillar)}
+        >
+          <ClearRounded fontSize="small" />
+        </IconButton>
+      );
+    };
+
     return (<div>
       <Grid container spacing={8}
         direction="row"
@@ -157,30 +172,29 @@ class Board extends React.Component {
       >
         {facilitator && pillars && pillars.map(pillar => (
           <Grid item key={pillar.title} xs={12} sm={12} md={4} >
-            <Card wrap='nowrap'>
-              <CardHeader
-                title={pillarTitle(pillar)}
-                subheader={pillar.subheader}
-                titleTypographyProps={{ align: 'center' }}
-                subheaderTypographyProps={{ align: 'center' }}
-                action={
-                  <IconButton onClick={this.handleDeletePillar.bind(this, pillar)}>
-                    <DeleteOutlineRounded fontSize="small" />
-                  </IconButton>
-                }
-              />
-              <CardContent>
-                <TextField fullWidth
-                  label={pillar.intro}
-                  value={newItemInPillar[pillar.id]}
-                  disabled={board && board.locked}
-                  name={pillar.id}
-                  onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
-                  onKeyPress={this.handleAddItem.bind(this, pillar.id)}
+            <Badge
+              badgeContent={badge(pillar)}
+            >
+              <Card wrap='nowrap'>
+                <CardHeader
+                  title={pillarTitle(pillar)}
+                  subheader={pillar.subheader}
+                  titleTypographyProps={{ align: 'center' }}
+                  subheaderTypographyProps={{ align: 'center' }}
                 />
-              </CardContent>
-              <Pillar pillar={pillar} itemProgress={itemProgress} />
-            </Card>
+                <CardContent>
+                  <TextField fullWidth
+                    label={pillar.intro}
+                    value={newItemInPillar[pillar.id]}
+                    disabled={board && board.locked}
+                    name={pillar.id}
+                    onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
+                    onKeyPress={this.handleAddItem.bind(this, pillar.id)}
+                  />
+                </CardContent>
+                <Pillar pillar={pillar} itemProgress={itemProgress} />
+              </Card>
+            </Badge>
           </Grid>))}
       </Grid>
 

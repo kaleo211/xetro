@@ -156,7 +156,7 @@ class Pillar extends React.Component {
 
     const members = group.members;
 
-    const items = pillar.items.sort(Utils.createdAt);
+    const items = pillar.items.sort(Utils.createdAt());
 
     console.log('items:', items);
 
