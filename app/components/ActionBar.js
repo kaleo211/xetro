@@ -17,7 +17,6 @@ import {
   RefreshRounded,
   Assignment,
   CheckRounded,
-  HistoryRounded,
 } from '@material-ui/icons';
 
 import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
@@ -95,42 +94,35 @@ class ActionBar extends React.Component {
     );
 
     return (<div>
-      <Tooltip title="Show board history" placement="bottom">
-        <IconButton id="historyButton" onClick={this.handleViewHistory.bind(this)} color="inherit">
-          <HistoryRounded />
+      <Tooltip title="Refresh board" placement="bottom">
+        <IconButton id="refreshButton" onClick={this.handleRefreshBoard.bind(this)} color="inherit">
+          <RefreshRounded />
         </IconButton>
       </Tooltip>
-      {board && (
-        <Tooltip title="Refresh board" placement="bottom">
-          <IconButton id="refreshButton" onClick={this.handleRefreshBoard.bind(this)} color="inherit">
-            <RefreshRounded />
-          </IconButton>
-        </Tooltip>)}
-      {board && board.video && (
+      {board.video && (
         <Tooltip title="Open Video Chat" placement="bottom">
           <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
             <VoiceChat />
           </IconButton>
         </Tooltip>)}
-      {board && (
-        <Tooltip title="Show Actions" placement="bottom">
-          <IconButton onClick={this.handleDialogOpen} color="inherit">
-            <Assignment />
-          </IconButton>
-        </Tooltip>)}
-      {board && !board.locked && (
+      <Tooltip title="Show Actions" placement="bottom">
+        <IconButton onClick={this.handleDialogOpen} color="inherit">
+          <Assignment />
+        </IconButton>
+      </Tooltip>
+      {!board.locked && (
         <Tooltip title="Lock Board" placement="bottom">
           <IconButton onClick={this.handleLockBoard.bind(this)} color="inherit">
             <LockOutlined />
           </IconButton>
         </Tooltip>)}
-      {board && board.locked && (
+      {board.locked && (
         <Tooltip title="Unlock Board" placement="bottom">
           <IconButton onClick={this.handleUnlockBoard.bind(this)} color="inherit">
             <VpnKeyOutlined />
           </IconButton>
         </Tooltip>)}
-      {board && board.stage === 'active' && (
+      {board.stage === 'active' && (
         <Tooltip title="Archive Board" placement="bottom">
           <IconButton onClick={this.handleArchiveBoard.bind(this)} color="inherit">
             <SaveOutlined />

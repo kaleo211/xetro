@@ -91,6 +91,7 @@ export const setBoard = (boardId) => {
 export const archiveBoard = (boardId) => {
   return (dispatch) => {
     Utils.fetch(`/boards/${boardId}/archive`);
+    dispatch(setPage('createBoard'))
   }
 }
 

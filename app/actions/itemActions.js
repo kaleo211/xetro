@@ -23,6 +23,7 @@ export const finishItem = (item) => {
   return (dispatch) => {
     Utils.fetch(`/items/${item.id}/finish`).then(() => {
       dispatch(getMe());
+      dispatch(setBoard(item.boardId));
     });
   };
 };

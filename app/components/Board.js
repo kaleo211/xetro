@@ -36,6 +36,12 @@ const styles = theme => ({
   badge: {
     padding: 0,
   },
+  header: {
+    padding: theme.spacing.unit * 1,
+  },
+  length: {
+    maxWidth: theme.spacing.unit * 999,
+  },
 });
 
 class Board extends React.Component {
@@ -138,7 +144,9 @@ class Board extends React.Component {
     const { newItemInPillar, itemProgress } = this.state;
 
     let facilitator = board.facilitator;
-    let pillars = board.pillars.sort(Utils.createdAt);
+    let pillars = board.pillars.sort(Utils.createdAt());
+
+    console.log('haha', this.props.draw);
 
     const pillarTitle = (pillar) => {
       return (
@@ -152,17 +160,20 @@ class Board extends React.Component {
       );
     };
 
-    let badge = (pillar) => {
-      return (board.locked ? null :
-        <IconButton disableRipple
-          color="primary"
-          className={classes.badge}
-          onClick={this.handleDeletePillar.bind(this, pillar)}
-        >
-          <ClearRounded fontSize="small" />
-        </IconButton>
-      );
-    };
+    let size = () => {
+      let size = board.pillars.length;
+      return size <= 3 ? 4 : 3;
+    }
+
+    let action = (pillar) => {
+      return <IconButton disableRipple
+        color="primary"
+        className={classes.badge}
+        onClick={this.handleDeletePillar.bind(this, pillar)}
+      >
+        <ClearRounded fontSize="small" />
+      </IconButton>
+    }
 
     return (<div>
       <Grid container spacing={8}
@@ -171,30 +182,27 @@ class Board extends React.Component {
         alignItems="stretch"
       >
         {facilitator && pillars && pillars.map(pillar => (
-          <Grid item key={pillar.title} xs={12} sm={12} md={4} >
-            <Badge
-              badgeContent={badge(pillar)}
-            >
-              <Card wrap='nowrap'>
-                <CardHeader
-                  title={pillarTitle(pillar)}
-                  subheader={pillar.subheader}
-                  titleTypographyProps={{ align: 'center' }}
-                  subheaderTypographyProps={{ align: 'center' }}
+          <Grid item key={pillar.title} xs={12} sm={12} md={size()} >
+            <Card wrap='nowrap'>
+              <CardHeader
+                title={pillarTitle(pillar)}
+                subheader={pillar.subheader}
+                titleTypographyProps={{ align: 'center' }}
+                subheaderTypographyProps={{ align: 'center' }}
+                action={action(pillar)}
+              />
+              <CardContent>
+                <TextField fullWidth
+                  label={pillar.intro}
+                  value={newItemInPillar[pillar.id]}
+                  disabled={board && board.locked}
+                  name={pillar.id}
+                  onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
+                  onKeyPress={this.handleAddItem.bind(this, pillar.id)}
                 />
-                <CardContent>
-                  <TextField fullWidth
-                    label={pillar.intro}
-                    value={newItemInPillar[pillar.id]}
-                    disabled={board && board.locked}
-                    name={pillar.id}
-                    onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
-                    onKeyPress={this.handleAddItem.bind(this, pillar.id)}
-                  />
-                </CardContent>
-                <Pillar pillar={pillar} itemProgress={itemProgress} />
-              </Card>
-            </Badge>
+              </CardContent>
+              <Pillar pillar={pillar} itemProgress={itemProgress} />
+            </Card>
           </Grid>))}
       </Grid>
 
@@ -208,6 +216,7 @@ class Board extends React.Component {
 const mapStateToProps = state => ({
   board: state.boards.board,
   activeItem: state.local.activeItem,
+  draw: state.local.drawOpen,
 });
 const mapDispatchToProps = (dispatch) => {
   return {

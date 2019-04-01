@@ -21,7 +21,7 @@ const initialState = {
   snackbarOpen: false,
   snackbarMessage: "",
   activeItem: {},
-  drawOpen: true,
+  drawOpen: false,
 };
 
 const localReducer = function (state = initialState, action) {
