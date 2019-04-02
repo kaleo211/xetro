@@ -31,11 +31,19 @@ let associations = [
 
 var respondWithBoard = async (res, id) => {
   try {
-    const board = await model.Board.findOne({
+    let board = await model.Board.findOne({
       include: associations,
       where: { id: id },
     });
     if (board) {
+      let actions = [];
+      board.pillars.map(p => {
+        p.items.map(i => {
+          actions.push(...i.actions);
+        });
+      });
+      board = board.toJSON();
+      board.actions = actions;
       res.json(board);
     } else {
       res.sendStatus(404);
@@ -44,7 +52,7 @@ var respondWithBoard = async (res, id) => {
     console.log('error get board', err);
     res.sendStatus(500);
   };
-}
+};
 
 var respondWithActiveBoards = async (res, groupId) => {
   try {
@@ -64,7 +72,7 @@ var respondWithActiveBoards = async (res, groupId) => {
     console.log('error get active board', err);
     res.sendStatus(500);
   };
-}
+};
 
 var updateBoard = async (res, id, fields) => {
   try {

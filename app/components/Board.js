@@ -74,9 +74,7 @@ class Board extends React.Component {
           itemProgress: Math.floor((this.state.secondsPerItem - difference) * 100 / this.state.secondsPerItem),
         });
       } else {
-        this.setState({
-          itemProgress: 100,
-        });
+        this.setState({ itemProgress: 100 });
       }
     }
   };
@@ -193,7 +191,7 @@ class Board extends React.Component {
                 action={action(pillar)}
               />
               <CardContent>
-                {board.stage!=='archived' && !board.locked &&
+                {board.stage !== 'archived' && !board.locked &&
                   <TextField fullWidth
                     label={pillar.intro}
                     value={newItemInPillar[pillar.id]}

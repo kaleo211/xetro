@@ -32,14 +32,16 @@ export const fetchGroupActiveBoards = (groupId) => {
 };
 
 export const postBoard = (newBoard) => {
-  return (dispatch) => {
-    Utils.post('boards', newBoard).then(body => {
+  return async (dispatch) => {
+    Utils.post('boards', newBoard).then(async body => {
       dispatch({
         type: SET_BOARD,
         board: body,
       });
       dispatch(postPillar({ title: ':)', boardId: body.id }));
+      await Utils.sleep(50);
       dispatch(postPillar({ title: ':|', boardId: body.id }));
+      await Utils.sleep(50);
       dispatch(postPillar({ title: ':(', boardId: body.id }));
     });
   };

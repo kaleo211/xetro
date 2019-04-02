@@ -17,11 +17,13 @@ import {
   RefreshRounded,
   Assignment,
   CheckRounded,
+  AssignmentTurnedInOutlined,
 } from '@material-ui/icons';
 
 import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 import { openSnackBar, setPage } from '../actions/localActions';
+import { finishItem } from '../actions/itemActions';
 
 const styles = theme => ({
 });
@@ -83,33 +85,23 @@ class ActionBar extends React.Component {
   }
 
   render() {
-    const { board, group } = this.props;
-
-    const members = group ? group.members : [];
-
-    const membersWithActions = members.filter(member =>
-      member.actions && member.actions.filter(action =>
-        !action.finished && action.group.id === group.id
-      ).length > 0
-    );
+    const { board, classes } = this.props;
+    let actions = board.actions;
 
     return (<div>
-      <Tooltip title="Refresh board" placement="bottom">
-        <IconButton id="refreshButton" onClick={this.handleRefreshBoard.bind(this)} color="inherit">
-          <RefreshRounded />
-        </IconButton>
-      </Tooltip>
       {board.video && (
         <Tooltip title="Open Video Chat" placement="bottom">
           <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
             <VoiceChat />
           </IconButton>
         </Tooltip>)}
-      <Tooltip title="Show Actions" placement="bottom">
-        <IconButton onClick={this.handleDialogOpen} color="inherit">
-          <Assignment />
-        </IconButton>
-      </Tooltip>
+      {board.stage === 'active' && (
+        <Tooltip title="Archive Board" placement="bottom">
+          <IconButton onClick={this.handleArchiveBoard.bind(this)} color="inherit">
+            <SaveOutlined />
+          </IconButton>
+        </Tooltip>
+      )}
       {!board.locked && (
         <Tooltip title="Lock Board" placement="bottom">
           <IconButton onClick={this.handleLockBoard.bind(this)} color="inherit">
@@ -122,36 +114,33 @@ class ActionBar extends React.Component {
             <VpnKeyOutlined />
           </IconButton>
         </Tooltip>)}
-      {board.stage === 'active' && (
-        <Tooltip title="Archive Board" placement="bottom">
-          <IconButton onClick={this.handleArchiveBoard.bind(this)} color="inherit">
-            <SaveOutlined />
-          </IconButton>
-        </Tooltip>)}
+      <Tooltip title="Show Actions" placement="bottom">
+        <IconButton onClick={this.handleDialogOpen} color="inherit">
+          <AssignmentTurnedInOutlined />
+        </IconButton>
+      </Tooltip>
 
       <Dialog fullWidth
         open={this.state.dialogOpen}
         onClose={this.handleDialogClose}
       >
         <DialogTitle>
-          {membersWithActions && membersWithActions.length > 0 ? "Actions" : "No Actions"}
+          {actions && actions.length > 0 ? "Actions" : "No Actions"}
         </DialogTitle>
         <DialogContent>
-          <Grid container justify="flex-start" spacing={16}>
-            {membersWithActions.map(member => (
-              <Grid item xs={12} key={"action" + member.userId}>
-                <List>
-                  {member.actions && member.actions.filter(ac => ac.group.id === group.id && !ac.finished).map((a, idx) => (
-                    <ListItem divider key={"actionToCheck" + a.id} button >
-                      <Avatar style={{ backgroundColor: idx === 0 || 'rgba(0, 0, 0, 0)' }}>{member.userId}</Avatar>
-                      <ListItemText primary={a.title} />
-                      <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, a)}>
-                        <IconButton><CheckRounded /></IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>))}
-                </List>
-              </Grid>))}
-          </Grid>
+          <List>
+            {actions.map(action => (
+              <ListItem divider button
+                key={"actionToCheck" + action.id}
+                disabled={action.stage === 'done'}
+              >
+                <Avatar>{action.ownerId}</Avatar>
+                <ListItemText primary={action.title} />
+                <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, action)}>
+                  <IconButton><CheckRounded /></IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>))}
+          </List>
         </DialogContent>
         <DialogActions>
           <Button onClick={this.handleDialogClose} color="primary">OK</Button>
@@ -163,7 +152,6 @@ class ActionBar extends React.Component {
 
 const mapStateToProps = (state) => ({
   board: state.boards.board,
-  group: state.groups.group,
 });
 
 const mapDispatchToProps = (dispatch) => {
