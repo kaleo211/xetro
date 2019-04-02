@@ -196,7 +196,7 @@ class Pillar extends React.Component {
         <ExpansionPanelDetails className={classes.panelDetail}>
           <Grid container direction="column">
             <Grid item>
-              {board.stage !== 'archived' &&
+              {board.stage === 'active' &&
                 <TextField fullWidth
                   label='Action Item'
                   value={item.action ? item.action.title : newAction}
@@ -207,7 +207,7 @@ class Pillar extends React.Component {
             </Grid>
             <Grid item>
               <List>
-                {items.map(i => i.itemId === item.id &&
+                {item.actions.map(i =>
                   <ListItem divider key={'action' + i.id} className={classes.item}>
                     <ListItemText primary={i.title} />
                     {i.ownerId && <Avatar className={classes.owner}>{i.ownerId}</Avatar>}
@@ -248,10 +248,12 @@ class Pillar extends React.Component {
                       <PlayArrowRounded />
                     </IconButton>
                   }
-                  <IconButton onClick={this.handleFinishItem.bind(this, item)}>
-                    <Done />
-                  </IconButton>
-                  {!board.locked && item.stage === 'created' && (
+                  {item.stage === 'active' &&
+                    <IconButton onClick={this.handleFinishItem.bind(this, item)}>
+                      <Done />
+                    </IconButton>
+                  }
+                  {!board.locked && item.stage === 'created' && (item.actions == null || item.actions.length === 0) && (
                     <IconButton onClick={this.handleDeleteItem.bind(this, item)}>
                       <DeleteOutline />
                     </IconButton>

@@ -1,25 +1,38 @@
 const routes = require('express').Router();
 const model = require('../models');
 
+let associations = [
+  {
+    model: model.User,
+    as: 'facilitator',
+  }, {
+    model: model.Group,
+    as: 'group',
+  }, {
+    model: model.Pillar,
+    as: 'pillars',
+    order: [['createdAt', 'ASC']],
+    include: [
+      {
+        model: model.Item,
+        as: 'items',
+        order: [['createdAt', 'ASC']],
+        include: [
+          {
+            model: model.Item,
+            as: 'actions',
+            order: [['createdAt', 'ASC']],
+          },
+        ],
+      },
+    ],
+  },
+];
+
 var respondWithBoard = async (res, id) => {
   try {
     const board = await model.Board.findOne({
-      include: [{
-        model: model.User,
-        as: 'facilitator',
-      }, {
-        model: model.Group,
-        as: 'group',
-      }, {
-        model: model.Pillar,
-        as: 'pillars',
-        order: [['createdAt', 'ASC']],
-        include: [{
-          model: model.Item,
-          as: 'items',
-          order: [['createdAt', 'ASC']],
-        }],
-      }],
+      include: associations,
       where: { id: id },
     });
     if (board) {
@@ -36,16 +49,10 @@ var respondWithBoard = async (res, id) => {
 var respondWithActiveBoards = async (res, groupId) => {
   try {
     const board = await model.Board.findAll({
-      include: [{
-        model: model.User,
-        as: 'facilitator',
-      }, {
-        model: model.Group,
-        as: 'group',
-      }],
+      include: associations,
       where: {
         groupId: groupId,
-        stage: 'active',
+        stage: 'created',
       },
     });
     if (board) {
@@ -89,7 +96,10 @@ routes.get('/:id/archive', async (req, res) => {
 
 // Lock
 routes.get('/:id/lock', async (req, res) => {
-  await updateBoard(res, req.params.id, { locked: true });
+  await updateBoard(res, req.params.id, {
+    locked: true,
+    stage: 'active',
+  });
 });
 
 // Unlock
@@ -125,7 +135,7 @@ routes.post('/', async (req, res) => {
   try {
     const newBoard = await model.Board.create({
       name: board.name,
-      stage: board.stage,
+      stage: 'created',
     });
     await newBoard.setFacilitator(board.facilitatorId);
     await newBoard.setGroup(board.groupId);

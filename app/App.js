@@ -20,11 +20,8 @@ import { ArrowForwardIosOutlined } from '@material-ui/icons';
 import ActionBar from './components/ActionBar';
 import Board from './components/Board';
 import BoardList from './components/BoardList';
-import MemberList from './components/MemberList';
 import NewBoard from './components/NewBoard';
 import NewGroup from './components/NewGroup';
-import GroupList from './components/GroupList';
-import ActionItemList from './components/ActionItemList';
 import Utils from './components/Utils';
 
 import { fetchGroups } from './actions/groupActions';
@@ -159,7 +156,7 @@ class App extends React.Component {
 
   render() {
     const { page, group, board, drawOpen, classes } = this.props;
-    console.log('page in app', page);
+    console.log('page in app', page, board);
 
     return (<div className={classes.root}>
       <CssBaseline />

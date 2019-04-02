@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
     Item.belongsTo(models.Group, { as: 'group' });
     Item.belongsTo(models.Pillar, { as: 'pillar' });
     Item.belongsTo(models.User, { as: 'owner' });
-    Item.belongsTo(Item, { as: 'item' })
+    Item.belongsTo(Item, { as: 'item' });
+    Item.hasMany(Item, { as: 'actions', foreignKey: 'itemId' });
   };
 
   return Item;

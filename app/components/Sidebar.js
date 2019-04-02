@@ -58,12 +58,12 @@ class Sidebar extends React.Component {
 
     console.log('members:', group && group.members, groups);
 
-    return (me && groups &&
+    return (me &&
       <List disablePadding>
         <ListItem button selected={expand === 'group'} onClick={this.handleClick.bind(this, 'group')}>
           <ListItemText
             primary={<Typography variant="h6">My Groups</Typography>}
-            secondary={groups.length === 0 ? 'click magnifier to join a group' : ''}
+            secondary={(group == null || groups.length === 0) ? 'click magnifier to join a group' : ''}
           />
           <ListItemSecondaryAction>
             <IconButton onClick={this.handleCreateGroup.bind(this)}>

@@ -15,7 +15,10 @@ var associations = [
   }, {
     model: model.Item,
     as: 'item',
-  }
+  }, {
+    model: model.Item,
+    as: 'actions',
+  },
 ];
 
 var respondWithItem = async (res, id) => {

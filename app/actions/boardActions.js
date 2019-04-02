@@ -36,12 +36,11 @@ export const postBoard = (newBoard) => {
     Utils.post('boards', newBoard).then(body => {
       dispatch({
         type: SET_BOARD,
-        board: body
+        board: body,
       });
-
-      dispatch(postPillar({ title: ':)', boardId: body.id }))
-      dispatch(postPillar({ title: ':|', boardId: body.id }))
-      dispatch(postPillar({ title: ':(', boardId: body.id }))
+      dispatch(postPillar({ title: ':)', boardId: body.id }));
+      dispatch(postPillar({ title: ':|', boardId: body.id }));
+      dispatch(postPillar({ title: ':(', boardId: body.id }));
     });
   };
 };
