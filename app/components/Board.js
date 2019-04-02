@@ -145,12 +145,12 @@ class Board extends React.Component {
 
     let facilitator = board.facilitator;
     let pillars = board.pillars.sort(Utils.createdAt());
-
-    console.log('haha', this.props.draw);
+    let enabled = (board.stage !== 'archived' && !board.locked);
 
     const pillarTitle = (pillar) => {
       return (
         <TextField fullWidth
+          disabled={!enabled}
           defaultValue={pillar.title}
           InputProps={{ disableUnderline: true, }}
           inputProps={{ className: classes.title, }}
@@ -165,14 +165,15 @@ class Board extends React.Component {
       return size <= 3 ? 4 : 3;
     }
 
+
     let action = (pillar) => {
-      return <IconButton disableRipple
+      return enabled ? <IconButton disableRipple
         color="primary"
         className={classes.badge}
         onClick={this.handleDeletePillar.bind(this, pillar)}
       >
         <ClearRounded fontSize="small" />
-      </IconButton>
+      </IconButton> : null;
     }
 
     return (<div>
@@ -192,14 +193,16 @@ class Board extends React.Component {
                 action={action(pillar)}
               />
               <CardContent>
-                <TextField fullWidth
-                  label={pillar.intro}
-                  value={newItemInPillar[pillar.id]}
-                  disabled={board && board.locked}
-                  name={pillar.id}
-                  onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
-                  onKeyPress={this.handleAddItem.bind(this, pillar.id)}
-                />
+                {board.stage!=='archived' && !board.locked &&
+                  <TextField fullWidth
+                    label={pillar.intro}
+                    value={newItemInPillar[pillar.id]}
+                    disabled={!enabled}
+                    name={pillar.id}
+                    onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
+                    onKeyPress={this.handleAddItem.bind(this, pillar.id)}
+                  />
+                }
               </CardContent>
               <Pillar pillar={pillar} itemProgress={itemProgress} />
             </Card>

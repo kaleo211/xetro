@@ -200,7 +200,7 @@ class App extends React.Component {
               }
             </Grid>
             <Grid container item justify="flex-end" md={6}>
-              {page === 'board' && board && <ActionBar />}
+              {page === 'board' && board && board.stage !== 'archived' && <ActionBar />}
             </Grid>
           </Grid>
         </Toolbar>

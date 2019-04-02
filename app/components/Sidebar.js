@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { Add, Search } from '@material-ui/icons';
+import { Search } from '@material-ui/icons';
 
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
@@ -58,7 +58,7 @@ class Sidebar extends React.Component {
 
     console.log('members:', group && group.members, groups);
 
-    return (me &&
+    return (me && groups &&
       <List disablePadding>
         <ListItem button selected={expand === 'group'} onClick={this.handleClick.bind(this, 'group')}>
           <ListItemText

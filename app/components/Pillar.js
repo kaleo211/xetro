@@ -155,10 +155,11 @@ class Pillar extends React.Component {
     const { newAction, ownerAnchorEl, switcher } = this.state;
 
     const members = group.members;
-
     const items = pillar.items.sort(Utils.createdAt());
 
-    console.log('items:', items);
+    let disabled = (item) => {
+      return board.locked || board.stage === 'archived' || item.stage === 'done';
+    }
 
     return (items ? items.map(item => (item.type === 'item' &&
       <ExpansionPanel
@@ -182,7 +183,7 @@ class Pillar extends React.Component {
             <Grid item className={classes.summaryGrid}>
               <IconButton
                 onClick={this.handleLikeItem.bind(this, item)}
-                disabled={board.locked || item.stage === 'done' || item.started}
+                disabled={disabled(item)}
               >
                 <Badge badgeContent={item.likes} color="primary" invisible={item.likes === 0} classes={{ badge: classes.badge }}>
                   <ThumbUpOutlined />
@@ -195,13 +196,14 @@ class Pillar extends React.Component {
         <ExpansionPanelDetails className={classes.panelDetail}>
           <Grid container direction="column">
             <Grid item>
-              <TextField fullWidth
-                label='Action Item'
-                disabled={item.stage === 'done'}
-                value={item.action ? item.action.title : newAction}
-                onChange={this.handleNewActionChange.bind(this)}
-                onKeyPress={this.handleSaveAction.bind(this, item)}
-              />
+              {board.stage !== 'archived' &&
+                <TextField fullWidth
+                  label='Action Item'
+                  value={item.action ? item.action.title : newAction}
+                  onChange={this.handleNewActionChange.bind(this)}
+                  onKeyPress={this.handleSaveAction.bind(this, item)}
+                />
+              }
             </Grid>
             <Grid item>
               <List>
@@ -239,23 +241,23 @@ class Pillar extends React.Component {
         <ExpansionPanelActions className={classes.panelAction}>
           <Grid container direction="column" className={classes.action}>
             <Grid container justify="flex-end" >
-              {board.locked && item.stage === 'created' &&
-                <IconButton onClick={this.handleStartItem.bind(this, item)}>
-                  <PlayArrowRounded />
-                </IconButton>
-              }
-              {!item.action && item.stage !== 'done' && (
+              {board.stage !== 'archived' && item.stage !== 'done' &&
                 <Grid item>
-                  <IconButton disabled={item.stage === 'done'} onClick={this.handleFinishItem.bind(this, item)}>
+                  {board.locked && item.stage === 'created' &&
+                    <IconButton onClick={this.handleStartItem.bind(this, item)}>
+                      <PlayArrowRounded />
+                    </IconButton>
+                  }
+                  <IconButton onClick={this.handleFinishItem.bind(this, item)}>
                     <Done />
                   </IconButton>
-                  {!board.locked && (
+                  {!board.locked && item.stage === 'created' && (
                     <IconButton onClick={this.handleDeleteItem.bind(this, item)}>
                       <DeleteOutline />
                     </IconButton>
                   )}
                 </Grid>
-              )}
+              }
             </Grid>
             <Grid>
               {board.locked && item.stage === 'active' &&
