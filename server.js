@@ -13,6 +13,8 @@ var boardRouter = require('./routers/board');
 var pillarRouter = require('./routers/pillar');
 var itemRouter = require('./routers/item');
 
+const model = require('./models');
+
 server.use(session({
   secret: config.get('server.session_secret'),
   resave: true,
@@ -24,8 +26,12 @@ server.use(session({
 
 var isAuthenticated = (req, res, next) => {
   if (!req.session.user) {
-    res.status(403).send('You are not authorized to view this page');
+    res.status(403).send('Nice Try! May be Try Login Instead.');
   } else {
+    model.User.update(
+      { last: new Date() },
+      { where: { id: req.session.user.id } },
+    );
     next();
   }
 }

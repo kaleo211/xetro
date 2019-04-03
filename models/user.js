@@ -15,6 +15,14 @@ module.exports = (sequelize, DataTypes) => {
     lastName: DataTypes.STRING,
     email: DataTypes.STRING,
     microsoftID: DataTypes.STRING,
+    last: DataTypes.DATE,
+    active: {
+      type: new DataTypes.VIRTUAL(DataTypes.BOOLEAN),
+      get() {
+        let gap = new Date().getTime() - new Date(this.get('last')).getTime();
+        return gap < 3 * 60 * 1000 ? true : false;
+      },
+    }
   }, {});
 
   User.associate = function (models) {

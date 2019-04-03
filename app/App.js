@@ -28,6 +28,7 @@ import { fetchGroups } from './actions/groupActions';
 import { closeSnackBar, openDraw, closeDraw } from './actions/localActions';
 import { fetchUsers, getMe } from './actions/userActions';
 import Sidebar from './components/Sidebar';
+import MemberList from './components/MemberList';
 
 const drawerWidth = 240;
 
@@ -221,7 +222,7 @@ class App extends React.Component {
           </IconButton>
         </div>
         <Divider />
-        {drawOpen && <Sidebar />}
+        {drawOpen ? <Sidebar /> : <MemberList />}
       </Drawer>
 
       <main className={classes.content}>

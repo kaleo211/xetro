@@ -4,23 +4,20 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import { withStyles } from '@material-ui/core/styles';
-import deepPurple from '@material-ui/core/colors/deepPurple';
+import green from '@material-ui/core/colors/green';
 
-import { Avatar, Tooltip } from '@material-ui/core';
-import { List, ListItem, ListItemText, ListItemAvatar } from '@material-ui/core';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import { Avatar, Tooltip, Badge, IconButton } from '@material-ui/core';
+import { List, ListItem } from '@material-ui/core';
 
 import { addUserToGroup } from '../actions/groupActions';
 import { setActiveMember } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
 
 const styles = theme => ({
-  avatar: {
+  active: {
     color: '#fff',
-    backgroundColor: deepPurple[300],
-    width: 30,
-    height: 30,
-    marginLeft: -3,
+    backgroundColor: green[300],
+    marginLeft: theme.spacing.unit * 1,
   },
 });
 
@@ -45,26 +42,23 @@ class MemberList extends React.Component {
     const { group, classes } = this.props;
     let members = group ? group.members : [];
 
+    console.log('members:', members);
+
     return (
-      <List dense>
+      <List>
         {members && members.map(m => (
-          < Tooltip key={"side" + m.userId} title={m.firstName} placement="right" >
-            <ListItem button onClick={this.handleMemberSelect.bind(this, m.id)} >
-              <ListItemAvatar>
-                <Avatar className={classes.avatar}>
-                  {`${m.firstName.substring(0, 1).toUpperCase()}${m.lastName.substring(0, 1).toUpperCase()}`}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={m.firstName} />
-              <ListItemSecondaryAction>
-              </ListItemSecondaryAction>
+          <Tooltip key={"side" + m.userId} title={m.firstName} placement="right" >
+            <ListItem disableGutters button onClick={this.handleMemberSelect.bind(this, m.id)} >
+              <Avatar className={classes.active}>
+                {`${m.firstName.substring(0, 1).toUpperCase()}${m.lastName.substring(0, 1).toUpperCase()}`}
+              </Avatar>
             </ListItem>
           </Tooltip>
         ))}
       </List>
-    )
-  }
-}
+    );
+  };
+};
 
 const mapStateToProps = state => ({
   group: state.groups.group,
@@ -83,5 +77,5 @@ MemberList.propTypes = {
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles),
+  withStyles(styles, { withTheme: true }),
 )(MemberList);
