@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import indigo from '@material-ui/core/colors/indigo';
+import red from '@material-ui/core/colors/red';
 
 import App from './App'
 import { store } from './store';
@@ -15,7 +15,7 @@ const theme = createMuiTheme({
       main: blueGrey[600],
     },
     secondary: {
-      main: indigo[900],
+      main: red[600],
     },
     text: {
       white: blueGrey[50],

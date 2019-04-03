@@ -263,7 +263,7 @@ class Pillar extends React.Component {
             </Grid>
             <Grid>
               {board.locked && item.stage === 'active' &&
-                <LinearProgress variant="determinate" value={this.props.itemProgress} />
+                <LinearProgress color="secondary" variant="determinate" value={this.props.itemProgress} />
               }
             </Grid>
           </Grid>
