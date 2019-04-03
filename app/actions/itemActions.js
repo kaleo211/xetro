@@ -45,9 +45,8 @@ export const deleteItem = (item) => {
 };
 
 export const postItem = (item) => {
-  return (dispatch) => {
-    Utils.post('items', item).then(() => {
-      dispatch(setBoard(item.boardId));
-    });
+  return async (dispatch) => {
+    await Utils.post('items', item);
+    dispatch(setBoard(item.boardId));
   };
 };

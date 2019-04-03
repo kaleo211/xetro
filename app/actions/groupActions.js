@@ -39,7 +39,7 @@ export const postGroup = (newGroup) => {
 };
 
 export const setGroup = (groupId) => {
-  return (dispatch) => {
+  return async (dispatch) => {
     if (groupId == null) {
       dispatch(setBoard(null));
       dispacth(setPage(''));
@@ -48,13 +48,14 @@ export const setGroup = (groupId) => {
         group: null,
       });
     } else {
-      Utils.get(`groups`, groupId).then(body => {
+      const group = await Utils.get(`groups`, groupId);
+      if (group) {
         dispatch(fetchGroupActiveBoards(groupId));
         dispatch({
           type: SET_GROUP,
-          group: body,
+          group,
         });
-      });
+      }
     }
   };
 };

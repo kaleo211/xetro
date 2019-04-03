@@ -58,7 +58,7 @@ class Sidebar extends React.Component {
 
     console.log('members:', group && group.members, groups);
 
-    return (me &&
+    return (
       <List disablePadding>
         <ListItem button selected={expand === 'group'} onClick={this.handleClick.bind(this, 'group')}>
           <ListItemText

@@ -33,7 +33,7 @@ let associations = [
     as: 'items',
     required: false,
     where: {
-      type: 'actions',
+      type: 'action',
       stage: {
         [Op.ne]: 'done',
       }
@@ -60,15 +60,17 @@ var respondWithBoard = async (res, id) => {
 
 var respondWithActiveBoards = async (res, groupId) => {
   try {
-    const board = await model.Board.findAll({
+    const boards = await model.Board.findAll({
       include: associations,
       where: {
         groupId: groupId,
-        stage: 'created',
+        stage: {
+          [Op.ne]: 'archived',
+        },
       },
     });
-    if (board) {
-      res.json(board);
+    if (boards) {
+      res.json(boards);
     } else {
       res.sendStatus(404);
     }
