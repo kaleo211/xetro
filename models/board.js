@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     Board.belongsTo(models.Group, { as: 'group' });
     Board.belongsTo(models.User, { as: 'facilitator' });
     Board.hasMany(models.Pillar, { as: 'pillars', foreignKey: 'boardId' });
+    Board.hasMany(models.Item, { as: 'items', foreignKey: 'boardId' });
   };
 
   return Board;

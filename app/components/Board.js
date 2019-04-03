@@ -100,6 +100,7 @@ class Board extends React.Component {
         title: newItemTitle,
         pillarId: pillarId,
         boardId: this.props.board.id,
+        groupId: this.props.group.id,
       };
       this.props.postItem(newItem);
       this.changeItemTitle(pillarId, '');
@@ -216,6 +217,7 @@ class Board extends React.Component {
 
 const mapStateToProps = state => ({
   board: state.boards.board,
+  group: state.groups.group,
   activeItem: state.local.activeItem,
   draw: state.local.drawOpen,
 });

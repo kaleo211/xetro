@@ -4,22 +4,19 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import Grid from '@material-ui/core/Grid';
+import AsyncCreatableSelect from 'react-select/lib/AsyncCreatable';
+import Card from '@material-ui/core/Card';
+import NoSsr from '@material-ui/core/NoSsr';
+import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
-import { Card, CardActions, CardContent } from '@material-ui/core';
-import { IconButton } from '@material-ui/core';
-import { Done, Close } from '@material-ui/icons';
 import Typography from '@material-ui/core/Typography';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import { getMe } from '../actions/userActions';
 import { fetchGroups, postGroup, setGroup } from '../actions/groupActions';
-import { setPage } from '../actions/localActions';
-import AsyncCreatableSelect from 'react-select/lib/AsyncCreatable';
+import { setPage, closeDraw } from '../actions/localActions';
 import { emphasize } from '@material-ui/core/styles/colorManipulator';
-import NoSsr from '@material-ui/core/NoSsr';
-import MenuItem from '@material-ui/core/MenuItem';
-import Chip from '@material-ui/core/Chip';
-import Paper from '@material-ui/core/Paper';
+
 import Utils from './Utils';
 
 const styles = theme => ({
@@ -192,7 +189,8 @@ class NewGroup extends React.Component {
       await this.props.postGroup(group);
     }
 
-    this.props.setPage('');
+    this.props.setPage('createBoard');
+    this.props.closeDraw();
   }
 
   async handleSearchGroup(searchText) {
@@ -258,6 +256,7 @@ const mapDispatchToProps = (dispatch) => {
     setPage: (page) => dispatch(setPage(page)),
     getMe: () => dispatch(getMe()),
     setGroup: (id) => dispatch(setGroup(id)),
+    closeDraw: () => dispatch(closeDraw()),
   };
 };
 

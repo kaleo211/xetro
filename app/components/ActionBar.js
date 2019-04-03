@@ -86,7 +86,7 @@ class ActionBar extends React.Component {
 
   render() {
     const { board, classes } = this.props;
-    let actions = board.actions;
+    let actions = board.items;
 
     return (<div>
       {board.video && (

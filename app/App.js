@@ -156,7 +156,7 @@ class App extends React.Component {
 
   render() {
     const { page, group, board, drawOpen, classes } = this.props;
-    console.log('page in app', page, board);
+    console.log('page in app', page, board, group);
 
     return (<div className={classes.root}>
       <CssBaseline />
@@ -227,7 +227,7 @@ class App extends React.Component {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {page === 'board' && board && <Board />}
-        {page === 'createBoard' && <NewBoard />}
+        {page === 'createBoard' && group && <NewBoard />}
         {page === 'boardList' && <BoardList />}
         {page === 'createGroup' && <NewGroup />}
       </main>

@@ -5,14 +5,24 @@ const Op = Sequelize.Op;
 
 var respondWithGroup = async (res, id) => {
   try {
-    const group = await model.Group.findOne({
-      include: [{
-        model: model.User,
-        as: 'members',
-      }, {
-        model: model.Board,
-        as: 'boards',
-      }],
+    let group = await model.Group.findOne({
+      include: [
+        {
+          model: model.User,
+          as: 'members',
+          through: 'GroupMember',
+        }, {
+          model: model.Board,
+          as: 'boards',
+        }, {
+          model: model.Item,
+          as: 'items',
+          required: false,
+          where: {
+            type: 'action',
+          },
+        }
+      ],
       where: { id: id },
     });
     if (group) {
@@ -93,13 +103,11 @@ routes.post('/', async (req, res) => {
       res.sendStatus(500);
       return;
     }
-
     let newGroup = newGroups[0];
     group.members.map(async id => {
       await newGroup.addMembers(id);
     });
     await respondWithGroup(res, newGroup.id);
-
   } catch (err) {
     console.log('error post group:', err);
     res.sendStatus(500);

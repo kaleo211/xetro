@@ -18,20 +18,23 @@ export const fetchGroups = () => {
 };
 
 export const postGroup = (newGroup) => {
-  return (dispatch) => {
-    Utils.post('groups', newGroup).then(group => {
-      Utils.list('groups').then(groups => {
-        dispatch(getMe());
-        dispatch({
-          type: SET_GROUPS,
-          groups,
-        });
-        dispatch({
-          type: SET_GROUP,
-          group,
-        });
+  return async (dispatch) => {
+    const resp = await Utils.post('groups', newGroup);
+    if (resp) {
+      const groups = await Utils.list('groups');
+      dispatch({
+        type: SET_GROUPS,
+        groups,
       });
-    });
+
+      const group = await Utils.get('groups', resp.id);
+      dispatch({
+        type: SET_GROUP,
+        group,
+      });
+
+      dispatch(getMe());
+    }
   };
 };
 

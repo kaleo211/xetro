@@ -178,7 +178,7 @@ class NewBoard extends React.Component {
           </Grid>
         );
       default:
-        return 'Unknown step';
+        return 'Unknown Step';
     }
   }
 
@@ -206,24 +206,24 @@ class NewBoard extends React.Component {
     const { activeStep, facilitator } = this.state;
     const steps = getSteps();
 
-    return (group &&
+    console.log('group:', group);
+
+    return (
       <Paper>
         <Grid container justify="flex-end" className={classes.root}>
           <Grid item xs={11}>
             <Stepper activeStep={activeStep} orientation="vertical">
-              {steps.map((label, index) => {
-                return (
-                  <Step key={label}>
-                    <StepLabel>{label}</StepLabel>
-                    <StepContent>
-                      {this.getStepContent(index, group.members, facilitator)}
-                      <div style={{ paddingTop: 20 }} >
-                        {this.getStepButton(index, facilitator)}
-                      </div>
-                    </StepContent>
-                  </Step>
-                );
-              })}
+              {steps.map((label, index) =>
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                  <StepContent>
+                    {this.getStepContent(index, group.members, facilitator)}
+                    <div style={{ paddingTop: 20 }} >
+                      {this.getStepButton(index, facilitator)}
+                    </div>
+                  </StepContent>
+                </Step>
+              )}
             </Stepper>
           </Grid>
         </Grid>

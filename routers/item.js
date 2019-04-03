@@ -150,6 +150,7 @@ routes.post('/', async (req, res) => {
     await newItem.setOwner(item.ownerId);
     await newItem.setPillar(item.pillarId)
     await newItem.setGroup(item.groupId);
+    await newItem.setBoard(item.boardId);
     await newItem.setItem(item.itemId);
     await respondWithItem(res, newItem.id);
   } catch (err) {

@@ -1,5 +1,7 @@
 const routes = require('express').Router();
 const model = require('../models');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 let associations = [
   {
@@ -26,7 +28,17 @@ let associations = [
         ],
       },
     ],
-  },
+  }, {
+    model: model.Item,
+    as: 'items',
+    required: false,
+    where: {
+      type: 'actions',
+      stage: {
+        [Op.ne]: 'done',
+      }
+    }
+  }
 ];
 
 var respondWithBoard = async (res, id) => {
@@ -36,14 +48,6 @@ var respondWithBoard = async (res, id) => {
       where: { id: id },
     });
     if (board) {
-      let actions = [];
-      board.pillars.map(p => {
-        p.items.map(i => {
-          actions.push(...i.actions);
-        });
-      });
-      board = board.toJSON();
-      board.actions = actions;
       res.json(board);
     } else {
       res.sendStatus(404);

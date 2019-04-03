@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Item.associate = function (models) {
     Item.belongsTo(models.Group, { as: 'group' });
+    Item.belongsTo(models.Board, { as: 'board' });
     Item.belongsTo(models.Pillar, { as: 'pillar' });
     Item.belongsTo(models.User, { as: 'owner' });
     Item.belongsTo(Item, { as: 'item' });
