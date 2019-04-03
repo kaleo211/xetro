@@ -63,7 +63,9 @@ class Sidebar extends React.Component {
         <ListItem button selected={expand === 'group'} onClick={this.handleClick.bind(this, 'group')}>
           <ListItemText
             primary={<Typography variant="h6">My Groups</Typography>}
-            secondary={(groups == null || groups.length === 0) ? 'click magnifier to join a group' : ''}
+            secondary={
+              (groups == null || groups.length === 0) ? 'click magnifier to join a group' : `${groups.length} groups`
+            }
           />
           <ListItemSecondaryAction>
             <IconButton onClick={this.handleCreateGroup.bind(this)}>
@@ -78,7 +80,7 @@ class Sidebar extends React.Component {
         <ListItem button selected={expand === 'action'} onClick={this.handleClick.bind(this, 'action')}>
           <ListItemText
             primary={<Typography variant="h6">My Actions</Typography>}
-            secondary={me.actions.length === 0 ? 'no actions' : ''}
+            secondary={me.actions.length === 0 ? 'no actions' : `${me.actions.length} actions`}
           />
         </ListItem>
         <Collapse in={expand === 'action'} timeout="auto" unmountOnExit>
