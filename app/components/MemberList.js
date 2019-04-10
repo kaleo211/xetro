@@ -6,7 +6,7 @@ import { compose } from 'redux';
 import { withStyles } from '@material-ui/core/styles';
 import green from '@material-ui/core/colors/green';
 
-import { Avatar, Tooltip, Badge, IconButton } from '@material-ui/core';
+import { Avatar, Tooltip } from '@material-ui/core';
 import { List, ListItem } from '@material-ui/core';
 
 import { addUserToGroup } from '../actions/groupActions';
@@ -41,11 +41,8 @@ class MemberList extends React.Component {
   render() {
     const { group, classes } = this.props;
     let members = group ? group.members : [];
-
-    console.log('members:', members);
-
     return (
-      <List>
+      <List dense>
         {members && members.map(m => (
           <Tooltip key={"side" + m.userId} title={m.firstName} placement="right" >
             <ListItem disableGutters button onClick={this.handleMemberSelect.bind(this, m.id)} >

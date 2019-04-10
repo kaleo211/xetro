@@ -45,6 +45,7 @@
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
     "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "sequelize": "^4.43.0",
     "sequelize-cli": "^5.4.0",
     "sinon": "^7.1.0",

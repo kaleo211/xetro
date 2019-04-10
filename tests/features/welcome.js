@@ -18,7 +18,7 @@ describe('Google demo test for Mocha', function () {
       done();
     });
 
-    it('uses BDD to run the Google simple test', function (browser) {
+    it('load page', function (browser) {
       browser
         .url('localhost:8080')
         .expect.element('body').to.be.present.before(1000);
