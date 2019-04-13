@@ -18,6 +18,7 @@ import {
   Assignment,
   CheckRounded,
   AssignmentTurnedInOutlined,
+  FlightTakeoffOutlined,
 } from '@material-ui/icons';
 
 import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
@@ -66,7 +67,6 @@ class ActionBar extends React.Component {
 
   handleArchiveBoard() {
     this.props.archiveBoard(this.props.board.id);
-    this.props.setPage('createBoard');
     this.props.openSnackBar('Board is ARCHIVED.');
     this.props.setGroup(this.props.group.id);
     this.props.setBoard(null);
@@ -85,73 +85,43 @@ class ActionBar extends React.Component {
   }
 
   render() {
-    const { board, classes } = this.props;
-    let actions = board.items;
+    const { board, classes, page } = this.props;
 
     return (<div>
-      {board.video && (
-        <Tooltip title="Open Video Chat" placement="bottom">
-          <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
-            <VoiceChat />
-          </IconButton>
-        </Tooltip>)}
-      {board.stage === 'active' && (
-        <Tooltip title="Archive Board" placement="bottom">
-          <IconButton onClick={this.handleArchiveBoard.bind(this)} color="inherit">
-            <SaveOutlined />
-          </IconButton>
-        </Tooltip>
-      )}
-      {!board.locked && (
-        <Tooltip title="Lock Board" placement="bottom">
-          <IconButton onClick={this.handleLockBoard.bind(this)} color="inherit">
-            <LockOutlined />
-          </IconButton>
-        </Tooltip>)}
-      {board.locked && (
-        <Tooltip title="Unlock Board" placement="bottom">
-          <IconButton onClick={this.handleUnlockBoard.bind(this)} color="inherit">
-            <VpnKeyOutlined />
-          </IconButton>
-        </Tooltip>)}
-      <Tooltip title="Show Actions" placement="bottom">
-        <IconButton onClick={this.handleDialogOpen} color="inherit">
-          <AssignmentTurnedInOutlined />
-        </IconButton>
-      </Tooltip>
-
-      <Dialog fullWidth
-        open={this.state.dialogOpen}
-        onClose={this.handleDialogClose}
-      >
-        <DialogTitle>
-          {actions && actions.length > 0 ? "Actions" : "No Actions"}
-        </DialogTitle>
-        <DialogContent>
-          <List>
-            {actions.map(action => (
-              <ListItem divider button
-                key={"actionToCheck" + action.id}
-                disabled={action.stage === 'done'}
-              >
-                <Avatar>{action.ownerId}</Avatar>
-                <ListItemText primary={action.title} />
-                <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, action)}>
-                  <IconButton><CheckRounded /></IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>))}
-          </List>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={this.handleDialogClose} color="primary">OK</Button>
-        </DialogActions>
-      </Dialog>
+      {page === "board" && board.stage !== 'archived' && <div>
+        {board.video && (
+          <Tooltip title="Open Video Chat" placement="bottom">
+            <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
+              <VoiceChat />
+            </IconButton>
+          </Tooltip>)}
+        {board.stage === 'active' && (
+          <Tooltip title="Archive Board" placement="bottom">
+            <IconButton onClick={this.handleArchiveBoard.bind(this)} color="inherit">
+              <SaveOutlined />
+            </IconButton>
+          </Tooltip>
+        )}
+        {!board.locked && (
+          <Tooltip title="Lock Board" placement="bottom">
+            <IconButton onClick={this.handleLockBoard.bind(this)} color="inherit">
+              <LockOutlined />
+            </IconButton>
+          </Tooltip>)}
+        {board.locked && (
+          <Tooltip title="Unlock Board" placement="bottom">
+            <IconButton onClick={this.handleUnlockBoard.bind(this)} color="inherit">
+              <VpnKeyOutlined />
+            </IconButton>
+          </Tooltip>)}
+      </div>}
     </div>);
   }
 }
 
 const mapStateToProps = (state) => ({
   board: state.boards.board,
+  page: state.local.page,
 });
 
 const mapDispatchToProps = (dispatch) => {

@@ -10,23 +10,14 @@ import { postPillar } from './pillarActions';
 export const fetchGroupActiveBoards = (groupId) => {
   return (dispatch) => {
     Utils.fetch(`/boards/active/${groupId}`).then(body => {
-      let page;
       let boards = body || [];
-
-      if (boards.length === 0) {
-        page = 'createBoard';
-      } else if (boards.length === 1) {
+      if (boards.length === 1) {
         dispatch(setBoard(boards[0].id));
-        page = "board";
-      } else if (boards.length > 1) {
-        page = "boardList";
       }
-
       dispatch({
         type: SET_BOARDS,
         boards
       });
-      dispatch(setPage(page));
     });
   };
 };
@@ -92,7 +83,7 @@ export const setBoard = (boardId) => {
 export const archiveBoard = (boardId) => {
   return (dispatch) => {
     Utils.fetch(`/boards/${boardId}/archive`);
-    dispatch(setPage('createBoard'))
+    dispatch(setPage('group'))
   }
 }
 

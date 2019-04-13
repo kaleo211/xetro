@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import AsyncCreatableSelect from 'react-select/lib/AsyncCreatable';
-import Card from '@material-ui/core/Card';
 import NoSsr from '@material-ui/core/NoSsr';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
@@ -64,9 +63,6 @@ const styles = theme => ({
     marginTop: theme.spacing.unit,
     left: 0,
     right: 0,
-  },
-  divider: {
-    height: theme.spacing.unit * 2,
   },
 });
 
@@ -189,7 +185,6 @@ class NewGroup extends React.Component {
       await this.props.postGroup(group);
     }
 
-    this.props.setPage('createBoard');
     this.props.closeDraw();
   }
 
@@ -229,18 +224,16 @@ class NewGroup extends React.Component {
     };
 
     return (
-      <Card className={classes.root}>
-        <NoSsr>
-          <AsyncCreatableSelect
-            classes={classes}
-            styles={selectStyles}
-            loadOptions={this.handleSearchGroup.bind(this)}
-            components={components}
-            onChange={this.handleCreateGroup.bind(this)}
-            formatCreateLabel={(g) => { return `Create: ${g}` }}
-          />
-        </NoSsr>
-      </Card>
+      <NoSsr>
+        <AsyncCreatableSelect
+          classes={classes}
+          styles={selectStyles}
+          loadOptions={this.handleSearchGroup.bind(this)}
+          components={components}
+          onChange={this.handleCreateGroup.bind(this)}
+          formatCreateLabel={(g) => { return `Create: ${g}` }}
+        />
+      </NoSsr>
     );
   }
 }

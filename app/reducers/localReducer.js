@@ -17,7 +17,7 @@ const persistConfig = {
 };
 
 const initialState = {
-  page: "",
+  page: "home",
   snackbarOpen: false,
   snackbarMessage: "",
   activeItem: {},

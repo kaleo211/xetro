@@ -3,6 +3,7 @@ import {
   SET_GROUP,
 } from './types';
 import { getMe } from './userActions';
+import { setPage } from './localActions';
 import Utils from '../components/Utils';
 import { fetchGroupActiveBoards } from './boardActions';
 
@@ -55,6 +56,7 @@ export const setGroup = (groupId) => {
           type: SET_GROUP,
           group,
         });
+        dispatch(setPage('group'));
       }
     }
   };

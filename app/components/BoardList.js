@@ -88,9 +88,7 @@ function Control(props) {
     <TextField fullWidth
       InputProps={{
         inputComponent,
-        disableUnderline: true,
         inputProps: {
-          styles: { color: 'white' },
           inputRef: props.innerRef,
           children: props.children,
           ...props.innerProps,
@@ -124,7 +122,7 @@ function Placeholder(props) {
       className={props.selectProps.classes.placeholder}
       {...props.innerProps}
     >
-      Group to Create/Join
+      Search Archived Boards
     </Typography>
   );
 }
@@ -188,11 +186,6 @@ class BoardList extends React.Component {
   render() {
     const { historyBoards, classes, theme } = this.props;
 
-    let board = {
-      value: this.props.board.id,
-      label: this.props.board.name,
-    }
-
     let boardNames = [];
     historyBoards.map(board => {
       boardNames.push({
@@ -214,7 +207,6 @@ class BoardList extends React.Component {
           classes={classes}
           components={components}
           styles={selectStyles}
-          value={board}
           options={boardNames}
           onChange={this.handleSelectBoard}
         />

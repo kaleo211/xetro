@@ -56,8 +56,6 @@ class Sidebar extends React.Component {
     const { group, groups, me, classes } = this.props;
     const { expand } = this.state;
 
-    console.log('members:', group && group.members, groups);
-
     return (
       <List disablePadding>
         <ListItem button selected={expand === 'group'} onClick={this.handleClick.bind(this, 'group')}>

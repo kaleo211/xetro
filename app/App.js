@@ -15,20 +15,19 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import { ArrowForwardIosOutlined } from '@material-ui/icons';
+import { ArrowForwardIosOutlined, FaceOutlined } from '@material-ui/icons';
 
 import ActionBar from './components/ActionBar';
 import Board from './components/Board';
 import BoardList from './components/BoardList';
-import NewBoard from './components/NewBoard';
 import NewGroup from './components/NewGroup';
 import Utils from './components/Utils';
 
 import { fetchGroups } from './actions/groupActions';
-import { closeSnackBar, openDraw, closeDraw } from './actions/localActions';
+import { closeSnackBar, openDraw, closeDraw, setPage } from './actions/localActions';
 import { fetchUsers, getMe } from './actions/userActions';
-import Sidebar from './components/Sidebar';
-import MemberList from './components/MemberList';
+import Group from './components/Group';
+import Home from './components/Home';
 
 const drawerWidth = 240;
 
@@ -95,7 +94,8 @@ const styles = theme => ({
     padding: theme.spacing.unit * 1,
   },
   arrow: {
-    margin: theme.spacing.unit,
+    marginLeft: theme.spacing.unit * 1,
+    marginRight: theme.spacing.unit * 1,
   },
   bar: {
     marginLeft: theme.spacing.unit * 2,
@@ -147,13 +147,9 @@ class App extends React.Component {
     win.focus();
   }
 
-  handleDrawerOpen = () => {
-    this.props.openDraw();
-  };
-
-  handleDrawerClose = () => {
-    this.props.closeDraw();
-  };
+  handleOpenHome() {
+    this.props.setPage('home');
+  }
 
   render() {
     const { page, group, board, drawOpen, classes } = this.props;
@@ -169,10 +165,10 @@ class App extends React.Component {
           <IconButton
             color="inherit"
             aria-label="Open drawer"
-            onClick={this.handleDrawerOpen}
+            onClick={this.handleOpenHome.bind(this)}
             className={classNames(classes.menuButton, { [classes.hide]: drawOpen })}
           >
-            <MenuIcon />
+            <FaceOutlined />
           </IconButton>
           <Grid container
             alignItems="center"
@@ -182,53 +178,23 @@ class App extends React.Component {
           >
             <Grid container alignItems="center" item md={6}>
               <Grid item>
-                <Typography variant="h6" color="inherit" noWrap>
+                <Typography variant="h3" color="inherit" noWrap>
                   {group ? group.name : 'Xetro'}
                 </Typography>
               </Grid>
-              {board &&
-                <Grid item xs={1}>
-                  <ArrowForwardIosOutlined className={classes.arrow} />
-                </Grid>
-              }
-              {board &&
-                <Grid item md={3}>
-                  <BoardList />
-                </Grid>
-              }
             </Grid>
             <Grid container item justify="flex-end" md={6}>
-              {page === 'board' && board && board.stage !== 'archived' && <ActionBar />}
+              {board && <ActionBar />}
             </Grid>
           </Grid>
         </Toolbar>
       </AppBar>
 
-      <Drawer variant="permanent" open={drawOpen}
-        className={classNames(classes.drawer, {
-          [classes.drawerOpen]: drawOpen,
-          [classes.drawerClose]: !drawOpen,
-        })}
-        classes={{
-          paper: classNames({
-            [classes.drawerOpen]: drawOpen,
-            [classes.drawerClose]: !drawOpen,
-          }),
-        }}
-      >
-        <div className={classes.toolbar}>
-          <IconButton onClick={this.handleDrawerClose}>
-            <ChevronLeft />
-          </IconButton>
-        </div>
-        <Divider />
-        {drawOpen ? <Sidebar /> : <MemberList />}
-      </Drawer>
-
       <main className={classes.content}>
         <div className={classes.toolbar} />
+        {page === 'home' && <Home />}
+        {page === 'group' && group && <Group />}
         {page === 'board' && board && <Board />}
-        {page === 'createBoard' && group && <NewBoard />}
         {page === 'boardList' && <BoardList />}
         {page === 'createGroup' && <NewGroup />}
       </main>
@@ -258,4 +224,5 @@ export default connect(mapStateToProps, {
   getMe,
   openDraw,
   closeDraw,
+  setPage,
 })(withStyles(styles, { withTheme: true })(App));

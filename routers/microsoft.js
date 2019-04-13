@@ -23,7 +23,7 @@ routes.get('/', async (req, res) => {
     });
     const authorization = JSON.parse(body);
 
-    let body = rp.get({
+    body = await rp.get({
       url: `${config.get('microsoft.api')}/me`,
       headers: {
         'Authorization': `Bearer ${authorization.access_token}`,
