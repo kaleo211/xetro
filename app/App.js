@@ -179,7 +179,7 @@ class App extends React.Component {
             <Grid container alignItems="center" item md={6}>
               <Grid item>
                 <Typography variant="h3" color="inherit" noWrap>
-                  {group ? group.name : 'Xetro'}
+                  {group ? `#${group.name}` : 'Xetro'}
                 </Typography>
               </Grid>
             </Grid>

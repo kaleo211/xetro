@@ -5,7 +5,7 @@ import {
 import { getMe } from './userActions';
 import { setPage } from './localActions';
 import Utils from '../components/Utils';
-import { fetchGroupActiveBoards } from './boardActions';
+import { fetchGroupActiveBoard } from './boardActions';
 
 export const fetchGroups = () => {
   return (dispatch) => {
@@ -51,7 +51,7 @@ export const setGroup = (groupId) => {
     } else {
       const group = await Utils.get(`groups`, groupId);
       if (group) {
-        dispatch(fetchGroupActiveBoards(groupId));
+        dispatch(fetchGroupActiveBoard(groupId));
         dispatch({
           type: SET_GROUP,
           group,

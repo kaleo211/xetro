@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { FlightTakeoffOutlined, Casino, MusicNoteRounded, NearMeRounded, MoodRounded, CasinoRounded, CasinoOutlined } from '@material-ui/icons';
+import { FlightTakeoffOutlined, NearMeRounded, MoodRounded, CasinoOutlined } from '@material-ui/icons';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -14,10 +14,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
-import Fab from '@material-ui/core/Fab';
 
 import { setGroup } from '../actions/groupActions';
-import { setBoard, postBoard } from '../actions/boardActions';
+import { setBoard, postBoard, fetchGroupActiveBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
 import { Paper, Avatar, Grid, Stepper, StepButton, Step, StepConnector, Badge } from '@material-ui/core';
 import BoardList from './BoardList';
@@ -45,6 +44,10 @@ class Group extends React.Component {
       facilitator: null,
       happy: false,
     };
+  }
+
+  async componentDidMount() {
+    await this.props.fetchGroupActiveBoard();
   }
 
   handleCreateBoard() {
@@ -98,7 +101,7 @@ class Group extends React.Component {
   }
 
   render() {
-    const { group, classes } = this.props;
+    const { group, activeBoard, classes } = this.props;
     const { facilitator, happy } = this.state;
 
     const members = group.members;
@@ -106,35 +109,47 @@ class Group extends React.Component {
     return (
       <div>
         <Paper className={classes.paper}>
-          <Grid container direction="row" alignItems="center">
-            <Grid item md={2}>
-              <Typography variant="h6">Create New Board</Typography>
-            </Grid>
-            <Grid item>
-              <Stepper nonLinear connector={<StepConnector />}>
-                <Step>
-                  <StepButton completed={true}>
-                    Set Timer
+          {activeBoard ?
+            <Grid container direction="row" alignItems="center">
+              <Grid item md={2}>
+                <Typography variant="h6">Join Ongoing Board</Typography>
+              </Grid>
+              <Grid item>
+                <IconButton onClick={this.handleCreateBoard.bind(this)}>
+                  <FlightTakeoffOutlined />
+                </IconButton>
+              </Grid>
+            </Grid> :
+            <Grid container direction="row" alignItems="center">
+              <Grid item md={2}>
+                <Typography variant="h6">Create New Board</Typography>
+              </Grid>
+              <Grid item>
+                <Stepper nonLinear connector={<StepConnector />}>
+                  <Step>
+                    <StepButton completed={true}>
+                      Set Timer
                   </StepButton>
-                </Step>
-                <Step>
-                  <StepButton completed={facilitator}>
-                    Select Facilitator
+                  </Step>
+                  <Step>
+                    <StepButton completed={facilitator}>
+                      Select Facilitator
                   </StepButton>
-                </Step>
-                <Step>
-                  <StepButton completed={happy}>
-                    Go Through Action Items
+                  </Step>
+                  <Step>
+                    <StepButton completed={happy}>
+                      Go Through Action Items
                   </StepButton>
-                </Step>
-              </Stepper>
+                  </Step>
+                </Stepper>
+              </Grid>
+              <Grid>
+                <IconButton onClick={this.handleCreateBoard.bind(this)}>
+                  <FlightTakeoffOutlined />
+                </IconButton>
+              </Grid>
             </Grid>
-            <Grid>
-              <IconButton onClick={this.handleCreateBoard.bind(this)}>
-                <FlightTakeoffOutlined />
-              </IconButton>
-            </Grid>
-          </Grid>
+          }
         </Paper>
         <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="center">
@@ -226,6 +241,7 @@ const mapStateToProps = state => ({
   group: state.groups.group,
   board: state.boards.board,
   me: state.users.me,
+  activeBoard: state.boards.activeBoard,
 });
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -233,6 +249,7 @@ const mapDispatchToProps = (dispatch) => {
     setBoard: (id) => dispatch(setBoard(id)),
     setPage: (page) => dispatch(setPage(page)),
     postBoard: (board) => dispatch(postBoard(board)),
+    fetchGroupActiveBoard: (id) => dispatch(fetchGroupActiveBoard(id)),
   };
 };
 

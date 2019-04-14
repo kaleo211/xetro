@@ -1,22 +1,19 @@
 import {
   SET_BOARD,
   SET_BOARDS,
+  SET_ACTIVE_BOARD,
   SET_HISTORY_BOARDS,
 } from './types';
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
 import { postPillar } from './pillarActions';
 
-export const fetchGroupActiveBoards = (groupId) => {
+export const fetchGroupActiveBoard = (groupId) => {
   return (dispatch) => {
     Utils.fetch(`/boards/active/${groupId}`).then(body => {
-      let boards = body || [];
-      if (boards.length === 1) {
-        dispatch(setBoard(boards[0].id));
-      }
       dispatch({
-        type: SET_BOARDS,
-        boards
+        type: SET_ACTIVE_BOARD,
+        activeBoard: body,
       });
     });
   };
@@ -30,9 +27,9 @@ export const postBoard = (newBoard) => {
         board: body,
       });
       dispatch(postPillar({ title: ':)', boardId: body.id }));
-      await Utils.sleep(50);
+      await Utils.sleep(25);
       dispatch(postPillar({ title: ':|', boardId: body.id }));
-      await Utils.sleep(50);
+      await Utils.sleep(25);
       dispatch(postPillar({ title: ':(', boardId: body.id }));
     });
   };
