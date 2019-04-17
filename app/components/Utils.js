@@ -72,6 +72,16 @@ export default {
     });
   },
 
+  async po(type, body) {
+    return await fetch(`/${type}`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    });
+  },
+
   post(type, body) {
     return new Promise((resolve, reject) => {
       fetch(`/${type}`, {

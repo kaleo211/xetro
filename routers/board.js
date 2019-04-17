@@ -70,7 +70,7 @@ var respondWithActiveBoards = async (res, groupId) => {
       },
     });
     if (boards) {
-      res.json(boards);
+      res.json(boards[0]);
     } else {
       res.sendStatus(404);
     }

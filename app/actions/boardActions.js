@@ -9,19 +9,23 @@ import { setPage } from './localActions';
 import { postPillar } from './pillarActions';
 
 export const fetchGroupActiveBoard = (groupId) => {
-  return (dispatch) => {
-    Utils.fetch(`/boards/active/${groupId}`).then(body => {
+  return async (dispatch) => {
+    const resp = await fetch(`/boards/active/${groupId}`);
+    if (resp) {
+      const body = await resp.json();
       dispatch({
         type: SET_ACTIVE_BOARD,
         activeBoard: body,
       });
-    });
+    }      
   };
 };
 
 export const postBoard = (newBoard) => {
   return async (dispatch) => {
-    Utils.post('boards', newBoard).then(async body => {
+    const resp = await Utils.po('boards', newBoard);
+    if (resp) {
+      const body = await resp.json();
       dispatch({
         type: SET_BOARD,
         board: body,
@@ -31,31 +35,35 @@ export const postBoard = (newBoard) => {
       dispatch(postPillar({ title: ':|', boardId: body.id }));
       await Utils.sleep(25);
       dispatch(postPillar({ title: ':(', boardId: body.id }));
-    });
+    }
   };
 };
 
 export const listBoards = (groupId) => {
-  return (dispatch) => {
-    Utils.fetch(`/boards/group/${groupId}`).then(body => {
+  return async (dispatch) => {
+    const resp = await fetch(`/boards/group/${groupId}`);
+    if (resp) {
+      const body = await resp.json();
       let historyBoards = body || [];
       dispatch({
         type: SET_HISTORY_BOARDS,
         historyBoards,
       });
-    });
+    }      
   };
 }
 
 export const setBoards = () => {
-  return (dispatch) => {
-    return Utils.list("boards").then(body => {
+  return async (dispatch) => {
+    const resp = await fetch('boards');
+    if (resp) {
+      const body = await resp.json();
       let boards = body || [];
       dispatch({
         type: SET_BOARDS,
         boards,
       });
-    });
+    }
   };
 };
 

@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    timer: DataTypes.INTEGER,
   }, {});
 
   Board.associate = function (models) {

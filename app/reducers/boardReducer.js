@@ -35,7 +35,7 @@ export default function (state = initialState, action) {
     case SET_ACTIVE_BOARD:
       return {
         ...state,
-        activeBoard: activeBoard,
+        activeBoard: action.activeBoard,
       }
 
     case SET_HISTORY_BOARDS:

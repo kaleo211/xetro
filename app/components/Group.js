@@ -14,11 +14,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
+import { Paper, Avatar, Grid, Stepper, StepButton, Step, StepConnector, Badge, TextField } from '@material-ui/core';
 
 import { setGroup } from '../actions/groupActions';
 import { setBoard, postBoard, fetchGroupActiveBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
-import { Paper, Avatar, Grid, Stepper, StepButton, Step, StepConnector, Badge } from '@material-ui/core';
 import BoardList from './BoardList';
 
 const styles = theme => ({
@@ -41,13 +41,28 @@ class Group extends React.Component {
 
     this.state = {
       newBoard: {},
+      timer: 60,
       facilitator: null,
       happy: false,
     };
   }
 
   async componentDidMount() {
-    await this.props.fetchGroupActiveBoard();
+    await this.props.fetchGroupActiveBoard(this.props.group.id);
+
+    let activeBoard = this.props.activeBoard;
+    console.log("active board:", activeBoard);
+    if (activeBoard) {
+      this.setState({
+        facilitator: activeBoard.facilitator,
+        timer: activeBoard.timer,
+      });
+    }
+  }
+
+  handleJoinBoard() {
+    this.props.setBoard(this.props.activeBoard.id);
+    this.props.setPage('board');
   }
 
   handleCreateBoard() {
@@ -55,14 +70,20 @@ class Group extends React.Component {
     let boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
 
     let newBoard = this.state.newBoard;
-    // newBoard.endTime = this.getDate();
     newBoard.stage = 'active';
     newBoard.groupId = this.props.group.id;
     newBoard.name = boardName;
+    newBoard.timer = this.state.timer;
     newBoard.facilitatorId = this.state.facilitator.id;
 
     this.props.postBoard(newBoard);
     this.props.setPage('board');
+  }
+
+  handleSetTimer(evt) {
+    this.setState({
+      timer: evt.target.value,
+    })
   }
 
   handleRandomSelectFacilitator() {
@@ -90,21 +111,17 @@ class Group extends React.Component {
     this.setState({ happy: true });
   }
 
-  handleBoardEndTimeChange(event) {
-    this.setState({
-      endTime: event.target.value,
-    });
-  }
-
   handleActionCheck(action) {
     this.props.finishItem(action);
   }
 
   render() {
     const { group, activeBoard, classes } = this.props;
-    const { facilitator, happy } = this.state;
+    const { facilitator, happy, timer } = this.state;
 
     const members = group.members;
+
+    let readyToTakeOff = timer && facilitator && happy;
 
     return (
       <div>
@@ -115,7 +132,7 @@ class Group extends React.Component {
                 <Typography variant="h6">Join Ongoing Board</Typography>
               </Grid>
               <Grid item>
-                <IconButton onClick={this.handleCreateBoard.bind(this)}>
+                <IconButton onClick={this.handleJoinBoard.bind(this)}>
                   <FlightTakeoffOutlined />
                 </IconButton>
               </Grid>
@@ -127,24 +144,24 @@ class Group extends React.Component {
               <Grid item>
                 <Stepper nonLinear connector={<StepConnector />}>
                   <Step>
-                    <StepButton completed={true}>
+                    <StepButton completed={true} onClick={this.handleSetTimer}>
                       Set Timer
-                  </StepButton>
+                    </StepButton>
                   </Step>
                   <Step>
-                    <StepButton completed={facilitator}>
+                    <StepButton completed={facilitator != null} onClick={this.handleRandomSelectFacilitator.bind(this)}>
                       Select Facilitator
-                  </StepButton>
+                    </StepButton>
                   </Step>
                   <Step>
-                    <StepButton completed={happy}>
+                    <StepButton completed={happy} onClick={this.handleThroughActions.bind(this)}>
                       Go Through Action Items
-                  </StepButton>
+                    </StepButton>
                   </Step>
                 </Stepper>
               </Grid>
               <Grid>
-                <IconButton onClick={this.handleCreateBoard.bind(this)}>
+                <IconButton disabled={!readyToTakeOff} onClick={this.handleCreateBoard.bind(this)}>
                   <FlightTakeoffOutlined />
                 </IconButton>
               </Grid>
@@ -156,8 +173,14 @@ class Group extends React.Component {
             <Grid item md={2}>
               <Typography variant="h6">Timer</Typography>
             </Grid>
-            <Grid item>
-              50 Minutes
+            <Grid item md={1}>
+              <TextField
+                value={this.state.timer}
+                onChange={this.handleSetTimer.bind(this)}
+                type="number"
+                inputProps={{ step: 5 }}
+              />
+              <Typography>Minutes</Typography> 
             </Grid>
           </Grid>
         </Paper>
@@ -167,22 +190,13 @@ class Group extends React.Component {
               <Typography variant="h6">Members</Typography>
             </Grid>
             <Grid item md={10} container justify="space-between">
-              <Grid item>
-                {members.map(member =>
-                  <Badge badgeContent={facilitator && member.id === facilitator.id && <NearMeRounded />}                  >
-                    <IconButton onClick={this.handleSetFacilitator.bind(this, member)}>
-                      <Avatar>{member.firstName.charAt(0) + member.lastName.charAt(0)}</Avatar>
-                    </IconButton>
-                  </Badge>
-                )}
-              </Grid>
-              <Grid item>
-                <Tooltip title="Random pick" placement="left">
-                  <IconButton onClick={this.handleRandomSelectFacilitator.bind(this)}>
-                    <CasinoOutlined fontSize="large" />
+              {members.map(member =>
+                <Badge badgeContent={facilitator && member.id === facilitator.id && <NearMeRounded />}                  >
+                  <IconButton onClick={this.handleSetFacilitator.bind(this, member)}>
+                    <Avatar>{member.firstName.charAt(0) + member.lastName.charAt(0)}</Avatar>
                   </IconButton>
-                </Tooltip>
-              </Grid>
+                </Badge>
+              )}
             </Grid>
           </Grid>
         </Paper>
@@ -192,32 +206,23 @@ class Group extends React.Component {
               <Typography variant="h6">Actions</Typography>
             </Grid>
             <Grid item md={10} container justify="space-between">
-              <Grid item style={{ paddingTop: 20 }} container justify="flex-start">
-                {members.filter(m => m.actions && m.actions.filter(a => !a.finished).length > 0).map(member => (
-                  <Grid item xs={12} md={6} lg={4} key={"action" + member.userId}>
-                    <List>
-                      {member.actions && member.actions.map((action) => (!action.finished &&
-                        <ListItem divider key={"actionToCheck" + action.id} dense button >
-                          <Avatar style={{ marginLeft: -15 }}>
-                            {member.userId}
-                          </Avatar>
-                          <ListItemText primary={action.title} />
-                          <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, action)}>
-                            <IconButton><CheckRounded /></IconButton>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Grid>
-                ))}
-              </Grid>
-              <Grid item>
-                <Tooltip title="Random pick" placement="left">
-                  <IconButton onClick={this.handleThroughActions.bind(this)}>
-                    <MoodRounded fontSize="large" />
-                  </IconButton>
-                </Tooltip>
-              </Grid>
+              {members.filter(m => m.actions && m.actions.filter(a => !a.finished).length > 0).map(member => (
+                <Grid item xs={12} md={6} lg={4} key={"action" + member.userId}>
+                  <List>
+                    {member.actions && member.actions.map((action) => (!action.finished &&
+                      <ListItem divider key={"actionToCheck" + action.id} dense button >
+                        <Avatar style={{ marginLeft: -15 }}>
+                          {member.userId}
+                        </Avatar>
+                        <ListItemText primary={action.title} />
+                        <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, action)}>
+                          <IconButton><CheckRounded /></IconButton>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Grid>
+              ))}
             </Grid>
           </Grid>
         </Paper>
