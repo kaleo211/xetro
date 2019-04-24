@@ -10,7 +10,17 @@ var respondWithGroup = async (res, id) => {
         {
           model: model.User,
           as: 'members',
-          through: 'GroupMember',
+          include: [{
+            model: model.Item,
+            as: 'actions',
+            where: {
+              type: 'action',
+              stage: {
+                [Op.ne]: 'done',
+              },
+            },
+            required: false,
+          }],
         }, {
           model: model.Board,
           as: 'boards',
@@ -31,7 +41,7 @@ var respondWithGroup = async (res, id) => {
       res.sendStatus(404);
     }
   } catch (err) {
-    console.log('error get group', err);
+    console.error('error get group', err);
     res.sendStatus(500);
   };
 }

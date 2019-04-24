@@ -1,5 +1,7 @@
 const routes = require('express').Router();
 const model = require('../models');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 routes.get('/', (req, res) => {
   model.User.findAll({
@@ -26,7 +28,9 @@ routes.get('/me', (req, res) => {
       as: 'actions',
       where: {
         type: 'action',
-        stage: 'created',
+        stage: {
+          [Op.ne]: 'done',
+        },
       },
       required: false,
     }],

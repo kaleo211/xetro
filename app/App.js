@@ -121,15 +121,14 @@ class App extends React.Component {
 
   async handleMicrosoftLogin() {
     await this.props.getMe();
-    if (this.props.me) {
-      return;
+    if (this.props.me == null) {
+      var uri = `${SSO_ADDRESS}/${SSO_TENANT_ID}/oauth2/authorize` +
+                `?client_id=${SSO_CLIENT_ID}` +
+                `&response_type=code` +
+                `&redirect_uri=${SSO_REDIRECT_URL}` +
+                `&response_mode=query`;
+      window.open(uri, 'microsoft', 'height=500,width=620');
     }
-    var uri = `${SSO_ADDRESS}/${SSO_TENANT_ID}/oauth2/authorize
-                  ?client_id=${SSO_CLIENT_ID}
-                  &response_type=code
-                  &redirect_uri=${SSO_REDIRECT_URL}
-                  &response_mode=query`;
-    window.open(uri, 'microsoft', 'height=500,width=620');
 
     while (this.props.me == null) {
       console.log("i am here", this.props.me);

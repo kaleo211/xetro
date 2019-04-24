@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { FlightTakeoffOutlined, NearMeRounded, MoodRounded, CasinoOutlined } from '@material-ui/icons';
+import { FlightTakeoffOutlined, NearMeRounded, MoodRounded, CasinoOutlined, CheckRounded } from '@material-ui/icons';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -120,8 +120,9 @@ class Group extends React.Component {
     const { facilitator, happy, timer } = this.state;
 
     const members = group.members;
-
     let readyToTakeOff = timer && facilitator && happy;
+
+    console.log('members:', members);
 
     return (
       <div>
@@ -180,7 +181,7 @@ class Group extends React.Component {
                 type="number"
                 inputProps={{ step: 5 }}
               />
-              <Typography>Minutes</Typography> 
+              <Typography>Minutes</Typography>
             </Grid>
           </Grid>
         </Paper>
@@ -207,12 +208,12 @@ class Group extends React.Component {
             </Grid>
             <Grid item md={10} container justify="space-between">
               {members.filter(m => m.actions && m.actions.filter(a => !a.finished).length > 0).map(member => (
-                <Grid item xs={12} md={6} lg={4} key={"action" + member.userId}>
+                <Grid item xs={12} md={6} lg={4} key={"action" + member.id}>
                   <List>
                     {member.actions && member.actions.map((action) => (!action.finished &&
                       <ListItem divider key={"actionToCheck" + action.id} dense button >
                         <Avatar style={{ marginLeft: -15 }}>
-                          {member.userId}
+                          {member.initial}
                         </Avatar>
                         <ListItemText primary={action.title} />
                         <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, action)}>
