@@ -28,7 +28,8 @@ module.exports = (sequelize, DataTypes) => {
         let gap = new Date().getTime() - new Date(this.get('last')).getTime();
         return gap < 3 * 60 * 1000 ? true : false;
       },
-    }
+    },
+    accessToken: DataTypes.STRING(2000),
   }, {});
 
   User.associate = function (models) {

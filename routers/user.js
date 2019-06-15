@@ -16,7 +16,7 @@ routes.get('/', (req, res) => {
 });
 
 routes.get('/me', (req, res) => {
-  let me = req.session.user;
+  let me = req.session.me;
 
   model.User.findOne({
     include: [{

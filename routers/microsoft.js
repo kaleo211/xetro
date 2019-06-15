@@ -1,15 +1,15 @@
 const config = require('config');
 const routes = require('express').Router();
-const model = require('../models');
 const rp = require('request-promise');
 
+const model = require('../models');
+
 routes.get('/', async (req, res) => {
-  var address = config.get('sso.address')
-  var tenantID = config.get('sso.tenant_id');
+  const address = config.get('sso.address');
+  const tenantID = config.get('sso.tenant_id');
   const tokenURL = `${address}/${tenantID}/oauth2/v2.0/token`
 
   try {
-
     let body = await rp.post({
       url: tokenURL,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', },
@@ -21,30 +21,33 @@ routes.get('/', async (req, res) => {
         redirect_uri: config.get('sso.redirect_uri'),
       },
     });
-    const authorization = JSON.parse(body);
+    const accessToken = JSON.parse(body).access_token;
+    if (accessToken == null) {
+      throw new Error('error getting null access token');
+    }
 
     body = await rp.get({
       url: `${config.get('microsoft.api')}/me`,
       headers: {
-        'Authorization': `Bearer ${authorization.access_token}`,
-        'Host': config.get('microsoft.host'),
-      }
+        Authorization: `Bearer ${accessToken}`,
+        Host: config.get('microsoft.host'),
+      },
     });
-    const user = JSON.parse(body);
+    const me = JSON.parse(body);
 
     model.User.findOrCreate({
-      where: { email: user.mail.toLowerCase() },
+      where: { email: me.mail.toLowerCase() },
       defaults: {
-        firstName: user.givenName,
-        lastName: user.surname,
-        microsoftID: user.id,
-      }
-    }).spread((user, created) => {
-      req.session.user = user;
+        firstName: me.givenName,
+        lastName: me.surname,
+        microsoftID: me.id,
+      },
+    }).spread((me, created) => {
+      req.session.me = me;
       req.session.save();
     });
   } catch (err) {
-    console.log('error getting user profile', err);
+    console.error('error getting user profile', err);
     res.sendStatus(500);
   }
 

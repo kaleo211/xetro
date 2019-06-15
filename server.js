@@ -1,17 +1,17 @@
-var express = require('express');
-var server = express();
+const express = require('express');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const path = require('path');
+const session = require('express-session');
+const config = require('config');
+const microsoftRouter = require('./routers/microsoft');
+const groupRouter = require('./routers/group');
+const userRouter = require('./routers/user');
+const boardRouter = require('./routers/board');
+const pillarRouter = require('./routers/pillar');
+const itemRouter = require('./routers/item');
 
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var path = require('path');
-var session = require('express-session');
-var config = require('config');
-var microsoftRouter = require('./routers/microsoft');
-var groupRouter = require('./routers/group');
-var userRouter = require('./routers/user');
-var boardRouter = require('./routers/board');
-var pillarRouter = require('./routers/pillar');
-var itemRouter = require('./routers/item');
+const server = express();
 
 const model = require('./models');
 
@@ -24,17 +24,17 @@ server.use(session({
   saveUninitialized: true,
 }));
 
-var isAuthenticated = (req, res, next) => {
-  if (!req.session.user) {
+const isAuthenticated = (req, res, next) => {
+  if (!req.session.me) {
     res.status(403).send('Nice Try! May be Try Login Instead.');
   } else {
     model.User.update(
       { last: new Date() },
-      { where: { id: req.session.user.id } },
+      { where: { id: req.session.me.id } },
     );
     next();
   }
-}
+};
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
@@ -52,9 +52,9 @@ server.get('/', (req, res) => {
 });
 server.use(express.static('dist'));
 
-var port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 server.listen(port, () => {
-  console.log('Xetro is listenning on port ' + port);
+  console.warn('Xetro is listenning on port:', port);
 });
 
 module.exports = server;
