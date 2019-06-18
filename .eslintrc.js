@@ -20,5 +20,15 @@ module.exports = {
     ],
     "rules": {
         "no-console": ["error", { allow: ["warn", "error"] }],
+        "react/jsx-filename-extension": 0,
+        "react/jsx-wrap-multilines": 0,
+        "object-curly-newline": 0,
+        "react/prop-types": 0,
+        "react/destructuring-assignment": 0,
+        "react/jsx-no-bind": 0,
+        "operator-linebreak": 0,
+        "class-methods-use-this": 0,
+        "prefer-destructuring": 0,
+        "react/sort-comp": 0
     }
 };

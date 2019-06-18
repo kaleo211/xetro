@@ -36,6 +36,7 @@
     "msal": "^0.2.4",
     "passport-oauth2": "^1.4.0",
     "pg": "^7.8.2",
+    "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.4.2",
     "react-native-fetch": "^2.0.0",

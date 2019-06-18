@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { FlightTakeoffOutlined, NearMeRounded, MoodRounded, CasinoOutlined, CheckRounded } from '@material-ui/icons';
+import { FlightTakeoffOutlined, NearMeRounded, CheckRounded } from '@material-ui/icons';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -13,8 +13,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import { Paper, Avatar, Grid, Stepper, StepButton, Step, StepConnector, Badge, TextField } from '@material-ui/core';
+import { Paper, Avatar, Grid, Stepper, StepButton, Step, StepConnector, Badge } from '@material-ui/core';
 
 import { setGroup } from '../actions/groupActions';
 import { setBoard, postBoard, fetchGroupActiveBoard } from '../actions/boardActions';
@@ -41,7 +40,6 @@ class Group extends React.Component {
 
     this.state = {
       newBoard: {},
-      timer: 60,
       facilitator: null,
       happy: false,
     };
@@ -50,12 +48,11 @@ class Group extends React.Component {
   async componentDidMount() {
     await this.props.fetchGroupActiveBoard(this.props.group.id);
 
-    let activeBoard = this.props.activeBoard;
-    console.log("active board:", activeBoard);
+    const activeBoard = this.props.activeBoard;
+    console.warn('active board:', activeBoard);
     if (activeBoard) {
       this.setState({
         facilitator: activeBoard.facilitator,
-        timer: activeBoard.timer,
       });
     }
   }
@@ -66,43 +63,36 @@ class Group extends React.Component {
   }
 
   handleCreateBoard() {
-    let now = new Date();
-    let boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
+    const now = new Date();
+    const boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
 
-    let newBoard = this.state.newBoard;
+    const newBoard = this.state.newBoard;
     newBoard.stage = 'active';
     newBoard.groupId = this.props.group.id;
     newBoard.name = boardName;
-    newBoard.timer = this.state.timer;
     newBoard.facilitatorId = this.state.facilitator.id;
 
     this.props.postBoard(newBoard);
     this.props.setPage('board');
   }
 
-  handleSetTimer(evt) {
-    this.setState({
-      timer: evt.target.value,
-    })
-  }
-
   handleRandomSelectFacilitator() {
-    let upLimit = this.props.group.members.length;
-    let randomIndex = Math.floor(Math.random() * (upLimit));
+    const upLimit = this.props.group.members.length;
+    const randomIndex = Math.floor(Math.random() * (upLimit));
     this.setState({
       facilitator: this.props.group.members[randomIndex],
-    })
+    });
   }
 
   handleSetFacilitator(member) {
     this.setState({
       facilitator: member,
-    })
+    });
   }
 
   getDate() {
-    let now = new Date();
-    let numbers = this.state.endTime.split(':');
+    const now = new Date();
+    const numbers = this.state.endTime.split(':');
     now.setHours(numbers[0], numbers[1], 0);
     return now;
   }
@@ -117,12 +107,10 @@ class Group extends React.Component {
 
   render() {
     const { group, activeBoard, classes } = this.props;
-    const { facilitator, happy, timer } = this.state;
+    const { facilitator, happy } = this.state;
 
     const members = group.members;
-    let readyToTakeOff = timer && facilitator && happy;
-
-    console.log('members:', members);
+    const readyToTakeOff = facilitator && happy;
 
     return (
       <div>
@@ -144,11 +132,6 @@ class Group extends React.Component {
               </Grid>
               <Grid item>
                 <Stepper nonLinear connector={<StepConnector />}>
-                  <Step>
-                    <StepButton completed={true} onClick={this.handleSetTimer}>
-                      Set Timer
-                    </StepButton>
-                  </Step>
                   <Step>
                     <StepButton completed={facilitator != null} onClick={this.handleRandomSelectFacilitator.bind(this)}>
                       Select Facilitator
@@ -172,32 +155,16 @@ class Group extends React.Component {
         <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="center">
             <Grid item md={2}>
-              <Typography variant="h6">Timer</Typography>
-            </Grid>
-            <Grid item md={1}>
-              <TextField
-                value={this.state.timer}
-                onChange={this.handleSetTimer.bind(this)}
-                type="number"
-                inputProps={{ step: 5 }}
-              />
-              <Typography>Minutes</Typography>
-            </Grid>
-          </Grid>
-        </Paper>
-        <Paper className={classes.paper}>
-          <Grid container direction="row" alignItems="center">
-            <Grid item md={2}>
               <Typography variant="h6">Members</Typography>
             </Grid>
             <Grid item md={10} container justify="space-between">
-              {members.map(member =>
-                <Badge badgeContent={facilitator && member.id === facilitator.id && <NearMeRounded />}                  >
+              {members.map(member => (
+                <Badge badgeContent={facilitator && member.id === facilitator.id && <NearMeRounded />}>
                   <IconButton onClick={this.handleSetFacilitator.bind(this, member)}>
                     <Avatar>{member.firstName.charAt(0) + member.lastName.charAt(0)}</Avatar>
                   </IconButton>
                 </Badge>
-              )}
+              ))}
             </Grid>
           </Grid>
         </Paper>
@@ -208,10 +175,10 @@ class Group extends React.Component {
             </Grid>
             <Grid item md={10} container justify="space-between">
               {members.filter(m => m.actions && m.actions.filter(a => !a.finished).length > 0).map(member => (
-                <Grid item xs={12} md={6} lg={4} key={"action" + member.id}>
+                <Grid item xs={12} md={6} lg={4} key={`action${member.id}`}>
                   <List>
-                    {member.actions && member.actions.map((action) => (!action.finished &&
-                      <ListItem divider key={"actionToCheck" + action.id} dense button >
+                    {member.actions && member.actions.map(action => (!action.finished &&
+                      <ListItem divider key={`actionToCheck${action.id}`} dense button>
                         <Avatar style={{ marginLeft: -15 }}>
                           {member.initial}
                         </Avatar>
@@ -239,8 +206,8 @@ class Group extends React.Component {
         </Paper>
       </div>
     );
-  };
-};
+  }
+}
 
 const mapStateToProps = state => ({
   groups: state.groups.groups,
@@ -251,11 +218,11 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = (dispatch) => {
   return {
-    setGroup: (id) => dispatch(setGroup(id)),
-    setBoard: (id) => dispatch(setBoard(id)),
-    setPage: (page) => dispatch(setPage(page)),
-    postBoard: (board) => dispatch(postBoard(board)),
-    fetchGroupActiveBoard: (id) => dispatch(fetchGroupActiveBoard(id)),
+    setGroup: id => dispatch(setGroup(id)),
+    setBoard: id => dispatch(setBoard(id)),
+    setPage: page => dispatch(setPage(page)),
+    postBoard: board => dispatch(postBoard(board)),
+    fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
   };
 };
 

@@ -7,15 +7,11 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
-import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import { ArrowForwardIosOutlined, FaceOutlined } from '@material-ui/icons';
+import { FaceOutlined } from '@material-ui/icons';
 
 import ActionBar from './components/ActionBar';
 import Board from './components/Board';
@@ -24,10 +20,16 @@ import NewGroup from './components/NewGroup';
 import Utils from './components/Utils';
 
 import { fetchGroups } from './actions/groupActions';
-import { closeSnackBar, openDraw, closeDraw, setPage } from './actions/localActions';
+import {
+  closeSnackBar,
+  openDraw,
+  closeDraw,
+  setPage,
+} from './actions/localActions';
 import { fetchUsers, getMe } from './actions/userActions';
 import Group from './components/Group';
 import Home from './components/Home';
+import Timer from './components/Timer';
 
 const drawerWidth = 240;
 
@@ -122,7 +124,7 @@ class App extends React.Component {
   async handleMicrosoftLogin() {
     await this.props.getMe();
     if (this.props.me == null) {
-      var uri = `${SSO_ADDRESS}/${SSO_TENANT_ID}/oauth2/authorize` +
+      const uri = `${SSO_ADDRESS}/${SSO_TENANT_ID}/oauth2/authorize` +
                 `?client_id=${SSO_CLIENT_ID}` +
                 `&response_type=code` +
                 `&redirect_uri=${SSO_REDIRECT_URL}` +
@@ -142,7 +144,7 @@ class App extends React.Component {
   }
 
   handleFeedbackClick() {
-    let win = window.open("https://github.com/kaleo211/xetro-board/issues", '_blank');
+    const win = window.open('https://github.com/kaleo211/xetro-board/issues', '_blank');
     win.focus();
   }
 
@@ -152,52 +154,57 @@ class App extends React.Component {
 
   render() {
     const { page, group, board, drawOpen, classes } = this.props;
-    console.log('page in app', page, board, group);
 
-    return (<div className={classes.root}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        className={classNames(classes.appBar, { [classes.appBarShift]: drawOpen })}
-      >
-        <Toolbar disableGutters>
-          <IconButton
-            color="inherit"
-            aria-label="Open drawer"
-            onClick={this.handleOpenHome.bind(this)}
-            className={classNames(classes.menuButton, { [classes.hide]: drawOpen })}
-          >
-            <FaceOutlined />
-          </IconButton>
-          <Grid container
-            alignItems="center"
-            justify="space-between"
-            direction="row"
-            className={classes.bar}
-          >
-            <Grid container alignItems="center" item md={6}>
-              <Grid item>
-                <Typography variant="h3" color="inherit" noWrap>
-                  {group ? `#${group.name}` : 'Xetro'}
-                </Typography>
+    return (
+      <div className={classes.root}>
+        <CssBaseline />
+        <AppBar
+          position="fixed"
+          className={classNames(classes.appBar, { [classes.appBarShift]: drawOpen })}
+        >
+          <Toolbar disableGutters>
+            <IconButton
+              color="inherit"
+              aria-label="Open drawer"
+              onClick={this.handleOpenHome.bind(this)}
+              className={classNames(classes.menuButton, { [classes.hide]: drawOpen })}
+            >
+              <FaceOutlined />
+            </IconButton>
+            <Grid
+              container
+              alignItems="center"
+              justify="space-between"
+              direction="row"
+              className={classes.bar}
+            >
+              <Grid container alignItems="center" item md={5}>
+                <Grid item>
+                  <Typography variant="h3" color="inherit" noWrap>
+                    {group ? `#${group.name}` : 'Xetro'}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid md={1}>
+                {page === 'board' && <Timer />}
+              </Grid>
+              <Grid container item justify="flex-end" md={6}>
+                {board && <ActionBar />}
               </Grid>
             </Grid>
-            <Grid container item justify="flex-end" md={6}>
-              {board && <ActionBar />}
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
+          </Toolbar>
+        </AppBar>
 
-      <main className={classes.content}>
-        <div className={classes.toolbar} />
-        {page === 'home' && <Home />}
-        {page === 'group' && group && <Group />}
-        {page === 'board' && board && <Board />}
-        {page === 'boardList' && <BoardList />}
-        {page === 'createGroup' && <NewGroup />}
-      </main>
-    </div >);
+        <main className={classes.content}>
+          <div className={classes.toolbar} />
+          {page === 'home' && <Home />}
+          {page === 'group' && group && <Group />}
+          {page === 'board' && board && <Board />}
+          {page === 'boardList' && <BoardList />}
+          {page === 'createGroup' && <NewGroup />}
+        </main>
+      </div>
+    );
   }
 }
 
