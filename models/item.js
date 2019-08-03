@@ -1,5 +1,3 @@
-'use strict';
-
 const Sequelize = require('sequelize');
 const uuid = require('uuid/v4');
 
@@ -27,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     end: DataTypes.DATE,
   }, {});
 
-  Item.associate = function (models) {
+  Item.associate = (models) => {
     Item.belongsTo(models.Group, { as: 'group' });
     Item.belongsTo(models.Board, { as: 'board' });
     Item.belongsTo(models.Pillar, { as: 'pillar' });

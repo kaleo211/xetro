@@ -31,5 +31,6 @@ module.exports = {
         "prefer-destructuring": 0,
         "react/sort-comp": 0,
         "no-await-in-loop": 0,
+        "arrow-parens": 0,
     }
 };

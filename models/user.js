@@ -1,5 +1,3 @@
-'use strict';
-
 const Sequelize = require('sequelize');
 const uuid = require('uuid/v4');
 
@@ -25,14 +23,14 @@ module.exports = (sequelize, DataTypes) => {
     active: {
       type: new DataTypes.VIRTUAL(DataTypes.BOOLEAN),
       get() {
-        let gap = new Date().getTime() - new Date(this.get('last')).getTime();
-        return gap < 3 * 60 * 1000 ? true : false;
+        const gap = new Date().getTime() - new Date(this.get('last')).getTime();
+        return gap < 3 * 60 * 1000;
       },
     },
     accessToken: DataTypes.STRING(2000),
   }, {});
 
-  User.associate = function (models) {
+  User.associate = (models) => {
     User.belongsToMany(models.Group, { as: 'groups', through: 'GroupMember' });
     User.hasMany(models.Item, { as: 'actions', foreignKey: 'ownerId' });
   };

@@ -1,8 +1,8 @@
 const routes = require('express').Router();
-const model = require('../models');
 const sequelize = require('sequelize');
+const model = require('../models');
 
-var associations = [
+const associations = [
   {
     model: model.User,
     as: 'owner',
@@ -21,12 +21,12 @@ var associations = [
   },
 ];
 
-var respondWithItem = async (res, id) => {
+const respondWithItem = async (res, id) => {
   try {
     const item = await model.Item.findOne({
       include: associations,
       where: {
-        id: id,
+        id,
       },
     });
     if (item) {
@@ -35,12 +35,12 @@ var respondWithItem = async (res, id) => {
       res.sendStatus(404);
     }
   } catch (err) {
-    console.log('error get item', err);
+    console.error('error get item', err);
     res.sendStatus(500);
-  };
+  }
 };
 
-var respondWithActiveItems = async (res, query) => {
+const respondWithActiveItems = async (res, query) => {
   try {
     const item = await model.Item.findAll({
       include: associations,
@@ -56,23 +56,23 @@ var respondWithActiveItems = async (res, query) => {
       res.sendStatus(404);
     }
   } catch (err) {
-    console.log('error get active item', err);
+    console.error('error get active item', err);
     res.sendStatus(500);
-  };
+  }
 };
 
-var updateItem = async (res, id, fields) => {
+const updateItem = async (res, id, fields) => {
   try {
     await model.Item.update(
       fields,
-      { where: { id: id } }
+      { where: { id } },
     );
     respondWithItem(res, id);
   } catch (err) {
-    console.log('error update board', err);
+    console.error('error update board', err);
     res.sendStatus(500);
-  };
-}
+  }
+};
 
 // Get
 routes.get('/:id', async (req, res) => {
@@ -81,7 +81,7 @@ routes.get('/:id', async (req, res) => {
 
 // Like
 routes.get('/:id/like', async (req, res) => {
-  updateItem(res, req.params.id, { likes: sequelize.literal('likes + 1') })
+  updateItem(res, req.params.id, { likes: sequelize.literal('likes + 1') });
 });
 
 // Finish
@@ -91,21 +91,21 @@ routes.get('/:id/finish', async (req, res) => {
 
 // Start
 routes.get('/:id/start', async (req, res) => {
-  var now = new Date();
+  const now = new Date();
   now.setMinutes(now.getMinutes() + 5);
   await updateItem(res, req.params.id, { stage: 'active', end: new Date(now) });
 });
 
 // Group Active Items
 routes.get('/group/:id', async (req, res) => {
-  let query = { groupId: req.params.id };
+  const query = { groupId: req.params.id };
   await respondWithActiveItems(res, query);
 });
 
 // User Items
-routes.get('/user/:id', async (req, res) => {
-  await respondWithUserItems(res, { ownerId: req.params.id });
-});
+// routes.get('/user/:id', async (req, res) => {
+//   await respondWithUserItems(res, { ownerId: req.params.id });
+// });
 
 // Delete
 routes.delete('/:id', async (req, res) => {
@@ -115,9 +115,9 @@ routes.delete('/:id', async (req, res) => {
     });
     res.sendStatus(204);
   } catch (err) {
-    console.log('error delete item', err);
+    console.error('error delete item', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 // List
@@ -134,29 +134,29 @@ routes.get('/', async (req, res) => {
     });
     res.json(items);
   } catch (err) {
-    console.log('error list items', err);
+    console.error('error list items', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 // Create
 routes.post('/', async (req, res) => {
-  var item = req.body;
+  const item = req.body;
   try {
     const newItem = await model.Item.create({
       title: item.title,
       type: item.type,
     });
     await newItem.setOwner(item.ownerId);
-    await newItem.setPillar(item.pillarId)
+    await newItem.setPillar(item.pillarId);
     await newItem.setGroup(item.groupId);
     await newItem.setBoard(item.boardId);
     await newItem.setItem(item.itemId);
     await respondWithItem(res, newItem.id);
   } catch (err) {
-    console.log('error post item:', err);
+    console.error('error post item:', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 // Update
@@ -175,9 +175,9 @@ routes.patch('/:id', async (req, res) => {
     }
     await respondWithItem(res, req.params.id);
   } catch (err) {
-    console.log('error patch item:', err);
+    console.error('error patch item:', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 module.exports = routes;

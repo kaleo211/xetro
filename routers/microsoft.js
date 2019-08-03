@@ -7,12 +7,12 @@ const model = require('../models');
 routes.get('/', async (req, res) => {
   const address = config.get('sso.address');
   const tenantID = config.get('sso.tenant_id');
-  const tokenURL = `${address}/${tenantID}/oauth2/v2.0/token`
+  const tokenURL = `${address}/${tenantID}/oauth2/v2.0/token`;
 
   try {
     let body = await rp.post({
       url: tokenURL,
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       form: {
         grant_type: 'authorization_code',
         client_id: config.get('sso.client_id'),
@@ -42,8 +42,8 @@ routes.get('/', async (req, res) => {
         lastName: me.surname,
         microsoftID: me.id,
       },
-    }).spread((me, created) => {
-      req.session.me = me;
+    }).spread(result => {
+      req.session.me = result;
       req.session.save();
     });
   } catch (err) {

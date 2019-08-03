@@ -19,5 +19,4 @@ boardSvc.create = async (name, facilitatorId, groupId) => {
   return newBoard;
 };
 
-
 module.exports = boardSvc;

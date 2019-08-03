@@ -1,11 +1,12 @@
 const routes = require('express').Router();
-const model = require('../models');
 const Sequelize = require('sequelize');
+const model = require('../models');
+
 const Op = Sequelize.Op;
 
-var respondWithGroup = async (res, id) => {
+const respondWithGroup = async (res, id) => {
   try {
-    let group = await model.Group.findOne({
+    const group = await model.Group.findOne({
       include: [
         {
           model: model.User,
@@ -31,9 +32,9 @@ var respondWithGroup = async (res, id) => {
           where: {
             type: 'action',
           },
-        }
+        },
       ],
-      where: { id: id },
+      where: { id },
     });
     if (group) {
       res.json(group);
@@ -43,8 +44,8 @@ var respondWithGroup = async (res, id) => {
   } catch (err) {
     console.error('error get group', err);
     res.sendStatus(500);
-  };
-}
+  }
+};
 
 routes.get('/:id', async (req, res) => {
   respondWithGroup(res, req.params.id);
@@ -57,9 +58,9 @@ routes.delete('/:id', async (req, res) => {
     });
     res.sendStatus(204);
   } catch (err) {
-    console.log('error delete group', err);
+    console.error('error delete group', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 routes.get('/', async (req, res) => {
@@ -73,13 +74,13 @@ routes.get('/', async (req, res) => {
     });
     res.json(groups);
   } catch (err) {
-    console.log('error delete group', err);
+    console.error('error delete group', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 routes.post('/search', async (req, res) => {
-  var name = req.body.name;
+  const name = req.body.name;
   model.Group.findAll({
     include: [{
       model: model.User,
@@ -96,32 +97,32 @@ routes.post('/search', async (req, res) => {
       res.sendStatus(404);
     }
   }).catch(err => {
-    console.log('error search group:', err);
+    console.error('error search group:', err);
     res.sendStatus(500);
   });
 });
 
 routes.post('/', async (req, res) => {
-  var group = req.body;
+  const group = req.body;
 
   try {
     const newGroups = await model.Group.findOrCreate({
       where: { name: group.name },
     });
     if (newGroups.length != 2) {
-      console.log('error finding unique group:');
+      console.error('error finding unique group:');
       res.sendStatus(500);
       return;
     }
-    let newGroup = newGroups[0];
+    const newGroup = newGroups[0];
     group.members.map(async id => {
       await newGroup.addMembers(id);
     });
     await respondWithGroup(res, newGroup.id);
   } catch (err) {
-    console.log('error post group:', err);
+    console.error('error post group:', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 routes.patch('/:id', async (req, res) => {
@@ -132,9 +133,9 @@ routes.patch('/:id', async (req, res) => {
     await group.addMembers(req.body.userId)
     await respondWithGroup(res, group.id);
   } catch (err) {
-    console.log('error patch group:', err);
+    console.error('error patch group:', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 module.exports = routes;

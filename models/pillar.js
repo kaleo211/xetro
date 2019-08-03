@@ -1,5 +1,3 @@
-'use strict';
-
 const Sequelize = require('sequelize');
 const uuid = require('uuid/v4');
 
@@ -14,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
   }, {});
 
-  Pillar.associate = function (models) {
+  Pillar.associate = (models) => {
     Pillar.belongsTo(models.Board, { as: 'board' });
     Pillar.hasMany(models.Item, { as: 'items', foreignKey: 'pillarId' });
   };

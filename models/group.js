@@ -1,5 +1,3 @@
-'use strict';
-
 const Sequelize = require('sequelize');
 const uuid = require('uuid/v4');
 
@@ -14,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
   }, {});
 
-  Group.associate = function (models) {
+  Group.associate = (models) => {
     Group.belongsToMany(models.User, { as: 'members', through: 'GroupMember' });
     Group.hasMany(models.Board, { as: 'boards', foreignKey: 'groupId' });
     Group.hasMany(models.Item, { as: 'items', foreignKey: 'groupId' });

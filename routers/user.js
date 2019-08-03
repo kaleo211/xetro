@@ -1,6 +1,7 @@
 const routes = require('express').Router();
-const model = require('../models');
 const Sequelize = require('sequelize');
+const model = require('../models');
+
 const Op = Sequelize.Op;
 
 routes.get('/', (req, res) => {
@@ -16,7 +17,7 @@ routes.get('/', (req, res) => {
 });
 
 routes.get('/me', (req, res) => {
-  let me = req.session.me;
+  const me = req.session.me;
 
   model.User.findOne({
     include: [{
@@ -38,7 +39,7 @@ routes.get('/me', (req, res) => {
   }).then(user => {
     res.json(user);
   }).catch(err => {
-    console.log('error get me:', err);
+    console.error('error get me:', err);
     res.sendStatus(500);
   });
 });
