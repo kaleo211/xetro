@@ -6,7 +6,6 @@ import {
 } from './types';
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
-import { postPillar } from './pillarActions';
 
 export const fetchGroupActiveBoard = (groupId) => {
   return async (dispatch) => {
@@ -17,7 +16,7 @@ export const fetchGroupActiveBoard = (groupId) => {
         type: SET_ACTIVE_BOARD,
         activeBoard: body,
       });
-    }      
+    }
   };
 };
 
@@ -30,11 +29,6 @@ export const postBoard = (newBoard) => {
         type: SET_BOARD,
         board: body,
       });
-      dispatch(postPillar({ title: ':)', boardId: body.id }));
-      await Utils.sleep(25);
-      dispatch(postPillar({ title: ':|', boardId: body.id }));
-      await Utils.sleep(25);
-      dispatch(postPillar({ title: ':(', boardId: body.id }));
     }
   };
 };
@@ -44,21 +38,21 @@ export const listBoards = (groupId) => {
     const resp = await fetch(`/boards/group/${groupId}`);
     if (resp) {
       const body = await resp.json();
-      let historyBoards = body || [];
+      const historyBoards = body || [];
       dispatch({
         type: SET_HISTORY_BOARDS,
         historyBoards,
       });
-    }      
+    }
   };
-}
+};
 
 export const setBoards = () => {
   return async (dispatch) => {
     const resp = await fetch('boards');
     if (resp) {
       const body = await resp.json();
-      let boards = body || [];
+      const boards = body || [];
       dispatch({
         type: SET_BOARDS,
         boards,
@@ -72,7 +66,7 @@ export const setBoard = (boardId) => {
     if (boardId == null || boardId === '') {
       dispatch({
         type: SET_BOARD,
-        board: null
+        board: null,
       });
     } else {
       Utils.get('boards', boardId).then(body => {
@@ -88,20 +82,20 @@ export const setBoard = (boardId) => {
 export const archiveBoard = (boardId) => {
   return (dispatch) => {
     Utils.fetch(`/boards/${boardId}/archive`);
-    dispatch(setPage('group'))
-  }
-}
+    dispatch(setPage('group'));
+  };
+};
 
 export const lockBoard = (boardId) => {
   return (dispatch) => {
     Utils.fetch(`/boards/${boardId}/lock`);
     dispatch(setBoard(boardId));
-  }
-}
+  };
+};
 
 export const unlockBoard = (boardId) => {
   return (dispatch) => {
     Utils.fetch(`/boards/${boardId}/unlock`);
     dispatch(setBoard(boardId));
-  }
-}
+  };
+};

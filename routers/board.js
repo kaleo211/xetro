@@ -1,9 +1,11 @@
 const routes = require('express').Router();
-const model = require('../models');
 const Sequelize = require('sequelize');
+const model = require('../models');
+const boardSvc = require('../services/board');
+
 const Op = Sequelize.Op;
 
-let associations = [
+const associations = [
   {
     model: model.User,
     as: 'facilitator',
@@ -36,16 +38,16 @@ let associations = [
       type: 'action',
       stage: {
         [Op.ne]: 'done',
-      }
-    }
-  }
+      },
+    },
+  },
 ];
 
-var respondWithBoard = async (res, id) => {
+const respondWithBoard = async (res, id) => {
   try {
-    let board = await model.Board.findOne({
+    const board = await model.Board.findOne({
       include: associations,
-      where: { id: id },
+      where: { id },
     });
     if (board) {
       res.json(board);
@@ -53,17 +55,17 @@ var respondWithBoard = async (res, id) => {
       res.sendStatus(404);
     }
   } catch (err) {
-    console.log('error get board', err);
+    console.error('error get board', err);
     res.sendStatus(500);
-  };
+  }
 };
 
-var respondWithActiveBoards = async (res, groupId) => {
+const respondWithActiveBoards = async (res, groupId) => {
   try {
     const boards = await model.Board.findAll({
       include: associations,
       where: {
-        groupId: groupId,
+        groupId,
         stage: {
           [Op.ne]: 'archived',
         },
@@ -75,22 +77,22 @@ var respondWithActiveBoards = async (res, groupId) => {
       res.sendStatus(404);
     }
   } catch (err) {
-    console.log('error get active board', err);
+    console.error('error get active board', err);
     res.sendStatus(500);
-  };
+  }
 };
 
-var updateBoard = async (res, id, fields) => {
+const updateBoard = async (res, id, fields) => {
   try {
     await model.Board.update(
       fields,
-      { where: { id: id } }
+      { where: { id } },
     );
     res.json({});
   } catch (err) {
-    console.log('error update board', err);
+    console.error('error update board', err);
     res.sendStatus(500);
-  };
+  }
 };
 
 // Get
@@ -138,27 +140,21 @@ routes.get('/group/:id', async (req, res) => {
     });
     res.json(boards);
   } catch (err) {
-    console.log('error list boards', err);
+    console.error('error list boards', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 // Create
 routes.post('/', async (req, res) => {
-  var board = req.body;
+  const board = req.body;
   try {
-    const newBoard = await model.Board.create({
-      name: board.name,
-      stage: 'created',
-    });
-    await newBoard.setFacilitator(board.facilitatorId);
-    await newBoard.setGroup(board.groupId);
-
+    const newBoard = await boardSvc.create(board.name, board.facilitatorId, board.groupId);
     await respondWithBoard(res, newBoard.id);
   } catch (err) {
-    console.log('error post board:', err);
+    console.error('error post board:', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 // Update
@@ -170,9 +166,9 @@ routes.patch('/:id', async (req, res) => {
     await board.setFacilitator(req.body.facilitatorId);
     await respondWithBoard(res, board.id);
   } catch (err) {
-    console.log('error patch board:', err);
+    console.error('error patch board:', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 module.exports = routes;

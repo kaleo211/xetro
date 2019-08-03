@@ -29,7 +29,6 @@ import {
 import { fetchUsers, getMe } from './actions/userActions';
 import Group from './components/Group';
 import Home from './components/Home';
-import Timer from './components/Timer';
 
 const drawerWidth = 240;
 
@@ -133,11 +132,10 @@ class App extends React.Component {
     }
 
     while (this.props.me == null) {
-      console.log("i am here", this.props.me);
       try {
         await this.props.getMe();
       } catch (err) {
-        console.log('error login microsoft:', err);
+        console.error('error login microsoft:', err);
       }
       await Utils.sleep(1000);
     }
@@ -184,9 +182,6 @@ class App extends React.Component {
                     {group ? `#${group.name}` : 'Xetro'}
                   </Typography>
                 </Grid>
-              </Grid>
-              <Grid md={1}>
-                {page === 'board' && <Timer />}
               </Grid>
               <Grid container item justify="flex-end" md={6}>
                 {board && <ActionBar />}

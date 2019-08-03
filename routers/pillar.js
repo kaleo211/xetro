@@ -1,7 +1,8 @@
 const routes = require('express').Router();
 const model = require('../models');
+const pillarSvc = require('../services/pillar');
 
-var respondWithPillar = async (res, id) => {
+const respondWithPillar = async (res, id) => {
   try {
     const pillar = await model.Pillar.findOne({
       include: [{
@@ -12,7 +13,7 @@ var respondWithPillar = async (res, id) => {
         as: 'items',
         order: [['createdAt', 'ASC']],
       }],
-      where: { id: id },
+      where: { id },
     });
     if (pillar) {
       res.json(pillar);
@@ -20,10 +21,10 @@ var respondWithPillar = async (res, id) => {
       res.sendStatus(404);
     }
   } catch (err) {
-    console.log('error get pillar', err);
+    console.error('error get pillar', err);
     res.sendStatus(500);
-  };
-}
+  }
+};
 
 routes.delete('/:id', async (req, res) => {
   try {
@@ -32,39 +33,36 @@ routes.delete('/:id', async (req, res) => {
     });
     res.sendStatus(204);
   } catch (err) {
-    console.log('error delete pillar', err);
+    console.error('error delete pillar', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 routes.post('/', async (req, res) => {
-  var pillar = req.body;
-
+  const pillar = req.body;
   try {
-    const newPillar = await model.Pillar.create({
-      title: pillar.title,
-    });
-    await newPillar.setBoard(pillar.boardId);
-
+    const newPillar = pillarSvc.create(pillar.title);
     await respondWithPillar(res, newPillar.id);
   } catch (err) {
-    console.log('error post pillar:', err);
+    console.error('error post pillar:', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 routes.patch('/:id', async (req, res) => {
   try {
-    await model.Pillar.update({
-      title: req.body.title,
-    }, {
+    await model.Pillar.update(
+      {
+        title: req.body.title,
+      }, {
         where: { id: req.params.id },
-      });
+      },
+    );
     await respondWithPillar(res, req.params.id);
   } catch (err) {
-    console.log('error patch pillar:', err);
+    console.error('error patch pillar:', err);
     res.sendStatus(500);
-  };
+  }
 });
 
 module.exports = routes;
