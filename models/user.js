@@ -14,7 +14,12 @@ module.exports = (sequelize, DataTypes) => {
     initial: {
       type: new DataTypes.VIRTUAL(DataTypes.STRING),
       get() {
-        return this.get('firstName').charAt(0).toUpperCase() + this.get('lastName').charAt(0).toUpperCase();
+        const first = this.get('firstName');
+        const last = this.get('lastName');
+        if (first && last) {
+          return first.charAt(0).toUpperCase() + last.charAt(0).toUpperCase();
+        }
+        return '';
       },
     },
     email: DataTypes.STRING,

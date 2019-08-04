@@ -4,31 +4,27 @@ import {
 } from './types';
 import Utils from '../components/Utils';
 
-export const getMe = () => {
-  return (dispatch) => {
-    fetch('/users/me')
-      .then(resp => {
-        if (resp.ok) {
-          return resp.json();
-        }
-      }).then(me => {
-        console.log('getMe:', me);
-        dispatch({
-          type: SET_ME,
-          me,
-        });
+export const getMe = () => async (dispatch) => {
+  try {
+    const me = await Utils.fetch('/users/me');
+    if (me) {
+      dispatch({
+        type: SET_ME,
+        me,
       });
-  };
+    }
+  } catch (err) {
+    console.error('error getting me', err);
+  }
 };
 
-export const fetchUsers = () => {
-  return (dispatch) => {
-    Utils.list('users').then(users => {
-      console.log('fetchUsers:', users);
-      dispatch({
-        type: SET_USERS,
-        users,
-      });
+export const fetchUsers = () => async (dispatch) => {
+  const resp = await Utils.list('users');
+  if (resp.ok) {
+    const users = await resp.json();
+    dispatch({
+      type: SET_USERS,
+      users,
     });
-  };
+  }
 };

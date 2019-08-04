@@ -47,9 +47,7 @@ class Group extends React.Component {
 
   async componentDidMount() {
     await this.props.fetchGroupActiveBoard(this.props.group.id);
-
     const activeBoard = this.props.activeBoard;
-    console.warn('active board:', activeBoard);
     if (activeBoard) {
       this.setState({
         facilitator: activeBoard.facilitator,
@@ -216,15 +214,13 @@ const mapStateToProps = state => ({
   me: state.users.me,
   activeBoard: state.boards.activeBoard,
 });
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setGroup: id => dispatch(setGroup(id)),
-    setBoard: id => dispatch(setBoard(id)),
-    setPage: page => dispatch(setPage(page)),
-    postBoard: board => dispatch(postBoard(board)),
-    fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  setGroup: id => dispatch(setGroup(id)),
+  setBoard: id => dispatch(setBoard(id)),
+  setPage: page => dispatch(setPage(page)),
+  postBoard: board => dispatch(postBoard(board)),
+  fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
+});
 
 Group.propTypes = {
   classes: PropTypes.object.isRequired,

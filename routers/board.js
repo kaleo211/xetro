@@ -62,7 +62,7 @@ const respondWithBoard = async (res, id) => {
 
 const respondWithActiveBoards = async (res, groupId) => {
   try {
-    const boards = await model.Board.findAll({
+    const board= await model.Board.findOne({
       include: associations,
       where: {
         groupId,
@@ -71,8 +71,8 @@ const respondWithActiveBoards = async (res, groupId) => {
         },
       },
     });
-    if (boards) {
-      res.json(boards[0]);
+    if (board) {
+      res.json(board);
     } else {
       res.sendStatus(404);
     }

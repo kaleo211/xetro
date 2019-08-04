@@ -38,7 +38,7 @@ const isAuthenticated = (req, res, next) => {
 
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
-server.use(cookieParser())
+server.use(cookieParser());
 
 server.use('/callback', microsoftRouter);
 server.use('/groups', isAuthenticated, groupRouter);

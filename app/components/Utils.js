@@ -12,7 +12,7 @@ export default {
         comparison = -1;
       }
       return comparison;
-    }
+    };
   },
 
   search(type, body) {
@@ -27,7 +27,7 @@ export default {
         if (resp.ok) {
           resolve(resp.json());
         } else {
-          reject(Error("failed to search:", type, body));
+          reject(Error('failed to search:', type, body));
         }
       });
     });
@@ -40,7 +40,7 @@ export default {
           if (resp.ok) {
             resolve(resp.json());
           } else {
-            reject(Error("failed to fetch:", uri));
+            resolve(undefined);
           }
         });
     });
@@ -53,7 +53,7 @@ export default {
           if (resp.ok) {
             resolve(resp.json());
           } else {
-            reject(Error("failed to get:", type, id));
+            reject(Error('failed to get:', type, id));
           }
         });
     });
@@ -66,19 +66,9 @@ export default {
           if (resp.ok) {
             resolve(resp.json());
           } else {
-            reject(Error("failed to get:", type));
+            reject(Error('failed to get:', type));
           }
         });
-    });
-  },
-
-  async po(type, body) {
-    return await fetch(`/${type}`, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
     });
   },
 
@@ -94,7 +84,7 @@ export default {
         if (resp.ok) {
           resolve(resp.json());
         } else {
-          reject(Error("failed to post:", type, body));
+          reject(Error('failed to post:', type, body));
         }
       });
     });
@@ -112,7 +102,7 @@ export default {
         if (resp.ok) {
           resolve(resp.json());
         } else {
-          reject(Error("failed to patch:", type, body));
+          reject(Error('failed to patch:', type, body));
         }
       });
     });
@@ -126,9 +116,9 @@ export default {
         if (resp.ok) {
           resolve(resp);
         } else {
-          reject(Error("failed to delete:", url));
+          reject(Error('failed to delete:'));
         }
       });
     });
   },
-}
+};

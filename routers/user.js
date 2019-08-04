@@ -4,16 +4,20 @@ const model = require('../models');
 
 const Op = Sequelize.Op;
 
-routes.get('/', (req, res) => {
-  model.User.findAll({
-    include: [{
-      model: model.Group,
-      as: 'groups',
-      through: {},
-    }],
-  }).then(users => {
+routes.get('/', async (req, res) => {
+  try {
+    const users = await model.User.findAll({
+      include: [{
+        model: model.Group,
+        as: 'groups',
+        through: {},
+      }],
+    });
     res.json(users);
-  });
+  } catch (err) {
+    console.error('error find group users:', err);
+    res.sendStatus(500);
+  }
 });
 
 routes.get('/me', (req, res) => {

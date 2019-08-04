@@ -1,3 +1,4 @@
+/* eslint-disable no-extend-native */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -107,10 +108,7 @@ const styles = theme => ({
 class App extends React.Component {
   constructor(props) {
     super(props);
-
-    String.prototype.capitalize = function () {
-      return this.charAt(0).toUpperCase() + this.slice(1);
-    }
+    String.prototype.capitalize = () => this.charAt(0).toUpperCase() + this.slice(1);
   }
 
   async componentWillMount() {
@@ -125,9 +123,9 @@ class App extends React.Component {
     if (this.props.me == null) {
       const uri = `${SSO_ADDRESS}/${SSO_TENANT_ID}/oauth2/authorize` +
                 `?client_id=${SSO_CLIENT_ID}` +
-                `&response_type=code` +
+                '&response_type=code' +
                 `&redirect_uri=${SSO_REDIRECT_URL}` +
-                `&response_mode=query`;
+                '&response_mode=query';
       window.open(uri, 'microsoft', 'height=500,width=620');
     }
 
