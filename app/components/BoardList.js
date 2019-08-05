@@ -9,9 +9,9 @@ import Select from 'react-select';
 import NoSsr from '@material-ui/core/NoSsr';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import { Paper, MenuItem } from '@material-ui/core';
 
 import { setBoard, listBoards } from '../actions/boardActions';
-import { Paper, MenuItem } from '@material-ui/core';
 
 const styles = theme => ({
   root: {
@@ -24,6 +24,7 @@ const styles = theme => ({
   input: {
     display: 'flex',
     padding: 0,
+    color: 'white',
   },
   valueContainer: {
     display: 'flex',
@@ -62,9 +63,6 @@ const styles = theme => ({
   divider: {
     height: theme.spacing.unit * 2,
   },
-  input: {
-    color: "white",
-  },
 });
 
 function NoOptionsMessage(props) {
@@ -85,7 +83,8 @@ function inputComponent({ inputRef, ...props }) {
 
 function Control(props) {
   return (
-    <TextField fullWidth
+    <TextField
+      fullWidth
       InputProps={{
         inputComponent,
         inputProps: {
@@ -179,15 +178,14 @@ class BoardList extends React.Component {
   }
 
   handleSelectBoard(board) {
-    console.log('handleSelectBoard:', board);
     this.props.setBoard(board.value);
   }
 
   render() {
     const { historyBoards, classes, theme } = this.props;
 
-    let boardNames = [];
-    historyBoards.map(board => {
+    const boardNames = [];
+    historyBoards.forEach(board => {
       boardNames.push({
         value: board.id,
         label: board.name,
@@ -220,12 +218,10 @@ const mapStateToProps = state => ({
   board: state.boards.board,
   group: state.groups.group,
 });
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setBoard: (id) => dispatch(setBoard(id)),
-    listBoards: (id) => dispatch(listBoards(id)),
-  };
-}
+const mapDispatchToProps = (dispatch) => ({
+  setBoard: (id) => dispatch(setBoard(id)),
+  listBoards: (id) => dispatch(listBoards(id)),
+});
 
 BoardList.propTypes = {
   classes: PropTypes.object.isRequired,

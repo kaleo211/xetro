@@ -34,7 +34,7 @@ export default {
   },
 
   fetch(uri) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       fetch(uri)
         .then(resp => {
           if (resp.ok) {

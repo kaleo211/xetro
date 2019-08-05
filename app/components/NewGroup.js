@@ -10,11 +10,11 @@ import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
+import { emphasize } from '@material-ui/core/styles/colorManipulator';
 
 import { getMe } from '../actions/userActions';
 import { fetchGroups, postGroup, setGroup } from '../actions/groupActions';
 import { setPage, closeDraw } from '../actions/localActions';
-import { emphasize } from '@material-ui/core/styles/colorManipulator';
 
 import Utils from './Utils';
 
@@ -172,16 +172,17 @@ const components = {
 class NewGroup extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {};
   }
 
   async handleCreateGroup(search) {
     if (search.disabled) {
       await this.props.setGroup(search.id);
     } else {
-      let group = {
+      const group = {
         name: search.value,
         members: [this.props.me.id],
-      }
+      };
       await this.props.postGroup(group);
     }
 
@@ -190,21 +191,20 @@ class NewGroup extends React.Component {
 
   async handleSearchGroup(searchText) {
     const groups = await Utils.search('groups', { name: searchText });
-    let result = [];
+    const result = [];
 
-    groups.map(g => {
-      let option = {
+    groups.forEach(g => {
+      const option = {
         value: g.name,
         id: g.id,
         label: `Join: ${g.name}`,
       };
-      for (let mg of this.props.me.groups) {
+      this.props.me.groups.forEach(mg => {
         if (g.id === mg.id) {
           option.disabled = true;
           option.label = `Select: ${g.name}`;
-          break;
         }
-      }
+      });
       result.push(option);
     });
 
@@ -231,7 +231,7 @@ class NewGroup extends React.Component {
           loadOptions={this.handleSearchGroup.bind(this)}
           components={components}
           onChange={this.handleCreateGroup.bind(this)}
-          formatCreateLabel={(g) => { return `Create: ${g}` }}
+          formatCreateLabel={(g) => `Create: ${g}`}
         />
       </NoSsr>
     );
@@ -242,16 +242,14 @@ const mapStateToProps = state => ({
   me: state.users.me,
 });
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetchGroups: () => dispatch(fetchGroups()),
-    postGroup: (group) => dispatch(postGroup(group)),
-    setPage: (page) => dispatch(setPage(page)),
-    getMe: () => dispatch(getMe()),
-    setGroup: (id) => dispatch(setGroup(id)),
-    closeDraw: () => dispatch(closeDraw()),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  fetchGroups: () => dispatch(fetchGroups()),
+  postGroup: (group) => dispatch(postGroup(group)),
+  setPage: (page) => dispatch(setPage(page)),
+  getMe: () => dispatch(getMe()),
+  setGroup: (id) => dispatch(setGroup(id)),
+  closeDraw: () => dispatch(closeDraw()),
+});
 
 NewGroup.propTypes = {
   classes: PropTypes.object.isRequired,

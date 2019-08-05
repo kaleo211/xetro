@@ -6,14 +6,11 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 import { CheckRounded } from '@material-ui/icons';
-
-import Collapse from '@material-ui/core/Collapse';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Typography from '@material-ui/core/Typography';
 
 import { setGroup } from '../actions/groupActions';
 import { setBoard } from '../actions/boardActions';
@@ -29,10 +26,7 @@ const styles = theme => ({
 class ActionItemList extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      open: true,
-    };
+    this.state = {};
   }
 
   handleFinishAction(action) {
@@ -43,8 +37,8 @@ class ActionItemList extends React.Component {
     const { me, classes } = this.props;
     return (me &&
       <List disablePadding>
-        {me.actions && me.actions.map(action =>
-          <ListItem button key={action.id} className={classes.nested} >
+        {me.actions && me.actions.map(action => (
+          <ListItem button key={action.id} className={classes.nested}>
             <ListItemText primary={action.title} />
             <ListItemSecondaryAction>
               <IconButton aria-label="Delete" onClick={this.handleFinishAction.bind(this, action)}>
@@ -52,7 +46,7 @@ class ActionItemList extends React.Component {
               </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
-        )}
+        ))}
       </List>
     );
   }

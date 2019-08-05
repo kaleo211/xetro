@@ -6,11 +6,11 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 import Typography from '@material-ui/core/Typography';
+import { Paper, Grid } from '@material-ui/core';
 
 import { setGroup } from '../actions/groupActions';
 import { setBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
-import { Paper, Grid } from '@material-ui/core';
 
 import ActionItemList from './ActionItemList';
 import GroupList from './GroupList';
@@ -52,15 +52,15 @@ class Group extends React.Component {
 
   handleClick(expand) {
     this.setState(state => ({ expand: state.expand === expand ? '' : expand }));
-  };
+  }
 
   render() {
-    const { groups, me, board, classes } = this.props;
+    const { me, classes } = this.props;
 
     return (me &&
       <div>
         <Paper className={classes.paper}>
-          <Typography variant="h4">{me.lastName + ', ' + me.firstName}</Typography>
+          <Typography variant="h4">{`${me.lastName} ${me.firstName}`}</Typography>
         </Paper>
 
         <Paper className={classes.paper}>
@@ -94,11 +94,11 @@ class Group extends React.Component {
               <ActionItemList />
             </Grid>
           </Grid>
-        </Paper >
+        </Paper>
       </div>
     );
-  };
-};
+  }
+}
 
 const mapStateToProps = state => ({
   groups: state.groups.groups,
@@ -106,13 +106,11 @@ const mapStateToProps = state => ({
   board: state.boards.board,
   me: state.users.me,
 });
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setGroup: (id) => dispatch(setGroup(id)),
-    setBoard: (id) => dispatch(setBoard(id)),
-    setPage: (page) => dispatch(setPage(page)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  setGroup: (id) => dispatch(setGroup(id)),
+  setBoard: (id) => dispatch(setBoard(id)),
+  setPage: (page) => dispatch(setPage(page)),
+});
 
 Group.propTypes = {
   classes: PropTypes.object.isRequired,

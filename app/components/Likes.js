@@ -12,7 +12,7 @@ const styles = theme => ({
     fontSize: 18,
     marginLeft: -20,
     marginRight: 2,
-  }
+  },
 });
 
 class Likes extends React.Component {

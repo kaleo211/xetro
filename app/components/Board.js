@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import Fab from '@material-ui/core/Fab';
-import { Card, CardHeader, CardContent, Badge } from '@material-ui/core';
+import { Card, CardHeader, CardContent } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
@@ -58,47 +58,50 @@ class Board extends React.Component {
   }
 
   componentDidMount() {
-    this.state.progressTimer = setInterval(this.updateItemProgress, 1000);
+    console.log('props:', this.props);
+
+    this.state.progressTimer = setInterval(() => {
+      const item = this.props.activeItem;
+      if (item && item.end) {
+        const difference = Math.floor((new Date(item.end).getTime() - new Date().getTime()) / 1000);
+        if (difference > 0 && difference < this.state.secondsPerItem) {
+          this.setState(state => ({
+            ...state,
+            itemProgress: Math.floor((state.secondsPerItem - difference) * 100 / state.secondsPerItem),
+          }));
+        } else {
+          this.setState({ itemProgress: 100 });
+        }
+      }
+    }, 1000);
   }
 
   componentWillUnmount() {
     clearInterval(this.state.progressTimer);
   }
 
-  updateItemProgress = () => {
-    let item = this.props.activeItem;
-    if (item && item.end) {
-      let difference = Math.floor((new Date(item.end).getTime() - new Date().getTime()) / 1000);
-      if (difference > 0 && difference < this.state.secondsPerItem) {
-        this.setState({
-          itemProgress: Math.floor((this.state.secondsPerItem - difference) * 100 / this.state.secondsPerItem),
-        });
-      } else {
-        this.setState({ itemProgress: 100 });
-      }
-    }
-  };
-
   changePillarTitle(id, title) {
     this.setState(state => {
-      state.titleOfPillar[id] = title;
-      return state;
+      const newState = state;
+      newState.titleOfPillar[id] = title;
+      return newState;
     });
   }
 
   changeItemTitle(id, title) {
     this.setState(state => {
-      state.newItemInPillar[id] = title;
-      return state;
+      const newState = state;
+      newState.newItemInPillar[id] = title;
+      return newState;
     });
   }
 
   handleAddItem(pillarId, event) {
-    let newItemTitle = this.state.newItemInPillar[pillarId];
+    const newItemTitle = this.state.newItemInPillar[pillarId];
     if (event && event.key === 'Enter' && newItemTitle !== '') {
-      let newItem = {
+      const newItem = {
+        pillarId,
         title: newItemTitle,
-        pillarId: pillarId,
         boardId: this.props.board.id,
         groupId: this.props.group.id,
       };
@@ -112,10 +115,10 @@ class Board extends React.Component {
   }
 
   handleAddPillar() {
-    let pillar = {
+    const pillar = {
       title: 'ChangeTitle',
       boardId: this.props.board.id,
-    }
+    };
     this.props.postPillar(pillar);
   }
 
@@ -129,9 +132,8 @@ class Board extends React.Component {
 
   handleSetPillarTitle(pillar, evt) {
     if (evt && evt.key === 'Enter') {
-      if (evt.target.value != '') {
-        pillar.title = evt.target.value;
-        this.props.patchPillar(pillar);
+      if (evt.target.value !== '') {
+        this.props.patchPillar({ ...pillar, title: evt.target.value });
       } else {
         this.changePillarTitle(pillar.id, pillar.title);
       }
@@ -141,77 +143,80 @@ class Board extends React.Component {
   render() {
     const { classes, board } = this.props;
     const { newItemInPillar, itemProgress } = this.state;
+    console.log('props:====================================', this.props);
 
-    let facilitator = board.facilitator;
-    let pillars = board.pillars.sort(Utils.createdAt());
-    let enabled = (board.stage !== 'archived' && !board.locked);
+    const facilitator = board.facilitator;
+    const pillars = board.pillars.sort(Utils.createdAt());
+    const enabled = (board.stage !== 'archived' && !board.locked);
 
-    const pillarTitle = (pillar) => {
-      return (
-        <TextField fullWidth
-          disabled={!enabled}
-          defaultValue={pillar.title}
-          InputProps={{ disableUnderline: true, }}
-          inputProps={{ className: classes.title, }}
-          onChange={this.handleChangePillarTitle.bind(this, pillar)}
-          onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
-        ></TextField >
-      );
-    };
+    const pillarTitle = (pillar) => (
+      <TextField
+        fullWidth
+        disabled={!enabled}
+        defaultValue={pillar.title}
+        InputProps={{ disableUnderline: true }}
+        inputProps={{ className: classes.title }}
+        onChange={this.handleChangePillarTitle.bind(this, pillar)}
+        onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
+      />
+    );
 
-    let size = () => {
-      let size = board.pillars.length;
-      return size <= 3 ? 4 : 3;
-    }
+    const size = () => (board.pillars.length <= 3 ? 4 : 3);
 
-
-    let action = (pillar) => {
-      return enabled ? <IconButton disableRipple
+    const action = (pillar) => (enabled ?
+      <IconButton
+        disableRipple
         color="primary"
         className={classes.badge}
         onClick={this.handleDeletePillar.bind(this, pillar)}
       >
         <ClearRounded fontSize="small" />
-      </IconButton> : null;
-    }
+      </IconButton>
+      : null
+    );
 
-    return (<div>
-      <Grid container spacing={8}
-        direction="row"
-        justify="flex-start"
-        alignItems="stretch"
-      >
-        {facilitator && pillars && pillars.map(pillar => (
-          <Grid item key={pillar.title} xs={12} sm={12} md={size()} >
-            <Card wrap='nowrap'>
-              <CardHeader
-                title={pillarTitle(pillar)}
-                subheader={pillar.subheader}
-                titleTypographyProps={{ align: 'center' }}
-                subheaderTypographyProps={{ align: 'center' }}
-                action={action(pillar)}
-              />
-              <CardContent>
-                {board.stage !== 'archived' && !board.locked &&
-                  <TextField fullWidth
-                    label={pillar.intro}
-                    value={newItemInPillar[pillar.id]}
-                    disabled={!enabled}
-                    name={pillar.id}
-                    onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
-                    onKeyPress={this.handleAddItem.bind(this, pillar.id)}
-                  />
-                }
-              </CardContent>
-              <Pillar pillar={pillar} itemProgress={itemProgress} />
-            </Card>
-          </Grid>))}
-      </Grid>
+    return (
+      <div>
+        <Grid
+          container
+          spacing={8}
+          direction="row"
+          justify="flex-start"
+          alignItems="stretch"
+        >
+          {facilitator && pillars && pillars.map(pillar => (
+            <Grid item key={pillar.title} xs={12} sm={12} md={size()}>
+              <Card wrap="nowrap">
+                <CardHeader
+                  title={pillarTitle(pillar)}
+                  subheader={pillar.subheader}
+                  titleTypographyProps={{ align: 'center' }}
+                  subheaderTypographyProps={{ align: 'center' }}
+                  action={action(pillar)}
+                />
+                <CardContent>
+                  {board.stage !== 'archived' && !board.locked &&
+                    <TextField
+                      fullWidth
+                      label={pillar.intro}
+                      value={newItemInPillar[pillar.id]}
+                      disabled={!enabled}
+                      name={pillar.id}
+                      onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
+                      onKeyPress={this.handleAddItem.bind(this, pillar.id)}
+                    />
+                  }
+                </CardContent>
+                <Pillar pillar={pillar} itemProgress={itemProgress} />
+              </Card>
+            </Grid>))}
+        </Grid>
 
-      <Fab className={classes.fab} onClick={this.handleAddPillar.bind(this)} >
-        <Add />
-      </Fab>
-    </div>);
+        <Fab className={classes.fab} onClick={this.handleAddPillar.bind(this)}>
+          <Add />
+        </Fab>
+      </div>
+    );
   }
 }
 
@@ -221,22 +226,20 @@ const mapStateToProps = state => ({
   activeItem: state.local.activeItem,
   draw: state.local.drawOpen,
 });
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setBoard: (id) => dispatch(setBoard(id)),
-    postItem: (item, bID) => dispatch(postItem(item, bID)),
-    patchPillar: (p, pillar, bID) => dispatch(patchPillar(p, pillar, bID)),
-    postPillar: (pillar, bID) => dispatch(postPillar(pillar, bID)),
-    openSnackBar: (msg) => dispatch(openSnackBar(msg)),
-    closeSnackBar: () => dispatch(closeSnackBar()),
-    deletePillar: (pillar) => dispatch(deletePillar(pillar)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  setBoard: (id) => dispatch(setBoard(id)),
+  postItem: (item, bID) => dispatch(postItem(item, bID)),
+  patchPillar: (p, pillar, bID) => dispatch(patchPillar(p, pillar, bID)),
+  postPillar: (pillar, bID) => dispatch(postPillar(pillar, bID)),
+  openSnackBar: (msg) => dispatch(openSnackBar(msg)),
+  closeSnackBar: () => dispatch(closeSnackBar()),
+  deletePillar: (pillar) => dispatch(deletePillar(pillar)),
+});
 
 Board.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles, { withTheme: true })
+  withStyles(styles, { withTheme: true }),
 )(Board);

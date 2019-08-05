@@ -1,3 +1,7 @@
+import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
+import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
+
 import {
   SHOW_PAGE,
   CLOSE_SNACKBAR,
@@ -6,56 +10,52 @@ import {
   SET_DRAW,
 } from '../actions/types';
 
-import storage from 'redux-persist/lib/storage';
-import { persistReducer } from 'redux-persist';
-import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
-
 const persistConfig = {
+  storage,
   key: 'local',
-  storage: storage,
   stateReconciler: autoMergeLevel2,
 };
 
 const initialState = {
-  page: "home",
+  page: 'home',
   snackbarOpen: false,
-  snackbarMessage: "",
+  snackbarMessage: '',
   activeItem: {},
   drawOpen: false,
 };
 
-const localReducer = function (state = initialState, action) {
+const localReducer = (state = initialState, action) => {
   switch (action.type) {
     case SHOW_PAGE:
       return {
         ...state,
-        page: action.page
+        page: action.page,
       };
 
     case OPEN_SNACKBAR:
       return {
         ...state,
         snackbarMessage: action.snackbarMessage,
-        snackbarOpen: action.snackbarOpen
+        snackbarOpen: action.snackbarOpen,
       };
 
     case CLOSE_SNACKBAR:
       return {
         ...state,
-        snackbarOpen: action.snackbarOpen
+        snackbarOpen: action.snackbarOpen,
       };
 
     case SET_ITEM:
       return {
         ...state,
-        activeItem: action.activeItem
+        activeItem: action.activeItem,
       };
 
     case SET_DRAW:
       return {
         ...state,
         drawOpen: action.drawOpen,
-      }
+      };
 
     default:
       return state;

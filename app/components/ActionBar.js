@@ -109,19 +109,17 @@ const mapStateToProps = state => ({
   page: state.local.page,
 });
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setBoard: id => dispatch(setBoard(id)),
-    setBoards: () => dispatch(setBoards()),
-    setGroup: id => dispatch(setGroup(id)),
-    openSnackBar: message => dispatch(openSnackBar(message)),
-    setPage: page => dispatch(setPage(page)),
-    archiveBoard: id => dispatch(archiveBoard(id)),
-    lockBoard: id => dispatch(lockBoard(id)),
-    unlockBoard: id => dispatch(unlockBoard(id)),
-    finishItem: item => dispatch(finishItem(item)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  setBoard: id => dispatch(setBoard(id)),
+  setBoards: () => dispatch(setBoards()),
+  setGroup: id => dispatch(setGroup(id)),
+  openSnackBar: message => dispatch(openSnackBar(message)),
+  setPage: page => dispatch(setPage(page)),
+  archiveBoard: id => dispatch(archiveBoard(id)),
+  lockBoard: id => dispatch(lockBoard(id)),
+  unlockBoard: id => dispatch(unlockBoard(id)),
+  finishItem: item => dispatch(finishItem(item)),
+});
 
 ActionBar.propTypes = {
 };

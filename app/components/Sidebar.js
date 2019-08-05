@@ -4,9 +4,7 @@ import { connect } from 'react-redux';
 
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-
 import { Search } from '@material-ui/icons';
-
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -53,7 +51,7 @@ class Sidebar extends React.Component {
   };
 
   render() {
-    const { group, groups, me, classes } = this.props;
+    const { groups, me, classes } = this.props;
     const { expand } = this.state;
 
     return (
@@ -86,21 +84,19 @@ class Sidebar extends React.Component {
         </Collapse>
       </List>
     );
-  };
-};
+  }
+}
 
 const mapStateToProps = state => ({
   groups: state.groups.groups,
   group: state.groups.group,
   me: state.users.me,
 });
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setGroup: (id) => dispatch(setGroup(id)),
-    setBoard: (id) => dispatch(setBoard(id)),
-    setPage: (page) => dispatch(setPage(page)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  setGroup: (id) => dispatch(setGroup(id)),
+  setBoard: (id) => dispatch(setBoard(id)),
+  setPage: (page) => dispatch(setPage(page)),
+});
 
 Sidebar.propTypes = {
   classes: PropTypes.object.isRequired,

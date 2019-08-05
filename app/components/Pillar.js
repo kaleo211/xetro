@@ -31,13 +31,13 @@ const styles = theme => ({
     paddingRight: 0,
   },
   itemDone: {
-    textDecoration: "line-through",
+    textDecoration: 'line-through',
   },
   title: {
     fontSize: 22,
   },
   summaryGrid: {
-    marginRight: - theme.spacing.unit * 5,
+    marginRight: -theme.spacing.unit * 5,
   },
   panelSummay: {
     height: theme.spacing.unit * 6,
@@ -74,35 +74,39 @@ class Pillar extends React.Component {
       ownerAnchorEl: {},
       newAction: '',
       switcher: false,
-    }
+    };
   }
 
   handleAddActionOwner(item, owner) {
-    this.handleOwerListClose(item.id)
-    item.ownerId = owner.id;
-    item.boardId = this.props.board.id;
-    this.props.patchItem(item);
+    this.handleOwerListClose(item.id);
+    this.props.patchItem({ ...item, ownerId: owner.id, boardId: this.props.board.id });
   }
 
   handleActivateItem(item) {
     this.props.setActiveItem(item);
     if (this.props.activeItem.id === item.id && this.state.switcher) {
-      this.setState({ switcher: false })
+      this.setState({ switcher: false });
     } else {
-      this.setState({ switcher: true })
+      this.setState({ switcher: true });
     }
   }
 
   handleOwerListClose(itemID) {
-    let ownerAnchorEl = this.state.ownerAnchorEl;
-    ownerAnchorEl[itemID] = null;
-    this.setState({ ownerAnchorEl })
+    this.setState(state => ({
+      ownerAnchorEl: {
+        ...state.ownerAnchorEl,
+        [`${itemID}`]: null,
+      },
+    }));
   }
 
   handleOwerListOpen(itemID, event) {
-    let ownerAnchorEl = this.state.ownerAnchorEl;
-    ownerAnchorEl[itemID] = event.currentTarget;
-    this.setState({ ownerAnchorEl });
+    this.setState(state => ({
+      ownerAnchorEl: {
+        ...state.ownerAnchorEl,
+        [`${itemID}`]: event.currentTarget,
+      },
+    }));
   }
 
   handleNewActionChange(event) {
@@ -112,20 +116,18 @@ class Pillar extends React.Component {
   }
 
   handleDeleteItem(item) {
-    item.boardId = this.props.board.id;
-    this.props.deleteItem(item);
-  };
+    this.props.deleteItem({ ...item, boardId: this.props.board.id });
+  }
 
   handleStartItem(item, evt) {
     evt.stopPropagation();
-    item.boardId = this.props.board.id;
-    this.props.startItem(item);
+    this.props.startItem({ ...item, boardId: this.props.board.id });
     this.setState({ switcher: true });
   }
 
   handleSaveAction(item, event) {
     if (event && event.key === 'Enter' && this.state.newAction !== '') {
-      let newAction = {
+      const newAction = {
         title: this.state.newAction.capitalize(),
         itemId: item.id,
         type: 'action',
@@ -141,13 +143,11 @@ class Pillar extends React.Component {
 
   handleLikeItem(item, event) {
     event.stopPropagation();
-    item.boardId = this.props.board.id;
-    this.props.likeItem(item);
+    this.props.likeItem({ ...item, boardId: this.props.board.id });
   }
 
   handleFinishItem(item) {
-    item.boardId = this.props.board.id;
-    this.props.finishItem(item);
+    this.props.finishItem({ ...item, boardId: this.props.board.id });
   }
 
   render() {
@@ -157,24 +157,24 @@ class Pillar extends React.Component {
     const members = group.members;
     const items = pillar.items.sort(Utils.createdAt());
 
-    let disabled = (item) => {
-      return board.locked || board.stage === 'archived' || item.stage === 'done';
-    }
+    const disabled = (item) => board.locked || board.stage === 'archived' || item.stage === 'done';
 
     return (items ? items.map(item => (item.type === 'item' &&
       <ExpansionPanel
-        key={"item-" + item.id}
+        key={`item-${item.id}`}
         expanded={switcher && activeItem.id === item.id}
         onChange={this.handleActivateItem.bind(this, item)}
       >
         <ExpansionPanelSummary className={classes.panelSummay}>
-          <Grid container
+          <Grid
+            container
             justify="space-between"
             alignItems="center"
             spacing={0}
           >
             <Grid item xs={10} sm={11}>
-              <TextField fullWidth
+              <TextField
+                fullWidth
                 value={item.title}
                 InputProps={{ disableUnderline: true, readOnly: true, classes: { input: classes.title } }}
                 className={item.stage === 'done' ? classes.itemDone : null}
@@ -197,8 +197,9 @@ class Pillar extends React.Component {
           <Grid container direction="column">
             <Grid item>
               {board.stage === 'active' &&
-                <TextField fullWidth
-                  label='Action Item'
+                <TextField
+                  fullWidth
+                  label="Action Item"
                   value={item.action ? item.action.title : newAction}
                   onChange={this.handleNewActionChange.bind(this)}
                   onKeyPress={this.handleSaveAction.bind(this, item)}
@@ -207,32 +208,34 @@ class Pillar extends React.Component {
             </Grid>
             <Grid item>
               <List>
-                {item.actions.map(i =>
-                  <ListItem divider key={'action' + i.id} className={classes.item}>
+                {item.actions.map(i => (
+                  <ListItem divider key={`action-${i.id}`} className={classes.item}>
                     <ListItemText primary={i.title} />
                     {i.ownerId && <Avatar className={classes.owner}>{i.ownerId}</Avatar>}
-                    {!i.ownerId && (<div>
-                      <IconButton onClick={this.handleOwerListOpen.bind(this, i.id)}>
-                        <Add fontSize='inherit' />
-                      </IconButton>
-                      <Menu
-                        anchorEl={ownerAnchorEl[i.id]}
-                        open={Boolean(ownerAnchorEl[i.id])}
-                        onClose={this.handleOwerListClose.bind(this, i.id)}
-                      >
-                        {members && members.map(member => (
-                          <MenuItem
-                            style={{ paddingTop: 20, paddingBottom: 20 }}
-                            key={"owner" + member.userId}
-                            onClick={this.handleAddActionOwner.bind(this, i, member)}
-                          >
-                            <Avatar>{member.firstName}</Avatar>
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </div>)}
+                    {!i.ownerId &&
+                      <div>
+                        <IconButton onClick={this.handleOwerListOpen.bind(this, i.id)}>
+                          <Add fontSize="inherit" />
+                        </IconButton>
+                        <Menu
+                          anchorEl={ownerAnchorEl[i.id]}
+                          open={Boolean(ownerAnchorEl[i.id])}
+                          onClose={this.handleOwerListClose.bind(this, i.id)}
+                        >
+                          {members && members.map(member => (
+                            <MenuItem
+                              style={{ paddingTop: 20, paddingBottom: 20 }}
+                              key={`owner-${member.userId}`}
+                              onClick={this.handleAddActionOwner.bind(this, i, member)}
+                            >
+                              <Avatar>{member.firstName}</Avatar>
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </div>
+                    }
                   </ListItem>
-                )}
+                ))}
               </List>
             </Grid>
           </Grid>
@@ -240,7 +243,7 @@ class Pillar extends React.Component {
 
         <ExpansionPanelActions className={classes.panelAction}>
           <Grid container direction="column" className={classes.action}>
-            <Grid container justify="flex-end" >
+            <Grid container justify="flex-end">
               {board.stage !== 'archived' && item.stage !== 'done' &&
                 <Grid item>
                   {board.locked && item.stage === 'created' &&
@@ -267,11 +270,9 @@ class Pillar extends React.Component {
               }
             </Grid>
           </Grid>
-
-
-        </ExpansionPanelActions >
-      </ExpansionPanel >
-    )) : <div></div>);
+        </ExpansionPanelActions>
+      </ExpansionPanel>
+    )) : <div />);
   }
 }
 
@@ -281,19 +282,17 @@ const mapStateToProps = state => ({
   activeItem: state.local.activeItem,
 });
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    postItem: (i, item, bId) => dispatch(postItem(i, item, bId)),
-    deleteItem: (item) => dispatch(deleteItem(item)),
-    setBoard: (id) => dispatch(setBoard(id)),
-    setActiveItem: (item) => dispatch(setActiveItem(item)),
-    setGroup: (id) => dispatch(setGroup(id)),
-    likeItem: (id) => dispatch(likeItem(id)),
-    finishItem: (id) => dispatch(finishItem(id)),
-    startItem: (item) => dispatch(startItem(item)),
-    patchItem: (item) => dispatch(patchItem(item)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  postItem: (i, item, bId) => dispatch(postItem(i, item, bId)),
+  deleteItem: (item) => dispatch(deleteItem(item)),
+  setBoard: (id) => dispatch(setBoard(id)),
+  setActiveItem: (item) => dispatch(setActiveItem(item)),
+  setGroup: (id) => dispatch(setGroup(id)),
+  likeItem: (id) => dispatch(likeItem(id)),
+  finishItem: (id) => dispatch(finishItem(id)),
+  startItem: (item) => dispatch(startItem(item)),
+  patchItem: (item) => dispatch(patchItem(item)),
+});
 
 Pillar.propTypes = {
   classes: PropTypes.object.isRequired,

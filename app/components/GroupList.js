@@ -11,6 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 
 import { setGroup } from '../actions/groupActions';
+import { setPage } from '../actions/localActions';
 
 const styles = theme => ({
   nested: {
@@ -21,10 +22,7 @@ const styles = theme => ({
 class GroupList extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      open: true,
-    };
+    this.state = {};
   }
 
   handleSetGroup(groupId) {
@@ -43,31 +41,30 @@ class GroupList extends React.Component {
 
     return (
       <List>
-        {groups && groups.map(g =>
-          <ListItem button key={g.id}
+        {groups && groups.map(g => (
+          <ListItem
+            button
+            key={g.id}
             className={classes.nested}
             selected={group && group.id === g.id}
             onClick={this.handleSetGroup.bind(this, g.id)}
           >
             <ListItemText disableTypography primary={<Typography variant="h6">{g.name}</Typography>} />
           </ListItem>
-        )}
+        ))}
       </List>
     );
-  };
-};
+  }
+}
 
 const mapStateToProps = state => ({
   groups: state.groups.groups,
   group: state.groups.group,
 });
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setGroup: (id) => dispatch(setGroup(id)),
-    setBoard: (id) => dispatch(setBoard(id)),
-    setPage: (page) => dispatch(setPage(page)),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  setGroup: (id) => dispatch(setGroup(id)),
+  setPage: (page) => dispatch(setPage(page)),
+});
 
 GroupList.propTypes = {
   classes: PropTypes.object.isRequired,
