@@ -172,12 +172,16 @@ const components = {
 class NewGroup extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      search: '',
+    };
   }
 
   async handleCreateGroup(search) {
-    if (search.disabled) {
+    if (search.label.includes('Select')) {
       await this.props.setGroup(search.id);
+    } else if (search.label.includes('Join')) {
+      console.error('wowo');
     } else {
       const group = {
         name: search.value,
@@ -185,12 +189,11 @@ class NewGroup extends React.Component {
       };
       await this.props.postGroup(group);
     }
-
     this.props.closeDraw();
   }
 
-  async handleSearchGroup(searchText) {
-    const groups = await Utils.search('groups', { name: searchText });
+  async handleSearchGroup(name) {
+    const groups = await Utils.search('groups', { name });
     const result = [];
 
     groups.forEach(g => {
@@ -201,7 +204,6 @@ class NewGroup extends React.Component {
       };
       this.props.me.groups.forEach(mg => {
         if (g.id === mg.id) {
-          option.disabled = true;
           option.label = `Select: ${g.name}`;
         }
       });
@@ -213,6 +215,8 @@ class NewGroup extends React.Component {
 
   render() {
     const { classes, theme } = this.props;
+    const { search } = this.state;
+
     const selectStyles = {
       input: base => ({
         ...base,
@@ -232,6 +236,7 @@ class NewGroup extends React.Component {
           components={components}
           onChange={this.handleCreateGroup.bind(this)}
           formatCreateLabel={(g) => `Create: ${g}`}
+          value={search}
         />
       </NoSsr>
     );

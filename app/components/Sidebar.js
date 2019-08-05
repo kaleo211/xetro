@@ -48,7 +48,7 @@ class Sidebar extends React.Component {
 
   handleClick(expand) {
     this.setState(state => ({ expand: state.expand === expand ? '' : expand }));
-  };
+  }
 
   render() {
     const { groups, me, classes } = this.props;
@@ -88,13 +88,13 @@ class Sidebar extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  groups: state.groups.groups,
   group: state.groups.group,
+  groups: state.groups.groups,
   me: state.users.me,
 });
 const mapDispatchToProps = (dispatch) => ({
-  setGroup: (id) => dispatch(setGroup(id)),
   setBoard: (id) => dispatch(setBoard(id)),
+  setGroup: (id) => dispatch(setGroup(id)),
   setPage: (page) => dispatch(setPage(page)),
 });
 

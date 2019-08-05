@@ -58,8 +58,6 @@ class Board extends React.Component {
   }
 
   componentDidMount() {
-    console.log('props:', this.props);
-
     this.state.progressTimer = setInterval(() => {
       const item = this.props.activeItem;
       if (item && item.end) {
@@ -143,7 +141,6 @@ class Board extends React.Component {
   render() {
     const { classes, board } = this.props;
     const { newItemInPillar, itemProgress } = this.state;
-    console.log('props:====================================', this.props);
 
     const facilitator = board.facilitator;
     const pillars = board.pillars.sort(Utils.createdAt());
