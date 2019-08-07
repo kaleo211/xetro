@@ -72,7 +72,7 @@ class Pillar extends React.Component {
 
     this.state = {
       ownerAnchorEl: {},
-      newAction: '',
+      newActionTitle: '',
       switcher: false,
     };
   }
@@ -100,18 +100,18 @@ class Pillar extends React.Component {
     }));
   }
 
-  handleOwerListOpen(itemID, event) {
+  handleOwerListOpen(itemID, evt) {
     this.setState(state => ({
       ownerAnchorEl: {
         ...state.ownerAnchorEl,
-        [`${itemID}`]: event.currentTarget,
+        [`${itemID}`]: evt.currentTarget,
       },
     }));
   }
 
-  handleNewActionChange(event) {
+  handleNewActionChange(evt) {
     this.setState({
-      newAction: event.target.value,
+      newActionTitle: evt.target.value,
     });
   }
 
@@ -125,10 +125,11 @@ class Pillar extends React.Component {
     this.setState({ switcher: true });
   }
 
-  handleSaveAction(item, event) {
-    if (event && event.key === 'Enter' && this.state.newAction !== '') {
+  handleSaveAction(item, evt) {
+    const { newActionTitle } = this.state;
+    if (evt && evt.key === 'Enter' && newActionTitle !== '') {
       const newAction = {
-        title: this.state.newAction.capitalize(),
+        title: newActionTitle.capitalize(),
         itemId: item.id,
         type: 'action',
         pillarId: item.pillarId,
@@ -137,12 +138,12 @@ class Pillar extends React.Component {
       };
 
       this.props.postItem(newAction);
-      this.setState({ newAction: '' });
+      this.setState({ newActionTitle: '' });
     }
   }
 
-  handleLikeItem(item, event) {
-    event.stopPropagation();
+  handleLikeItem(item, evt) {
+    evt.stopPropagation();
     this.props.likeItem({ ...item, boardId: this.props.board.id });
   }
 
@@ -152,14 +153,14 @@ class Pillar extends React.Component {
 
   render() {
     const { activeItem, pillar, group, board, classes } = this.props;
-    const { newAction, ownerAnchorEl, switcher } = this.state;
+    const { newActionTitle, ownerAnchorEl, switcher } = this.state;
 
     const members = group.members;
     const items = pillar.items.sort(Utils.createdAt());
 
     const disabled = (item) => board.locked || board.stage === 'archived' || item.stage === 'done';
 
-    return (items ? items.map(item => (item.type === 'item' &&
+    return items.map(item => (item.type === 'item' &&
       <ExpansionPanel
         key={`item-${item.id}`}
         expanded={switcher && activeItem.id === item.id}
@@ -192,7 +193,6 @@ class Pillar extends React.Component {
             </Grid>
           </Grid>
         </ExpansionPanelSummary>
-
         <ExpansionPanelDetails className={classes.panelDetail}>
           <Grid container direction="column">
             <Grid item>
@@ -200,7 +200,7 @@ class Pillar extends React.Component {
                 <TextField
                   fullWidth
                   label="Action Item"
-                  value={item.action ? item.action.title : newAction}
+                  value={newActionTitle}
                   onChange={this.handleNewActionChange.bind(this)}
                   onKeyPress={this.handleSaveAction.bind(this, item)}
                 />
@@ -240,7 +240,6 @@ class Pillar extends React.Component {
             </Grid>
           </Grid>
         </ExpansionPanelDetails>
-
         <ExpansionPanelActions className={classes.panelAction}>
           <Grid container direction="column" className={classes.action}>
             <Grid container justify="flex-end">
@@ -272,7 +271,7 @@ class Pillar extends React.Component {
           </Grid>
         </ExpansionPanelActions>
       </ExpansionPanel>
-    )) : <div />);
+    ));
   }
 }
 
@@ -294,9 +293,6 @@ const mapDispatchToProps = (dispatch) => ({
   patchItem: (item) => dispatch(patchItem(item)),
 });
 
-Pillar.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles, { withTheme: true }),

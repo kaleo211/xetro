@@ -20,10 +20,10 @@ export const finishItem = (item) => async (dispatch) => {
 };
 
 export const startItem = (item) => async (dispatch) => {
-  const resp = await Utils.fetch(`/items/${item.id}/start`);
-  if (resp) {
+  const activeItem = await Utils.fetch(`/items/${item.id}/start`);
+  if (activeItem) {
     dispatch(setBoard(item.boardId));
-    dispatch(setActiveItem(resp.json()));
+    dispatch(setActiveItem(activeItem));
   }
 };
 

@@ -62,7 +62,7 @@ const respondWithBoard = async (res, id) => {
 
 const respondWithActiveBoards = async (res, groupId) => {
   try {
-    const board= await model.Board.findOne({
+    const board = await model.Board.findOne({
       include: associations,
       where: {
         groupId,

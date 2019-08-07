@@ -1,4 +1,3 @@
-/* eslint-disable no-extend-native */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -108,7 +107,13 @@ const styles = theme => ({
 class App extends React.Component {
   constructor(props) {
     super(props);
-    String.prototype.capitalize = () => this.charAt(0).toUpperCase() + this.slice(1);
+
+    String.prototype.capitalize = function () {
+      if (this && this.length > 0) {
+        return this.charAt(0).toUpperCase() + this.slice(1);
+      }
+      return '';
+    };
   }
 
   async componentWillMount() {

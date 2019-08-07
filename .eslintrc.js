@@ -35,5 +35,7 @@ module.exports = {
         "react/jsx-indent-props": 0,
         "react/jsx-no-duplicate-props": 0,
         "max-len": 0,
+        "func-names": 0,
+        "no-extend-native": 0,
     },
 };
