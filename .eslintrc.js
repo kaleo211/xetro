@@ -37,5 +37,6 @@ module.exports = {
         "max-len": 0,
         "func-names": 0,
         "no-extend-native": 0,
+        "react/jsx-closing-tag-location": 0,
     },
 };

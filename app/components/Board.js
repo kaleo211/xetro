@@ -209,9 +209,11 @@ class Board extends React.Component {
             </Grid>))}
         </Grid>
 
-        <Fab className={classes.fab} onClick={this.handleAddPillar.bind(this)}>
-          <Add />
-        </Fab>
+        {enabled &&
+          <Fab className={classes.fab} onClick={this.handleAddPillar.bind(this)}>
+            <Add />
+          </Fab>
+        }
       </div>
     );
   }

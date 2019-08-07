@@ -1,6 +1,5 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
@@ -16,7 +15,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
-import { List, ListItem, ListItemText } from '@material-ui/core';
+import { List, ListItem, ListItemText, ListItemIcon, Typography } from '@material-ui/core';
 import { Done, Add, DeleteOutline, PlayArrowRounded, ThumbUpOutlined } from '@material-ui/icons';
 
 import { setActiveItem } from '../actions/localActions';
@@ -92,19 +91,18 @@ class Pillar extends React.Component {
   }
 
   handleOwerListClose(itemID) {
-    this.setState(state => ({
-      ownerAnchorEl: {
-        ...state.ownerAnchorEl,
-        [`${itemID}`]: null,
-      },
-    }));
+    this.setOwnerAnchorEL(itemID, null);
   }
 
   handleOwerListOpen(itemID, evt) {
+    this.setOwnerAnchorEL(itemID, evt.currentTarget);
+  }
+
+  setOwnerAnchorEL(itemID, value) {
     this.setState(state => ({
       ownerAnchorEl: {
         ...state.ownerAnchorEl,
-        [`${itemID}`]: evt.currentTarget,
+        [`${itemID}`]: value,
       },
     }));
   }
@@ -212,28 +210,29 @@ class Pillar extends React.Component {
                   <ListItem divider key={`action-${i.id}`} className={classes.item}>
                     <ListItemText primary={i.title} />
                     {i.ownerId && <Avatar className={classes.owner}>{i.ownerId}</Avatar>}
-                    {!i.ownerId &&
-                      <div>
-                        <IconButton onClick={this.handleOwerListOpen.bind(this, i.id)}>
-                          <Add fontSize="inherit" />
-                        </IconButton>
-                        <Menu
-                          anchorEl={ownerAnchorEl[i.id]}
-                          open={Boolean(ownerAnchorEl[i.id])}
-                          onClose={this.handleOwerListClose.bind(this, i.id)}
-                        >
-                          {members && members.map(member => (
-                            <MenuItem
-                              style={{ paddingTop: 20, paddingBottom: 20 }}
-                              key={`owner-${member.userId}`}
-                              onClick={this.handleAddActionOwner.bind(this, i, member)}
-                            >
-                              <Avatar>{member.firstName}</Avatar>
-                            </MenuItem>
-                          ))}
-                        </Menu>
-                      </div>
-                    }
+                    {!i.ownerId && <div>
+                      <IconButton onClick={this.handleOwerListOpen.bind(this, i.id)}>
+                        <Add fontSize="inherit" />
+                      </IconButton>
+                      <Menu
+                        anchorEl={ownerAnchorEl[i.id]}
+                        open={Boolean(ownerAnchorEl[i.id])}
+                        onClose={this.handleOwerListClose.bind(this, i.id)}
+                      >
+                        {members && members.map(member => (
+                          <MenuItem
+                            style={{ paddingTop: 20, paddingBottom: 20 }}
+                            key={`owner-${member.userId}`}
+                            onClick={this.handleAddActionOwner.bind(this, i, member)}
+                          >
+                            <ListItemIcon><Avatar>{member.firstName}</Avatar></ListItemIcon>
+                            <Typography variant="h5">
+                              {`${member.firstName} ${member.lastName}`}
+                            </Typography>
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </div>}
                   </ListItem>
                 ))}
               </List>
