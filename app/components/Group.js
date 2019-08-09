@@ -157,11 +157,9 @@ class Group extends React.Component {
             </Grid>
             <Grid item md={10} container justify="space-between">
               {members.map(member => (
-                <Badge badgeContent={facilitator && member.id === facilitator.id && <NearMeRounded />}>
-                  <IconButton onClick={this.handleSetFacilitator.bind(this, member)}>
-                    <Avatar>{member.firstName.charAt(0) + member.lastName.charAt(0)}</Avatar>
-                  </IconButton>
-                </Badge>
+                <IconButton size="small" onClick={this.handleSetFacilitator.bind(this, member)}>
+                  <Avatar>{member.initial}</Avatar>
+                </IconButton>
               ))}
             </Grid>
           </Grid>
@@ -197,7 +195,7 @@ class Group extends React.Component {
             <Grid item md={2}>
               <Typography variant="h6">Boards</Typography>
             </Grid>
-            <Grid item md={2}>
+            <Grid item md={3}>
               <BoardList />
             </Grid>
           </Grid>
