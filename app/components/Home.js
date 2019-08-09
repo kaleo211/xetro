@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-
 import Typography from '@material-ui/core/Typography';
 import { Paper, Grid } from '@material-ui/core';
 
@@ -34,9 +33,7 @@ class Group extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      expand: '',
-    };
+    this.state = {};
   }
 
   handleSetGroup(groupId) {
@@ -47,22 +44,11 @@ class Group extends React.Component {
     this.props.setPage('createGroup');
   }
 
-  handleLeaveGroup() {
-  }
-
-  handleClick(expand) {
-    this.setState(state => ({ expand: state.expand === expand ? '' : expand }));
-  }
-
   render() {
     const { me, classes } = this.props;
 
     return (me &&
       <div>
-        <Paper className={classes.paper}>
-          <Typography variant="h4">{`${me.lastName} ${me.firstName}`}</Typography>
-        </Paper>
-
         <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="flex-start">
             <Grid item md={2}>

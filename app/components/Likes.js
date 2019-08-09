@@ -16,10 +16,6 @@ const styles = theme => ({
 });
 
 class Likes extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { item, classes } = this.props;
     return (

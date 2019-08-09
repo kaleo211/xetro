@@ -2,18 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import classNames from 'classnames';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles } from '@material-ui/core/styles';
-
 import AppBar from '@material-ui/core/AppBar';
-import Grid from '@material-ui/core/Grid';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import { FaceOutlined } from '@material-ui/icons';
 
-import ActionBar from './components/ActionBar';
 import Board from './components/Board';
 import BoardList from './components/BoardList';
 import NewGroup from './components/NewGroup';
@@ -29,6 +21,7 @@ import {
 import { fetchUsers, getMe } from './actions/userActions';
 import Group from './components/Group';
 import Home from './components/Home';
+import Menu from './components/Menu';
 
 const drawerWidth = 240;
 
@@ -144,54 +137,13 @@ class App extends React.Component {
     }
   }
 
-  handleFeedbackClick() {
-    const win = window.open('https://github.com/kaleo211/xetro-board/issues', '_blank');
-    win.focus();
-  }
-
-  handleOpenHome() {
-    this.props.setPage('home');
-  }
-
   render() {
-    const { page, group, board, drawOpen, classes } = this.props;
+    const { page, group, board, me, classes } = this.props;
 
-    return (
+    return (me &&
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar
-          position="fixed"
-          className={classNames(classes.appBar, { [classes.appBarShift]: drawOpen })}
-        >
-          <Toolbar disableGutters>
-            <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.handleOpenHome.bind(this)}
-              className={classNames(classes.menuButton, { [classes.hide]: drawOpen })}
-            >
-              <FaceOutlined />
-            </IconButton>
-            <Grid
-              container
-              alignItems="center"
-              justify="space-between"
-              direction="row"
-              className={classes.bar}
-            >
-              <Grid container alignItems="center" item md={5}>
-                <Grid item>
-                  <Typography variant="h3" color="inherit" noWrap>
-                    {group ? `#${group.name}` : 'Xetro'}
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Grid container item justify="flex-end" md={6}>
-                {board && <ActionBar />}
-              </Grid>
-            </Grid>
-          </Toolbar>
-        </AppBar>
+        <AppBar position="fixed"><Menu /></AppBar>
 
         <main className={classes.content}>
           <div className={classes.toolbar} />
