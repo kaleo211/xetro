@@ -23,26 +23,26 @@ export default function (state = initialState, action) {
     case SET_BOARD:
       return {
         ...state,
-        board: action.board
-      }
+        board: action.board,
+      };
 
     case SET_PILLARS:
       return {
         ...state,
         pillars: action.pillars,
-      }
+      };
 
     case SET_ACTIVE_BOARD:
       return {
         ...state,
         activeBoard: action.activeBoard,
-      }
+      };
 
     case SET_HISTORY_BOARDS:
       return {
         ...state,
         historyBoards: action.historyBoards,
-      }
+      };
 
     default:
       return state;

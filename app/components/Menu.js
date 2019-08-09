@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import { Grid, Toolbar, IconButton } from '@material-ui/core';
 import { AccountBox, ViewWeekRounded } from '@material-ui/icons';
 
-import { setBoard } from '../actions/boardActions';
+import { setBoard, postBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
 import ActionBar from './ActionBar';
 
@@ -31,8 +31,46 @@ class Menu extends React.Component {
     this.props.setPage('board');
   }
 
+  handleCreateBoard() {
+    const { activeBoard, group } = this.props;
+
+    const now = new Date();
+    const boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
+
+    const newBoard = {
+      stage: 'active',
+      groupId: group.id,
+      name: boardName,
+    };
+
+    if (activeBoard && activeBoard.facilitator) {
+      newBoard.facilitatorId = activeBoard.facilitator.id;
+    } else {
+      const randomIndex = Math.floor(Math.random() * (group.members.length));
+      newBoard.facilitatorId = group.members[randomIndex].id;
+    }
+
+    this.props.postBoard(newBoard);
+    this.props.setPage('board');
+  }
+
   render() {
-    const { me, group, board, page, classes } = this.props;
+    const { me, group, board, page, activeBoard, classes } = this.props;
+
+    const enterBoard = () => {
+      if (activeBoard) {
+        return (
+          <IconButton color="inherit" onClick={this.handleJoinBoard.bind(this)}>
+            <ViewWeekRounded fontSize="large" />
+          </IconButton>
+        );
+      }
+      return (
+        <IconButton color="inherit" onClick={this.handleCreateBoard.bind(this)}>
+          <ViewWeekRounded fontSize="large" />
+        </IconButton>
+      );
+    };
 
     return (
       <Toolbar disableGutters>
@@ -55,11 +93,7 @@ class Menu extends React.Component {
           </Grid>
           <Grid container item justify="flex-end" md={6}>
             {board && <ActionBar />}
-            {page === 'group' &&
-              <IconButton color="inherit" onClick={this.handleJoinBoard.bind(this)}>
-                <ViewWeekRounded fontSize="large" />
-              </IconButton>
-            }
+            {page === 'group' && enterBoard()}
           </Grid>
         </Grid>
       </Toolbar>
@@ -78,6 +112,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => ({
   setBoard: (id) => dispatch(setBoard(id)),
   setPage: (page) => dispatch(setPage(page)),
+  postBoard: (board) => dispatch(postBoard(board)),
 });
 
 Menu.propTypes = {

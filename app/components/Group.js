@@ -4,20 +4,16 @@ import { connect } from 'react-redux';
 
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-
-import { FlightTakeoffOutlined, CheckRounded } from '@material-ui/icons';
-
+import { CheckRounded } from '@material-ui/icons';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { Paper, Avatar, Grid, Stepper, StepButton, Step, StepConnector } from '@material-ui/core';
+import { Paper, Avatar, Grid } from '@material-ui/core';
 
-import { setGroup } from '../actions/groupActions';
-import { setBoard, postBoard, fetchGroupActiveBoard } from '../actions/boardActions';
-import { setPage } from '../actions/localActions';
+import { fetchGroupActiveBoard } from '../actions/boardActions';
 import BoardList from './BoardList';
 
 const styles = theme => ({
@@ -35,49 +31,11 @@ class Group extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      newBoard: {},
-      facilitator: null,
-      happy: false,
-    };
+    this.state = {};
   }
 
   async componentDidMount() {
     await this.props.fetchGroupActiveBoard(this.props.group.id);
-    const activeBoard = this.props.activeBoard;
-    if (activeBoard) {
-      this.setState({
-        facilitator: activeBoard.facilitator,
-      });
-    }
-  }
-
-  handleCreateBoard() {
-    const now = new Date();
-    const boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
-
-    const newBoard = this.state.newBoard;
-    newBoard.stage = 'active';
-    newBoard.groupId = this.props.group.id;
-    newBoard.name = boardName;
-    newBoard.facilitatorId = this.state.facilitator.id;
-
-    this.props.postBoard(newBoard);
-    this.props.setPage('board');
-  }
-
-  handleRandomSelectFacilitator() {
-    const upLimit = this.props.group.members.length;
-    const randomIndex = Math.floor(Math.random() * (upLimit));
-    this.setState({
-      facilitator: this.props.group.members[randomIndex],
-    });
-  }
-
-  handleSetFacilitator(member) {
-    this.setState({
-      facilitator: member,
-    });
   }
 
   getDate() {
@@ -87,61 +45,26 @@ class Group extends React.Component {
     return now;
   }
 
-  handleThroughActions() {
-    this.setState({ happy: true });
-  }
-
   handleActionCheck(action) {
     this.props.finishItem(action);
   }
 
   render() {
     const { group, activeBoard, classes } = this.props;
-    const { facilitator, happy } = this.state;
 
     const members = group.members;
-    const readyToTakeOff = facilitator && happy;
+    const facilitator = activeBoard && activeBoard.facilitator;
 
     return (
       <div>
-        {!activeBoard &&
-          <Paper className={classes.paper}>
-            <Grid container direction="row" alignItems="center">
-              <Grid item md={2}>
-                <Typography variant="h6">Create New Board</Typography>
-              </Grid>
-              <Grid item>
-                <Stepper nonLinear connector={<StepConnector />}>
-                  <Step>
-                    <StepButton completed={facilitator != null} onClick={this.handleRandomSelectFacilitator.bind(this)}>
-                      Select Facilitator
-                    </StepButton>
-                  </Step>
-                  <Step>
-                    <StepButton completed={happy} onClick={this.handleThroughActions.bind(this)}>
-                      Go Through Action Items
-                    </StepButton>
-                  </Step>
-                </Stepper>
-              </Grid>
-              <Grid>
-                <IconButton disabled={!readyToTakeOff} onClick={this.handleCreateBoard.bind(this)}>
-                  <FlightTakeoffOutlined />
-                </IconButton>
-              </Grid>
-            </Grid>
-          </Paper>
-        }
         <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="center">
             <Grid item md={2}>
-              <Typography variant="h6">Members</Typography>
+              <Typography variant="h6">Group Members</Typography>
             </Grid>
             <Grid item md={10} container justify="space-between">
               {members.map(member => (
-                <IconButton onClick={this.handleSetFacilitator.bind(this, member)}>
-                  <Avatar className={(facilitator && facilitator.id === member.id) ? classes.facilitator : null}>{member.initial}</Avatar>
-                </IconButton>
+                <Avatar className={(facilitator && facilitator.id === member.id) ? classes.facilitator : null}>{member.initial}</Avatar>
               ))}
             </Grid>
           </Grid>
@@ -149,7 +72,7 @@ class Group extends React.Component {
         <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="center">
             <Grid item md={2}>
-              <Typography variant="h6">Actions</Typography>
+              <Typography variant="h6">Group Actions</Typography>
             </Grid>
             <Grid item md={10} container justify="space-between">
               {members.filter(m => m.actions && m.actions.filter(a => !a.finished).length > 0).map(member => (
@@ -188,17 +111,11 @@ class Group extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  groups: state.groups.groups,
   group: state.groups.group,
-  board: state.boards.board,
+  activeBoard: state.groups.activeBoard,
   me: state.users.me,
-  activeBoard: state.boards.activeBoard,
 });
 const mapDispatchToProps = (dispatch) => ({
-  setGroup: id => dispatch(setGroup(id)),
-  setBoard: id => dispatch(setBoard(id)),
-  setPage: page => dispatch(setPage(page)),
-  postBoard: board => dispatch(postBoard(board)),
   fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
 });
 
