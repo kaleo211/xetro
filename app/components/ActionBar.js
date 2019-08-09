@@ -66,41 +66,37 @@ class ActionBar extends React.Component {
   render() {
     const { board, page, classes } = this.props;
 
-    return (
+    return page === 'board' && board.stage !== 'archived' &&
       <div>
-        {page === 'board' && board.stage !== 'archived' &&
-          <div>
-            {board.video &&
-              <Tooltip title="Open Video Chat" placement="bottom">
-                <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
-                  <VoiceChat />
-                </IconButton>
-              </Tooltip>
-            }
-            {board.stage === 'active' &&
-              <Tooltip title="Archive Board" placement="bottom">
-                <IconButton onClick={this.handleArchiveBoard.bind(this)} color="inherit">
-                  <SaveOutlined />
-                </IconButton>
-              </Tooltip>
-            }
-            {!board.locked &&
-              <Tooltip title="Lock Board" placement="bottom">
-                <IconButton onClick={this.handleLockBoard.bind(this)} color="inherit">
-                  <LockOutlined />
-                </IconButton>
-              </Tooltip>
-            }
-            {board.locked &&
-              <Tooltip title="Unlock Board" placement="bottom">
-                <IconButton onClick={this.handleUnlockBoard.bind(this)} color="inherit">
-                  <VpnKeyOutlined />
-                </IconButton>
-              </Tooltip>
-            }
-          </div>}
-      </div>
-    );
+        {board.video &&
+          <Tooltip title="Open Video Chat" placement="bottom">
+            <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
+              <VoiceChat />
+            </IconButton>
+          </Tooltip>
+        }
+        {board.stage === 'active' &&
+          <Tooltip title="Archive Board" placement="bottom">
+            <IconButton onClick={this.handleArchiveBoard.bind(this)} color="inherit">
+              <SaveOutlined />
+            </IconButton>
+          </Tooltip>
+        }
+        {!board.locked &&
+          <Tooltip title="Lock Board" placement="bottom">
+            <IconButton onClick={this.handleLockBoard.bind(this)} color="inherit">
+              <LockOutlined />
+            </IconButton>
+          </Tooltip>
+        }
+        {board.locked &&
+          <Tooltip title="Unlock Board" placement="bottom">
+            <IconButton onClick={this.handleUnlockBoard.bind(this)} color="inherit">
+              <VpnKeyOutlined />
+            </IconButton>
+          </Tooltip>
+        }
+      </div>;
   }
 }
 

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
-import { FlightTakeoffOutlined, NearMeRounded, CheckRounded } from '@material-ui/icons';
+import { FlightTakeoffOutlined, CheckRounded } from '@material-ui/icons';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -13,7 +13,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { Paper, Avatar, Grid, Stepper, StepButton, Step, StepConnector, Badge } from '@material-ui/core';
+import { Paper, Avatar, Grid, Stepper, StepButton, Step, StepConnector } from '@material-ui/core';
 
 import { setGroup } from '../actions/groupActions';
 import { setBoard, postBoard, fetchGroupActiveBoard } from '../actions/boardActions';
@@ -25,12 +25,9 @@ const styles = theme => ({
     padding: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 1,
   },
-  divider: {
-    marginBottom: theme.spacing.unit * 3,
-    marginTop: theme.spacing.unit * 3,
-  },
-  iconButton: {
-    padding: 0,
+  facilitator: {
+    width: 60,
+    height: 60,
   },
 });
 
@@ -53,11 +50,6 @@ class Group extends React.Component {
         facilitator: activeBoard.facilitator,
       });
     }
-  }
-
-  handleJoinBoard() {
-    this.props.setBoard(this.props.activeBoard.id);
-    this.props.setPage('board');
   }
 
   handleCreateBoard() {
@@ -112,18 +104,8 @@ class Group extends React.Component {
 
     return (
       <div>
-        <Paper className={classes.paper}>
-          {activeBoard ?
-            <Grid container direction="row" alignItems="center">
-              <Grid item md={2}>
-                <Typography variant="h6">Join Ongoing Board</Typography>
-              </Grid>
-              <Grid item>
-                <IconButton onClick={this.handleJoinBoard.bind(this)}>
-                  <FlightTakeoffOutlined />
-                </IconButton>
-              </Grid>
-            </Grid> :
+        {!activeBoard &&
+          <Paper className={classes.paper}>
             <Grid container direction="row" alignItems="center">
               <Grid item md={2}>
                 <Typography variant="h6">Create New Board</Typography>
@@ -148,8 +130,8 @@ class Group extends React.Component {
                 </IconButton>
               </Grid>
             </Grid>
-          }
-        </Paper>
+          </Paper>
+        }
         <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="center">
             <Grid item md={2}>
@@ -157,8 +139,8 @@ class Group extends React.Component {
             </Grid>
             <Grid item md={10} container justify="space-between">
               {members.map(member => (
-                <IconButton size="small" onClick={this.handleSetFacilitator.bind(this, member)}>
-                  <Avatar>{member.initial}</Avatar>
+                <IconButton onClick={this.handleSetFacilitator.bind(this, member)}>
+                  <Avatar className={(facilitator && facilitator.id === member.id) ? classes.facilitator : null}>{member.initial}</Avatar>
                 </IconButton>
               ))}
             </Grid>
@@ -193,7 +175,7 @@ class Group extends React.Component {
         <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="center">
             <Grid item md={2}>
-              <Typography variant="h6">Boards</Typography>
+              <Typography variant="h6">Archived Boards</Typography>
             </Grid>
             <Grid item md={3}>
               <BoardList />

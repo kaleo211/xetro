@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { Grid, Toolbar, IconButton } from '@material-ui/core';
-import { AccountBox } from '@material-ui/icons';
+import { AccountBox, ViewWeekRounded } from '@material-ui/icons';
 
 import { setBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
@@ -22,28 +22,21 @@ class Menu extends React.Component {
     this.state = {};
   }
 
-  handleSetGroup(groupId) {
-    this.props.setGroup(groupId);
-  }
-
-  handleCreateGroup() {
-    this.props.setPage('createGroup');
-  }
-
   handleOpenHome() {
     this.props.setPage('home');
   }
 
+  handleJoinBoard() {
+    this.props.setBoard(this.props.activeBoard.id);
+    this.props.setPage('board');
+  }
+
   render() {
-    const { me, group, board, classes } = this.props;
+    const { me, group, board, page, classes } = this.props;
 
     return (
       <Toolbar disableGutters>
-        <IconButton
-          color="inherit"
-          aria-label="Open drawer"
-          onClick={this.handleOpenHome.bind(this)}
-        >
+        <IconButton color="inherit" onClick={this.handleOpenHome.bind(this)}>
           <AccountBox fontSize="large" />
         </IconButton>
         <Grid
@@ -62,6 +55,11 @@ class Menu extends React.Component {
           </Grid>
           <Grid container item justify="flex-end" md={6}>
             {board && <ActionBar />}
+            {page === 'group' &&
+              <IconButton color="inherit" onClick={this.handleJoinBoard.bind(this)}>
+                <ViewWeekRounded fontSize="large" />
+              </IconButton>
+            }
           </Grid>
         </Grid>
       </Toolbar>
@@ -73,6 +71,8 @@ const mapStateToProps = state => ({
   groups: state.groups.groups,
   group: state.groups.group,
   board: state.boards.board,
+  page: state.local.page,
+  activeBoard: state.boards.activeBoard,
   me: state.users.me,
 });
 const mapDispatchToProps = (dispatch) => ({
