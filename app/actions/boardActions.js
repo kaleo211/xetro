@@ -9,14 +9,13 @@ import { setPage } from './localActions';
 
 export const fetchGroupActiveBoard = (groupId) => async (dispatch) => {
   const board = await Utils.fetch(`/boards/active/${groupId}`);
-  if (board) {
-    dispatch({
-      type: SET_ACTIVE_BOARD,
-      activeBoard: board,
-    });
-  } else {
+  if (!board) {
     console.error('error fetching active board');
   }
+  dispatch({
+    type: SET_ACTIVE_BOARD,
+    activeBoard: board,
+  });
 };
 
 export const postBoard = (newBoard) => async (dispatch) => {
