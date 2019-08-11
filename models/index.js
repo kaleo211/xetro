@@ -12,7 +12,6 @@ const sequelize = new Sequelize(
   config.get('database.password'), {
     host: config.get('database.host'),
     dialect: config.get('database.dialect'),
-    operatorsAliases: false,
     logging: false,
     syncOnAssociation: true,
   },

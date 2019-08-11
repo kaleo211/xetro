@@ -52,10 +52,10 @@ class ActionBar extends React.Component {
     this.props.setPage('boardList');
   }
 
-  handleArchiveBoard() {
+  async handleArchiveBoard() {
     this.props.archiveBoard(this.props.board.id);
     this.props.openSnackBar('Board is ARCHIVED.');
-    this.props.setGroup(this.props.group.id);
+    await this.props.setGroup(this.props.group.id);
     this.props.setBoard(null);
   }
 

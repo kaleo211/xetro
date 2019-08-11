@@ -47,13 +47,14 @@
     "redux-thunk": "^2.3.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "sequelize": "^4.43.0",
+    "sequelize": "^6.0.0",
     "sequelize-cli": "^5.4.0",
     "sinon": "^7.1.0",
     "uuid": "^3.3.2",
     "webpack": "^4.16.5"
   },
   "devDependencies": {
+    "cypress": "^3.4.1",
     "enzyme": "^3.6.0",
     "enzyme-adapter-react-16": "^1.4.0",
     "enzyme-to-json": "^3.3.4",
