@@ -7,9 +7,9 @@ push_green_app() {
   "sso": {
     "address": "https://login.microsoftonline.com",
     "client_id": "${SSO_CLIENT_ID}",
-    "client_secret": "",
-    "tenant_id": "",
-    "redirect_uri": "",
+    "client_secret": "${SSO_CLIENT_SECRET}",
+    "tenant_id": "${SSO_TENANT_ID}",
+    "redirect_uri": "${SSO_REDIRECT_URI}",
     "scopes": [
         "user.read"
     ]
@@ -30,6 +30,9 @@ push_green_app() {
   }
 }
 EOF
+
+  npm install
+  npm run build
 
   if ! cf app ${APP_NAME}; then
     cf push ${APP_NAME} --no-start -n ${APP_NAME}

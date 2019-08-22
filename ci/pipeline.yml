@@ -34,7 +34,7 @@ jobs:
         DB_PASSWORD:              {{db_password}}
         DB_HOST:                  {{db_host}}
         DB_NAME:                  {{db_name}}
-        DB_DIALECT:               {{db_dialact}}
+        DB_DIALECT:               {{db_dialect}}
         SSO_CLIENT_ID:            {{sso_client_id}}
         SSO_CLIENT_SECRET:        {{sso_client_secret}}
         SSO_TENANT_ID:            {{sso_tenant_id}}
