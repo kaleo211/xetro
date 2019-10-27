@@ -41,7 +41,7 @@ routes.delete('/:id', async (req, res) => {
 routes.post('/', async (req, res) => {
   const pillar = req.body;
   try {
-    const newPillar = await pillarSvc.create(pillar.title, pillar.boardId);
+    const newPillar = await pillarSvc.create(pillar.title, pillar.boardID);
     await respondWithPillar(res, newPillar.id);
   } catch (err) {
     console.error('error post pillar:', err);

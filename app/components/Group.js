@@ -4,13 +4,19 @@ import { connect } from 'react-redux';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CheckRounded } from '@material-ui/icons';
-import List from '@material-ui/core/List';
+// import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { Paper, Avatar, Grid } from '@material-ui/core';
+
+import { Stack } from 'office-ui-fabric-react/lib/Stack';
+import { Label } from 'office-ui-fabric-react/lib/Label';
+import { IPersonaSharedProps, Persona, PersonaSize, PersonaPresence } from 'office-ui-fabric-react/lib/Persona';
+import { Facepile, IFacepilePersona, IFacepileProps } from 'office-ui-fabric-react/lib/Facepile';
+import { List } from 'office-ui-fabric-react/lib/List';
 
 import { fetchGroupActiveBoard } from '../actions/boardActions';
 import BoardList from './BoardList';
@@ -51,31 +57,43 @@ class Group extends React.Component {
   render() {
     const { group, activeBoard, classes } = this.props;
 
-    const members = group.members;
     const facilitator = activeBoard && activeBoard.facilitator;
+    const members = group.members.map(member => {
+      return {
+        ...member,
+        imageInitials: member.initials,
+        text: member.name,
+        secondaryText: member.title,
+        tertiaryText: 'In a meeting',
+      };
+    });
+
+    const membersWithActions = members.filter(m => {
+      return m.actions && m.actions.filter(a => !a.finished && a.groupID === group.id).length > 0
+    });
 
     return (
       <div>
-        <Paper className={classes.paper}>
-          <Grid container direction="row" alignItems="center">
-            <Grid item md={2}>
-              <Typography variant="h6">Group Members</Typography>
-            </Grid>
-            <Grid item md={10} container justify="space-between">
-              {members.map(member => (
-                <Avatar className={(facilitator && facilitator.id === member.id) ? classes.facilitator : null}>{member.initial}</Avatar>
-              ))}
-            </Grid>
-          </Grid>
-        </Paper>
+        <Label>Members</Label>
+        <Stack.Item horizontal>
+          <Facepile personas={members} />
+        </Stack.Item>
 
-        <Paper className={classes.paper}>
+        <Label>Actions</Label>
+        {members.map(member => (
+          <div>
+            <Persona {...member} />
+            <List items={member.actions} />
+          </div>
+        ))}
+
+        {/* <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="center">
             <Grid item md={2}>
               <Typography variant="h6">Group Actions</Typography>
             </Grid>
             <Grid item md={10} container justify="space-between">
-              {members.filter(m => m.actions && m.actions.filter(a => !a.finished && a.groupID === group.id).length > 0).map(member => (
+              {membersWithActions.map(member => (
                 <Grid item xs={12} md={6} lg={4} key={`action${member.id}`}>
                   <List>
                     {member.actions && member.actions.map(action => (!action.finished && action.groupID === group.id &&
@@ -105,7 +123,7 @@ class Group extends React.Component {
               <BoardList />
             </Grid>
           </Grid>
-        </Paper>
+        </Paper> */}
       </div>
     );
   }

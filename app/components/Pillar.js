@@ -78,7 +78,7 @@ class Pillar extends React.Component {
 
   handleAddActionOwner(item, owner) {
     this.handleOwerListClose(item.id);
-    this.props.patchItem({ ...item, ownerId: owner.id, boardId: this.props.board.id });
+    this.props.patchItem({ ...item, ownerID: owner.id, boardID: this.props.board.id });
   }
 
   handleActivateItem(item) {
@@ -114,12 +114,12 @@ class Pillar extends React.Component {
   }
 
   handleDeleteItem(item) {
-    this.props.deleteItem({ ...item, boardId: this.props.board.id });
+    this.props.deleteItem({ ...item, boardID: this.props.board.id });
   }
 
   handleStartItem(item, evt) {
     evt.stopPropagation();
-    this.props.startItem({ ...item, boardId: this.props.board.id });
+    this.props.startItem({ ...item, boardID: this.props.board.id });
     this.setState({ switcher: true });
   }
 
@@ -128,11 +128,11 @@ class Pillar extends React.Component {
     if (evt && evt.key === 'Enter' && newActionTitle !== '') {
       const newAction = {
         title: newActionTitle.capitalize(),
-        itemId: item.id,
+        itemID: item.id,
         type: 'action',
-        pillarId: item.pillarId,
+        pillarID: item.pillarID,
         groupID: this.props.group.id,
-        boardId: this.props.board.id,
+        boardID: this.props.board.id,
       };
 
       this.props.postItem(newAction);
@@ -142,11 +142,11 @@ class Pillar extends React.Component {
 
   handleLikeItem(item, evt) {
     evt.stopPropagation();
-    this.props.likeItem({ ...item, boardId: this.props.board.id });
+    this.props.likeItem({ ...item, boardID: this.props.board.id });
   }
 
   handleFinishItem(item) {
-    this.props.finishItem({ ...item, boardId: this.props.board.id });
+    this.props.finishItem({ ...item, boardID: this.props.board.id });
   }
 
   render() {
@@ -209,8 +209,8 @@ class Pillar extends React.Component {
                 {item.actions.map(i => (
                   <ListItem divider key={`action-${i.id}`} className={classes.item}>
                     <ListItemText primary={i.title} />
-                    {i.ownerId && <Avatar className={classes.owner}>{i.ownerId}</Avatar>}
-                    {!i.ownerId && <div>
+                    {i.ownerID && <Avatar className={classes.owner}>{i.ownerID}</Avatar>}
+                    {!i.ownerID && <div>
                       <IconButton onClick={this.handleOwerListOpen.bind(this, i.id)}>
                         <Add fontSize="inherit" />
                       </IconButton>
@@ -281,7 +281,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  postItem: (i, item, bId) => dispatch(postItem(i, item, bId)),
+  postItem: (i, item, boardID) => dispatch(postItem(i, item, boardID)),
   deleteItem: (item) => dispatch(deleteItem(item)),
   setBoard: (id) => dispatch(setBoard(id)),
   setActiveItem: (item) => dispatch(setActiveItem(item)),

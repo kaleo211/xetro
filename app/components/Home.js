@@ -3,10 +3,9 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
-import { DocumentCard, DocumentCardTitle, DocumentCardActivity, DocumentCardStatus } from 'office-ui-fabric-react';
+import { Stack, DocumentCard, DocumentCardTitle, DocumentCardActivity, DocumentCardStatus } from 'office-ui-fabric-react';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
-import { DefaultPalette, Stack, IStackStyles, IStackTokens, IStackItemStyles } from 'office-ui-fabric-react';
 
 import { setGroup, searchGroups, addUserToGroup } from '../actions/groupActions';
 import { setPage } from '../actions/localActions';

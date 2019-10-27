@@ -104,7 +104,7 @@ routes.get('/group/:id', async (req, res) => {
 
 // User Items
 // routes.get('/user/:id', async (req, res) => {
-//   await respondWithUserItems(res, { ownerId: req.params.id });
+//   await respondWithUserItems(res, { ownerID: req.params.id });
 // });
 
 // Delete
@@ -147,11 +147,11 @@ routes.post('/', async (req, res) => {
       title: item.title,
       type: item.type,
     });
-    await newItem.setOwner(item.ownerId);
-    await newItem.setPillar(item.pillarId);
+    await newItem.setOwner(item.ownerID);
+    await newItem.setPillar(item.pillarID);
     await newItem.setGroup(item.groupID);
-    await newItem.setBoard(item.boardId);
-    await newItem.setItem(item.itemId);
+    await newItem.setBoard(item.boardID);
+    await newItem.setItem(item.itemID);
     await respondWithItem(res, newItem.id);
   } catch (err) {
     console.error('error post item:', err);
@@ -169,7 +169,7 @@ routes.patch('/:id', async (req, res) => {
       },
     });
     if (item) {
-      item.setOwner(req.body.ownerId);
+      item.setOwner(req.body.ownerID);
     } else {
       res.sendStatus(404);
     }

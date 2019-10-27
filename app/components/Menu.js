@@ -44,10 +44,10 @@ class Menu extends React.Component {
     };
 
     if (activeBoard && activeBoard.facilitator) {
-      newBoard.facilitatorId = activeBoard.facilitator.id;
+      newBoard.facilitatorID = activeBoard.facilitator.id;
     } else {
       const randomIndex = Math.floor(Math.random() * (group.members.length));
-      newBoard.facilitatorId = group.members[randomIndex].id;
+      newBoard.facilitatorID = group.members[randomIndex].id;
     }
 
     this.props.postBoard(newBoard);

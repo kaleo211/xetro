@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   Pillar.associate = (models) => {
-    Pillar.belongsTo(models.Board, { as: 'board' });
-    Pillar.hasMany(models.Item, { as: 'items', foreignKey: 'pillarId' });
+    Pillar.belongsTo(models.Board, { as: 'board', foreignKey: 'boardID' });
+    Pillar.hasMany(models.Item, { as: 'items', foreignKey: 'pillarID' });
   };
 
   return Pillar;

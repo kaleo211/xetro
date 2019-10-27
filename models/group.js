@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   Group.associate = (models) => {
-    Group.belongsToMany(models.User, { as: 'members', through: 'GroupMember' });
+    Group.belongsToMany(models.User, { as: 'members', through: 'GroupMember', foreignKey: 'groupID' });
     Group.hasMany(models.Board, { as: 'boards', foreignKey: 'groupID' });
     Group.hasMany(models.Item, { as: 'items', foreignKey: 'groupID' });
   };

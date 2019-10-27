@@ -149,7 +149,7 @@ routes.get('/group/:id', async (req, res) => {
 routes.post('/', async (req, res) => {
   const board = req.body;
   try {
-    const newBoard = await boardSvc.create(board.name, board.facilitatorId, board.groupID);
+    const newBoard = await boardSvc.create(board.name, board.facilitatorID, board.groupID);
     await respondWithBoard(res, newBoard.id);
   } catch (err) {
     console.error('error post board:', err);
@@ -163,7 +163,7 @@ routes.patch('/:id', async (req, res) => {
     const board = await model.Board.findOne({
       where: { id: req.params.id },
     });
-    await board.setFacilitator(req.body.facilitatorId);
+    await board.setFacilitator(req.body.facilitatorID);
     await respondWithBoard(res, board.id);
   } catch (err) {
     console.error('error patch board:', err);

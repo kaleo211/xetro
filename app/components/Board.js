@@ -93,28 +93,28 @@ class Board extends React.Component {
     });
   }
 
-  handleAddItem(pillarId, event) {
-    const newItemTitle = this.state.newItemInPillar[pillarId];
+  handleAddItem(pillarID, event) {
+    const newItemTitle = this.state.newItemInPillar[pillarID];
     if (event && event.key === 'Enter' && newItemTitle !== '') {
       const newItem = {
-        pillarId,
+        pillarID,
         title: newItemTitle,
-        boardId: this.props.board.id,
+        boardID: this.props.board.id,
         groupID: this.props.group.id,
       };
       this.props.postItem(newItem);
-      this.changeItemTitle(pillarId, '');
+      this.changeItemTitle(pillarID, '');
     }
   }
 
-  handleChangeNewItemTitle(pillarId, evt) {
-    this.changeItemTitle(pillarId, evt.target.value);
+  handleChangeNewItemTitle(pillarID, evt) {
+    this.changeItemTitle(pillarID, evt.target.value);
   }
 
   handleAddPillar() {
     const pillar = {
       title: 'ChangeTitle',
-      boardId: this.props.board.id,
+      boardID: this.props.board.id,
     };
     this.props.postPillar(pillar);
   }
