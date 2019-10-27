@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -235,9 +234,6 @@ const mapDispatchToProps = (dispatch) => ({
   deletePillar: (pillar) => dispatch(deletePillar(pillar)),
 });
 
-Board.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles, { withTheme: true }),

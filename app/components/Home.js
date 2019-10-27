@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { DocumentCard, DocumentCardTitle, DocumentCardActivity, DocumentCardStatus } from 'office-ui-fabric-react';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
+import { DefaultPalette, Stack, IStackStyles, IStackTokens, IStackItemStyles } from 'office-ui-fabric-react';
 
 import { setGroup, searchGroups, addUserToGroup } from '../actions/groupActions';
 import { setPage } from '../actions/localActions';
@@ -23,7 +24,6 @@ const styles = theme => ({
     padding: 0,
   },
   group: {
-    display: 'inline-block',
     marginTop: 8,
     marginRight: 8,
     width: 320,
@@ -64,22 +64,23 @@ class Group extends React.Component {
             onChange={this.onSearchGroup.bind(this)}
         />
 
-        {groups && groups.map(g => (
-          <div className={classes.group}>
-            <TooltipHost content="Click to Join Group">
-              <DocumentCard
-                  className={classes.group}
-                  onClick={this.onSetGroup.bind(this, g)}
-              >
-                <DocumentCardTitle title={g.name} />
-                <DocumentCardActivity people={g.members} />
-                <DocumentCardTitle title="No ongoing meeting" showAsSecondaryTitle />
-                <DocumentCardStatus status="3 Actions" />
-              </DocumentCard>
-            </TooltipHost>
-          </div>
-
-        ))}
+        <Stack horizontal wrap>
+          {groups && groups.map(g => (
+            <Stack.Item align="auto">
+              <TooltipHost content="Click to Join Group">
+                <DocumentCard
+                    className={classes.group}
+                    onClick={this.onSetGroup.bind(this, g)}
+                >
+                  <DocumentCardTitle title={g.name} />
+                  <DocumentCardActivity people={g.members} />
+                  <DocumentCardTitle title="No ongoing meeting" showAsSecondaryTitle />
+                  <DocumentCardStatus status="3 Actions" />
+                </DocumentCard>
+              </TooltipHost>
+            </Stack.Item>
+          ))}
+        </Stack>
       </div>
     );
   }

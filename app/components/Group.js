@@ -3,7 +3,6 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 import { CheckRounded } from '@material-ui/icons';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -69,6 +68,7 @@ class Group extends React.Component {
             </Grid>
           </Grid>
         </Paper>
+
         <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="center">
             <Grid item md={2}>
@@ -95,6 +95,7 @@ class Group extends React.Component {
             </Grid>
           </Grid>
         </Paper>
+
         <Paper className={classes.paper}>
           <Grid container direction="row" alignItems="center">
             <Grid item md={2}>
@@ -119,9 +120,6 @@ const mapDispatchToProps = (dispatch) => ({
   fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
 });
 
-Group.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles, { withTheme: true }),
