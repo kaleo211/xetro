@@ -13,7 +13,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { emphasize } from '@material-ui/core/styles/colorManipulator';
 
 import { getMe } from '../actions/userActions';
-import { fetchGroups, postGroup, setGroup } from '../actions/groupActions';
+import { searchGroups, postGroup, setGroup } from '../actions/groupActions';
 import { setPage, closeDraw } from '../actions/localActions';
 
 import Utils from './Utils';
@@ -248,7 +248,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchGroups: () => dispatch(fetchGroups()),
+  searchGroups: () => dispatch(searchGroups()),
   postGroup: (group) => dispatch(postGroup(group)),
   setPage: (page) => dispatch(setPage(page)),
   getMe: () => dispatch(getMe()),

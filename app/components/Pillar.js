@@ -131,7 +131,7 @@ class Pillar extends React.Component {
         itemId: item.id,
         type: 'action',
         pillarId: item.pillarId,
-        groupId: this.props.group.id,
+        groupID: this.props.group.id,
         boardId: this.props.board.id,
       };
 
@@ -222,7 +222,7 @@ class Pillar extends React.Component {
                         {members && members.map(member => (
                           <MenuItem
                             style={{ paddingTop: 20, paddingBottom: 20 }}
-                            key={`owner-${member.userId}`}
+                            key={`owner-${member.userID}`}
                             onClick={this.handleAddActionOwner.bind(this, i, member)}
                           >
                             <ListItemIcon><Avatar>{member.firstName}</Avatar></ListItemIcon>

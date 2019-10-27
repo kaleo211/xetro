@@ -7,8 +7,8 @@ import {
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
 
-export const fetchGroupActiveBoard = (groupId) => async (dispatch) => {
-  const board = await Utils.fetch(`/boards/active/${groupId}`);
+export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
+  const board = await Utils.fetch(`/boards/active/${groupID}`);
   if (!board) {
     console.error('error fetching active board');
   }
@@ -30,8 +30,8 @@ export const postBoard = (newBoard) => async (dispatch) => {
   }
 };
 
-export const listBoards = (groupId) => async (dispatch) => {
-  const boards = await Utils.fetch(`/boards/group/${groupId}`);
+export const listBoards = (groupID) => async (dispatch) => {
+  const boards = await Utils.fetch(`/boards/group/${groupID}`);
   if (boards) {
     dispatch({
       type: SET_HISTORY_BOARDS,

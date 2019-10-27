@@ -1,19 +1,14 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
-import Typography from '@material-ui/core/Typography';
-import { Paper, Grid } from '@material-ui/core';
 
-import { setGroup } from '../actions/groupActions';
-import { setBoard } from '../actions/boardActions';
+import { DocumentCard, DocumentCardTitle, DocumentCardActivity, DocumentCardStatus } from 'office-ui-fabric-react';
+import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
+import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
+
+import { setGroup, searchGroups, addUserToGroup } from '../actions/groupActions';
 import { setPage } from '../actions/localActions';
-
-import ActionItemList from './ActionItemList';
-import GroupList from './GroupList';
-import NewGroup from './NewGroup';
 
 const styles = theme => ({
   paper: {
@@ -27,6 +22,13 @@ const styles = theme => ({
   iconButton: {
     padding: 0,
   },
+  group: {
+    display: 'inline-block',
+    marginTop: 8,
+    marginRight: 8,
+    width: 320,
+    height: 198,
+  },
 });
 
 class Group extends React.Component {
@@ -36,8 +38,16 @@ class Group extends React.Component {
     this.state = {};
   }
 
-  handleSetGroup(groupId) {
-    this.props.setGroup(groupId);
+  onSetGroup(group) {
+    const isMember = group.members.filter(member => member.id === this.props.me.id).length !== 0;
+    if (!isMember) {
+      this.props.addUserToGroup(this.props.me.id, group.id);
+    }
+    this.props.setGroup(group.id);
+  }
+
+  async onSearchGroup(evt) {
+    await this.props.searchGroups({ name: evt.target.value });
   }
 
   handleCreateGroup() {
@@ -45,42 +55,31 @@ class Group extends React.Component {
   }
 
   render() {
-    const { me, classes } = this.props;
+    const { me, groups, classes } = this.props;
 
     return (me &&
       <div>
-        <Paper className={classes.paper}>
-          <Grid container direction="row" alignItems="flex-start">
-            <Grid item md={2}>
-              <Typography variant="h6">Join Group</Typography>
-            </Grid>
-            <Grid item md={4}>
-              <NewGroup />
-            </Grid>
-          </Grid>
-        </Paper>
+        <SearchBox
+            placeholder="Search Group"
+            onChange={this.onSearchGroup.bind(this)}
+        />
 
-        <Paper className={classes.paper}>
-          <Grid container direction="row" alignItems="flex-start">
-            <Grid item md={2}>
-              <Typography variant="h6">My Groups</Typography>
-            </Grid>
-            <Grid item md={4}>
-              <GroupList />
-            </Grid>
-          </Grid>
-        </Paper>
+        {groups && groups.map(g => (
+          <div className={classes.group}>
+            <TooltipHost content="Click to Join Group">
+              <DocumentCard
+                  className={classes.group}
+                  onClick={this.onSetGroup.bind(this, g)}
+              >
+                <DocumentCardTitle title={g.name} />
+                <DocumentCardActivity people={g.members} />
+                <DocumentCardTitle title="No ongoing meeting" showAsSecondaryTitle />
+                <DocumentCardStatus status="3 Actions" />
+              </DocumentCard>
+            </TooltipHost>
+          </div>
 
-        <Paper className={classes.paper}>
-          <Grid container direction="row" alignItems="flex-start">
-            <Grid item md={2}>
-              <Typography variant="h6">My Actions</Typography>
-            </Grid>
-            <Grid item md={4}>
-              <ActionItemList />
-            </Grid>
-          </Grid>
-        </Paper>
+        ))}
       </div>
     );
   }
@@ -94,13 +93,11 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   setGroup: (id) => dispatch(setGroup(id)),
-  setBoard: (id) => dispatch(setBoard(id)),
   setPage: (page) => dispatch(setPage(page)),
+  searchGroups: (query) => dispatch(searchGroups(query)),
+  addUserToGroup: (userID, groupID) => dispatch(addUserToGroup(userID, groupID)),
 });
 
-Group.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles, { withTheme: true }),

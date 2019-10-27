@@ -75,10 +75,10 @@ class Group extends React.Component {
               <Typography variant="h6">Group Actions</Typography>
             </Grid>
             <Grid item md={10} container justify="space-between">
-              {members.filter(m => m.actions && m.actions.filter(a => !a.finished && a.groupId === group.id).length > 0).map(member => (
+              {members.filter(m => m.actions && m.actions.filter(a => !a.finished && a.groupID === group.id).length > 0).map(member => (
                 <Grid item xs={12} md={6} lg={4} key={`action${member.id}`}>
                   <List>
-                    {member.actions && member.actions.map(action => (!action.finished && action.groupId === group.id &&
+                    {member.actions && member.actions.map(action => (!action.finished && action.groupID === group.id &&
                       <ListItem divider key={`actionToCheck${action.id}`} dense button>
                         <Avatar style={{ marginLeft: -15 }}>
                           {member.initial}

@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
-    initial: {
+    initials: {
       type: new DataTypes.VIRTUAL(DataTypes.STRING),
       get() {
         const first = this.get('firstName');

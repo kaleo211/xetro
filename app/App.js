@@ -1,17 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withStyles } from '@material-ui/core/styles';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 
 import Board from './components/Board';
 import BoardList from './components/BoardList';
-import NewGroup from './components/NewGroup';
 import Utils from './components/Utils';
 
-import { fetchGroups } from './actions/groupActions';
+import { searchGroups } from './actions/groupActions';
 import {
   closeSnackBar,
   openDraw,
@@ -113,7 +111,7 @@ class App extends React.Component {
     document.body.style.margin = 0;
     await this.handleMicrosoftLogin();
     this.props.fetchUsers();
-    this.props.fetchGroups();
+    await this.props.searchGroups();
   }
 
   async handleMicrosoftLogin() {
@@ -151,7 +149,6 @@ class App extends React.Component {
           {page === 'group' && group && <Group />}
           {page === 'board' && board && <Board />}
           {page === 'boardList' && <BoardList />}
-          {page === 'createGroup' && <NewGroup />}
         </main>
       </div>
     );
@@ -168,13 +165,8 @@ const mapStateToProps = state => ({
   drawOpen: state.local.drawOpen,
 });
 
-App.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
-};
-
 export default connect(mapStateToProps, {
-  fetchGroups,
+  searchGroups,
   closeSnackBar,
   fetchUsers,
   getMe,

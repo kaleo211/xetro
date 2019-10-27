@@ -4,8 +4,8 @@ import { setPage } from './localActions';
 import Utils from '../components/Utils';
 import { fetchGroupActiveBoard, setBoard } from './boardActions';
 
-export const fetchGroups = () => async (dispatch) => {
-  const groups = await Utils.list('groups');
+export const searchGroups = (query) => async (dispatch) => {
+  const groups = await Utils.post('groups/search', query || {});
   if (groups) {
     dispatch({
       type: SET_GROUPS,
@@ -42,8 +42,8 @@ export const postGroup = (newGroup) => async (dispatch) => {
   }
 };
 
-export const setGroup = (groupId) => async (dispatch) => {
-  if (groupId == null) {
+export const setGroup = (groupID) => async (dispatch) => {
+  if (groupID == null) {
     dispatch(setBoard(null));
     dispatch(setPage(''));
     dispatch({
@@ -51,9 +51,9 @@ export const setGroup = (groupId) => async (dispatch) => {
       group: null,
     });
   } else {
-    const group = await Utils.get('groups', groupId);
+    const group = await Utils.get('groups', groupID);
     if (group) {
-      dispatch(fetchGroupActiveBoard(groupId));
+      dispatch(fetchGroupActiveBoard(groupID));
       dispatch({
         type: SET_GROUP,
         group,
@@ -65,9 +65,8 @@ export const setGroup = (groupId) => async (dispatch) => {
   }
 };
 
-export const addUserToGroup = (groupId, userId) => async (dispatch) => {
-  const group = { id: groupId, userId };
-  const returnedGroup = await Utils.patch('groups', group);
+export const addUserToGroup = (userID, groupID) => async (dispatch) => {
+  const returnedGroup = await Utils.post('groups/member', { userID, groupID });
   if (returnedGroup) {
     dispatch({
       type: SET_GROUP,

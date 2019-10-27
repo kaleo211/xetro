@@ -60,12 +60,12 @@ const respondWithBoard = async (res, id) => {
   }
 };
 
-const respondWithActiveBoards = async (res, groupId) => {
+const respondWithActiveBoards = async (res, groupID) => {
   try {
     const board = await model.Board.findOne({
       include: associations,
       where: {
-        groupId,
+        groupID,
         stage: {
           [Op.ne]: 'archived',
         },
@@ -135,7 +135,7 @@ routes.get('/group/:id', async (req, res) => {
         as: 'group',
       }],
       where: {
-        groupId: req.params.id,
+        groupID: req.params.id,
       },
     });
     res.json(boards);
@@ -149,7 +149,7 @@ routes.get('/group/:id', async (req, res) => {
 routes.post('/', async (req, res) => {
   const board = req.body;
   try {
-    const newBoard = await boardSvc.create(board.name, board.facilitatorId, board.groupId);
+    const newBoard = await boardSvc.create(board.name, board.facilitatorId, board.groupID);
     await respondWithBoard(res, newBoard.id);
   } catch (err) {
     console.error('error post board:', err);

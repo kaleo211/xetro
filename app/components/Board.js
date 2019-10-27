@@ -101,7 +101,7 @@ class Board extends React.Component {
         pillarId,
         title: newItemTitle,
         boardId: this.props.board.id,
-        groupId: this.props.group.id,
+        groupID: this.props.group.id,
       };
       this.props.postItem(newItem);
       this.changeItemTitle(pillarId, '');

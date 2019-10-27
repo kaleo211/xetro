@@ -1,9 +1,7 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -25,8 +23,8 @@ class GroupList extends React.Component {
     this.state = {};
   }
 
-  handleSetGroup(groupId) {
-    this.props.setGroup(groupId);
+  handleSetGroup(groupID) {
+    this.props.setGroup(groupID);
   }
 
   handleCreateGroup() {
@@ -66,9 +64,6 @@ const mapDispatchToProps = (dispatch) => ({
   setPage: (page) => dispatch(setPage(page)),
 });
 
-GroupList.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles, { withTheme: true }),

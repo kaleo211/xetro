@@ -39,7 +39,7 @@ class Menu extends React.Component {
 
     const newBoard = {
       stage: 'active',
-      groupId: group.id,
+      groupID: group.id,
       name: boardName,
     };
 

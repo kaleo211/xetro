@@ -98,7 +98,7 @@ routes.get('/:id/start', async (req, res) => {
 
 // Group Active Items
 routes.get('/group/:id', async (req, res) => {
-  const query = { groupId: req.params.id };
+  const query = { groupID: req.params.id };
   await respondWithActiveItems(res, query);
 });
 
@@ -149,7 +149,7 @@ routes.post('/', async (req, res) => {
     });
     await newItem.setOwner(item.ownerId);
     await newItem.setPillar(item.pillarId);
-    await newItem.setGroup(item.groupId);
+    await newItem.setGroup(item.groupID);
     await newItem.setBoard(item.boardId);
     await newItem.setItem(item.itemId);
     await respondWithItem(res, newItem.id);
