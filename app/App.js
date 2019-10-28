@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
+import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 
 import Board from './components/Board';
 import BoardList from './components/BoardList';
@@ -20,6 +21,8 @@ import { fetchUsers, getMe } from './actions/userActions';
 import Group from './components/Group';
 import Home from './components/Home';
 import Menu from './components/Menu';
+
+initializeIcons();
 
 const drawerWidth = 240;
 
