@@ -2,18 +2,16 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
-import Typography from '@material-ui/core/Typography';
-import { Grid, Toolbar, IconButton } from '@material-ui/core';
-import { AccountBox, ViewWeekRounded } from '@material-ui/icons';
+import { IconButton } from '@material-ui/core';
+import { ViewWeekRounded } from '@material-ui/icons';
 import { Text } from 'office-ui-fabric-react/lib/Text';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { Breadcrumb } from 'office-ui-fabric-react/lib/Breadcrumb';
-
+import { Link, Icon } from 'office-ui-fabric-react';
 
 import { setBoard, postBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
 import ActionBar from './ActionBar';
-import { Link, Icon } from 'office-ui-fabric-react';
 
 const classNames = mergeStyleSets({
   root: {
@@ -104,9 +102,11 @@ class Menu extends React.Component {
       );
     };
 
-    const bread = [{ text: 'Xetro', key: 'xetro', onClick: '' }];
-    group && bread.push({ text: group.name, key: 'group', onClick: '' });
-    board && bread.push({ text: board.name, key: 'board', onClick: '' });
+    const bread = [{ text: 'Xetro', key: 'xetro', onClick: () => this.props.setPage('home') }];
+    if (group) {
+      bread.push({ text: group.name, key: 'group', onClick: () => this.props.setPage('group') });
+      bread.push({ text: 'Board', key: 'board', onClick: () => this.props.setPage('board') });
+    }
 
     return (
       <div className={classNames.root}>

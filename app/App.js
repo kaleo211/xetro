@@ -2,11 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
-import { Nav } from 'office-ui-fabric-react/lib/Nav';
 
 import Board from './components/Board';
 import BoardList from './components/BoardList';
