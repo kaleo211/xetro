@@ -50,18 +50,19 @@ export const setGroup = (groupID) => async (dispatch) => {
       type: SET_GROUP,
       group: null,
     });
+    return;
+  }
+
+  const group = await Utils.get('groups', groupID);
+  if (group) {
+    dispatch(fetchGroupActiveBoard(groupID));
+    dispatch({
+      type: SET_GROUP,
+      group,
+    });
+    dispatch(setPage('group'));
   } else {
-    const group = await Utils.get('groups', groupID);
-    if (group) {
-      dispatch(fetchGroupActiveBoard(groupID));
-      dispatch({
-        type: SET_GROUP,
-        group,
-      });
-      dispatch(setPage('group'));
-    } else {
-      console.error('error fetching group for setting group', group);
-    }
+    console.error('error fetching group for setting group', group);
   }
 };
 

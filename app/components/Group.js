@@ -2,33 +2,26 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
-import { withStyles } from '@material-ui/core/styles';
-import { CheckRounded } from '@material-ui/icons';
-// import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import { Paper, Avatar, Grid } from '@material-ui/core';
-
-import { Stack } from 'office-ui-fabric-react/lib/Stack';
 import { Label } from 'office-ui-fabric-react/lib/Label';
-import { IPersonaSharedProps, Persona, PersonaSize, PersonaPresence } from 'office-ui-fabric-react/lib/Persona';
-import { Facepile, IFacepilePersona, IFacepileProps } from 'office-ui-fabric-react/lib/Facepile';
+import { Persona, PersonaSize, PersonaPresence } from 'office-ui-fabric-react/lib/Persona';
+import { Facepile } from 'office-ui-fabric-react/lib/Facepile';
 import { List } from 'office-ui-fabric-react/lib/List';
+import { mergeStyleSets, getTheme, getFocusStyle } from 'office-ui-fabric-react/lib/Styling';
+import { Checkbox } from 'office-ui-fabric-react/lib/Checkbox';
+import { Stack, DocumentCard, DocumentCardTitle, DocumentCardActivity, DocumentCardDetails } from 'office-ui-fabric-react';
 
 import { fetchGroupActiveBoard } from '../actions/boardActions';
 import BoardList from './BoardList';
 
-const styles = theme => ({
-  paper: {
-    padding: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 1,
-  },
-  facilitator: {
-    width: 60,
-    height: 60,
+const theme = getTheme();
+const { palette, semanticColors, fonts } = theme;
+
+const classNames = mergeStyleSets({
+  group: {
+    marginTop: 8,
+    marginRight: 8,
+    width: 320,
+    // height: 50,
   },
 });
 
@@ -55,8 +48,9 @@ class Group extends React.Component {
   }
 
   render() {
-    const { group, activeBoard, classes } = this.props;
+    const { group, activeBoard } = this.props;
 
+    console.log(group);
     const facilitator = activeBoard && activeBoard.facilitator;
     const members = group.members.map(member => {
       return {
@@ -67,9 +61,9 @@ class Group extends React.Component {
         tertiaryText: 'In a meeting',
       };
     });
-
+    const actions = group.items;
     const membersWithActions = members.filter(m => {
-      return m.actions && m.actions.filter(a => !a.finished && a.groupID === group.id).length > 0
+      return m.actions && m.actions.filter(a => !a.finished && a.groupID === group.id).length > 0;
     });
 
     return (
@@ -80,50 +74,18 @@ class Group extends React.Component {
         </Stack.Item>
 
         <Label>Actions</Label>
-        {members.map(member => (
-          <div>
-            <Persona {...member} />
-            <List items={member.actions} />
-          </div>
-        ))}
-
-        {/* <Paper className={classes.paper}>
-          <Grid container direction="row" alignItems="center">
-            <Grid item md={2}>
-              <Typography variant="h6">Group Actions</Typography>
-            </Grid>
-            <Grid item md={10} container justify="space-between">
-              {membersWithActions.map(member => (
-                <Grid item xs={12} md={6} lg={4} key={`action${member.id}`}>
-                  <List>
-                    {member.actions && member.actions.map(action => (!action.finished && action.groupID === group.id &&
-                      <ListItem divider key={`actionToCheck${action.id}`} dense button>
-                        <Avatar style={{ marginLeft: -15 }}>
-                          {member.initial}
-                        </Avatar>
-                        <ListItemText primary={action.title} />
-                        <ListItemSecondaryAction onClick={this.handleActionCheck.bind(this, action)}>
-                          <IconButton><CheckRounded /></IconButton>
-                        </ListItemSecondaryAction>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
-        </Paper>
-
-        <Paper className={classes.paper}>
-          <Grid container direction="row" alignItems="center">
-            <Grid item md={2}>
-              <Typography variant="h6">Archived Boards</Typography>
-            </Grid>
-            <Grid item md={3}>
-              <BoardList />
-            </Grid>
-          </Grid>
-        </Paper> */}
+        <Stack horizontal wrap>
+          {actions && actions.map(action => (
+            <Stack.Item align="auto">
+              <DocumentCard className={classNames.group}>
+                <DocumentCardDetails>
+                  <DocumentCardTitle title={action.title} />
+                  <DocumentCardActivity activity="Oct 13 2019" people={[action.owner]} />
+                </DocumentCardDetails>
+              </DocumentCard>
+            </Stack.Item>
+          ))}
+        </Stack>
       </div>
     );
   }
@@ -140,5 +102,4 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles, { withTheme: true }),
 )(Group);

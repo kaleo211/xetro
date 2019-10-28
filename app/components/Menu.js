@@ -2,8 +2,6 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
-import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import { Grid, Toolbar, IconButton } from '@material-ui/core';
 import { AccountBox, ViewWeekRounded } from '@material-ui/icons';
@@ -11,9 +9,6 @@ import { AccountBox, ViewWeekRounded } from '@material-ui/icons';
 import { setBoard, postBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
 import ActionBar from './ActionBar';
-
-const styles = theme => ({
-});
 
 class Menu extends React.Component {
   constructor(props) {
@@ -55,7 +50,7 @@ class Menu extends React.Component {
   }
 
   render() {
-    const { me, group, board, page, activeBoard, classes } = this.props;
+    const { me, group, board, page, activeBoard } = this.props;
 
     const enterBoard = () => {
       if (activeBoard) {
@@ -82,7 +77,6 @@ class Menu extends React.Component {
           alignItems="center"
           justify="space-between"
           direction="row"
-          className={classes.bar}
         >
           <Grid container alignItems="center" item md={5}>
             <Grid item>
@@ -115,10 +109,6 @@ const mapDispatchToProps = (dispatch) => ({
   postBoard: (board) => dispatch(postBoard(board)),
 });
 
-Menu.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles, { withTheme: true }),
 )(Menu);

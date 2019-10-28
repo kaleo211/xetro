@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
+    name: {
+      type: new DataTypes.VIRTUAL(DataTypes.STRING),
+      get() {
+        return `${this.get('firstName')} ${this.get('lastName')}`;
+      },
+    },
     initials: {
       type: new DataTypes.VIRTUAL(DataTypes.STRING),
       get() {

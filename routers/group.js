@@ -32,6 +32,10 @@ const respondWithGroup = async (res, id) => {
           where: {
             type: 'action',
           },
+          include: [{
+            model: model.User,
+            as: 'owner',
+          }],
         },
       ],
       where: { id },
