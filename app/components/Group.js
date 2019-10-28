@@ -18,6 +18,7 @@ import {
 } from 'office-ui-fabric-react';
 
 import { fetchGroupActiveBoard } from '../actions/boardActions';
+import { finishItem, deleteItem } from '../actions/itemActions';
 
 const classNames = mergeStyleSets({
   group: {
@@ -77,6 +78,14 @@ class Group extends React.Component {
     this.setState({ hoveredActionID: '' });
   }
 
+  onFinishAction(item) {
+    this.props.finishItem(item);
+  }
+
+  async onRemoveAction(item) {
+    await this.props.deleteItem(item);
+  }
+
   render() {
     const { group, activeBoard } = this.props;
     const { hoveredActionID } = this.state;
@@ -91,7 +100,7 @@ class Group extends React.Component {
         tertiaryText: 'In a meeting',
       };
     });
-    const actions = group.items;
+    const actions = group.items.filter(action => action.stage !== 'done');
     const membersWithActions = members.filter(m => {
       return m.actions && m.actions.filter(a => !a.finished && a.groupID === group.id).length > 0;
     });
@@ -145,8 +154,16 @@ class Group extends React.Component {
                   {hoveredActionID === action.id &&
                     <Overlay>
                       <div className={classNames.overlay}>
-                        <IconButton className={classNames.icon} iconProps={finishIcon} />
-                        <IconButton className={classNames.icon} iconProps={removeIcon} />
+                        <IconButton
+                            className={classNames.icon}
+                            iconProps={finishIcon}
+                            onClick={this.onFinishAction.bind(this, action)}
+                        />
+                        <IconButton
+                            className={classNames.icon}
+                            iconProps={removeIcon}
+                            onClick={this.onRemoveAction.bind(this, action)}
+                        />
                       </div>
                     </Overlay>
                   }
@@ -167,6 +184,8 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
+  finishItem: item => dispatch(finishItem(item)),
+  deleteItem: item => dispatch(deleteItem(item)),
 });
 
 export default compose(
