@@ -5,6 +5,8 @@ import { withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
+import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
+import { Nav } from 'office-ui-fabric-react/lib/Nav';
 
 import Board from './components/Board';
 import BoardList from './components/BoardList';
@@ -24,58 +26,33 @@ import Menu from './components/Menu';
 
 initializeIcons();
 
-const drawerWidth = 240;
+const classNames = mergeStyleSets({
+  app: {
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  nav: {
+    height: 64,
+    alignItems: 'center',
+    color: 'white',
+    backgroundColor: '#355895',
+  },
+  body: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+});
 
 const styles = theme => ({
   root: {
     display: 'flex',
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginLeft: theme.spacing.unit * 1,
   },
   hide: {
     display: 'none',
   },
   grow: {
     flexGrow: 1,
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-  },
-  drawerOpen: {
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerClose: {
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: theme.spacing.unit * 7 + 1,
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing.unit * 7 + 1,
-    },
   },
   toolbar: {
     display: 'flex',
@@ -91,10 +68,6 @@ const styles = theme => ({
   arrow: {
     marginLeft: theme.spacing.unit * 1,
     marginRight: theme.spacing.unit * 1,
-  },
-  bar: {
-    marginLeft: theme.spacing.unit * 2,
-    marginRight: theme.spacing.unit * 2,
   },
 });
 
@@ -142,12 +115,12 @@ class App extends React.Component {
     const { page, group, board, me, classes } = this.props;
 
     return (me &&
-      <div className={classes.root}>
-        <CssBaseline />
-        <AppBar position="fixed"><Menu /></AppBar>
+      <div className={classNames.app}>
+        <div className={classNames.nav}>
+          <Menu />
+        </div>
 
         <main className={classes.content}>
-          <div className={classes.toolbar} />
           {page === 'home' && <Home />}
           {page === 'group' && group && <Group />}
           {page === 'board' && board && <Board />}

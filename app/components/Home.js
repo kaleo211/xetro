@@ -74,7 +74,7 @@ class Group extends React.Component {
                   <DocumentCardTitle title={g.name} />
                   <DocumentCardActivity people={g.members} />
                   <DocumentCardTitle title="No ongoing meeting" showAsSecondaryTitle />
-                  <DocumentCardStatus status="3 Actions" />
+                  {/* <DocumentCardStatus status="3 Actions" /> */}
                 </DocumentCard>
               </TooltipHost>
             </Stack.Item>
