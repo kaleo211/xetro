@@ -65,7 +65,7 @@ class Group extends React.Component {
 
         <Stack horizontal wrap>
           {groups && groups.map(g => (
-            <Stack.Item align="auto">
+            <Stack.Item key={g.id} align="auto">
               <TooltipHost content="Click to Join Group">
                 <DocumentCard
                     className={classes.group}

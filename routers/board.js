@@ -15,7 +15,7 @@ const associations = [
   }, {
     model: model.Pillar,
     as: 'pillars',
-    order: [['createdAt', 'ASC']],
+    order: [['position', 'ASC']],
     include: [
       {
         model: model.Item,

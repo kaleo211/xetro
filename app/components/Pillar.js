@@ -17,12 +17,23 @@ import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import { List, ListItem, ListItemText, ListItemIcon, Typography } from '@material-ui/core';
 import { Done, Add, DeleteOutline, PlayArrowRounded, ThumbUpOutlined } from '@material-ui/icons';
+import { DocumentCard, DocumentCardTitle } from 'office-ui-fabric-react';
+import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
 import { setActiveItem } from '../actions/localActions';
 import { postItem, deleteItem, likeItem, finishItem, startItem, patchItem } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 import Utils from './Utils';
+
+
+const classNames = mergeStyleSets({
+  card: {
+    maxWidth: '33vw',
+    minWidth: 320,
+    marginTop: 4,
+  },
+});
 
 const styles = theme => ({
   item: {
@@ -159,117 +170,120 @@ class Pillar extends React.Component {
     const disabled = (item) => board.locked || board.stage === 'archived' || item.stage === 'done';
 
     return items.map(item => (item.type === 'item' &&
-      <ExpansionPanel
-        key={`item-${item.id}`}
-        expanded={switcher && activeItem.id === item.id}
-        onChange={this.handleActivateItem.bind(this, item)}
-      >
-        <ExpansionPanelSummary className={classes.panelSummay}>
-          <Grid
-            container
-            justify="space-between"
-            alignItems="center"
-            spacing={0}
-          >
-            <Grid item xs={10} sm={11}>
-              <TextField
-                fullWidth
-                value={item.title}
-                InputProps={{ disableUnderline: true, readOnly: true, classes: { input: classes.title } }}
-                className={item.stage === 'done' ? classes.itemDone : null}
-              />
-            </Grid>
-            <Grid item className={classes.summaryGrid}>
-              <IconButton
-                onClick={this.handleLikeItem.bind(this, item)}
-                disabled={disabled(item)}
-              >
-                <Badge badgeContent={item.likes} color="primary" invisible={item.likes === 0} classes={{ badge: classes.badge }}>
-                  <ThumbUpOutlined />
-                </Badge>
-              </IconButton>
-            </Grid>
-          </Grid>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.panelDetail}>
-          <Grid container direction="column">
-            <Grid item>
-              {board.stage === 'active' &&
-                <TextField
-                  fullWidth
-                  label="Action Item"
-                  value={newActionTitle}
-                  onChange={this.handleNewActionChange.bind(this)}
-                  onKeyPress={this.handleSaveAction.bind(this, item)}
-                />
-              }
-            </Grid>
-            <Grid item>
-              <List>
-                {item.actions.map(i => (
-                  <ListItem divider key={`action-${i.id}`} className={classes.item}>
-                    <ListItemText primary={i.title} />
-                    {i.ownerID && <Avatar className={classes.owner}>{i.ownerID}</Avatar>}
-                    {!i.ownerID && <div>
-                      <IconButton onClick={this.handleOwerListOpen.bind(this, i.id)}>
-                        <Add fontSize="inherit" />
-                      </IconButton>
-                      <Menu
-                        anchorEl={ownerAnchorEl[i.id]}
-                        open={Boolean(ownerAnchorEl[i.id])}
-                        onClose={this.handleOwerListClose.bind(this, i.id)}
-                      >
-                        {members && members.map(member => (
-                          <MenuItem
-                            style={{ paddingTop: 20, paddingBottom: 20 }}
-                            key={`owner-${member.userID}`}
-                            onClick={this.handleAddActionOwner.bind(this, i, member)}
-                          >
-                            <ListItemIcon><Avatar>{member.firstName}</Avatar></ListItemIcon>
-                            <Typography variant="h5">
-                              {`${member.firstName} ${member.lastName}`}
-                            </Typography>
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </div>}
-                  </ListItem>
-                ))}
-              </List>
-            </Grid>
-          </Grid>
-        </ExpansionPanelDetails>
-        <ExpansionPanelActions className={classes.panelAction}>
-          <Grid container direction="column" className={classes.action}>
-            <Grid container justify="flex-end">
-              {board.stage !== 'archived' && item.stage !== 'done' &&
-                <Grid item>
-                  {board.locked && item.stage === 'created' &&
-                    <IconButton onClick={this.handleStartItem.bind(this, item)}>
-                      <PlayArrowRounded />
-                    </IconButton>
-                  }
-                  {item.stage === 'active' &&
-                    <IconButton onClick={this.handleFinishItem.bind(this, item)}>
-                      <Done />
-                    </IconButton>
-                  }
-                  {!board.locked && item.stage === 'created' && (item.actions == null || item.actions.length === 0) && (
-                    <IconButton onClick={this.handleDeleteItem.bind(this, item)}>
-                      <DeleteOutline />
-                    </IconButton>
-                  )}
-                </Grid>
-              }
-            </Grid>
-            <Grid>
-              {board.locked && item.stage === 'active' &&
-                <LinearProgress color="secondary" variant="determinate" value={this.props.itemProgress} />
-              }
-            </Grid>
-          </Grid>
-        </ExpansionPanelActions>
-      </ExpansionPanel>
+      <DocumentCard className={classNames.card}>
+        <DocumentCardTitle title={item.title} shouldTruncate />
+      </DocumentCard>
+      // <ExpansionPanel
+      //   key={`item-${item.id}`}
+      //   expanded={switcher && activeItem.id === item.id}
+      //   onChange={this.handleActivateItem.bind(this, item)}
+      // >
+      //   <ExpansionPanelSummary className={classes.panelSummay}>
+      //     <Grid
+      //       container
+      //       justify="space-between"
+      //       alignItems="center"
+      //       spacing={0}
+      //     >
+      //       <Grid item xs={10} sm={11}>
+      //         <TextField
+      //           fullWidth
+      //           value={item.title}
+      //           InputProps={{ disableUnderline: true, readOnly: true, classes: { input: classes.title } }}
+      //           className={item.stage === 'done' ? classes.itemDone : null}
+      //         />
+      //       </Grid>
+      //       <Grid item className={classes.summaryGrid}>
+      //         <IconButton
+      //           onClick={this.handleLikeItem.bind(this, item)}
+      //           disabled={disabled(item)}
+      //         >
+      //           <Badge badgeContent={item.likes} color="primary" invisible={item.likes === 0} classes={{ badge: classes.badge }}>
+      //             <ThumbUpOutlined />
+      //           </Badge>
+      //         </IconButton>
+      //       </Grid>
+      //     </Grid>
+      //   </ExpansionPanelSummary>
+      //   <ExpansionPanelDetails className={classes.panelDetail}>
+      //     <Grid container direction="column">
+      //       <Grid item>
+      //         {board.stage === 'active' &&
+      //           <TextField
+      //             fullWidth
+      //             label="Action Item"
+      //             value={newActionTitle}
+      //             onChange={this.handleNewActionChange.bind(this)}
+      //             onKeyPress={this.handleSaveAction.bind(this, item)}
+      //           />
+      //         }
+      //       </Grid>
+      //       <Grid item>
+      //         <List>
+      //           {item.actions.map(i => (
+      //             <ListItem divider key={`action-${i.id}`} className={classes.item}>
+      //               <ListItemText primary={i.title} />
+      //               {i.ownerID && <Avatar className={classes.owner}>{i.ownerID}</Avatar>}
+      //               {!i.ownerID && <div>
+      //                 <IconButton onClick={this.handleOwerListOpen.bind(this, i.id)}>
+      //                   <Add fontSize="inherit" />
+      //                 </IconButton>
+      //                 <Menu
+      //                   anchorEl={ownerAnchorEl[i.id]}
+      //                   open={Boolean(ownerAnchorEl[i.id])}
+      //                   onClose={this.handleOwerListClose.bind(this, i.id)}
+      //                 >
+      //                   {members && members.map(member => (
+      //                     <MenuItem
+      //                       style={{ paddingTop: 20, paddingBottom: 20 }}
+      //                       key={`owner-${member.userID}`}
+      //                       onClick={this.handleAddActionOwner.bind(this, i, member)}
+      //                     >
+      //                       <ListItemIcon><Avatar>{member.firstName}</Avatar></ListItemIcon>
+      //                       <Typography variant="h5">
+      //                         {`${member.firstName} ${member.lastName}`}
+      //                       </Typography>
+      //                     </MenuItem>
+      //                   ))}
+      //                 </Menu>
+      //               </div>}
+      //             </ListItem>
+      //           ))}
+      //         </List>
+      //       </Grid>
+      //     </Grid>
+      //   </ExpansionPanelDetails>
+      //   <ExpansionPanelActions className={classes.panelAction}>
+      //     <Grid container direction="column" className={classes.action}>
+      //       <Grid container justify="flex-end">
+      //         {board.stage !== 'archived' && item.stage !== 'done' &&
+      //           <Grid item>
+      //             {board.locked && item.stage === 'created' &&
+      //               <IconButton onClick={this.handleStartItem.bind(this, item)}>
+      //                 <PlayArrowRounded />
+      //               </IconButton>
+      //             }
+      //             {item.stage === 'active' &&
+      //               <IconButton onClick={this.handleFinishItem.bind(this, item)}>
+      //                 <Done />
+      //               </IconButton>
+      //             }
+      //             {!board.locked && item.stage === 'created' && (item.actions == null || item.actions.length === 0) && (
+      //               <IconButton onClick={this.handleDeleteItem.bind(this, item)}>
+      //                 <DeleteOutline />
+      //               </IconButton>
+      //             )}
+      //           </Grid>
+      //         }
+      //       </Grid>
+      //       <Grid>
+      //         {board.locked && item.stage === 'active' &&
+      //           <LinearProgress color="secondary" variant="determinate" value={this.props.itemProgress} />
+      //         }
+      //       </Grid>
+      //     </Grid>
+      //   </ExpansionPanelActions>
+      // </ExpansionPanel>
     ));
   }
 }

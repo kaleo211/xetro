@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: () => uuid(),
     },
     title: DataTypes.STRING,
+    position: DataTypes.INTEGER,
   }, {});
 
   Pillar.associate = (models) => {

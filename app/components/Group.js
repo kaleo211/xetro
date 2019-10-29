@@ -134,7 +134,7 @@ class Group extends React.Component {
           {/* <Text variant="xxLarge" style={{ marginBottom: 8 }}>Members</Text> */}
           <Stack horizontal>
             {members.map(member => (
-              <Stack.Item>
+              <Stack.Item key={member.id}>
                 <Persona
                     {...member}
                     size={PersonaSize.size40}
@@ -149,7 +149,7 @@ class Group extends React.Component {
           <Text variant="xxLarge">Actions</Text>
           <Stack horizontal wrap>
             {actions && actions.map(action => (
-              <Stack.Item align="auto">
+              <Stack.Item key={action.id} align="auto">
                 <DocumentCard
                     className={classNames.group}
                     onMouseEnter={this.onHoverAction.bind(this, action)}

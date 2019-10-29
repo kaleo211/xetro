@@ -26,16 +26,20 @@ const classNames = mergeStyleSets({
     justifyContent: 'space-evenly',
   },
   title: {
-    marginBottom: 80,
+    marginBottom: 24,
   },
   titleText: {
     fontSize: 24,
     textAlign: 'center',
   },
+  input: {
+  },
   pillar: {
-    // width: 360,
+    width: '33vw',
+    marginRight: 8,
   },
   card: {
+    maxWidth: '33vw',
     minWidth: 320,
   },
 });
@@ -164,7 +168,7 @@ class Board extends React.Component {
     const { newItemInPillar, itemProgress } = this.state;
 
     const facilitator = board.facilitator;
-    const pillars = board.pillars.sort(Utils.createdAt());
+    const pillars = board.pillars;
     const enabled = (board.stage !== 'archived' && !board.locked);
 
     const action = (pillar) => (enabled ?
@@ -182,41 +186,33 @@ class Board extends React.Component {
     return (
       <div className={classNames.board}>
         {facilitator && pillars && pillars.map(pillar => (
-          <div className={classNames.pillar}>
+          <div key={pillar.id} className={classNames.pillar}>
             <DocumentCard className={classNames.card}>
-              <div classNam={classNames.title}>
+              <div className={classNames.title}>
                 <TextField
                     borderless
                     inputClassName={classNames.titleText}
                     disabled={!enabled}
                     defaultValue={pillar.title}
-                    InputProps={{ disableUnderline: true }}
-                    inputProps={{ className: classes.title }}
                     onChange={this.handleChangePillarTitle.bind(this, pillar)}
                     onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
                 />
               </div>
-              {board.stage !== 'archived' && !board.locked &&
+              <div className={classNames.input}>
                 <TextField
-                  underlined
-                  label="New:"
-                  value={newItemInPillar[pillar.id]}
-                  disabled={!enabled}
-                  name={pillar.id}
-                  onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
-                  onKeyPress={this.handleAddItem.bind(this, pillar.id)}
+                    underlined
+                    label="New:"
+                    value={newItemInPillar[pillar.id]}
+                    disabled={!enabled}
+                    name={pillar.id}
+                    onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
+                    onKeyPress={this.handleAddItem.bind(this, pillar.id)}
                 />
-              }
+              </div>
               <Pillar pillar={pillar} itemProgress={itemProgress} />
             </DocumentCard>
           </div>
         ))}
-
-        {enabled &&
-          <Fab className={classes.fab} onClick={this.handleAddPillar.bind(this)}>
-            <Add />
-          </Fab>
-        }
       </div>
     );
   }
