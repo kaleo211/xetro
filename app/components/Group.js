@@ -25,7 +25,6 @@ const classNames = mergeStyleSets({
     marginTop: 8,
     marginRight: 8,
     width: 320,
-    // height: 50,
   },
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -43,6 +42,14 @@ const classNames = mergeStyleSets({
     fontSize: 50,
     height: 50,
     width: 50,
+  },
+  actions: {
+    marginTop: 16,
+    marginLeft: 8,
+  },
+  members: {
+    marginTop: 8,
+    marginLeft: 8,
   },
 });
 
@@ -123,14 +130,14 @@ class Group extends React.Component {
 
     return (
       <div>
-        <div className={classNames.group}>
-          <Text variant="xxLarge">Members</Text>
+        <div className={classNames.members}>
+          {/* <Text variant="xxLarge" style={{ marginBottom: 8 }}>Members</Text> */}
           <Stack horizontal>
             {members.map(member => (
               <Stack.Item>
                 <Persona
                     {...member}
-                    size={PersonaSize.size48}
+                    size={PersonaSize.size40}
                     presence={PersonaPresence.offline}
                 />
               </Stack.Item>
@@ -138,12 +145,13 @@ class Group extends React.Component {
           </Stack>
         </div>
 
-        <div>
-          <Text className={classNames.label} variant="xxLarge">Actions</Text>
+        <div className={classNames.actions}>
+          <Text variant="xxLarge">Actions</Text>
           <Stack horizontal wrap>
             {actions && actions.map(action => (
               <Stack.Item align="auto">
-                <DocumentCard className={classNames.group}
+                <DocumentCard
+                    className={classNames.group}
                     onMouseEnter={this.onHoverAction.bind(this, action)}
                     onMouseLeave={this.onLeaveHoveredAction.bind(this)}
                 >

@@ -4,19 +4,41 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import Fab from '@material-ui/core/Fab';
-import { Card, CardHeader, CardContent } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import { Add, ClearRounded } from '@material-ui/icons';
+
+import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
+import { DocumentCard } from 'office-ui-fabric-react';
 
 import { setBoard } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
 import { postItem } from '../actions/itemActions';
 import { patchPillar, postPillar, deletePillar } from '../actions/pillarActions';
 
+
 import Pillar from './Pillar';
 import Utils from './Utils';
+
+const classNames = mergeStyleSets({
+  board: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+  },
+  title: {
+    marginBottom: 80,
+  },
+  titleText: {
+    fontSize: 24,
+    textAlign: 'center',
+  },
+  pillar: {
+    // width: 360,
+  },
+  card: {
+    minWidth: 320,
+  },
+});
 
 const styles = theme => ({
   root: {
@@ -145,20 +167,6 @@ class Board extends React.Component {
     const pillars = board.pillars.sort(Utils.createdAt());
     const enabled = (board.stage !== 'archived' && !board.locked);
 
-    const pillarTitle = (pillar) => (
-      <TextField
-        fullWidth
-        disabled={!enabled}
-        defaultValue={pillar.title}
-        InputProps={{ disableUnderline: true }}
-        inputProps={{ className: classes.title }}
-        onChange={this.handleChangePillarTitle.bind(this, pillar)}
-        onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
-      />
-    );
-
-    const size = () => (board.pillars.length <= 3 ? 4 : 3);
-
     const action = (pillar) => (enabled ?
       <IconButton
         disableRipple
@@ -172,41 +180,37 @@ class Board extends React.Component {
     );
 
     return (
-      <div>
-        <Grid
-          container
-          spacing={8}
-          direction="row"
-          justify="flex-start"
-          alignItems="stretch"
-        >
-          {facilitator && pillars && pillars.map(pillar => (
-            <Grid item key={pillar.title} xs={12} sm={12} md={size()}>
-              <Card wrap="nowrap">
-                <CardHeader
-                  title={pillarTitle(pillar)}
-                  subheader={pillar.subheader}
-                  titleTypographyProps={{ align: 'center' }}
-                  subheaderTypographyProps={{ align: 'center' }}
-                  action={action(pillar)}
+      <div className={classNames.board}>
+        {facilitator && pillars && pillars.map(pillar => (
+          <div className={classNames.pillar}>
+            <DocumentCard className={classNames.card}>
+              <div classNam={classNames.title}>
+                <TextField
+                    borderless
+                    inputClassName={classNames.titleText}
+                    disabled={!enabled}
+                    defaultValue={pillar.title}
+                    InputProps={{ disableUnderline: true }}
+                    inputProps={{ className: classes.title }}
+                    onChange={this.handleChangePillarTitle.bind(this, pillar)}
+                    onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
                 />
-                <CardContent>
-                  {board.stage !== 'archived' && !board.locked &&
-                    <TextField
-                      fullWidth
-                      label={pillar.intro}
-                      value={newItemInPillar[pillar.id]}
-                      disabled={!enabled}
-                      name={pillar.id}
-                      onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
-                      onKeyPress={this.handleAddItem.bind(this, pillar.id)}
-                    />
-                  }
-                </CardContent>
-                <Pillar pillar={pillar} itemProgress={itemProgress} />
-              </Card>
-            </Grid>))}
-        </Grid>
+              </div>
+              {board.stage !== 'archived' && !board.locked &&
+                <TextField
+                  underlined
+                  label="New:"
+                  value={newItemInPillar[pillar.id]}
+                  disabled={!enabled}
+                  name={pillar.id}
+                  onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
+                  onKeyPress={this.handleAddItem.bind(this, pillar.id)}
+                />
+              }
+              <Pillar pillar={pillar} itemProgress={itemProgress} />
+            </DocumentCard>
+          </div>
+        ))}
 
         {enabled &&
           <Fab className={classes.fab} onClick={this.handleAddPillar.bind(this)}>

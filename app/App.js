@@ -30,10 +30,11 @@ const classNames = mergeStyleSets({
     flexDirection: 'column',
   },
   nav: {
-    height: 64,
+    height: 56,
     alignItems: 'center',
     color: 'white',
     backgroundColor: '#355895',
+    paddingBottom: 4,
   },
   body: {
     display: 'flex',

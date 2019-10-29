@@ -2,8 +2,6 @@ import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
-import { IconButton } from '@material-ui/core';
-import { ViewWeekRounded } from '@material-ui/icons';
 import { Text } from 'office-ui-fabric-react/lib/Text';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { Breadcrumb } from 'office-ui-fabric-react/lib/Breadcrumb';
@@ -16,16 +14,18 @@ import ActionBar from './ActionBar';
 const classNames = mergeStyleSets({
   root: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     marginLeft: 16,
   },
   bread: {
-    flexGrow: 8,
-  },
-  action: {
-    display: 'flex',
     flexGrow: 4,
+  },
+  profile: {
+    flexGrow: 2,
+    display: 'flex',
     justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginRight: 12,
   },
   text: {
     color: 'white',
@@ -34,6 +34,12 @@ const classNames = mergeStyleSets({
     marginLeft: 12,
     marginRight: 12,
     color: 'white',
+  },
+  icon: {
+    fontSize: 24,
+    height: 24,
+    width: 24,
+    paddingLeft: 8,
   },
 });
 
@@ -48,64 +54,48 @@ class Menu extends React.Component {
     this.props.setPage('home');
   }
 
-  handleJoinBoard() {
-    this.props.setBoard(this.props.activeBoard.id);
-    this.props.setPage('board');
-  }
-
-  handleCreateBoard() {
+  handleJoinOrCreateBoard() {
     const { activeBoard, group } = this.props;
+
+    if (activeBoard) {
+      this.props.setBoard(this.props.activeBoard.id);
+      this.props.setPage('board');
+      return;
+    }
 
     const now = new Date();
     const boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
+    const randomIndex = Math.floor(Math.random() * (group.members.length));
 
     const newBoard = {
       stage: 'active',
       groupID: group.id,
       name: boardName,
+      facilitatorID: group.members[randomIndex].id,
     };
-
-    if (activeBoard && activeBoard.facilitator) {
-      newBoard.facilitatorID = activeBoard.facilitator.id;
-    } else {
-      const randomIndex = Math.floor(Math.random() * (group.members.length));
-      newBoard.facilitatorID = group.members[randomIndex].id;
-    }
 
     this.props.postBoard(newBoard);
     this.props.setPage('board');
   }
 
   onRenderItem(item) {
-    return (
+    return item.key === 'action' ?
+      <ActionBar /> :
       <Link onClick={item.onClick}>
         <Text className={classNames.text} variant="xxLarge">{item.text}</Text>
-      </Link>
-    );
+      </Link>;
   }
 
   render() {
-    const { me, group, board, page, activeBoard } = this.props;
-
-    const enterBoard = () => {
-      if (activeBoard) {
-        return (
-          <IconButton color="inherit" onClick={this.handleJoinBoard.bind(this)}>
-            <ViewWeekRounded fontSize="large" />
-          </IconButton>
-        );
-      }
-      return (
-        <IconButton color="inherit" onClick={this.handleCreateBoard.bind(this)}>
-          <ViewWeekRounded fontSize="large" />
-        </IconButton>
-      );
-    };
+    const { group, board } = this.props;
 
     const bread = [{ text: 'Xetro', key: 'xetro', onClick: () => this.props.setPage('home') }];
     if (group) {
       bread.push({ text: group.name, key: 'group', onClick: () => this.props.setPage('group') });
-      bread.push({ text: 'Board', key: 'board', onClick: () => this.props.setPage('board') });
+      bread.push({ text: 'Board', key: 'board', onClick: this.handleJoinOrCreateBoard.bind(this) });
+    }
+    if (board) {
+      bread.push({ key: 'action' });
     }
 
     return (
@@ -118,9 +108,8 @@ class Menu extends React.Component {
               dividerAs={() => <Icon iconName="ChevronRightSmall" className={classNames.divider} />}
           />
         </div>
-        <div className={classNames.action}>
-          {board && <ActionBar />}
-          {page === 'group' && enterBoard()}
+        <div className={classNames.profile}>
+          <Text className={classNames.text} variant="xxLarge">Xuebin</Text>
         </div>
       </div>
     );
