@@ -1,8 +1,8 @@
 const routes = require('express').Router();
-const Sequelize = require('sequelize');
+const { Op } = require('sequelize');
 const model = require('../models');
 
-const Op = Sequelize.Op;
+const { search } = require('../services/group');
 
 const respondWithGroup = async (res, id) => {
   try {
@@ -32,6 +32,10 @@ const respondWithGroup = async (res, id) => {
           where: {
             type: 'action',
           },
+          include: [{
+            model: model.User,
+            as: 'owner',
+          }],
         },
       ],
       where: { id },
@@ -63,43 +67,15 @@ routes.delete('/:id', async (req, res) => {
   }
 });
 
-routes.get('/', async (req, res) => {
+routes.post('/search', async (req, res) => {
+  const { name } = req.body;
   try {
-    const groups = await model.Group.findAll({
-      include: [{
-        model: model.User,
-        as: 'members',
-        through: {},
-      }],
-    });
+    const groups = await search({ name });
     res.json(groups);
   } catch (err) {
-    console.error('error delete group', err);
-    res.sendStatus(500);
-  }
-});
-
-routes.post('/search', async (req, res) => {
-  const name = req.body.name;
-  model.Group.findAll({
-    include: [{
-      model: model.User,
-      as: 'members',
-      through: {},
-    }],
-    where: {
-      name: { [Op.iLike]: `%${name}%` },
-    },
-  }).then(results => {
-    if (results) {
-      res.json(results);
-    } else {
-      res.sendStatus(404);
-    }
-  }).catch(err => {
     console.error('error search group:', err);
     res.sendStatus(500);
-  });
+  }
 });
 
 routes.post('/', async (req, res) => {
@@ -125,13 +101,18 @@ routes.post('/', async (req, res) => {
   }
 });
 
-routes.patch('/:id', async (req, res) => {
+routes.post('/member', async (req, res) => {
   try {
+    const { userID, groupID } = req.body;
     const group = await model.Group.findOne({
-      where: { id: req.params.id },
+      where: { id: groupID },
     });
-    await group.addMembers(req.body.userId)
-    await respondWithGroup(res, group.id);
+    if (group) {
+      await group.addMembers(userID);
+      await respondWithGroup(res, groupID);
+    } else {
+      res.sendStatus(500);
+    }
   } catch (err) {
     console.error('error patch group:', err);
     res.sendStatus(500);

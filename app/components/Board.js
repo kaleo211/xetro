@@ -1,23 +1,48 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import Fab from '@material-ui/core/Fab';
-import { Card, CardHeader, CardContent } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import { Add, ClearRounded } from '@material-ui/icons';
+
+import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
+import { TextField } from 'office-ui-fabric-react/lib/TextField';
+import { DocumentCard } from 'office-ui-fabric-react';
 
 import { setBoard } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
 import { postItem } from '../actions/itemActions';
 import { patchPillar, postPillar, deletePillar } from '../actions/pillarActions';
 
+
 import Pillar from './Pillar';
 import Utils from './Utils';
+
+const classNames = mergeStyleSets({
+  board: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+  },
+  title: {
+    marginBottom: 24,
+  },
+  titleText: {
+    fontSize: 24,
+    textAlign: 'center',
+  },
+  input: {
+  },
+  pillar: {
+    width: '33vw',
+    marginRight: 8,
+  },
+  card: {
+    maxWidth: '33vw',
+    minWidth: 320,
+  },
+});
 
 const styles = theme => ({
   root: {
@@ -94,28 +119,28 @@ class Board extends React.Component {
     });
   }
 
-  handleAddItem(pillarId, event) {
-    const newItemTitle = this.state.newItemInPillar[pillarId];
+  handleAddItem(pillarID, event) {
+    const newItemTitle = this.state.newItemInPillar[pillarID];
     if (event && event.key === 'Enter' && newItemTitle !== '') {
       const newItem = {
-        pillarId,
+        pillarID,
         title: newItemTitle,
-        boardId: this.props.board.id,
-        groupId: this.props.group.id,
+        boardID: this.props.board.id,
+        groupID: this.props.group.id,
       };
       this.props.postItem(newItem);
-      this.changeItemTitle(pillarId, '');
+      this.changeItemTitle(pillarID, '');
     }
   }
 
-  handleChangeNewItemTitle(pillarId, evt) {
-    this.changeItemTitle(pillarId, evt.target.value);
+  handleChangeNewItemTitle(pillarID, evt) {
+    this.changeItemTitle(pillarID, evt.target.value);
   }
 
   handleAddPillar() {
     const pillar = {
       title: 'ChangeTitle',
-      boardId: this.props.board.id,
+      boardID: this.props.board.id,
     };
     this.props.postPillar(pillar);
   }
@@ -143,22 +168,8 @@ class Board extends React.Component {
     const { newItemInPillar, itemProgress } = this.state;
 
     const facilitator = board.facilitator;
-    const pillars = board.pillars.sort(Utils.createdAt());
+    const pillars = board.pillars;
     const enabled = (board.stage !== 'archived' && !board.locked);
-
-    const pillarTitle = (pillar) => (
-      <TextField
-        fullWidth
-        disabled={!enabled}
-        defaultValue={pillar.title}
-        InputProps={{ disableUnderline: true }}
-        inputProps={{ className: classes.title }}
-        onChange={this.handleChangePillarTitle.bind(this, pillar)}
-        onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
-      />
-    );
-
-    const size = () => (board.pillars.length <= 3 ? 4 : 3);
 
     const action = (pillar) => (enabled ?
       <IconButton
@@ -173,47 +184,35 @@ class Board extends React.Component {
     );
 
     return (
-      <div>
-        <Grid
-          container
-          spacing={8}
-          direction="row"
-          justify="flex-start"
-          alignItems="stretch"
-        >
-          {facilitator && pillars && pillars.map(pillar => (
-            <Grid item key={pillar.title} xs={12} sm={12} md={size()}>
-              <Card wrap="nowrap">
-                <CardHeader
-                  title={pillarTitle(pillar)}
-                  subheader={pillar.subheader}
-                  titleTypographyProps={{ align: 'center' }}
-                  subheaderTypographyProps={{ align: 'center' }}
-                  action={action(pillar)}
+      <div className={classNames.board}>
+        {facilitator && pillars && pillars.map(pillar => (
+          <div key={pillar.id} className={classNames.pillar}>
+            <DocumentCard className={classNames.card}>
+              <div className={classNames.title}>
+                <TextField
+                    borderless
+                    inputClassName={classNames.titleText}
+                    disabled={!enabled}
+                    defaultValue={pillar.title}
+                    onChange={this.handleChangePillarTitle.bind(this, pillar)}
+                    onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
                 />
-                <CardContent>
-                  {board.stage !== 'archived' && !board.locked &&
-                    <TextField
-                      fullWidth
-                      label={pillar.intro}
-                      value={newItemInPillar[pillar.id]}
-                      disabled={!enabled}
-                      name={pillar.id}
-                      onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
-                      onKeyPress={this.handleAddItem.bind(this, pillar.id)}
-                    />
-                  }
-                </CardContent>
-                <Pillar pillar={pillar} itemProgress={itemProgress} />
-              </Card>
-            </Grid>))}
-        </Grid>
-
-        {enabled &&
-          <Fab className={classes.fab} onClick={this.handleAddPillar.bind(this)}>
-            <Add />
-          </Fab>
-        }
+              </div>
+              <div className={classNames.input}>
+                <TextField
+                    underlined
+                    label="New:"
+                    value={newItemInPillar[pillar.id]}
+                    disabled={!enabled}
+                    name={pillar.id}
+                    onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
+                    onKeyPress={this.handleAddItem.bind(this, pillar.id)}
+                />
+              </div>
+              <Pillar pillar={pillar} itemProgress={itemProgress} />
+            </DocumentCard>
+          </div>
+        ))}
       </div>
     );
   }
@@ -235,9 +234,6 @@ const mapDispatchToProps = (dispatch) => ({
   deletePillar: (pillar) => dispatch(deletePillar(pillar)),
 });
 
-Board.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withStyles(styles, { withTheme: true }),

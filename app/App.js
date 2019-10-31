@@ -1,17 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
-import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
+
+import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
+import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
 import Board from './components/Board';
 import BoardList from './components/BoardList';
-import NewGroup from './components/NewGroup';
 import Utils from './components/Utils';
 
-import { fetchGroups } from './actions/groupActions';
+import { searchGroups } from './actions/groupActions';
 import {
   closeSnackBar,
   openDraw,
@@ -23,58 +21,36 @@ import Group from './components/Group';
 import Home from './components/Home';
 import Menu from './components/Menu';
 
-const drawerWidth = 240;
+initializeIcons();
+
+const classNames = mergeStyleSets({
+  app: {
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  nav: {
+    height: 56,
+    alignItems: 'center',
+    color: 'white',
+    backgroundColor: '#355895',
+    paddingBottom: 4,
+  },
+  body: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+});
 
 const styles = theme => ({
   root: {
     display: 'flex',
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginLeft: theme.spacing.unit * 1,
   },
   hide: {
     display: 'none',
   },
   grow: {
     flexGrow: 1,
-  },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-  },
-  drawerOpen: {
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerClose: {
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: theme.spacing.unit * 7 + 1,
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing.unit * 7 + 1,
-    },
   },
   toolbar: {
     display: 'flex',
@@ -90,10 +66,6 @@ const styles = theme => ({
   arrow: {
     marginLeft: theme.spacing.unit * 1,
     marginRight: theme.spacing.unit * 1,
-  },
-  bar: {
-    marginLeft: theme.spacing.unit * 2,
-    marginRight: theme.spacing.unit * 2,
   },
 });
 
@@ -113,7 +85,7 @@ class App extends React.Component {
     document.body.style.margin = 0;
     await this.handleMicrosoftLogin();
     this.props.fetchUsers();
-    this.props.fetchGroups();
+    await this.props.searchGroups();
   }
 
   async handleMicrosoftLogin() {
@@ -141,17 +113,16 @@ class App extends React.Component {
     const { page, group, board, me, classes } = this.props;
 
     return (me &&
-      <div className={classes.root}>
-        <CssBaseline />
-        <AppBar position="fixed"><Menu /></AppBar>
+      <div className={classNames.app}>
+        <div className={classNames.nav}>
+          <Menu />
+        </div>
 
         <main className={classes.content}>
-          <div className={classes.toolbar} />
           {page === 'home' && <Home />}
           {page === 'group' && group && <Group />}
           {page === 'board' && board && <Board />}
           {page === 'boardList' && <BoardList />}
-          {page === 'createGroup' && <NewGroup />}
         </main>
       </div>
     );
@@ -168,13 +139,8 @@ const mapStateToProps = state => ({
   drawOpen: state.local.drawOpen,
 });
 
-App.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
-};
-
 export default connect(mapStateToProps, {
-  fetchGroups,
+  searchGroups,
   closeSnackBar,
   fetchUsers,
   getMe,

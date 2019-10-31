@@ -20,10 +20,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   Board.associate = (models) => {
-    Board.belongsTo(models.Group, { as: 'group' });
-    Board.belongsTo(models.User, { as: 'facilitator' });
-    Board.hasMany(models.Pillar, { as: 'pillars', foreignKey: 'boardId' });
-    Board.hasMany(models.Item, { as: 'items', foreignKey: 'boardId' });
+    Board.belongsTo(models.Group, { as: 'group', foreignKey: 'groupID' });
+    Board.belongsTo(models.User, { as: 'facilitator', foreignKey: 'facilitatorID' });
+    Board.hasMany(models.Pillar, { as: 'pillars', foreignKey: 'boardID' });
+    Board.hasMany(models.Item, { as: 'items', foreignKey: 'boardID' });
   };
 
   return Board;

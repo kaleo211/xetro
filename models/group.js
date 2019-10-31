@@ -13,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   Group.associate = (models) => {
-    Group.belongsToMany(models.User, { as: 'members', through: 'GroupMember' });
-    Group.hasMany(models.Board, { as: 'boards', foreignKey: 'groupId' });
-    Group.hasMany(models.Item, { as: 'items', foreignKey: 'groupId' });
+    Group.belongsToMany(models.User, { as: 'members', through: 'GroupMember', foreignKey: 'groupID' });
+    Group.hasMany(models.Board, { as: 'boards', foreignKey: 'groupID' });
+    Group.hasMany(models.Item, { as: 'items', foreignKey: 'groupID' });
   };
 
   return Group;

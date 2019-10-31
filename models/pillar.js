@@ -10,11 +10,12 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: () => uuid(),
     },
     title: DataTypes.STRING,
+    position: DataTypes.INTEGER,
   }, {});
 
   Pillar.associate = (models) => {
-    Pillar.belongsTo(models.Board, { as: 'board' });
-    Pillar.hasMany(models.Item, { as: 'items', foreignKey: 'pillarId' });
+    Pillar.belongsTo(models.Board, { as: 'board', foreignKey: 'boardID' });
+    Pillar.hasMany(models.Item, { as: 'items', foreignKey: 'pillarID' });
   };
 
   return Pillar;

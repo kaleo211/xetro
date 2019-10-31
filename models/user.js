@@ -11,7 +11,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
-    initial: {
+    name: {
+      type: new DataTypes.VIRTUAL(DataTypes.STRING),
+      get() {
+        return `${this.get('firstName')} ${this.get('lastName')}`;
+      },
+    },
+    initials: {
       type: new DataTypes.VIRTUAL(DataTypes.STRING),
       get() {
         const first = this.get('firstName');
@@ -36,8 +42,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   User.associate = (models) => {
-    User.belongsToMany(models.Group, { as: 'groups', through: 'GroupMember' });
-    User.hasMany(models.Item, { as: 'actions', foreignKey: 'ownerId' });
+    User.belongsToMany(models.Group, { as: 'groups', through: 'GroupMember', foreignKey: 'userID' });
+    User.hasMany(models.Item, { as: 'actions', foreignKey: 'ownerID' });
   };
 
   return User;

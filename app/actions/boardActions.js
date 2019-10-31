@@ -7,8 +7,8 @@ import {
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
 
-export const fetchGroupActiveBoard = (groupId) => async (dispatch) => {
-  const board = await Utils.fetch(`/boards/active/${groupId}`);
+export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
+  const board = await Utils.fetch(`/boards/active/${groupID}`);
   if (!board) {
     console.error('error fetching active board');
   }
@@ -30,8 +30,8 @@ export const postBoard = (newBoard) => async (dispatch) => {
   }
 };
 
-export const listBoards = (groupId) => async (dispatch) => {
-  const boards = await Utils.fetch(`/boards/group/${groupId}`);
+export const listBoards = (groupID) => async (dispatch) => {
+  const boards = await Utils.fetch(`/boards/group/${groupID}`);
   if (boards) {
     dispatch({
       type: SET_HISTORY_BOARDS,
@@ -52,14 +52,14 @@ export const setBoards = () => async (dispatch) => {
   }
 };
 
-export const setBoard = (boardId) => async (dispatch) => {
-  if (boardId == null || boardId === '') {
+export const setBoard = (boardID) => async (dispatch) => {
+  if (boardID == null || boardID === '') {
     dispatch({
       type: SET_BOARD,
       board: null,
     });
   } else {
-    const board = await Utils.get('boards', boardId);
+    const board = await Utils.get('boards', boardID);
     if (board) {
       dispatch({
         type: SET_BOARD,
@@ -71,17 +71,17 @@ export const setBoard = (boardId) => async (dispatch) => {
   }
 };
 
-export const archiveBoard = (boardId) => async (dispatch) => {
-  await Utils.fetch(`/boards/${boardId}/archive`);
+export const archiveBoard = (boardID) => async (dispatch) => {
+  await Utils.fetch(`/boards/${boardID}/archive`);
   dispatch(setPage('group'));
 };
 
-export const lockBoard = (boardId) => async (dispatch) => {
-  await Utils.fetch(`/boards/${boardId}/lock`);
-  dispatch(setBoard(boardId));
+export const lockBoard = (boardID) => async (dispatch) => {
+  await Utils.fetch(`/boards/${boardID}/lock`);
+  dispatch(setBoard(boardID));
 };
 
-export const unlockBoard = (boardId) => async (dispatch) => {
-  await Utils.fetch(`/boards/${boardId}/unlock`);
-  dispatch(setBoard(boardId));
+export const unlockBoard = (boardID) => async (dispatch) => {
+  await Utils.fetch(`/boards/${boardID}/unlock`);
+  dispatch(setBoard(boardID));
 };

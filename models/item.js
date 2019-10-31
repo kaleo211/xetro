@@ -26,12 +26,12 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   Item.associate = (models) => {
-    Item.belongsTo(models.Group, { as: 'group' });
-    Item.belongsTo(models.Board, { as: 'board' });
-    Item.belongsTo(models.Pillar, { as: 'pillar' });
-    Item.belongsTo(models.User, { as: 'owner' });
-    Item.belongsTo(Item, { as: 'item' });
-    Item.hasMany(Item, { as: 'actions', foreignKey: 'itemId' });
+    Item.belongsTo(models.Group, { as: 'group', foreignKey: 'groupID' });
+    Item.belongsTo(models.Board, { as: 'board', foreignKey: 'boardID' });
+    Item.belongsTo(models.Pillar, { as: 'pillar', foreignKey: 'pillarID' });
+    Item.belongsTo(models.User, { as: 'owner', foreignKey: 'ownerID' });
+    Item.belongsTo(Item, { as: 'item', foreignKey: 'itemID' });
+    Item.hasMany(Item, { as: 'actions', foreignKey: 'actionID' });
   };
 
   return Item;

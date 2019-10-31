@@ -1,24 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { withStyles } from '@material-ui/core/styles';
 
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-
-import {
-  VpnKeyOutlined,
-  LockOutlined,
-  VoiceChat,
-  SaveOutlined,
-} from '@material-ui/icons';
+import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
+import { IconButton } from 'office-ui-fabric-react';
 
 import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 import { openSnackBar, setPage } from '../actions/localActions';
 import { finishItem } from '../actions/itemActions';
 
-const styles = theme => ({
+const classNames = mergeStyleSets({
+  iconButton: {
+    fontSize: 24,
+    height: 24,
+    width: 24,
+    marginRight: 16,
+  },
 });
 
 class ActionBar extends React.Component {
@@ -64,37 +62,70 @@ class ActionBar extends React.Component {
   }
 
   render() {
-    const { board, page, classes } = this.props;
+    const { board, page } = this.props;
+
+    const videoIcon = {
+      iconName: 'PresenceChickletVideo',
+      style: {
+        fontSize: 24,
+        color: 'white',
+      },
+    };
+
+    const saveIcon = {
+      iconName: 'Save',
+      style: {
+        fontSize: 24,
+        color: 'white',
+      },
+    };
+    const lockIcon = {
+      iconName: 'Lock',
+      style: {
+        fontSize: 24,
+        color: 'white',
+      },
+    };
+    const unlockIcon = {
+      iconName: 'Unlock',
+      style: {
+        fontSize: 24,
+        color: 'white',
+      },
+    };
 
     return page === 'board' && board.stage !== 'archived' &&
       <div>
         {board.video &&
-          <Tooltip title="Open Video Chat" placement="bottom">
-            <IconButton onClick={this.handleVideoOpen.bind(this, board.facilitator.video)} color="inherit">
-              <VoiceChat />
-            </IconButton>
-          </Tooltip>
+          <IconButton
+              primary
+              className={classNames.iconButton}
+              iconProps={videoIcon}
+          />
         }
         {board.stage === 'active' &&
-          <Tooltip title="Archive Board" placement="bottom">
-            <IconButton onClick={this.handleArchiveBoard.bind(this)} color="inherit">
-              <SaveOutlined />
-            </IconButton>
-          </Tooltip>
+          <IconButton
+              primary
+              className={classNames.iconButton}
+              iconProps={saveIcon}
+              onClick={this.handleArchiveBoard.bind(this)}
+          />
         }
         {!board.locked &&
-          <Tooltip title="Lock Board" placement="bottom">
-            <IconButton onClick={this.handleLockBoard.bind(this)} color="inherit">
-              <LockOutlined />
-            </IconButton>
-          </Tooltip>
+          <IconButton
+              primary
+              className={classNames.iconButton}
+              iconProps={lockIcon}
+              onClick={this.handleLockBoard.bind(this)}
+          />
         }
         {board.locked &&
-          <Tooltip title="Unlock Board" placement="bottom">
-            <IconButton onClick={this.handleUnlockBoard.bind(this)} color="inherit">
-              <VpnKeyOutlined />
-            </IconButton>
-          </Tooltip>
+          <IconButton
+              primary
+              className={classNames.iconButton}
+              iconProps={unlockIcon}
+              onClick={this.handleUnlockBoard.bind(this)}
+          />
         }
       </div>;
   }
@@ -121,5 +152,4 @@ ActionBar.propTypes = {
 };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles),
 )(ActionBar);
