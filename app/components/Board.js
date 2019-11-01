@@ -9,7 +9,7 @@ import { Add, ClearRounded } from '@material-ui/icons';
 
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { DocumentCard } from 'office-ui-fabric-react';
+import { DocumentCard, Text } from 'office-ui-fabric-react';
 
 import { setBoard } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
@@ -27,6 +27,10 @@ const classNames = mergeStyleSets({
   },
   title: {
     marginBottom: 24,
+  },
+  lockedTitle: {
+    height: 89,
+    textAlign: 'center',
   },
   titleText: {
     fontSize: 24,
@@ -86,14 +90,14 @@ class Board extends React.Component {
     this.state.progressTimer = setInterval(() => {
       const item = this.props.activeItem;
       if (item && item.end) {
-        const difference = Math.floor((new Date(item.end).getTime() - new Date().getTime()) / 1000);
+        const difference = (new Date(item.end).getTime() - new Date().getTime()) / 1000;
         if (difference > 0 && difference < this.state.secondsPerItem) {
           this.setState(state => ({
             ...state,
-            itemProgress: Math.floor((state.secondsPerItem - difference) * 100 / state.secondsPerItem),
+            itemProgress: (state.secondsPerItem - difference) / state.secondsPerItem,
           }));
         } else {
-          this.setState({ itemProgress: 100 });
+          this.setState({ itemProgress: 1 });
         }
       }
     }, 1000);
@@ -188,29 +192,36 @@ class Board extends React.Component {
         {facilitator && pillars && pillars.map(pillar => (
           <div key={pillar.id} className={classNames.pillar}>
             <DocumentCard className={classNames.card}>
-              <div className={classNames.title}>
-                <TextField
-                    borderless
-                    inputClassName={classNames.titleText}
-                    disabled={!enabled}
-                    defaultValue={pillar.title}
-                    onChange={this.handleChangePillarTitle.bind(this, pillar)}
-                    onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
-                />
-              </div>
-              <div className={classNames.input}>
-                <TextField
-                    underlined
-                    label="New:"
-                    value={newItemInPillar[pillar.id]}
-                    disabled={!enabled}
-                    name={pillar.id}
-                    onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
-                    onKeyPress={this.handleAddItem.bind(this, pillar.id)}
-                />
-              </div>
-              <Pillar pillar={pillar} itemProgress={itemProgress} />
+              {/* {enabled &&
+                <div className={classNames.title}>
+                  <TextField
+                      borderless
+                      inputClassName={classNames.titleText}
+                      defaultValue={pillar.title}
+                      onChange={this.handleChangePillarTitle.bind(this, pillar)}
+                      onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
+                  />
+                </div>
+              } */}
+              {/* {enabled &&
+                <div className={classNames.input}>
+                  <TextField
+                      underlined
+                      label="New:"
+                      value={newItemInPillar[pillar.id]}
+                      name={pillar.id}
+                      onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
+                      onKeyPress={this.handleAddItem.bind(this, pillar.id)}
+                  />
+                </div>
+              } */}
+              {/* {!enabled && */}
+                <div className={classNames.lockedTitle}>
+                  {pillar.title}
+                </div>
+              {/* } */}
             </DocumentCard>
+            <Pillar pillar={pillar} itemProgress={itemProgress} />
           </div>
         ))}
       </div>
