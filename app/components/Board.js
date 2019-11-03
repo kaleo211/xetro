@@ -1,24 +1,15 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import Fab from '@material-ui/core/Fab';
-import IconButton from '@material-ui/core/IconButton';
-import { Add, ClearRounded } from '@material-ui/icons';
-
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
-import { TextField } from 'office-ui-fabric-react/lib/TextField';
-import { DocumentCard, Text } from 'office-ui-fabric-react';
+import { DocumentCard, Text, TextField } from 'office-ui-fabric-react';
 
 import { setBoard } from '../actions/boardActions';
 import { openSnackBar, closeSnackBar } from '../actions/localActions';
 import { postItem } from '../actions/itemActions';
 import { patchPillar, postPillar, deletePillar } from '../actions/pillarActions';
-
-
 import Pillar from './Pillar';
-import Utils from './Utils';
 
 const classNames = mergeStyleSets({
   board: {
@@ -30,6 +21,7 @@ const classNames = mergeStyleSets({
   },
   lockedTitle: {
     height: 89,
+    fontSize: 56,
     textAlign: 'center',
   },
   titleText: {
@@ -45,31 +37,6 @@ const classNames = mergeStyleSets({
   card: {
     maxWidth: '33vw',
     minWidth: 320,
-  },
-});
-
-const styles = theme => ({
-  root: {
-    paddingTop: theme.spacing.unit * 1,
-    paddingBottom: theme.spacing.unit * 1,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 32,
-  },
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing.unit * 3,
-    right: theme.spacing.unit * 3,
-  },
-  badge: {
-    padding: 0,
-  },
-  header: {
-    padding: theme.spacing.unit * 1,
-  },
-  length: {
-    maxWidth: theme.spacing.unit * 999,
   },
 });
 
@@ -168,31 +135,19 @@ class Board extends React.Component {
   }
 
   render() {
-    const { classes, board } = this.props;
+    const { board } = this.props;
     const { newItemInPillar, itemProgress } = this.state;
 
     const facilitator = board.facilitator;
     const pillars = board.pillars;
     const enabled = (board.stage !== 'archived' && !board.locked);
 
-    const action = (pillar) => (enabled ?
-      <IconButton
-        disableRipple
-        color="primary"
-        className={classes.badge}
-        onClick={this.handleDeletePillar.bind(this, pillar)}
-      >
-        <ClearRounded fontSize="small" />
-      </IconButton>
-      : null
-    );
-
     return (
       <div className={classNames.board}>
         {facilitator && pillars && pillars.map(pillar => (
           <div key={pillar.id} className={classNames.pillar}>
             <DocumentCard className={classNames.card}>
-              {/* {enabled &&
+              {enabled &&
                 <div className={classNames.title}>
                   <TextField
                       borderless
@@ -202,8 +157,8 @@ class Board extends React.Component {
                       onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
                   />
                 </div>
-              } */}
-              {/* {enabled &&
+              }
+              {enabled &&
                 <div className={classNames.input}>
                   <TextField
                       underlined
@@ -214,12 +169,14 @@ class Board extends React.Component {
                       onKeyPress={this.handleAddItem.bind(this, pillar.id)}
                   />
                 </div>
-              } */}
-              {/* {!enabled && */}
+              }
+              {!enabled &&
                 <div className={classNames.lockedTitle}>
-                  {pillar.title}
+                  <Text variant="superLarge">
+                    {pillar.title}
+                  </Text>
                 </div>
-              {/* } */}
+              }
             </DocumentCard>
             <Pillar pillar={pillar} itemProgress={itemProgress} />
           </div>
@@ -235,6 +192,7 @@ const mapStateToProps = state => ({
   activeItem: state.local.activeItem,
   draw: state.local.drawOpen,
 });
+
 const mapDispatchToProps = (dispatch) => ({
   setBoard: (id) => dispatch(setBoard(id)),
   postItem: (item, bID) => dispatch(postItem(item, bID)),
@@ -247,5 +205,4 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles, { withTheme: true }),
 )(Board);
