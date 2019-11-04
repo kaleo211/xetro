@@ -107,7 +107,7 @@ class Group extends React.Component {
         tertiaryText: 'In a meeting',
       };
     });
-    const actions = group.items.filter(action => action.stage !== 'done');
+    const actions = group.actions.filter(action => action.stage !== 'done');
     const membersWithActions = members.filter(m => {
       return m.actions && m.actions.filter(a => !a.finished && a.groupID === group.id).length > 0;
     });

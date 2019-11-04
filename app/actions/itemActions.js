@@ -36,3 +36,19 @@ export const postItem = (item) => async (dispatch) => {
   await Utils.post('items', item);
   dispatch(setBoard(item.boardID));
 };
+
+export const finishAction = (action) => async (dispatch) => {
+  await Utils.fetch(`/actions/${action.id}/finish`);
+  dispatch(getMe());
+  dispatch(setBoard(action.boardID));
+};
+
+export const startAction = (action) => async (dispatch) => {
+  await Utils.fetch(`/items/${action.id}/start`);
+  dispatch(setBoard(action.boardID));
+};
+
+export const postAction = (action) => async (dispatch) => {
+  await Utils.post('actions', action);
+  dispatch(setBoard(action.boardID));
+};

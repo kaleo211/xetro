@@ -10,6 +10,7 @@ const userRouter = require('./routers/user');
 const boardRouter = require('./routers/board');
 const pillarRouter = require('./routers/pillar');
 const itemRouter = require('./routers/item');
+const actionRouter = require('./routers/action');
 
 const server = express();
 
@@ -46,6 +47,7 @@ server.use('/users', isAuthenticated, userRouter);
 server.use('/boards', isAuthenticated, boardRouter);
 server.use('/pillars', isAuthenticated, pillarRouter);
 server.use('/items', isAuthenticated, itemRouter);
+server.use('/actions', isAuthenticated, actionRouter);
 
 server.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));

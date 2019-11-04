@@ -12,26 +12,24 @@ const respondWithGroup = async (res, id) => {
           model: model.User,
           as: 'members',
           include: [{
-            model: model.Item,
+            model: model.Action,
             as: 'actions',
             where: {
-              type: 'action',
               stage: {
                 [Op.ne]: 'done',
               },
             },
             required: false,
           }],
-        }, {
+        },
+        {
           model: model.Board,
           as: 'boards',
-        }, {
-          model: model.Item,
-          as: 'items',
+        },
+        {
+          model: model.Action,
+          as: 'actions',
           required: false,
-          where: {
-            type: 'action',
-          },
           include: [{
             model: model.User,
             as: 'owner',

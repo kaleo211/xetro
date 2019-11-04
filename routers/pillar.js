@@ -12,6 +12,10 @@ const respondWithPillar = async (res, id) => {
         model: model.Item,
         as: 'items',
         order: [['createdAt', 'ASC']],
+        include: [{
+          model: model.Action,
+          as: 'actions',
+        }],
       }],
       where: { id },
     });

@@ -29,10 +29,9 @@ routes.get('/me', (req, res) => {
       as: 'groups',
       through: {},
     }, {
-      model: model.Item,
+      model: model.Action,
       as: 'actions',
       where: {
-        type: 'action',
         stage: {
           [Op.ne]: 'done',
         },

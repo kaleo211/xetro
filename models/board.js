@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     Board.belongsTo(models.Group, { as: 'group', foreignKey: 'groupID' });
     Board.belongsTo(models.User, { as: 'facilitator', foreignKey: 'facilitatorID' });
     Board.hasMany(models.Pillar, { as: 'pillars', foreignKey: 'boardID' });
-    Board.hasMany(models.Item, { as: 'items', foreignKey: 'boardID' });
+    Board.hasMany(models.Action, { as: 'actions', foreignKey: 'boardID' });
   };
 
   return Board;

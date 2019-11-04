@@ -9,33 +9,31 @@ const associations = [
   {
     model: model.User,
     as: 'facilitator',
-  }, {
+  },
+  {
     model: model.Group,
     as: 'group',
-  }, {
+  },
+  {
     model: model.Pillar,
     as: 'pillars',
-    order: [['position', 'ASC']],
-    include: [
-      {
-        model: model.Item,
-        as: 'items',
-        order: [['createdAt', 'ASC']],
-        include: [
-          {
-            model: model.Item,
-            as: 'actions',
-            order: [['createdAt', 'ASC']],
-          },
-        ],
-      },
-    ],
-  }, {
-    model: model.Item,
-    as: 'items',
+    order: [[{ model: model.Pillar, as: 'pillars' }, 'position', 'ASC']],
+    include: [{
+      model: model.Item,
+      as: 'items',
+      order: [[{ model: model.Item, as: 'items' }, 'createdAt', 'ASC']],
+      include: [{
+        model: model.Action,
+        as: 'actions',
+        order: [[{ model: model.Action, as: 'actions' }, 'createdAt', 'ASC']],
+      }],
+    }],
+  },
+  {
+    model: model.Action,
+    as: 'actions',
     required: false,
     where: {
-      type: 'action',
       stage: {
         [Op.ne]: 'done',
       },
@@ -60,28 +58,6 @@ const respondWithBoard = async (res, id) => {
   }
 };
 
-const respondWithActiveBoards = async (res, groupID) => {
-  try {
-    const board = await model.Board.findOne({
-      include: associations,
-      where: {
-        groupID,
-        stage: {
-          [Op.ne]: 'archived',
-        },
-      },
-    });
-    if (board) {
-      res.json(board);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    console.error('error get active board', err);
-    res.sendStatus(500);
-  }
-};
-
 const updateBoard = async (res, id, fields) => {
   try {
     await model.Board.update(
@@ -98,11 +74,6 @@ const updateBoard = async (res, id, fields) => {
 // Get
 routes.get('/:id', async (req, res) => {
   await respondWithBoard(res, req.params.id);
-});
-
-// List Active
-routes.get('/active/:id', async (req, res) => {
-  await respondWithActiveBoards(res, req.params.id);
 });
 
 // Archive

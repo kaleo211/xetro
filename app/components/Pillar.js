@@ -26,7 +26,15 @@ import {
 import { mergeStyleSets, registerIcons } from 'office-ui-fabric-react/lib/Styling';
 
 import { setActiveItem } from '../actions/localActions';
-import { postItem, deleteItem, likeItem, finishItem, startItem, patchItem } from '../actions/itemActions';
+import {
+  postItem,
+  deleteItem,
+  likeItem,
+  finishItem,
+  startItem,
+  patchItem,
+  postAction,
+} from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 import Utils from './Utils';
@@ -166,13 +174,11 @@ class Pillar extends React.Component {
       const newAction = {
         title: newActionTitle.capitalize(),
         itemID: item.id,
-        type: 'action',
-        pillarID: item.pillarID,
         groupID: this.props.group.id,
         boardID: this.props.board.id,
       };
 
-      this.props.postItem(newAction);
+      this.props.postAction(newAction);
       this.setState({ newActionTitle: '' });
     }
   }
@@ -197,13 +203,13 @@ class Pillar extends React.Component {
         onClick: (action) => this.handleAddActionOwner.bind(this, action, member),
       };
     });
-    const items = pillar.items.sort(Utils.createdAt());
+    const items = pillar.items;
 
     const showTimer = (item) => board.locked && board.stage === 'active' && item.stage === 'created';
     const showFinishButtons = (item) => board.locked && board.stage === 'active' && item.stage === 'active';
     const showAddAction = (item) => board.locked && board.stage === 'active' && item.stage === 'active' && addingAction;
 
-    return items.map(item => (item.type === 'item' &&
+    return items.map(item => (
       <DocumentCard key={item.id} className={classNames.card}>
         <div className={classNames.title}>
           <DocumentCardTitle
@@ -409,6 +415,7 @@ const mapDispatchToProps = (dispatch) => ({
   finishItem: (id) => dispatch(finishItem(id)),
   startItem: (item) => dispatch(startItem(item)),
   patchItem: (item) => dispatch(patchItem(item)),
+  postAction: (action) => dispatch(postAction(action)),
 });
 
 export default compose(

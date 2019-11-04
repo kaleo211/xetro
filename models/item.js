@@ -18,10 +18,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: 'created',
     },
-    type: {
-      type: DataTypes.STRING,
-      defaultValue: 'item',
-    },
     end: DataTypes.DATE,
   }, {});
 
@@ -30,8 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     Item.belongsTo(models.Board, { as: 'board', foreignKey: 'boardID' });
     Item.belongsTo(models.Pillar, { as: 'pillar', foreignKey: 'pillarID' });
     Item.belongsTo(models.User, { as: 'owner', foreignKey: 'ownerID' });
-    Item.belongsTo(Item, { as: 'item', foreignKey: 'itemID' });
-    Item.hasMany(Item, { as: 'actions', foreignKey: 'actionID' });
+    Item.hasMany(models.Action, { as: 'actions', foreignKey: 'itemID' });
   };
 
   return Item;

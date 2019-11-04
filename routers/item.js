@@ -6,17 +6,17 @@ const associations = [
   {
     model: model.User,
     as: 'owner',
-  }, {
+  },
+  {
     model: model.Group,
     as: 'group',
-  }, {
+  },
+  {
     model: model.Pillar,
     as: 'pillar',
-  }, {
-    model: model.Item,
-    as: 'item',
-  }, {
-    model: model.Item,
+  },
+  {
+    model: model.Action,
     as: 'actions',
   },
 ];
@@ -145,13 +145,11 @@ routes.post('/', async (req, res) => {
   try {
     const newItem = await model.Item.create({
       title: item.title,
-      type: item.type,
     });
     await newItem.setOwner(item.ownerID);
     await newItem.setPillar(item.pillarID);
     await newItem.setGroup(item.groupID);
     await newItem.setBoard(item.boardID);
-    await newItem.setItem(item.itemID);
     await respondWithItem(res, newItem.id);
   } catch (err) {
     console.error('error post item:', err);
