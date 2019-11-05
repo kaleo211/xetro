@@ -14,8 +14,8 @@ app.post('/tenantID/oauth2/v2.0/token', (req, res) => {
 app.get('/me', (req, res) => {
   res.json({
     mail: 'fakeEamil',
-    firstName: 'fakeGivenName',
-    lastName: 'fakeSurname',
+    givenName: 'TheElephant',
+    surname: 'Cage',
     microsoftID: '79499A9B-6023-4FAC-B594-7626312BC6BD',
   });
 });

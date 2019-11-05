@@ -37,7 +37,6 @@ import {
 } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
-import Utils from './Utils';
 
 registerIcons({
   icons: {
@@ -92,7 +91,6 @@ registerIcons({
   },
 });
 
-
 const classNames = mergeStyleSets({
   card: {
     maxWidth: '33vw',
@@ -126,7 +124,7 @@ class Pillar extends React.Component {
 
     this.state = {
       newActionTitle: '',
-      addingAction: false,
+      isAddingAction: false,
     };
   }
 
@@ -160,27 +158,34 @@ class Pillar extends React.Component {
     this.setState({ switcher: true });
   }
 
-  onAddAction() {
-    this.setState({ addingAction: true });
+  async onAddAction(item) {
+    this.setState({ isAddingAction: true });
+    this.props.setActiveItem(item);
+    await this.handleFinishItem(item);
   }
 
   onAddedAction() {
-    this.setState({ addingAction: false });
+    this.setState({ isAddingAction: false });
   }
 
-  handleSaveAction(item, evt) {
+  async onSaveActionEnterKey(item, evt) {
     const { newActionTitle } = this.state;
     if (evt && evt.key === 'Enter' && newActionTitle !== '') {
-      const newAction = {
-        title: newActionTitle.capitalize(),
-        itemID: item.id,
-        groupID: this.props.group.id,
-        boardID: this.props.board.id,
-      };
-
-      this.props.postAction(newAction);
-      this.setState({ newActionTitle: '' });
+      await this.onSaveAction(item);
     }
+  }
+
+  async onSaveAction(item) {
+    const { newActionTitle } = this.state;
+    const newAction = {
+      title: newActionTitle.capitalize(),
+      itemID: item.id,
+      groupID: this.props.group.id,
+      boardID: this.props.board.id,
+    };
+
+    await this.props.postAction(newAction);
+    this.setState({ newActionTitle: '' });
   }
 
   handleLikeItem(item, evt) {
@@ -188,13 +193,13 @@ class Pillar extends React.Component {
     this.props.likeItem({ ...item, boardID: this.props.board.id });
   }
 
-  handleFinishItem(item) {
-    this.props.finishItem({ ...item, boardID: this.props.board.id });
+  async handleFinishItem(item) {
+    await this.props.finishItem({ ...item, boardID: this.props.board.id });
   }
 
   render() {
     const { activeItem, itemProgress, pillar, group, board } = this.props;
-    const { newActionTitle, addingAction } = this.state;
+    const { newActionTitle, isAddingAction } = this.state;
 
     const members = group.members.map(member => {
       return {
@@ -205,9 +210,21 @@ class Pillar extends React.Component {
     });
     const items = pillar.items;
 
-    const showTimer = (item) => board.locked && board.stage === 'active' && item.stage === 'created';
-    const showFinishButtons = (item) => board.locked && board.stage === 'active' && item.stage === 'active';
-    const showAddAction = (item) => board.locked && board.stage === 'active' && item.stage === 'active' && addingAction;
+    const showTimer = (item) => {
+      return board.locked && board.stage === 'active' && item.stage === 'created';
+    };
+    const showFinishButton = (item) => {
+      return board.locked && board.stage === 'active' && item.stage === 'active';
+    };
+    const showActionButton = (item) => {
+      return board.locked && board.stage === 'active' && item.stage !== 'created';
+    };
+
+    console.log('active item:', activeItem);
+
+    const showAddAction = (item) => {
+      return board.locked && board.stage === 'active' && item.id === activeItem.id && isAddingAction;
+    };
 
     return items.map(item => (
       <DocumentCard key={item.id} className={classNames.card}>
@@ -241,7 +258,7 @@ class Pillar extends React.Component {
                   onClick={this.handleStartItem.bind(this, item)}
               />
             }
-            {showFinishButtons(item) &&
+            {showFinishButton(item) &&
               <IconButton
                   primary
                   className={classNames.iconButton}
@@ -249,7 +266,7 @@ class Pillar extends React.Component {
                   onClick={this.handleFinishItem.bind(this, item)}
               />
             }
-            {showFinishButtons(item) &&
+            {showActionButton(item) &&
               <IconButton
                   primary
                   className={classNames.iconButton}
@@ -266,7 +283,8 @@ class Pillar extends React.Component {
                   underlined
                   style={{ width: '100%' }}
                   onChange={this.handleNewActionChange.bind(this)}
-                  onKeyPress={this.handleSaveAction.bind(this, item)}
+                  onKeyPress={this.onSaveActionEnterKey.bind(this, item)}
+                  onBlur={this.onSaveAction.bind(this, item)}
               />
             </div>
             <IconButton
@@ -277,6 +295,11 @@ class Pillar extends React.Component {
                   shouldFocusOnMount: true,
                   items: members,
                 }}
+            />
+            <IconButton
+                primary
+                iconProps={{ iconName: 'add-svg' }}
+                onClick={this.onAddAction.bind(this, item)}
             />
           </div>
         }
@@ -325,7 +348,7 @@ class Pillar extends React.Component {
       //             label="Action Item"
       //             value={newActionTitle}
       //             onChange={this.handleNewActionChange.bind(this)}
-      //             onKeyPress={this.handleSaveAction.bind(this, item)}
+      //             onKeyPress={this.onSaveActionEnterKey.bind(this, item)}
       //           />
       //         }
       //       </Grid>

@@ -41,11 +41,11 @@ const associations = [
   },
 ];
 
-const respondWithBoard = async (res, id) => {
+const respondWithBoard = async (res, where) => {
   try {
     const board = await model.Board.findOne({
       include: associations,
-      where: { id },
+      where,
     });
     if (board) {
       res.json(board);
@@ -73,7 +73,11 @@ const updateBoard = async (res, id, fields) => {
 
 // Get
 routes.get('/:id', async (req, res) => {
-  await respondWithBoard(res, req.params.id);
+  await respondWithBoard(res, { id: req.params.id });
+});
+
+routes.get('/active/:groupID', async (req, res) => {
+  await respondWithBoard(res, { groupID: req.params.groupID });
 });
 
 // Archive
@@ -121,7 +125,7 @@ routes.post('/', async (req, res) => {
   const board = req.body;
   try {
     const newBoard = await boardSvc.create(board.name, board.facilitatorID, board.groupID);
-    await respondWithBoard(res, newBoard.id);
+    await respondWithBoard(res, { id: newBoard.id });
   } catch (err) {
     console.error('error post board:', err);
     res.sendStatus(500);
@@ -135,7 +139,7 @@ routes.patch('/:id', async (req, res) => {
       where: { id: req.params.id },
     });
     await board.setFacilitator(req.body.facilitatorID);
-    await respondWithBoard(res, board.id);
+    await respondWithBoard(res, { id: board.id });
   } catch (err) {
     console.error('error patch board:', err);
     res.sendStatus(500);
