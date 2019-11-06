@@ -2,29 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import Avatar from '@material-ui/core/Avatar';
-import Badge from '@material-ui/core/Badge';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelActions from '@material-ui/core/ExpansionPanelActions';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import Grid from '@material-ui/core/Grid';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import { List, ListItem, ListItemText, ListItemIcon, Typography } from '@material-ui/core';
 import {
-  ActionButton,
-  DefaultButton,
   DocumentCard,
   DocumentCardTitle,
   IconButton,
   ProgressIndicator,
   TextField,
-  Dropdown,
   FocusTrapCallout,
   FocusZone,
   PrimaryButton,
+  Button,
 } from 'office-ui-fabric-react';
 import { mergeStyleSets, registerIcons } from 'office-ui-fabric-react/lib/Styling';
 
@@ -67,12 +54,6 @@ registerIcons({
         <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z" />
       </svg>
     ),
-    // 'action-svg': (
-    //   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-    //     <path fill="none" d="M0 0h24v24H0V0z" />
-    //     <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.8 1.29 6 2H9zm-3-3v-3h3v-2H6V7H4v3H1v2h3v3z" />
-    //   </svg>
-    // ),
     'assign-svg': (
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
         <path fill="none" d="M0 0h24v24H0V0z" />
@@ -99,6 +80,13 @@ const classNames = mergeStyleSets({
     maxWidth: '33vw',
     minWidth: 320,
     marginTop: 4,
+  },
+  actionCard: {
+    maxWidth: '33vw',
+    minWidth: 320,
+    maxHeight: 36,
+    marginTop: 2,
+    marginLeft: 16,
   },
   title: {
     display: 'flex',
@@ -152,6 +140,15 @@ class Pillar extends React.Component {
     this.setState({ switcher: true });
   }
 
+  handleLikeItem(item, evt) {
+    evt.stopPropagation();
+    this.props.likeItem({ ...item, boardID: this.props.board.id });
+  }
+
+  async handleFinishItem(item) {
+    await this.props.finishItem({ ...item, boardID: this.props.board.id });
+  }
+
   onChangeNewActionTitle(evt) {
     this.setState({
       newActionTitle: evt.target.value,
@@ -185,28 +182,19 @@ class Pillar extends React.Component {
     });
   }
 
-  handleLikeItem(item, evt) {
-    evt.stopPropagation();
-    this.props.likeItem({ ...item, boardID: this.props.board.id });
-  }
-
-  async handleFinishItem(item) {
-    await this.props.finishItem({ ...item, boardID: this.props.board.id });
-  }
-
-  onSetActionOwner(action, member) {
-    console.log('action:', action, 'member:', member);
+  onSetActionOwner(member) {
+    this.setState({ newActionOwner: member });
   }
 
   render() {
     const { activeItem, itemProgress, pillar, group, board } = this.props;
-    const { newActionTitle, activeItemDOM, isAddingAction } = this.state;
+    const { newActionOwner, activeItemDOM, isAddingAction } = this.state;
 
     const members = group.members.map(member => {
       return {
         ...member,
         text: member.name,
-        onClick: () => (this.onSetActionOwner.bind(this)),
+        onClick: this.onSetActionOwner.bind(this, member),
       };
     });
     const items = pillar.items;
@@ -220,218 +208,124 @@ class Pillar extends React.Component {
     const showActionButton = (item) => {
       return board.locked && board.stage === 'active' && item.stage !== 'created';
     };
-
-    console.log('active item:', activeItem);
-
     const showAddAction = (item) => {
       return board.locked && board.stage === 'active' && item.id === activeItem.id && isAddingAction;
     };
 
     return items.map(item => (
-      <DocumentCard
-          key={item.id}
-          className={classNames.card}
-      >
-        <div className={classNames.title}>
-          <DocumentCardTitle
-              title={item.title}
-              className={item.stage !== 'done' ? classNames.titleText : null}
-          />
-          <div className={classNames.actions}>
-            {!board.locked &&
-              <IconButton
-                  primary
-                  className={classNames.iconButton}
-                  iconProps={{ iconName: 'delete-svg' }}
-                  onClick={this.handleDeleteItem.bind(this, item)}
-              />
-            }
-            {!board.locked &&
-              <IconButton
-                  primary
-                  className={classNames.iconButton}
-                  iconProps={{ iconName: 'thumbsup-svg' }}
-                  onClick={this.handleLikeItem.bind(this, item)}
-              />
-            }
-            {showTimer(item) &&
-              <IconButton
-                  primary
-                  className={classNames.iconButton}
-                  iconProps={{ iconName: 'timer-svg' }}
-                  onClick={this.handleStartItem.bind(this, item)}
-              />
-            }
-            {showFinishButton(item) &&
-              <IconButton
-                  primary
-                  className={classNames.iconButton}
-                  iconProps={{ iconName: 'done-svg' }}
-                  onClick={this.handleFinishItem.bind(this, item)}
-              />
-            }
-            {showActionButton(item) &&
-              <IconButton
-                  primary
-                  className={classNames.iconButton}
-                  iconProps={{ iconName: 'action-svg' }}
-                  onClick={this.onClickAddActionButton.bind(this, item)}
-              />
-            }
+      <div>
+        <DocumentCard
+            key={item.id}
+            className={classNames.card}
+        >
+          <div className={classNames.title}>
+            <DocumentCardTitle
+                title={item.title}
+                className={item.stage !== 'done' ? classNames.titleText : null}
+            />
+            <div className={classNames.actions}>
+              {!board.locked &&
+                <IconButton
+                    primary
+                    className={classNames.iconButton}
+                    iconProps={{ iconName: 'delete-svg' }}
+                    onClick={this.handleDeleteItem.bind(this, item)}
+                />
+              }
+              {!board.locked &&
+                <IconButton
+                    primary
+                    className={classNames.iconButton}
+                    iconProps={{ iconName: 'thumbsup-svg' }}
+                    onClick={this.handleLikeItem.bind(this, item)}
+                />
+              }
+              {showTimer(item) &&
+                <IconButton
+                    primary
+                    className={classNames.iconButton}
+                    iconProps={{ iconName: 'timer-svg' }}
+                    onClick={this.handleStartItem.bind(this, item)}
+                />
+              }
+              {showFinishButton(item) &&
+                <IconButton
+                    primary
+                    className={classNames.iconButton}
+                    iconProps={{ iconName: 'done-svg' }}
+                    onClick={this.handleFinishItem.bind(this, item)}
+                />
+              }
+              {showActionButton(item) &&
+                <IconButton
+                    primary
+                    className={classNames.iconButton}
+                    iconProps={{ iconName: 'action-svg' }}
+                    onClick={this.onClickAddActionButton.bind(this, item)}
+                />
+              }
+            </div>
           </div>
-        </div>
-        {showAddAction(item) &&
-          <FocusTrapCallout
-              role="alertdialog"
-              gapSpace={0}
-              setInitialFocus
-              target={activeItemDOM}
-              style={{ padding: 8, width: 320 }}
-          >
-            <FocusZone>
-              <div>
-                <div style={{ display: 'flex', verticalAlign: 'middle' }}>
-                  <div style={{ width: '100%' }}>
-                    <TextField
-                        underlined
-                        style={{ width: '100%' }}
-                        onChange={this.onChangeNewActionTitle.bind(this)}
+          {showAddAction(item) &&
+            <FocusTrapCallout
+                role="alertdialog"
+                gapSpace={0}
+                setInitialFocus
+                target={activeItemDOM}
+                style={{ padding: 8, width: 320 }}
+            >
+              <FocusZone>
+                <div>
+                  <div style={{ display: 'flex', verticalAlign: 'middle' }}>
+                    <div style={{ width: '100%' }}>
+                      <TextField
+                          underlined
+                          style={{ width: '100%' }}
+                          onChange={this.onChangeNewActionTitle.bind(this)}
+                      />
+                    </div>
+                    {newActionOwner ?
+                      <Button
+                          text={newActionOwner.initials}
+                          menuProps={{
+                            shouldFocusOnMount: true,
+                            items: members,
+                          }}
+                      /> :
+                      <IconButton
+                          primary
+                          iconProps={{ iconName: 'assign-svg' }}
+                          menuProps={{
+                            shouldFocusOnMount: true,
+                            items: members,
+                          }}
+                      />
+                    }
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+                    <PrimaryButton
+                        text="Add"
+                        onClick={this.onSaveAction.bind(this, item)}
                     />
                   </div>
-                  <IconButton
-                      primary
-                      iconProps={{ iconName: 'assign-svg' }}
-                      menuProps={{
-                        shouldFocusOnMount: true,
-                        items: members,
-                      }}
-                  />
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
-                  <PrimaryButton
-                      text="Add"
-                      onClick={this.onSaveAction.bind(this, item)}
-                  />
-                </div>
-              </div>
-            </FocusZone>
-          </FocusTrapCallout>
-        }
-        {board.locked && item.id === activeItem.id && item.stage === 'active' &&
-          <ProgressIndicator percentComplete={1 - itemProgress} />
-        }
-      </DocumentCard>
-      // <ExpansionPanel
-      //   key={`item-${item.id}`}
-      //   expanded={switcher && activeItem.id === item.id}
-      //   onChange={this.handleActivateItem.bind(this, item)}
-      // >
-      //   <ExpansionPanelSummary className={classes.panelSummay}>
-      //     <Grid
-      //       container
-      //       justify="space-between"
-      //       alignItems="center"
-      //       spacing={0}
-      //     >
-      //       <Grid item xs={10} sm={11}>
-      //         <TextField
-      //           fullWidth
-      //           value={item.title}
-      //           InputProps={{ disableUnderline: true, readOnly: true, classes: { input: classes.title } }}
-      //           className={item.stage === 'done' ? classes.itemDone : null}
-      //         />
-      //       </Grid>
-      //       <Grid item className={classes.summaryGrid}>
-      //         <IconButton
-      //           onClick={this.handleLikeItem.bind(this, item)}
-      //           disabled={disabled(item)}
-      //         >
-      //           <Badge badgeContent={item.likes} color="primary" invisible={item.likes === 0} classes={{ badge: classes.badge }}>
-      //             <ThumbUpOutlined />
-      //           </Badge>
-      //         </IconButton>
-      //       </Grid>
-      //     </Grid>
-      //   </ExpansionPanelSummary>
-      //   <ExpansionPanelDetails className={classes.panelDetail}>
-      //     <Grid container direction="column">
-      //       <Grid item>
-      //         {board.stage === 'active' &&
-      //           <TextField
-      //             fullWidth
-      //             label="Action Item"
-      //             value={newActionTitle}
-      //             onChange={this.onChangeNewActionTitle.bind(this)}
-      //             onKeyPress={this.onSaveActionEnterKey.bind(this, item)}
-      //           />
-      //         }
-      //       </Grid>
-      //       <Grid item>
-      //         <List>
-      //           {item.actions.map(i => (
-      //             <ListItem divider key={`action-${i.id}`} className={classes.item}>
-      //               <ListItemText primary={i.title} />
-      //               {i.ownerID && <Avatar className={classes.owner}>{i.ownerID}</Avatar>}
-      //               {!i.ownerID && <div>
-      //                 <IconButton onClick={this.handleOwerListOpen.bind(this, i.id)}>
-      //                   <Add fontSize="inherit" />
-      //                 </IconButton>
-      //                 <Menu
-      //                   anchorEl={ownerAnchorEl[i.id]}
-      //                   open={Boolean(ownerAnchorEl[i.id])}
-      //                   onClose={this.handleOwerListClose.bind(this, i.id)}
-      //                 >
-      //                   {members && members.map(member => (
-      //                     <MenuItem
-      //                       style={{ paddingTop: 20, paddingBottom: 20 }}
-      //                       key={`owner-${member.userID}`}
-      //                       onClick={this.handleAddActionOwner.bind(this, i, member)}
-      //                     >
-      //                       <ListItemIcon><Avatar>{member.firstName}</Avatar></ListItemIcon>
-      //                       <Typography variant="h5">
-      //                         {`${member.firstName} ${member.lastName}`}
-      //                       </Typography>
-      //                     </MenuItem>
-      //                   ))}
-      //                 </Menu>
-      //               </div>}
-      //             </ListItem>
-      //           ))}
-      //         </List>
-      //       </Grid>
-      //     </Grid>
-      //   </ExpansionPanelDetails>
-      //   <ExpansionPanelActions className={classes.panelAction}>
-      //     <Grid container direction="column" className={classes.action}>
-      //       <Grid container justify="flex-end">
-      //         {board.stage !== 'archived' && item.stage !== 'done' &&
-      //           <Grid item>
-      //             {board.locked && item.stage === 'created' &&
-      //               <IconButton onClick={this.handleStartItem.bind(this, item)}>
-      //                 <PlayArrowRounded />
-      //               </IconButton>
-      //             }
-      //             {item.stage === 'active' &&
-      //               <IconButton onClick={this.handleFinishItem.bind(this, item)}>
-      //                 <Done />
-      //               </IconButton>
-      //             }
-      //             {!board.locked && item.stage === 'created' && (item.actions == null || item.actions.length === 0) && (
-      //               <IconButton onClick={this.handleDeleteItem.bind(this, item)}>
-      //                 <DeleteOutline />
-      //               </IconButton>
-      //             )}
-      //           </Grid>
-      //         }
-      //       </Grid>
-      //       <Grid>
-      //         {board.locked && item.stage === 'active' &&
-      //           <LinearProgress color="secondary" variant="determinate" value={this.props.itemProgress} />
-      //         }
-      //       </Grid>
-      //     </Grid>
-      //   </ExpansionPanelActions>
-      // </ExpansionPanel>
+              </FocusZone>
+            </FocusTrapCallout>
+          }
+          {board.locked && item.id === activeItem.id && item.stage === 'active' &&
+            <ProgressIndicator percentComplete={1 - itemProgress} />
+          }
+        </DocumentCard>
+        {item.actions.map(action => (
+          <DocumentCard
+              className={classNames.actionCard}
+          >
+            <DocumentCardTitle
+                title={action.title}
+            />
+          </DocumentCard>
+        ))}
+      </div>
     ));
   }
 }

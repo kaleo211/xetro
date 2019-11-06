@@ -110,6 +110,7 @@ routes.post('/', async (req, res) => {
     await newAction.setOwner(action.ownerID);
     await newAction.setGroup(action.groupID);
     await newAction.setBoard(action.boardID);
+    await newAction.setItem(action.itemID);
     await respondWithAction(res, newAction.id);
   } catch (err) {
     console.error('error post action:', err);
