@@ -22,6 +22,9 @@ import {
   ProgressIndicator,
   TextField,
   Dropdown,
+  FocusTrapCallout,
+  FocusZone,
+  PrimaryButton,
 } from 'office-ui-fabric-react';
 import { mergeStyleSets, registerIcons } from 'office-ui-fabric-react/lib/Styling';
 
@@ -124,13 +127,10 @@ class Pillar extends React.Component {
 
     this.state = {
       newActionTitle: '',
+      newActionOwner: null,
       isAddingAction: false,
+      activeItemDOM: null,
     };
-  }
-
-  handleAddActionOwner(item, owner) {
-    this.handleOwerListClose(item.id);
-    this.props.patchItem({ ...item, ownerID: owner.id, boardID: this.props.board.id });
   }
 
   handleActivateItem(item) {
@@ -140,12 +140,6 @@ class Pillar extends React.Component {
     } else {
       this.setState({ switcher: true });
     }
-  }
-
-  handleNewActionChange(evt) {
-    this.setState({
-      newActionTitle: evt.target.value,
-    });
   }
 
   handleDeleteItem(item) {
@@ -158,34 +152,37 @@ class Pillar extends React.Component {
     this.setState({ switcher: true });
   }
 
-  async onAddAction(item) {
-    this.setState({ isAddingAction: true });
+  onChangeNewActionTitle(evt) {
+    this.setState({
+      newActionTitle: evt.target.value,
+    });
+  }
+
+  async onClickAddActionButton(item, evt) {
+    this.setState({
+      isAddingAction: true,
+      activeItemDOM: evt.target,
+    });
     this.props.setActiveItem(item);
     await this.handleFinishItem(item);
   }
 
-  onAddedAction() {
-    this.setState({ isAddingAction: false });
-  }
-
-  async onSaveActionEnterKey(item, evt) {
-    const { newActionTitle } = this.state;
-    if (evt && evt.key === 'Enter' && newActionTitle !== '') {
-      await this.onSaveAction(item);
-    }
-  }
-
   async onSaveAction(item) {
-    const { newActionTitle } = this.state;
+    const { newActionTitle, newActionOwner } = this.state;
     const newAction = {
       title: newActionTitle.capitalize(),
       itemID: item.id,
+      ownerID: newActionOwner.id,
       groupID: this.props.group.id,
       boardID: this.props.board.id,
     };
-
     await this.props.postAction(newAction);
-    this.setState({ newActionTitle: '' });
+
+    this.setState({
+      isAddingAction: false,
+      newActionTitle: '',
+      newActionOwner: null,
+    });
   }
 
   handleLikeItem(item, evt) {
@@ -197,15 +194,19 @@ class Pillar extends React.Component {
     await this.props.finishItem({ ...item, boardID: this.props.board.id });
   }
 
+  onSetActionOwner(action, member) {
+    console.log('action:', action, 'member:', member);
+  }
+
   render() {
     const { activeItem, itemProgress, pillar, group, board } = this.props;
-    const { newActionTitle, isAddingAction } = this.state;
+    const { newActionTitle, activeItemDOM, isAddingAction } = this.state;
 
     const members = group.members.map(member => {
       return {
         ...member,
         text: member.name,
-        onClick: (action) => this.handleAddActionOwner.bind(this, action, member),
+        onClick: () => (this.onSetActionOwner.bind(this)),
       };
     });
     const items = pillar.items;
@@ -227,7 +228,10 @@ class Pillar extends React.Component {
     };
 
     return items.map(item => (
-      <DocumentCard key={item.id} className={classNames.card}>
+      <DocumentCard
+          key={item.id}
+          className={classNames.card}
+      >
         <div className={classNames.title}>
           <DocumentCardTitle
               title={item.title}
@@ -271,37 +275,47 @@ class Pillar extends React.Component {
                   primary
                   className={classNames.iconButton}
                   iconProps={{ iconName: 'action-svg' }}
-                  onClick={this.onAddAction.bind(this, item)}
+                  onClick={this.onClickAddActionButton.bind(this, item)}
               />
             }
           </div>
         </div>
         {showAddAction(item) &&
-          <div style={{ display: 'flex', verticalAlign: 'middle' }}>
-            <div style={{ width: '100%' }}>
-              <TextField
-                  underlined
-                  style={{ width: '100%' }}
-                  onChange={this.handleNewActionChange.bind(this)}
-                  onKeyPress={this.onSaveActionEnterKey.bind(this, item)}
-                  onBlur={this.onSaveAction.bind(this, item)}
-              />
-            </div>
-            <IconButton
-                primary
-                iconProps={{ iconName: 'assign-svg' }}
-                onClick={this.onAddAction.bind(this, item)}
-                menuProps={{
-                  shouldFocusOnMount: true,
-                  items: members,
-                }}
-            />
-            <IconButton
-                primary
-                iconProps={{ iconName: 'add-svg' }}
-                onClick={this.onAddAction.bind(this, item)}
-            />
-          </div>
+          <FocusTrapCallout
+              role="alertdialog"
+              gapSpace={0}
+              setInitialFocus
+              target={activeItemDOM}
+              style={{ padding: 8, width: 320 }}
+          >
+            <FocusZone>
+              <div>
+                <div style={{ display: 'flex', verticalAlign: 'middle' }}>
+                  <div style={{ width: '100%' }}>
+                    <TextField
+                        underlined
+                        style={{ width: '100%' }}
+                        onChange={this.onChangeNewActionTitle.bind(this)}
+                    />
+                  </div>
+                  <IconButton
+                      primary
+                      iconProps={{ iconName: 'assign-svg' }}
+                      menuProps={{
+                        shouldFocusOnMount: true,
+                        items: members,
+                      }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+                  <PrimaryButton
+                      text="Add"
+                      onClick={this.onSaveAction.bind(this, item)}
+                  />
+                </div>
+              </div>
+            </FocusZone>
+          </FocusTrapCallout>
         }
         {board.locked && item.id === activeItem.id && item.stage === 'active' &&
           <ProgressIndicator percentComplete={1 - itemProgress} />
@@ -347,7 +361,7 @@ class Pillar extends React.Component {
       //             fullWidth
       //             label="Action Item"
       //             value={newActionTitle}
-      //             onChange={this.handleNewActionChange.bind(this)}
+      //             onChange={this.onChangeNewActionTitle.bind(this)}
       //             onKeyPress={this.onSaveActionEnterKey.bind(this, item)}
       //           />
       //         }
