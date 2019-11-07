@@ -20,6 +20,7 @@ import { fetchUsers, getMe } from './actions/userActions';
 import Group from './components/Group';
 import Home from './components/Home';
 import Menu from './components/Menu';
+import { MICROSOFT_URI } from './constants';
 
 initializeIcons();
 registerIcons({
@@ -149,12 +150,7 @@ class App extends React.Component {
   async handleMicrosoftLogin() {
     await this.props.getMe();
     if (this.props.me == null) {
-      const uri = `${SSO_ADDRESS}/${SSO_TENANT_ID}/oauth2/authorize` +
-                `?client_id=${SSO_CLIENT_ID}` +
-                '&response_type=code' +
-                `&redirect_uri=${SSO_REDIRECT_URL}` +
-                '&response_mode=query';
-      window.open(uri, 'microsoft', 'height=500,width=620');
+      window.open(MICROSOFT_URI, 'microsoft', 'height=500,width=620');
     }
 
     while (this.props.me == null) {
