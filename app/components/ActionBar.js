@@ -132,6 +132,7 @@ class ActionBar extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  group: state.groups.group,
   board: state.boards.board,
   page: state.local.page,
 });

@@ -3,11 +3,12 @@ import { persistReducer } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 
 import {
-  SHOW_PAGE,
   CLOSE_SNACKBAR,
   OPEN_SNACKBAR,
-  SET_ITEM,
   SET_DRAW,
+  SET_ITEM,
+  SHOW_PAGE,
+  UPDATE_SHOW_ACTION_MAP,
 } from '../actions/types';
 
 const persistConfig = {
@@ -22,6 +23,7 @@ const initialState = {
   snackbarMessage: '',
   activeItem: {},
   drawOpen: false,
+  showActionMap: {},
 };
 
 const localReducer = (state = initialState, action) => {
@@ -55,6 +57,15 @@ const localReducer = (state = initialState, action) => {
       return {
         ...state,
         drawOpen: action.drawOpen,
+      };
+
+    case UPDATE_SHOW_ACTION_MAP:
+      return {
+        ...state,
+        showActionMap: {
+          ...state.showActionMap,
+          [action.itemID]: action.show,
+        },
       };
 
     default:

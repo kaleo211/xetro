@@ -4,6 +4,7 @@ import {
   CLOSE_SNACKBAR,
   SET_ITEM,
   SET_DRAW,
+  UPDATE_SHOW_ACTION_MAP,
 } from './types';
 
 export const setPage = (page) => ({
@@ -35,4 +36,16 @@ export const openDraw = () => ({
 export const closeDraw = () => ({
   type: SET_DRAW,
   drawOpen: false,
+});
+
+export const showActions = (itemID) => ({
+  type: UPDATE_SHOW_ACTION_MAP,
+  itemID,
+  show: true,
+});
+
+export const hideActions = (itemID) => ({
+  type: UPDATE_SHOW_ACTION_MAP,
+  itemID,
+  show: false,
 });

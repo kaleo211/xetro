@@ -3,7 +3,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
-import { Stack, DocumentCard, DocumentCardTitle, DocumentCardActivity, DocumentCardStatus } from 'office-ui-fabric-react';
+import { Stack, DocumentCard, DocumentCardTitle, DocumentCardActivity } from 'office-ui-fabric-react';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
 
