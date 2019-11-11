@@ -1,7 +1,6 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
 
 import {
   DocumentCard,
@@ -11,22 +10,12 @@ import {
 } from 'office-ui-fabric-react';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
+import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
 import { setGroup, searchGroups, addUserToGroup } from '../actions/groupActions';
 import { setPage } from '../actions/localActions';
 
-const styles = theme => ({
-  paper: {
-    padding: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 1,
-  },
-  divider: {
-    marginBottom: theme.spacing.unit * 3,
-    marginTop: theme.spacing.unit * 3,
-  },
-  iconButton: {
-    padding: 0,
-  },
+const classNames = mergeStyleSets({
   group: {
     marginTop: 8,
     marginRight: 8,
@@ -58,7 +47,7 @@ class Group extends React.Component {
   }
 
   render() {
-    const { me, groups, classes } = this.props;
+    const { me, groups } = this.props;
 
     return (me &&
       <div>
@@ -71,7 +60,7 @@ class Group extends React.Component {
             <Stack.Item key={g.id} align="auto">
               <TooltipHost content="Click to Join Group">
                 <DocumentCard
-                    className={classes.group}
+                    className={classNames.group}
                     onClick={this.onSetGroup.bind(this, g)}
                 >
                   <DocumentCardTitle title={g.name} />
@@ -102,5 +91,4 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withStyles(styles, { withTheme: true }),
 )(Group);

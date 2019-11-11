@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
 
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { mergeStyleSets, registerIcons } from 'office-ui-fabric-react/lib/Styling';
