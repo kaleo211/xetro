@@ -1,6 +1,7 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
 
 import { Text } from 'office-ui-fabric-react/lib/Text';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
@@ -11,7 +12,7 @@ import { setBoard, postBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
 import ActionBar from './ActionBar';
 
-const classNames = mergeStyleSets({
+const classes = mergeStyleSets({
   root: {
     display: 'flex',
     justifyContent: 'flex-start',
@@ -30,6 +31,9 @@ const classNames = mergeStyleSets({
   text: {
     color: 'white',
   },
+  underline: {
+    textDecoration: 'underline',
+  },
   divider: {
     marginLeft: 12,
     marginRight: 12,
@@ -46,7 +50,6 @@ const classNames = mergeStyleSets({
 class Menu extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {};
   }
 
@@ -82,34 +85,39 @@ class Menu extends React.Component {
     return item.key === 'action' ?
       <ActionBar /> :
       <Link onClick={item.onClick}>
-        <Text className={classNames.text} variant="xxLarge">{item.text}</Text>
+        <Text
+            className={classNames(classes.text, { [classes.underline]: item.key === this.props.page })}
+            variant="xxLarge"
+        >
+          {item.text}
+        </Text>
       </Link>;
   }
 
   render() {
-    const { group, board } = this.props;
+    const { group, board, page } = this.props;
 
-    const bread = [{ text: 'Xetro', key: 'xetro', onClick: () => this.props.setPage('home') }];
+    const bread = [{ text: 'Xetro', key: 'home', onClick: () => this.props.setPage('home') }];
     if (group) {
       bread.push({ text: group.name, key: 'group', onClick: () => this.props.setPage('group') });
       bread.push({ text: 'Board', key: 'board', onClick: this.handleJoinOrCreateBoard.bind(this) });
     }
-    if (board) {
+    if (board && page === 'board') {
       bread.push({ key: 'action' });
     }
 
     return (
-      <div className={classNames.root}>
-        <div className={classNames.bread}>
+      <div className={classes.root}>
+        <div className={classes.bread}>
           <Breadcrumb
               items={bread}
               maxDisplayedItems={10}
               onRenderItem={this.onRenderItem.bind(this)}
-              dividerAs={() => <Icon iconName="ChevronRightSmall" className={classNames.divider} />}
+              dividerAs={() => <Icon iconName="ChevronRightSmall" className={classes.divider} />}
           />
         </div>
-        <div className={classNames.profile}>
-          <Text className={classNames.text} variant="xxLarge">Xuebin</Text>
+        <div className={classes.profile}>
+          <Text className={classes.text} variant="xxLarge">Xuebin</Text>
         </div>
       </div>
     );

@@ -94,10 +94,9 @@ class Group extends React.Component {
   }
 
   render() {
-    const { group, activeBoard } = this.props;
+    const { group } = this.props;
     const { hoveredActionID } = this.state;
 
-    const facilitator = activeBoard && activeBoard.facilitator;
     const members = group.members.map(member => {
       return {
         ...member,
@@ -108,9 +107,6 @@ class Group extends React.Component {
       };
     });
     const actions = group.actions.filter(action => action.stage !== 'done');
-    const membersWithActions = members.filter(m => {
-      return m.actions && m.actions.filter(a => !a.finished && a.groupID === group.id).length > 0;
-    });
 
     const finishIcon = {
       iconName: 'CheckMark',
@@ -131,7 +127,6 @@ class Group extends React.Component {
     return (
       <div>
         <div className={classNames.members}>
-          {/* <Text variant="xxLarge" style={{ marginBottom: 8 }}>Members</Text> */}
           <Stack horizontal>
             {members.map(member => (
               <Stack.Item key={member.id}>
@@ -187,7 +182,6 @@ class Group extends React.Component {
 
 const mapStateToProps = state => ({
   group: state.groups.group,
-  activeBoard: state.groups.activeBoard,
   me: state.users.me,
 });
 const mapDispatchToProps = (dispatch) => ({

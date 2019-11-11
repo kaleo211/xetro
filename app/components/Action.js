@@ -3,35 +3,34 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import {
-  IconButton,
-  TextField,
   Button,
+  DefaultButton,
   Dialog,
   DialogFooter,
   DialogType,
+  IconButton,
   PrimaryButton,
-  DefaultButton,
+  TextField,
 } from 'office-ui-fabric-react';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
 import { setActiveItem, hideAddingAction } from '../actions/localActions';
 import {
-  postItem,
   deleteItem,
-  likeItem,
   finishItem,
-  startItem,
+  likeItem,
   patchItem,
   postAction,
+  postItem,
+  startItem,
 } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 
 const classNames = mergeStyleSets({
-  addButton: {
+  body: {
     display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: 12,
+    verticalAlign: 'middle',
   },
 });
 
@@ -102,7 +101,7 @@ class Action extends React.Component {
             title: 'New Action',
           }}
       >
-        <div style={{ display: 'flex', verticalAlign: 'middle' }}>
+        <div className={classNames.body}>
           <div style={{ width: '100%' }}>
             <TextField
                 underlined

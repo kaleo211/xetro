@@ -54,20 +54,20 @@ class Board extends React.Component {
   }
 
   componentDidMount() {
-    // this.state.progressTimer = setInterval(() => {
-    //   const item = this.props.activeItem;
-    //   if (item && item.end) {
-    //     const difference = (new Date(item.end).getTime() - new Date().getTime()) / 1000;
-    //     if (difference > 0 && difference < this.state.secondsPerItem) {
-    //       this.setState(state => ({
-    //         ...state,
-    //         itemProgress: (state.secondsPerItem - difference) / state.secondsPerItem,
-    //       }));
-    //     } else {
-    //       this.setState({ itemProgress: 1 });
-    //     }
-    //   }
-    // }, 1000);
+    this.state.progressTimer = setInterval(() => {
+      const item = this.props.activeItem;
+      if (item && item.end) {
+        const difference = (new Date(item.end).getTime() - new Date().getTime()) / 1000;
+        if (difference > 0 && difference < this.state.secondsPerItem) {
+          this.setState(state => ({
+            ...state,
+            itemProgress: (state.secondsPerItem - difference) / state.secondsPerItem,
+          }));
+        } else {
+          this.setState({ itemProgress: 1 });
+        }
+      }
+    }, 1000);
   }
 
   componentWillUnmount() {

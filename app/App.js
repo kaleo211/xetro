@@ -10,12 +10,7 @@ import BoardList from './components/BoardList';
 import Utils from './components/Utils';
 
 import { searchGroups } from './actions/groupActions';
-import {
-  closeSnackBar,
-  openDraw,
-  closeDraw,
-  setPage,
-} from './actions/localActions';
+import { setPage } from './actions/localActions';
 import { fetchUsers, getMe } from './actions/userActions';
 import Group from './components/Group';
 import Home from './components/Home';
@@ -79,6 +74,12 @@ registerIcons({
         <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6 1.41 1.41z" />
       </svg>
     ),
+    'archive-svg': (
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+        <path fill="none" d="M0 0h24v24H0V0z" />
+        <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm2 16H5V5h11.17L19 7.83V19zm-7-7c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3zM6 6h9v4H6z" />
+      </svg>
+    ),
   },
 });
 
@@ -99,32 +100,9 @@ const classNames = mergeStyleSets({
     display: 'flex',
     flexDirection: 'row',
   },
-});
-
-const styles = theme => ({
-  root: {
-    display: 'flex',
-  },
-  hide: {
-    display: 'none',
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  toolbar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    // padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
   content: {
     flexGrow: 1,
-    padding: theme.spacing.unit * 1,
-  },
-  arrow: {
-    marginLeft: theme.spacing.unit * 1,
-    marginRight: theme.spacing.unit * 1,
+    padding: 8,
   },
 });
 
@@ -164,15 +142,14 @@ class App extends React.Component {
   }
 
   render() {
-    const { page, group, board, me, classes } = this.props;
+    const { page, group, board, me } = this.props;
 
     return (me &&
       <div className={classNames.app}>
         <div className={classNames.nav}>
           <Menu />
         </div>
-
-        <main className={classes.content}>
+        <main className={classNames.content}>
           {page === 'home' && <Home />}
           {page === 'group' && group && <Group />}
           {page === 'board' && board && <Board />}
@@ -188,17 +165,11 @@ const mapStateToProps = state => ({
   group: state.groups.group,
   me: state.users.me,
   board: state.boards.board,
-  snackbarOpen: state.local.snackbarOpen,
-  snackbarMessage: state.local.snackbarMessage,
-  drawOpen: state.local.drawOpen,
 });
 
 export default connect(mapStateToProps, {
   searchGroups,
-  closeSnackBar,
   fetchUsers,
   getMe,
-  openDraw,
-  closeDraw,
   setPage,
-})(withStyles(styles, { withTheme: true })(App));
+})(App);

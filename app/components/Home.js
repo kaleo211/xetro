@@ -3,7 +3,12 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 
-import { Stack, DocumentCard, DocumentCardTitle, DocumentCardActivity } from 'office-ui-fabric-react';
+import {
+  DocumentCard,
+  DocumentCardActivity,
+  DocumentCardTitle,
+  Stack,
+} from 'office-ui-fabric-react';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
 
@@ -33,7 +38,6 @@ const styles = theme => ({
 class Group extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {};
   }
 
@@ -62,7 +66,6 @@ class Group extends React.Component {
             placeholder="Search Group"
             onChange={this.onSearchGroup.bind(this)}
         />
-
         <Stack horizontal wrap>
           {groups && groups.map(g => (
             <Stack.Item key={g.id} align="auto">
@@ -74,7 +77,6 @@ class Group extends React.Component {
                   <DocumentCardTitle title={g.name} />
                   <DocumentCardActivity people={g.members} />
                   <DocumentCardTitle title="No ongoing meeting" showAsSecondaryTitle />
-                  {/* <DocumentCardStatus status="3 Actions" /> */}
                 </DocumentCard>
               </TooltipHost>
             </Stack.Item>

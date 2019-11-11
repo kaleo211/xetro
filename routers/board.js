@@ -77,7 +77,10 @@ routes.get('/:id', async (req, res) => {
 });
 
 routes.get('/active/:groupID', async (req, res) => {
-  await respondWithBoard(res, { groupID: req.params.groupID });
+  await respondWithBoard(res, {
+    groupID: req.params.groupID,
+    stage: 'active',
+  });
 });
 
 // Archive

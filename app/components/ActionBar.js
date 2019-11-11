@@ -51,7 +51,7 @@ class ActionBar extends React.Component {
   }
 
   async handleArchiveBoard() {
-    this.props.archiveBoard(this.props.board.id);
+    await this.props.archiveBoard(this.props.board.id);
     this.props.openSnackBar('Board is ARCHIVED.');
     await this.props.setGroup(this.props.group.id);
     this.props.setBoard(null);
@@ -73,7 +73,7 @@ class ActionBar extends React.Component {
     };
 
     const saveIcon = {
-      iconName: 'Save',
+      iconName: 'archive-svg',
       style: {
         fontSize: 24,
         color: 'white',
