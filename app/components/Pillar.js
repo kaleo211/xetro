@@ -14,6 +14,7 @@ import {
   setActiveItem,
   showActions,
   hideActions,
+  showAddingAction,
 } from '../actions/localActions';
 import {
   deleteItem,
@@ -31,7 +32,7 @@ const classNames = mergeStyleSets({
   },
   actionCard: {
     maxWidth: '33vw',
-    minWidth: 320,
+    minWidth: 300,
     maxHeight: 36,
     marginTop: 2,
     marginLeft: 16,
@@ -58,10 +59,7 @@ class Pillar extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      isAddingAction: false,
-      activeItemDOM: null,
-    };
+    this.state = {};
   }
 
   handleActivateItem(item) {
@@ -92,13 +90,10 @@ class Pillar extends React.Component {
     await this.props.finishItem({ ...item, boardID: this.props.board.id });
   }
 
-  async onClickAddActionButton(item, evt) {
-    this.setState({
-      isAddingAction: true,
-      activeItemDOM: evt.target,
-    });
-    this.props.setActiveItem(item);
+  async onClickAddActionButton(item) {
     await this.handleFinishItem(item);
+    this.props.setActiveItem(item);
+    this.props.showAddingAction();
   }
 
   onHideActions(item) {
@@ -110,9 +105,7 @@ class Pillar extends React.Component {
   }
 
   render() {
-    const { activeItem, itemProgress, pillar, board, showActionMap } = this.props;
-    const { activeItemDOM, isAddingAction } = this.state;
-
+    const { activeItem, itemProgress, pillar, board, showActionMap, addingAction } = this.props;
     const items = pillar.items;
 
     const showTimer = (item) => {
@@ -125,7 +118,7 @@ class Pillar extends React.Component {
       return board.locked && board.stage === 'active' && item.stage !== 'created';
     };
     const showAddAction = (item) => {
-      return board.locked && board.stage === 'active' && item.id === activeItem.id && isAddingAction;
+      return board.locked && board.stage === 'active' && item.id === activeItem.id && addingAction;
     };
     const showFoldButton = (item) => {
       return item.actions.length > 0;
@@ -201,7 +194,7 @@ class Pillar extends React.Component {
             </div>
           </div>
           {showAddAction(item) &&
-            <Action target={activeItemDOM} />
+            <Action />
           }
           {board.locked && item.id === activeItem.id && item.stage === 'active' &&
             <ProgressIndicator percentComplete={1 - itemProgress} />
@@ -226,6 +219,7 @@ const mapStateToProps = state => ({
   group: state.groups.group,
   activeItem: state.local.activeItem,
   showActionMap: state.local.showActionMap,
+  addingAction: state.local.addingAction,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -236,6 +230,7 @@ const mapDispatchToProps = (dispatch) => ({
   startItem: (item) => dispatch(startItem(item)),
   showActions: (item) => dispatch(showActions(item)),
   hideActions: (item) => dispatch(hideActions(item)),
+  showAddingAction: () => dispatch(showAddingAction()),
 });
 
 export default compose(

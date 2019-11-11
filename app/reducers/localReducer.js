@@ -9,6 +9,7 @@ import {
   SET_ITEM,
   SHOW_PAGE,
   UPDATE_SHOW_ACTION_MAP,
+  UPDATE_SHOW_ADDING_ACTION,
 } from '../actions/types';
 
 const persistConfig = {
@@ -66,6 +67,12 @@ const localReducer = (state = initialState, action) => {
           ...state.showActionMap,
           [action.itemID]: action.show,
         },
+      };
+
+    case UPDATE_SHOW_ADDING_ACTION:
+      return {
+        ...state,
+        addingAction: action.addingAction,
       };
 
     default:

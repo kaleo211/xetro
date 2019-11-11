@@ -5,13 +5,16 @@ import { compose } from 'redux';
 import {
   IconButton,
   TextField,
-  FocusTrapCallout,
-  FocusZone,
   Button,
+  Dialog,
+  DialogFooter,
+  DialogType,
+  PrimaryButton,
+  DefaultButton,
 } from 'office-ui-fabric-react';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
-import { setActiveItem } from '../actions/localActions';
+import { setActiveItem, hideAddingAction } from '../actions/localActions';
 import {
   postItem,
   deleteItem,
@@ -39,7 +42,6 @@ class Action extends React.Component {
     this.state = {
       newActionTitle: '',
       newActionOwner: null,
-      activeItemDOM: null,
     };
   }
 
@@ -49,10 +51,7 @@ class Action extends React.Component {
     });
   }
 
-  async onClickAddActionButton(item, evt) {
-    this.setState({
-      activeItemDOM: evt.target,
-    });
+  async onClickAddActionButton(item) {
     this.props.setActiveItem(item);
     await this.handleFinishItem(item);
   }
@@ -67,6 +66,7 @@ class Action extends React.Component {
       boardID: this.props.board.id,
     };
     await this.props.postAction(newAction);
+    this.props.hideAddingAction();
 
     this.setState({
       newActionTitle: '',
@@ -78,9 +78,13 @@ class Action extends React.Component {
     this.setState({ newActionOwner: member });
   }
 
+  onDismissAddingAction() {
+    this.props.hideAddingAction();
+  }
+
   render() {
-    const { activeItem, group } = this.props;
-    const { newActionOwner, activeItemDOM } = this.state;
+    const { activeItem, group, addingAction } = this.props;
+    const { newActionOwner } = this.state;
 
     const members = group.members.map(member => {
       return {
@@ -91,54 +95,50 @@ class Action extends React.Component {
     });
 
     return (
-      <FocusTrapCallout
-          role="alertdialog"
-          gapSpace={0}
-          setInitialFocus
-          target={activeItemDOM}
-          style={{ padding: 8, width: 320 }}
+      <Dialog
+          hidden={!addingAction}
+          dialogContentProps={{
+            type: DialogType.largeHeader,
+            title: 'New Action',
+          }}
       >
-        <FocusZone>
-          <div>
-            <div style={{ display: 'flex', verticalAlign: 'middle' }}>
-              <div style={{ width: '100%' }}>
-                <TextField
-                    underlined
-                    style={{ width: '100%' }}
-                    onChange={this.onChangeNewActionTitle.bind(this)}
-                />
-              </div>
-              {newActionOwner ?
-                <Button
-                    text={newActionOwner.initials}
-                    menuProps={{
-                      shouldFocusOnMount: true,
-                      items: members,
-                    }}
-                /> :
-                <IconButton
-                    primary
-                    iconProps={{ iconName: 'assign-svg' }}
-                    menuProps={{
-                      shouldFocusOnMount: true,
-                      items: members,
-                    }}
-                />
-              }
-            </div>
-            <div className={classNames.addButton}>
-              <IconButton
-                  iconProps={{ iconName: 'delete-svg' }}
-                  onClick={this.onSaveAction.bind(this, activeItem)}
-              />
-              <IconButton
-                  iconProps={{ iconName: 'done-svg' }}
-                  onClick={this.onSaveAction.bind(this, activeItem)}
-              />
-            </div>
+        <div style={{ display: 'flex', verticalAlign: 'middle' }}>
+          <div style={{ width: '100%' }}>
+            <TextField
+                underlined
+                style={{ width: '100%' }}
+                onChange={this.onChangeNewActionTitle.bind(this)}
+            />
           </div>
-        </FocusZone>
-      </FocusTrapCallout>
+          {newActionOwner ?
+            <Button
+                text={newActionOwner.initials}
+                menuProps={{
+                  shouldFocusOnMount: true,
+                  items: members,
+                }}
+            /> :
+            <IconButton
+                primary
+                iconProps={{ iconName: 'assign-svg' }}
+                menuProps={{
+                  shouldFocusOnMount: true,
+                  items: members,
+                }}
+            />
+          }
+        </div>
+        <DialogFooter>
+          <PrimaryButton
+              text="Add"
+              onClick={this.onSaveAction.bind(this, activeItem)}
+          />
+          <DefaultButton
+              text="Cancel"
+              onClick={this.onDismissAddingAction.bind(this)}
+          />
+        </DialogFooter>
+      </Dialog>
     );
   }
 }
@@ -147,6 +147,7 @@ const mapStateToProps = state => ({
   board: state.boards.board,
   group: state.groups.group,
   activeItem: state.local.activeItem,
+  addingAction: state.local.addingAction,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -160,6 +161,7 @@ const mapDispatchToProps = (dispatch) => ({
   startItem: (item) => dispatch(startItem(item)),
   patchItem: (item) => dispatch(patchItem(item)),
   postAction: (action) => dispatch(postAction(action)),
+  hideAddingAction: () => dispatch(hideAddingAction()),
 });
 
 export default compose(
