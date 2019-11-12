@@ -52,7 +52,6 @@ class Action extends React.Component {
 
   async onClickAddActionButton(item) {
     this.props.setActiveItem(item);
-    await this.handleFinishItem(item);
   }
 
   async onSaveAction(item) {

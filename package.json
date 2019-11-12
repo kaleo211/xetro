@@ -1,6 +1,6 @@
 {
   "name": "xetro",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "scripts": {
     "build": "webpack",
@@ -37,12 +37,9 @@
     "mysql2": "^1.6.5",
     "office-ui-fabric-react": "^7.54.0",
     "pg": "^7.12.1",
-    "prop-types": "^15.7.2",
     "react": "^16.8.4",
     "react-dom": "^16.4.2",
-    "react-native-fetch": "^2.0.0",
     "react-redux": "^5.0.7",
-    "react-select": "^2.4.2",
     "redux": "^4.0.0",
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
@@ -50,8 +47,7 @@
     "request-promise": "^4.2.4",
     "sequelize": "^6.0.0",
     "uuid": "^3.3.2",
-    "webpack": "^4.16.5",
-    "webpack-cli": "^3.3.0"
+    "webpack": "^4.16.5"
   },
   "devDependencies": {
     "enzyme": "^3.6.0",
@@ -75,6 +71,7 @@
     "sequelize-cli": "^5.4.0",
     "start-server-and-test": "^1.7.11",
     "webdriver": "^5.7.1",
+    "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.2.1"
   }
 }

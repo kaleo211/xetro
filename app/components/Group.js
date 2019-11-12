@@ -73,10 +73,6 @@ class Group extends React.Component {
     return now;
   }
 
-  handleActionCheck(action) {
-    this.props.finishItem(action);
-  }
-
   onHoverAction(action) {
     this.setState({ hoveredActionID: action.id });
   }

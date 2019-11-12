@@ -76,36 +76,26 @@ class Pillar extends React.Component {
     this.state = {};
   }
 
-  handleActivateItem(item) {
-    this.props.setActiveItem(item);
-    if (this.props.activeItem.id === item.id && this.state.switcher) {
-      this.setState({ switcher: false });
-    } else {
-      this.setState({ switcher: true });
-    }
-  }
-
-  handleDeleteItem(item) {
+  onDeleteItem(item) {
     this.props.deleteItem({ ...item, boardID: this.props.board.id });
   }
 
-  handleStartItem(item, evt) {
+  onStartItem(item, evt) {
     evt.stopPropagation();
     this.props.startItem({ ...item, boardID: this.props.board.id });
-    this.setState({ switcher: true });
   }
 
-  handleLikeItem(item, evt) {
+  onLikeItem(item, evt) {
     evt.stopPropagation();
     this.props.likeItem({ ...item, boardID: this.props.board.id });
   }
 
-  async handleFinishItem(item) {
+  async onFinishItem(item) {
     await this.props.finishItem({ ...item, boardID: this.props.board.id });
   }
 
   async onClickAddActionButton(item) {
-    await this.handleFinishItem(item);
+    await this.onFinishItem(item);
     this.props.setActiveItem(item);
     this.props.showAddingAction();
   }
@@ -170,7 +160,7 @@ class Pillar extends React.Component {
                     primary
                     className={classes.iconButton}
                     iconProps={{ iconName: 'Delete', style: iconStyle }}
-                    onClick={this.handleDeleteItem.bind(this, item)}
+                    onClick={this.onDeleteItem.bind(this, item)}
                 />
               }
               {!board.locked &&
@@ -179,7 +169,7 @@ class Pillar extends React.Component {
                       primary
                       className={classes.iconButton}
                       iconProps={{ iconName: 'Like', style: iconStyle }}
-                      onClick={this.handleLikeItem.bind(this, item)}
+                      onClick={this.onLikeItem.bind(this, item)}
                   />
                 </div>
               }
@@ -188,7 +178,7 @@ class Pillar extends React.Component {
                     primary
                     className={classes.iconButton}
                     iconProps={{ iconName: 'Stopwatch', style: iconStyle }}
-                    onClick={this.handleStartItem.bind(this, item)}
+                    onClick={this.onStartItem.bind(this, item)}
                 />
               }
               {showFinishButton(item) &&
@@ -196,7 +186,7 @@ class Pillar extends React.Component {
                     primary
                     className={classes.iconButton}
                     iconProps={{ iconName: 'CheckMark', style: iconStyle }}
-                    onClick={this.handleFinishItem.bind(this, item)}
+                    onClick={this.onFinishItem.bind(this, item)}
                 />
               }
               {showActionButton(item) &&

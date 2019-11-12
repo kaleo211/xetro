@@ -89,7 +89,7 @@ class Board extends React.Component {
     });
   }
 
-  handleAddItem(pillarID, event) {
+  onAddItem(pillarID, event) {
     const newItemTitle = this.state.newItemInPillar[pillarID];
     if (event && event.key === 'Enter' && newItemTitle !== '') {
       const newItem = {
@@ -103,11 +103,11 @@ class Board extends React.Component {
     }
   }
 
-  handleChangeNewItemTitle(pillarID, evt) {
+  onChangeNewItemTitle(pillarID, evt) {
     this.changeItemTitle(pillarID, evt.target.value);
   }
 
-  handleAddPillar() {
+  onAddPillar() {
     const pillar = {
       title: 'ChangeTitle',
       boardID: this.props.board.id,
@@ -115,15 +115,15 @@ class Board extends React.Component {
     this.props.postPillar(pillar);
   }
 
-  handleDeletePillar(pillar) {
+  onDeletePillar(pillar) {
     this.props.deletePillar(pillar);
   }
 
-  handleChangePillarTitle(pillar, evt) {
+  onChangePillarTitle(pillar, evt) {
     this.changePillarTitle(pillar.id, evt.target.value);
   }
 
-  handleSetPillarTitle(pillar, evt) {
+  onSetPillarTitle(pillar, evt) {
     if (evt && evt.key === 'Enter') {
       if (evt.target.value !== '') {
         this.props.patchPillar({ ...pillar, title: evt.target.value });
@@ -152,8 +152,8 @@ class Board extends React.Component {
                       borderless
                       inputClassName={classNames.titleText}
                       defaultValue={pillar.title}
-                      onChange={this.handleChangePillarTitle.bind(this, pillar)}
-                      onKeyPress={this.handleSetPillarTitle.bind(this, pillar)}
+                      onChange={this.onChangePillarTitle.bind(this, pillar)}
+                      onKeyPress={this.onSetPillarTitle.bind(this, pillar)}
                   />
                 </div>
               }
@@ -164,8 +164,8 @@ class Board extends React.Component {
                       label="New:"
                       value={newItemInPillar[pillar.id]}
                       name={pillar.id}
-                      onChange={this.handleChangeNewItemTitle.bind(this, pillar.id)}
-                      onKeyPress={this.handleAddItem.bind(this, pillar.id)}
+                      onChange={this.onChangeNewItemTitle.bind(this, pillar.id)}
+                      onKeyPress={this.onAddItem.bind(this, pillar.id)}
                   />
                 </div>
               }

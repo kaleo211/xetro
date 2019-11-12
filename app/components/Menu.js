@@ -48,11 +48,7 @@ class Menu extends React.Component {
     this.state = {};
   }
 
-  handleOpenHome() {
-    this.props.setPage('home');
-  }
-
-  handleJoinOrCreateBoard() {
+  onJoinOrCreateBoard() {
     const { activeBoard, group } = this.props;
 
     if (activeBoard) {
@@ -95,7 +91,7 @@ class Menu extends React.Component {
     const bread = [{ text: 'Xetro', key: 'home', onClick: () => this.props.setPage('home') }];
     if (group) {
       bread.push({ text: group.name, key: 'group', onClick: () => this.props.setPage('group') });
-      bread.push({ text: 'Board', key: 'board', onClick: this.handleJoinOrCreateBoard.bind(this) });
+      bread.push({ text: 'Board', key: 'board', onClick: this.onJoinOrCreateBoard.bind(this) });
     }
     if (board && page === 'board') {
       bread.push({ key: 'action' });

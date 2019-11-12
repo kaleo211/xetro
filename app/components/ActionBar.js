@@ -31,28 +31,36 @@ class ActionBar extends React.Component {
     this.state = {};
   }
 
-  handleVideoOpen(url) {
+  onVideoOpen(url) {
     const win = window.open(url, '_blank');
     win.focus();
   }
 
-  handleRefreshBoard() {
+  onRefreshBoard() {
     this.props.setBoard(this.props.board.id);
   }
 
-  handleViewHistory() {
+  onViewHistory() {
     this.props.setBoards();
     this.props.setPage('boardList');
   }
 
-  async handleArchiveBoard() {
+  async onArchiveBoard() {
     await this.props.archiveBoard(this.props.board.id);
     await this.props.setGroup(this.props.group.id);
     this.props.setBoard(null);
   }
 
-  handleActionCheck(action) {
+  onActionCheck(action) {
     this.props.finishItem(action);
+  }
+
+  onLockBoard() {
+    this.props.lockBoard(this.props.board.id);
+  }
+
+  onUnlockBoard() {
+    this.props.unlockBoard(this.props.board.id);
   }
 
   render() {
@@ -82,7 +90,7 @@ class ActionBar extends React.Component {
               primary
               className={classNames.iconButton}
               iconProps={unlockIcon}
-              onClick={this.handleUnlockBoard.bind(this)}
+              onClick={this.onUnlockBoard.bind(this)}
           />
         }
         {!board.locked &&
@@ -90,7 +98,7 @@ class ActionBar extends React.Component {
               primary
               className={classNames.iconButton}
               iconProps={lockIcon}
-              onClick={this.handleLockBoard.bind(this)}
+              onClick={this.onLockBoard.bind(this)}
           />
         }
         {board.video &&
@@ -105,7 +113,7 @@ class ActionBar extends React.Component {
               primary
               className={classNames.iconButton}
               iconProps={saveIcon}
-              onClick={this.handleArchiveBoard.bind(this)}
+              onClick={this.onArchiveBoard.bind(this)}
           />
         }
       </div>;
@@ -129,8 +137,6 @@ const mapDispatchToProps = (dispatch) => ({
   unlockBoard: id => dispatch(unlockBoard(id)),
 });
 
-ActionBar.propTypes = {
-};
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
 )(ActionBar);
