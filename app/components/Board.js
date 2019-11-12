@@ -16,7 +16,8 @@ const classNames = mergeStyleSets({
     justifyContent: 'space-evenly',
   },
   title: {
-    marginBottom: 24,
+    marginBottom: 16,
+    marginTop: 8,
   },
   lockedTitle: {
     height: 89,

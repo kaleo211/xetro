@@ -1,33 +1,30 @@
 import React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
 import {
   DocumentCard,
   DocumentCardActivity,
   DocumentCardDetails,
   DocumentCardTitle,
-  Persona,
-  PersonaPresence,
-  PersonaSize,
-  Stack,
-  Text,
-  Overlay,
+  FontIcon,
   IconButton,
+  Overlay,
+  Stack,
 } from 'office-ui-fabric-react';
+import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
 import { fetchGroupActiveBoard } from '../actions/boardActions';
-import { finishItem, deleteItem } from '../actions/itemActions';
+import { finishAction, deleteAction } from '../actions/itemActions';
 
 const classNames = mergeStyleSets({
   group: {
-    marginTop: 8,
-    marginRight: 8,
+    marginRight: 4,
     width: 320,
+    height: 112,
   },
   overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.16)',
     top: '0',
     bottom: '0',
     color: 'white',
@@ -35,21 +32,26 @@ const classNames = mergeStyleSets({
     position: 'absolute',
     right: '0',
     display: 'flex',
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingTop: 48,
+    paddingRight: 8,
   },
   icon: {
-    fontSize: 50,
-    height: 50,
-    width: 50,
+    fontSize: 40,
+    height: 40,
+    width: 40,
+    marginRight: 16,
   },
   actions: {
-    marginTop: 16,
-    marginLeft: 8,
+    marginTop: 4,
+    marginLeft: 4,
   },
-  members: {
-    marginTop: 8,
-    marginLeft: 8,
+  noActionsIcon: {
+    fontSize: 40,
+    height: 40,
+    width: 40,
+    color: 'green',
   },
 });
 
@@ -81,95 +83,78 @@ class Group extends React.Component {
     this.setState({ hoveredActionID: '' });
   }
 
-  onFinishAction(item) {
-    this.props.finishItem(item);
+  async onFinishAction(item) {
+    await this.props.finishAction(item);
   }
 
   async onRemoveAction(item) {
-    await this.props.deleteItem(item);
+    await this.props.deleteAction(item);
   }
 
   render() {
     const { group } = this.props;
     const { hoveredActionID } = this.state;
 
-    const members = group.members.map(member => {
-      return {
-        ...member,
-        imageInitials: member.initials,
-        text: member.name,
-        secondaryText: member.title,
-        tertiaryText: 'In a meeting',
-      };
-    });
-    const actions = group.actions.filter(action => action.stage !== 'done');
-
+    const actions = group.actions;
     const finishIcon = {
-      iconName: 'CheckMark',
+      iconName: 'BoxCheckmarkSolid',
       style: {
-        fontSize: 50,
-        color: 'white',
+        fontSize: 40,
+        color: '#498205',
       },
     };
-
     const removeIcon = {
-      iconName: 'Delete',
+      iconName: 'BoxMultiplySolid',
       style: {
-        fontSize: 50,
-        color: 'white',
+        fontSize: 40,
+        color: '#d13438',
       },
     };
 
     return (
-      <div>
-        <div className={classNames.members}>
-          <Stack horizontal>
-            {members.map(member => (
-              <Stack.Item key={member.id}>
-                <Persona
-                    {...member}
-                    size={PersonaSize.size40}
-                    presence={PersonaPresence.offline}
-                />
-              </Stack.Item>
-            ))}
-          </Stack>
-        </div>
-        <div className={classNames.actions}>
-          <Text variant="xxLarge">Actions</Text>
-          <Stack horizontal wrap>
-            {actions && actions.map(action => (
-              <Stack.Item key={action.id} align="auto">
-                <DocumentCard
-                    className={classNames.group}
-                    onMouseEnter={this.onHoverAction.bind(this, action)}
-                    onMouseLeave={this.onLeaveHoveredAction.bind(this)}
-                >
-                  <DocumentCardDetails>
-                    <DocumentCardTitle title={action.title} />
-                    <DocumentCardActivity activity="Oct 13 2019" people={[action.owner]} />
-                  </DocumentCardDetails>
-                  {hoveredActionID === action.id &&
-                    <Overlay>
-                      <div className={classNames.overlay}>
-                        <IconButton
-                            className={classNames.icon}
-                            iconProps={finishIcon}
-                            onClick={this.onFinishAction.bind(this, action)}
-                        />
-                        <IconButton
-                            className={classNames.icon}
-                            iconProps={removeIcon}
-                            onClick={this.onRemoveAction.bind(this, action)}
-                        />
-                      </div>
-                    </Overlay>
-                  }
-                </DocumentCard>
-              </Stack.Item>
-            ))}
-          </Stack>
-        </div>
+      <div className={classNames.actions}>
+        <Stack horizontal wrap>
+          {actions && actions.map(action => (
+            <Stack.Item key={action.id} align="auto">
+              <DocumentCard
+                  className={classNames.group}
+                  onMouseEnter={this.onHoverAction.bind(this, action)}
+                  onMouseLeave={this.onLeaveHoveredAction.bind(this)}
+              >
+                <DocumentCardDetails>
+                  <DocumentCardTitle title={action.title} />
+                  <DocumentCardActivity activity="Oct 13 2019" people={[action.owner]} />
+                </DocumentCardDetails>
+                {hoveredActionID === action.id &&
+                  <Overlay>
+                    <div className={classNames.overlay}>
+                      <IconButton
+                          className={classNames.icon}
+                          iconProps={finishIcon}
+                          onClick={this.onFinishAction.bind(this, action)}
+                      />
+                      <IconButton
+                          className={classNames.icon}
+                          iconProps={removeIcon}
+                          onClick={this.onRemoveAction.bind(this, action)}
+                      />
+                    </div>
+                  </Overlay>
+                }
+              </DocumentCard>
+            </Stack.Item>
+          ))}
+          {actions && actions.length === 0 &&
+            <Stack.Item>
+              <DocumentCard className={classNames.group}>
+                <DocumentCardTitle title="No Actions" />
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <FontIcon iconName="SkypeCircleCheck" className={classNames.noActionsIcon} />
+                </div>
+              </DocumentCard>
+            </Stack.Item>
+          }
+        </Stack>
       </div>
     );
   }
@@ -180,9 +165,9 @@ const mapStateToProps = state => ({
   me: state.users.me,
 });
 const mapDispatchToProps = (dispatch) => ({
-  deleteItem: item => dispatch(deleteItem(item)),
+  deleteAction: action => dispatch(deleteAction(action)),
   fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
-  finishItem: item => dispatch(finishItem(item)),
+  finishAction: action => dispatch(finishAction(action)),
 });
 
 export default compose(

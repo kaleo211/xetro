@@ -50,6 +50,7 @@ const classes = mergeStyleSets({
     paddingLeft: 8,
     paddingRight: 8,
     justifyContent: 'space-between',
+    backgroundColor: '#fdfcfb',
   },
   title: {
     display: 'flex',
@@ -209,7 +210,7 @@ class Pillar extends React.Component {
         {showActionMap[item.id] && item.actions.map(action => (
           <DocumentCard key={action.id} className={classes.actionCard}>
             <Text variant="medium">{action.title}</Text>
-            <Persona text="Kat Larrson" hidePersonaDetails size={PersonaSize.size24} />
+            <Persona text={action.owner.initials} hidePersonaDetails size={PersonaSize.size24} />
           </DocumentCard>
         ))}
       </div>

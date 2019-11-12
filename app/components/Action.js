@@ -25,7 +25,6 @@ import {
   startItem,
 } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
-import { setGroup } from '../actions/groupActions';
 
 const classNames = mergeStyleSets({
   body: {
@@ -153,7 +152,6 @@ const mapDispatchToProps = (dispatch) => ({
   deleteItem: (item) => dispatch(deleteItem(item)),
   setBoard: (id) => dispatch(setBoard(id)),
   setActiveItem: (item) => dispatch(setActiveItem(item)),
-  setGroup: (id) => dispatch(setGroup(id)),
   likeItem: (id) => dispatch(likeItem(id)),
   finishItem: (id) => dispatch(finishItem(id)),
   startItem: (item) => dispatch(startItem(item)),

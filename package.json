@@ -35,7 +35,7 @@
     "html-webpack-plugin": "^3.2.0",
     "msal": "^0.2.4",
     "mysql2": "^1.6.5",
-    "office-ui-fabric-react": "^7.54.0",
+    "office-ui-fabric-react": "^7.60.0",
     "pg": "^7.12.1",
     "react": "^16.8.4",
     "react-dom": "^16.4.2",

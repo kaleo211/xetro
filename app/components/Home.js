@@ -15,7 +15,7 @@ import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
 import { setGroup, searchGroups, addUserToGroup, postGroup } from '../actions/groupActions';
-import { setPage } from '../actions/localActions';
+import { showGroupPage } from '../actions/localActions';
 
 const classNames = mergeStyleSets({
   group: {
@@ -40,6 +40,7 @@ class Group extends React.Component {
       this.props.addUserToGroup(this.props.me.id, group.id);
     }
     this.props.setGroup(group.id);
+    this.props.showGroupPage();
   }
 
   async onSearchGroup(evt) {
@@ -115,7 +116,7 @@ const mapDispatchToProps = (dispatch) => ({
   postGroup: (group) => dispatch(postGroup(group)),
   searchGroups: (query) => dispatch(searchGroups(query)),
   setGroup: (id) => dispatch(setGroup(id)),
-  setPage: (page) => dispatch(setPage(page)),
+  showGroupPage: () => dispatch(showGroupPage()),
 });
 
 export default compose(

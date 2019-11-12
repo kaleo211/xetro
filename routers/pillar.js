@@ -15,6 +15,10 @@ const respondWithPillar = async (res, id) => {
         include: [{
           model: model.Action,
           as: 'actions',
+          include: [{
+            model: model.User,
+            as: 'owner',
+          }],
         }],
       }],
       where: { id },

@@ -60,7 +60,6 @@ export const setGroup = (groupID) => async (dispatch) => {
       type: SET_GROUP,
       group,
     });
-    dispatch(setPage('group'));
   } else {
     console.error('error fetching group for setting group', group);
   }

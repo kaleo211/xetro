@@ -23,18 +23,12 @@ const associations = [
       include: [{
         model: model.Action,
         as: 'actions',
+        include: [{
+          model: model.User,
+          as: 'owner',
+        }],
       }],
     }],
-  },
-  {
-    model: model.Action,
-    as: 'actions',
-    required: false,
-    where: {
-      stage: {
-        [Op.ne]: 'done',
-      },
-    },
   },
 ];
 

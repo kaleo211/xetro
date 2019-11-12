@@ -29,6 +29,11 @@ const respondWithGroup = async (res, id) => {
         {
           model: model.Action,
           as: 'actions',
+          where: {
+            stage: {
+              [Op.ne]: 'done',
+            },
+          },
           required: false,
           include: [{
             model: model.User,

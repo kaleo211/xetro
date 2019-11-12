@@ -2,6 +2,7 @@ import Utils from '../components/Utils';
 import { setBoard } from './boardActions';
 import { setActiveItem } from './localActions';
 import { getMe } from './userActions';
+import { setGroup } from './groupActions';
 
 export const patchItem = (item) => async (dispatch) => {
   await Utils.patch('items', item);
@@ -40,15 +41,22 @@ export const postItem = (item) => async (dispatch) => {
 export const finishAction = (action) => async (dispatch) => {
   await Utils.fetch(`/actions/${action.id}/finish`);
   dispatch(getMe());
-  dispatch(setBoard(action.boardID));
+  dispatch(setGroup(action.groupID));
+};
+
+export const deleteAction = (action) => async (dispatch) => {
+  await Utils.delete('actions', action.id);
+  dispatch(setGroup(action.groupID));
 };
 
 export const startAction = (action) => async (dispatch) => {
-  await Utils.fetch(`/items/${action.id}/start`);
+  await Utils.fetch(`/action/${action.id}/start`);
   dispatch(setBoard(action.boardID));
+  dispatch(setGroup(action.groupID));
 };
 
 export const postAction = (action) => async (dispatch) => {
   await Utils.post('actions', action);
   dispatch(setBoard(action.boardID));
+  dispatch(setGroup(action.groupID));
 };

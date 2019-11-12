@@ -27,6 +27,10 @@ export const hideActions = (itemID) => ({
   show: false,
 });
 
+export const showGroupPage = () => ({
+  type: SHOW_PAGE,
+  page: 'group',
+});
 
 export const showAddingAction = () => ({
   type: UPDATE_SHOW_ADDING_ACTION,
