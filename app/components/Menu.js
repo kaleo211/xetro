@@ -26,7 +26,8 @@ const classes = mergeStyleSets({
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 24,
+    marginTop: 8,
   },
   text: {
     color: '#222222',
@@ -65,7 +66,7 @@ class Menu extends React.Component {
     const randomIndex = Math.floor(Math.random() * (group.members.length));
 
     const newBoard = {
-      stage: 'active',
+      stage: 'created',
       groupID: group.id,
       name: boardName,
       facilitatorID: group.members[randomIndex].id,
@@ -111,7 +112,7 @@ class Menu extends React.Component {
           />
         </div>
         <div className={classes.profile}>
-          <Text className={classes.text} variant="xxLarge">Xuebin</Text>
+          <Text className={classes.text} variant="xLarge">Xuebin</Text>
         </div>
       </div>
     );

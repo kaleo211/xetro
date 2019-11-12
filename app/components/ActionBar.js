@@ -11,7 +11,7 @@ import { openSnackBar, setPage } from '../actions/localActions';
 import { finishItem } from '../actions/itemActions';
 
 const iconStyle = {
-  fontSize: 24,
+  fontSize: 20,
   color: '#222222',
 };
 
@@ -82,7 +82,7 @@ class ActionBar extends React.Component {
       style: iconStyle,
     };
     const unlockIcon = {
-      iconName: 'Unlock',
+      iconName: 'Permissions',
       style: iconStyle,
     };
 
@@ -111,7 +111,7 @@ class ActionBar extends React.Component {
               iconProps={videoIcon}
           />
         }
-        {board.stage === 'active' &&
+        {board.stage === 'created' &&
           <IconButton
               primary
               className={classNames.iconButton}

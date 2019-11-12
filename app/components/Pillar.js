@@ -8,6 +8,9 @@ import {
   DocumentCardTitle,
   IconButton,
   ProgressIndicator,
+  Persona,
+  PersonaSize,
+  Text,
 } from 'office-ui-fabric-react';
 
 import {
@@ -37,10 +40,16 @@ const classes = mergeStyleSets({
   },
   actionCard: {
     maxWidth: '33vw',
-    minWidth: 300,
-    maxHeight: 36,
     marginTop: 2,
-    marginLeft: 16,
+    minHeight: 40,
+    minWidth: 290,
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: 12,
+    marginRight: 4,
+    paddingLeft: 8,
+    paddingRight: 8,
+    justifyContent: 'space-between',
   },
   title: {
     display: 'flex',
@@ -114,23 +123,23 @@ class Pillar extends React.Component {
     const items = pillar.items;
 
     const showTimer = (item) => {
-      return board.locked && board.stage === 'active' && item.stage === 'created';
+      return board.locked && board.stage === 'created' && item.stage === 'created';
     };
     const showFinishButton = (item) => {
-      return board.locked && board.stage === 'active' && item.stage === 'active';
+      return board.locked && board.stage === 'created' && item.stage === 'active';
     };
     const showActionButton = (item) => {
-      return board.locked && board.stage === 'active' && item.stage !== 'created';
+      return board.locked && board.stage === 'created' && item.stage !== 'created';
     };
     const showAddAction = (item) => {
-      return board.locked && board.stage === 'active' && item.id === activeItem.id && addingAction;
+      return board.locked && board.stage === 'created' && item.id === activeItem.id && addingAction;
     };
     const showFoldButton = (item) => {
       return item.actions.length > 0;
     };
 
     return items.map(item => (
-      <div>
+      <div key={item.id}>
         <DocumentCard
             key={item.id}
             className={classes.card}
@@ -141,6 +150,21 @@ class Pillar extends React.Component {
                 className={item.stage !== 'done' ? classes.titleText : null}
             />
             <div className={classes.actions}>
+              {showFoldButton(item) && (
+                typeof showActionMap[item.id] === 'undefined' || !showActionMap[item.id] ?
+                  <IconButton
+                      primary
+                      className={classes.iconButton}
+                      iconProps={{ iconName: 'ChevronUp', style: iconStyle }}
+                      onClick={this.onShowActions.bind(this, item)}
+                  /> :
+                  <IconButton
+                      primary
+                      className={classes.iconButton}
+                      iconProps={{ iconName: 'ChevronDown', style: iconStyle }}
+                      onClick={this.onHideActions.bind(this, item)}
+                  />
+              )}
               {!board.locked &&
                 <IconButton
                     primary
@@ -175,21 +199,6 @@ class Pillar extends React.Component {
                     onClick={this.handleFinishItem.bind(this, item)}
                 />
               }
-              {showFoldButton(item) && (
-                typeof showActionMap[item.id] === 'undefined' || !showActionMap[item.id] ?
-                  <IconButton
-                      primary
-                      className={classes.iconButton}
-                      iconProps={{ iconName: 'ChevronUp', style: iconStyle }}
-                      onClick={this.onShowActions.bind(this, item)}
-                  /> :
-                  <IconButton
-                      primary
-                      className={classes.iconButton}
-                      iconProps={{ iconName: 'ChevronDown', style: iconStyle }}
-                      onClick={this.onHideActions.bind(this, item)}
-                  />
-              )}
               {showActionButton(item) &&
                 <IconButton
                     primary
@@ -208,12 +217,9 @@ class Pillar extends React.Component {
           }
         </DocumentCard>
         {showActionMap[item.id] && item.actions.map(action => (
-          <DocumentCard
-              className={classes.actionCard}
-          >
-            <DocumentCardTitle
-                title={action.title}
-            />
+          <DocumentCard key={action.id} className={classes.actionCard}>
+            <Text variant="medium">{action.title}</Text>
+            <Persona text="Kat Larrson" hidePersonaDetails size={PersonaSize.size24} />
           </DocumentCard>
         ))}
       </div>

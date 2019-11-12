@@ -24,11 +24,7 @@ const associations = [
         model: model.Action,
         as: 'actions',
       }],
-      order: [[{ model: model.Action, as: 'actions' }, 'createdAt', 'ASC']],
     }],
-    order: [
-      [{ model: model.Item, as: 'items' }, 'likes', 'DESC'],
-    ],
   },
   {
     model: model.Action,
@@ -46,7 +42,16 @@ const respondWithBoard = async (res, where) => {
   try {
     const board = await model.Board.findOne({
       include: associations,
-      order: [[{ model: model.Pillar, as: 'pillars' }, 'position', 'ASC']],
+      order: [
+        [{ model: model.Pillar, as: 'pillars' }, 'position', 'ASC'],
+        [{ model: model.Pillar, as: 'pillars' },
+          { model: model.Item, as: 'items' }, 'likes', 'DESC'],
+        [{ model: model.Pillar, as: 'pillars' },
+          { model: model.Item, as: 'items' }, 'createdAt', 'ASC'],
+        [{ model: model.Pillar, as: 'pillars' },
+          { model: model.Item, as: 'items' },
+          { model: model.Action, as: 'actions' }, 'createdAt', 'ASC'],
+      ],
       where,
     });
     if (board) {
@@ -94,7 +99,6 @@ routes.get('/:id/archive', async (req, res) => {
 routes.get('/:id/lock', async (req, res) => {
   await updateBoard(res, req.params.id, {
     locked: true,
-    stage: 'active',
   });
 });
 

@@ -172,7 +172,7 @@ class Board extends React.Component {
               }
               {!enabled &&
                 <div className={classNames.lockedTitle}>
-                  <Text variant="superLarge">
+                  <Text variant="xxLarge">
                     {pillar.title}
                   </Text>
                 </div>
