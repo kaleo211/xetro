@@ -83,13 +83,13 @@ routes.post('/', async (req, res) => {
     const newGroups = await model.Group.findOrCreate({
       where: { name: group.name },
     });
-    if (newGroups.length != 2) {
+    if (newGroups.length !== 2) {
       console.error('error finding unique group:');
       res.sendStatus(500);
       return;
     }
     const newGroup = newGroups[0];
-    group.members.map(async id => {
+    group.members && group.members.map(async id => {
       await newGroup.addMembers(id);
     });
     await respondWithGroup(res, newGroup.id);

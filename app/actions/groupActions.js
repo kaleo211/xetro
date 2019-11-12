@@ -19,7 +19,7 @@ export const searchGroups = (query) => async (dispatch) => {
 export const postGroup = (newGroup) => async (dispatch) => {
   const resp = await Utils.post('groups', newGroup);
   if (resp) {
-    const groups = await Utils.list('groups');
+    const groups = await Utils.post('groups/search', {});
     if (groups) {
       dispatch({
         type: SET_GROUPS,

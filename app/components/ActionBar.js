@@ -7,7 +7,7 @@ import { IconButton } from 'office-ui-fabric-react';
 
 import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
-import { openSnackBar, setPage } from '../actions/localActions';
+import { setPage } from '../actions/localActions';
 import { finishItem } from '../actions/itemActions';
 
 const iconStyle = {
@@ -36,16 +36,6 @@ class ActionBar extends React.Component {
     win.focus();
   }
 
-  handleLockBoard() {
-    this.props.lockBoard(this.props.board.id);
-    this.props.openSnackBar('Board is LOCKED.');
-  }
-
-  handleUnlockBoard() {
-    this.props.unlockBoard(this.props.board.id);
-    this.props.openSnackBar('Board is UNLOCKED.');
-  }
-
   handleRefreshBoard() {
     this.props.setBoard(this.props.board.id);
   }
@@ -57,7 +47,6 @@ class ActionBar extends React.Component {
 
   async handleArchiveBoard() {
     await this.props.archiveBoard(this.props.board.id);
-    this.props.openSnackBar('Board is ARCHIVED.');
     await this.props.setGroup(this.props.group.id);
     this.props.setBoard(null);
   }
@@ -130,15 +119,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  archiveBoard: id => dispatch(archiveBoard(id)),
+  finishItem: item => dispatch(finishItem(item)),
+  lockBoard: id => dispatch(lockBoard(id)),
   setBoard: id => dispatch(setBoard(id)),
   setBoards: () => dispatch(setBoards()),
   setGroup: id => dispatch(setGroup(id)),
-  openSnackBar: message => dispatch(openSnackBar(message)),
   setPage: page => dispatch(setPage(page)),
-  archiveBoard: id => dispatch(archiveBoard(id)),
-  lockBoard: id => dispatch(lockBoard(id)),
   unlockBoard: id => dispatch(unlockBoard(id)),
-  finishItem: item => dispatch(finishItem(item)),
 });
 
 ActionBar.propTypes = {

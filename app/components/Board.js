@@ -6,7 +6,6 @@ import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { DocumentCard, Text, TextField } from 'office-ui-fabric-react';
 
 import { setBoard } from '../actions/boardActions';
-import { openSnackBar, closeSnackBar } from '../actions/localActions';
 import { postItem } from '../actions/itemActions';
 import { patchPillar, postPillar, deletePillar } from '../actions/pillarActions';
 import Pillar from './Pillar';
@@ -187,20 +186,17 @@ class Board extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  activeItem: state.local.activeItem,
   board: state.boards.board,
   group: state.groups.group,
-  activeItem: state.local.activeItem,
-  draw: state.local.drawOpen,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setBoard: (id) => dispatch(setBoard(id)),
-  postItem: (item, bID) => dispatch(postItem(item, bID)),
-  patchPillar: (p, pillar, bID) => dispatch(patchPillar(p, pillar, bID)),
-  postPillar: (pillar, bID) => dispatch(postPillar(pillar, bID)),
-  openSnackBar: (msg) => dispatch(openSnackBar(msg)),
-  closeSnackBar: () => dispatch(closeSnackBar()),
   deletePillar: (pillar) => dispatch(deletePillar(pillar)),
+  patchPillar: (p, pillar, bID) => dispatch(patchPillar(p, pillar, bID)),
+  postItem: (item, bID) => dispatch(postItem(item, bID)),
+  postPillar: (pillar, bID) => dispatch(postPillar(pillar, bID)),
+  setBoard: (id) => dispatch(setBoard(id)),
 });
 
 export default compose(

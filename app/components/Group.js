@@ -139,7 +139,6 @@ class Group extends React.Component {
             ))}
           </Stack>
         </div>
-
         <div className={classNames.actions}>
           <Text variant="xxLarge">Actions</Text>
           <Stack horizontal wrap>
@@ -185,9 +184,9 @@ const mapStateToProps = state => ({
   me: state.users.me,
 });
 const mapDispatchToProps = (dispatch) => ({
+  deleteItem: item => dispatch(deleteItem(item)),
   fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
   finishItem: item => dispatch(finishItem(item)),
-  deleteItem: item => dispatch(deleteItem(item)),
 });
 
 export default compose(

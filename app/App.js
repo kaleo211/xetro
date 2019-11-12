@@ -94,15 +94,15 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  page: state.local.page,
+  board: state.boards.board,
   group: state.groups.group,
   me: state.users.me,
-  board: state.boards.board,
+  page: state.local.page,
 });
 
 export default connect(mapStateToProps, {
-  searchGroups,
   fetchUsers,
   getMe,
+  searchGroups,
   setPage,
 })(App);

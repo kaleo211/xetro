@@ -3,16 +3,18 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 
 import {
+  DefaultButton,
   DocumentCard,
   DocumentCardActivity,
   DocumentCardTitle,
   Stack,
+  Text,
 } from 'office-ui-fabric-react';
 import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
 import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
-import { setGroup, searchGroups, addUserToGroup } from '../actions/groupActions';
+import { setGroup, searchGroups, addUserToGroup, postGroup } from '../actions/groupActions';
 import { setPage } from '../actions/localActions';
 
 const classNames = mergeStyleSets({
@@ -27,7 +29,9 @@ const classNames = mergeStyleSets({
 class Group extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      newGroupName: '',
+    };
   }
 
   onSetGroup(group) {
@@ -39,15 +43,21 @@ class Group extends React.Component {
   }
 
   async onSearchGroup(evt) {
-    await this.props.searchGroups({ name: evt.target.value });
+    const name = evt.target.value;
+    this.setState({ newGroupName: name });
+    await this.props.searchGroups({ name });
   }
 
-  handleCreateGroup() {
-    this.props.setPage('createGroup');
+  async onCreateGroup() {
+    const newGroup = {
+      name: this.state.newGroupName,
+    };
+    await this.props.postGroup(newGroup);
   }
 
   render() {
     const { me, groups } = this.props;
+    const { newGroupName } = this.state;
 
     return (me &&
       <div>
@@ -70,6 +80,24 @@ class Group extends React.Component {
               </TooltipHost>
             </Stack.Item>
           ))}
+          {groups.length === 0 &&
+            <Stack.Item align="auto">
+              <DocumentCard className={classNames.group}>
+                <div style={{ display: 'flex', flexDirection: 'column', marginTop: 56 }}>
+                  <div style={{ marginRight: 24, display: 'flex', justifyContent: 'center', minHeight: 84 }}>
+                    <Text variant="xLarge">{newGroupName}</Text>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginRight: 24 }}>
+                    <DefaultButton
+                        primary
+                        text="Create Group"
+                        onClick={this.onCreateGroup.bind(this)}
+                    />
+                  </div>
+                </div>
+              </DocumentCard>
+            </Stack.Item>
+          }
         </Stack>
       </div>
     );
@@ -77,16 +105,17 @@ class Group extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  groups: state.groups.groups,
-  group: state.groups.group,
   board: state.boards.board,
+  group: state.groups.group,
+  groups: state.groups.groups,
   me: state.users.me,
 });
 const mapDispatchToProps = (dispatch) => ({
+  addUserToGroup: (userID, groupID) => dispatch(addUserToGroup(userID, groupID)),
+  postGroup: (group) => dispatch(postGroup(group)),
+  searchGroups: (query) => dispatch(searchGroups(query)),
   setGroup: (id) => dispatch(setGroup(id)),
   setPage: (page) => dispatch(setPage(page)),
-  searchGroups: (query) => dispatch(searchGroups(query)),
-  addUserToGroup: (userID, groupID) => dispatch(addUserToGroup(userID, groupID)),
 });
 
 export default compose(
