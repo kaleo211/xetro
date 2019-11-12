@@ -16,7 +16,7 @@ const classes = mergeStyleSets({
   root: {
     display: 'flex',
     justifyContent: 'flex-start',
-    marginLeft: 16,
+    marginLeft: 32,
   },
   bread: {
     flexGrow: 4,
@@ -29,7 +29,7 @@ const classes = mergeStyleSets({
     marginRight: 12,
   },
   text: {
-    color: 'white',
+    color: '#222222',
   },
   underline: {
     textDecoration: 'underline',
@@ -37,13 +37,7 @@ const classes = mergeStyleSets({
   divider: {
     marginLeft: 12,
     marginRight: 12,
-    color: 'white',
-  },
-  icon: {
-    fontSize: 24,
-    height: 24,
-    width: 24,
-    paddingLeft: 8,
+    color: '#222222',
   },
 });
 
@@ -87,7 +81,7 @@ class Menu extends React.Component {
       <Link onClick={item.onClick}>
         <Text
             className={classNames(classes.text, { [classes.underline]: item.key === this.props.page })}
-            variant="xxLarge"
+            variant="xLarge"
         >
           {item.text}
         </Text>

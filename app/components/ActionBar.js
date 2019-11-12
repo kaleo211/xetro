@@ -10,6 +10,11 @@ import { setGroup } from '../actions/groupActions';
 import { openSnackBar, setPage } from '../actions/localActions';
 import { finishItem } from '../actions/itemActions';
 
+const iconStyle = {
+  fontSize: 24,
+  color: '#222222',
+};
+
 const classNames = mergeStyleSets({
   iconButton: {
     fontSize: 24,
@@ -66,36 +71,39 @@ class ActionBar extends React.Component {
 
     const videoIcon = {
       iconName: 'PresenceChickletVideo',
-      style: {
-        fontSize: 24,
-        color: 'white',
-      },
+      style: iconStyle,
     };
-
     const saveIcon = {
-      iconName: 'archive-svg',
-      style: {
-        fontSize: 24,
-        color: 'white',
-      },
+      iconName: 'archive',
+      style: iconStyle,
     };
     const lockIcon = {
       iconName: 'Lock',
-      style: {
-        fontSize: 24,
-        color: 'white',
-      },
+      style: iconStyle,
     };
     const unlockIcon = {
       iconName: 'Unlock',
-      style: {
-        fontSize: 24,
-        color: 'white',
-      },
+      style: iconStyle,
     };
 
     return page === 'board' && board.stage !== 'archived' &&
-      <div>
+      <div style={{ marginLeft: 8 }}>
+        {board.locked &&
+          <IconButton
+              primary
+              className={classNames.iconButton}
+              iconProps={unlockIcon}
+              onClick={this.handleUnlockBoard.bind(this)}
+          />
+        }
+        {!board.locked &&
+          <IconButton
+              primary
+              className={classNames.iconButton}
+              iconProps={lockIcon}
+              onClick={this.handleLockBoard.bind(this)}
+          />
+        }
         {board.video &&
           <IconButton
               primary
@@ -109,22 +117,6 @@ class ActionBar extends React.Component {
               className={classNames.iconButton}
               iconProps={saveIcon}
               onClick={this.handleArchiveBoard.bind(this)}
-          />
-        }
-        {!board.locked &&
-          <IconButton
-              primary
-              className={classNames.iconButton}
-              iconProps={lockIcon}
-              onClick={this.handleLockBoard.bind(this)}
-          />
-        }
-        {board.locked &&
-          <IconButton
-              primary
-              className={classNames.iconButton}
-              iconProps={unlockIcon}
-              onClick={this.handleUnlockBoard.bind(this)}
           />
         }
       </div>;

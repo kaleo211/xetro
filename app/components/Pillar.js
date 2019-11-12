@@ -24,7 +24,12 @@ import {
 } from '../actions/itemActions';
 import Action from './Action';
 
-const classNames = mergeStyleSets({
+const iconStyle = {
+  fontSize: 18,
+  color: '#222222',
+};
+
+const classes = mergeStyleSets({
   card: {
     maxWidth: '33vw',
     minWidth: 320,
@@ -128,43 +133,45 @@ class Pillar extends React.Component {
       <div>
         <DocumentCard
             key={item.id}
-            className={classNames.card}
+            className={classes.card}
         >
-          <div className={classNames.title}>
+          <div className={classes.title}>
             <DocumentCardTitle
                 title={item.title}
-                className={item.stage !== 'done' ? classNames.titleText : null}
+                className={item.stage !== 'done' ? classes.titleText : null}
             />
-            <div className={classNames.actions}>
+            <div className={classes.actions}>
               {!board.locked &&
                 <IconButton
                     primary
-                    className={classNames.iconButton}
-                    iconProps={{ iconName: 'delete-svg' }}
+                    className={classes.iconButton}
+                    iconProps={{ iconName: 'Delete', style: iconStyle }}
                     onClick={this.handleDeleteItem.bind(this, item)}
                 />
               }
               {!board.locked &&
-                <IconButton
-                    primary
-                    className={classNames.iconButton}
-                    iconProps={{ iconName: 'thumbsup-svg' }}
-                    onClick={this.handleLikeItem.bind(this, item)}
-                />
+                <div>
+                  <IconButton
+                      primary
+                      className={classes.iconButton}
+                      iconProps={{ iconName: 'Like', style: iconStyle }}
+                      onClick={this.handleLikeItem.bind(this, item)}
+                  />
+                </div>
               }
               {showTimer(item) &&
                 <IconButton
                     primary
-                    className={classNames.iconButton}
-                    iconProps={{ iconName: 'timer-svg' }}
+                    className={classes.iconButton}
+                    iconProps={{ iconName: 'Stopwatch', style: iconStyle }}
                     onClick={this.handleStartItem.bind(this, item)}
                 />
               }
               {showFinishButton(item) &&
                 <IconButton
                     primary
-                    className={classNames.iconButton}
-                    iconProps={{ iconName: 'done-svg' }}
+                    className={classes.iconButton}
+                    iconProps={{ iconName: 'CheckMark', style: iconStyle }}
                     onClick={this.handleFinishItem.bind(this, item)}
                 />
               }
@@ -172,22 +179,22 @@ class Pillar extends React.Component {
                 typeof showActionMap[item.id] === 'undefined' || !showActionMap[item.id] ?
                   <IconButton
                       primary
-                      className={classNames.iconButton}
-                      iconProps={{ iconName: 'arrow-up-svg' }}
+                      className={classes.iconButton}
+                      iconProps={{ iconName: 'ChevronUp', style: iconStyle }}
                       onClick={this.onShowActions.bind(this, item)}
                   /> :
                   <IconButton
                       primary
-                      className={classNames.iconButton}
-                      iconProps={{ iconName: 'arrow-down-svg' }}
+                      className={classes.iconButton}
+                      iconProps={{ iconName: 'ChevronDown', style: iconStyle }}
                       onClick={this.onHideActions.bind(this, item)}
                   />
               )}
               {showActionButton(item) &&
                 <IconButton
                     primary
-                    className={classNames.iconButton}
-                    iconProps={{ iconName: 'action-svg' }}
+                    className={classes.iconButton}
+                    iconProps={{ iconName: 'MyMoviesTV', style: iconStyle }}
                     onClick={this.onClickAddActionButton.bind(this, item)}
                 />
               }
@@ -202,7 +209,7 @@ class Pillar extends React.Component {
         </DocumentCard>
         {showActionMap[item.id] && item.actions.map(action => (
           <DocumentCard
-              className={classNames.actionCard}
+              className={classes.actionCard}
           >
             <DocumentCardTitle
                 title={action.title}

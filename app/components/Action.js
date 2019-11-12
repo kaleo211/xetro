@@ -119,7 +119,7 @@ class Action extends React.Component {
             /> :
             <IconButton
                 primary
-                iconProps={{ iconName: 'assign-svg' }}
+                iconProps={{ iconName: 'AddFriend' }}
                 menuProps={{
                   shouldFocusOnMount: true,
                   items: members,

@@ -17,17 +17,18 @@ const associations = [
   {
     model: model.Pillar,
     as: 'pillars',
-    order: [[{ model: model.Pillar, as: 'pillars' }, 'position', 'ASC']],
     include: [{
       model: model.Item,
       as: 'items',
-      order: [[{ model: model.Item, as: 'items' }, 'createdAt', 'ASC']],
       include: [{
         model: model.Action,
         as: 'actions',
-        order: [[{ model: model.Action, as: 'actions' }, 'createdAt', 'ASC']],
       }],
+      order: [[{ model: model.Action, as: 'actions' }, 'createdAt', 'ASC']],
     }],
+    order: [
+      [{ model: model.Item, as: 'items' }, 'likes', 'DESC'],
+    ],
   },
   {
     model: model.Action,
@@ -45,6 +46,7 @@ const respondWithBoard = async (res, where) => {
   try {
     const board = await model.Board.findOne({
       include: associations,
+      order: [[{ model: model.Pillar, as: 'pillars' }, 'position', 'ASC']],
       where,
     });
     if (board) {
@@ -79,7 +81,7 @@ routes.get('/:id', async (req, res) => {
 routes.get('/active/:groupID', async (req, res) => {
   await respondWithBoard(res, {
     groupID: req.params.groupID,
-    stage: 'active',
+    stage: 'created',
   });
 });
 
