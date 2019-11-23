@@ -11,6 +11,7 @@ import {
   Persona,
   PersonaSize,
   Text,
+  Overlay,
 } from 'office-ui-fabric-react';
 
 import {
@@ -67,6 +68,9 @@ const classes = mergeStyleSets({
   },
   iconButton: {
     marginTop: 12,
+  },
+  progress: {
+    marginTop: 36,
   },
 });
 
@@ -131,10 +135,7 @@ class Pillar extends React.Component {
 
     return items.map(item => (
       <div key={item.id}>
-        <DocumentCard
-            key={item.id}
-            className={classes.card}
-        >
+        <DocumentCard key={item.id} className={classes.card}>
           <div className={classes.title}>
             <DocumentCardTitle
                 title={item.title}
@@ -200,11 +201,11 @@ class Pillar extends React.Component {
               }
             </div>
           </div>
-          {showAddAction(item) &&
-            <Action />
-          }
+          {showAddAction(item) && <Action />}
           {board.locked && item.id === activeItem.id && item.stage === 'active' &&
-            <ProgressIndicator percentComplete={1 - itemProgress} />
+            <Overlay className={classes.progress}>
+              <ProgressIndicator percentComplete={1 - itemProgress} barHeight={10} />
+            </Overlay>
           }
         </DocumentCard>
         {showActionMap[item.id] && item.actions.map(action => (

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
+import { mergeStyleSets, loadTheme } from 'office-ui-fabric-react/lib/Styling';
 
 import Board from './components/Board';
 import Utils from './components/Utils';
@@ -16,6 +16,14 @@ import Menu from './components/Menu';
 import { MICROSOFT_URI } from './constants';
 
 initializeIcons();
+
+loadTheme({
+  palette: {
+    primary: '#0078d4',
+    black: '#1d1d1d',
+    white: '#fafafa',
+  },
+});
 
 const classNames = mergeStyleSets({
   app: {
