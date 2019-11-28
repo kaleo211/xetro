@@ -3,14 +3,13 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import {
-  Button,
   DefaultButton,
   Dialog,
   DialogFooter,
-  DialogType,
-  IconButton,
   PrimaryButton,
   TextField,
+  Persona,
+  PersonaSize,
 } from 'office-ui-fabric-react';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
@@ -26,10 +25,20 @@ import {
 } from '../actions/itemActions';
 import { setBoard } from '../actions/boardActions';
 
+import { isBlank } from '../../utils/tool';
+
 const classNames = mergeStyleSets({
+  dialog: {
+    minWidth: 1000,
+  },
   body: {
     display: 'flex',
     verticalAlign: 'middle',
+    height: 68,
+    flexDirection: 'column',
+  },
+  noOwerError: {
+    color: 'red',
   },
 });
 
@@ -39,13 +48,16 @@ class Action extends React.Component {
 
     this.state = {
       newActionTitle: '',
-      newActionOwner: null,
+      noOwnerError: '',
+      noTitleError: '',
+      pickedOwners: [],
     };
   }
 
   onChangeNewActionTitle(evt) {
     this.setState({
       newActionTitle: evt.target.value,
+      noTitleError: '',
     });
   }
 
@@ -54,25 +66,48 @@ class Action extends React.Component {
   }
 
   async onSaveAction(item) {
-    const { newActionTitle, newActionOwner } = this.state;
-    const newAction = {
-      title: newActionTitle.capitalize(),
-      itemID: item.id,
-      ownerID: newActionOwner.id,
-      groupID: this.props.group.id,
-      boardID: this.props.board.id,
-    };
-    await this.props.postAction(newAction);
-    this.props.hideAddingAction();
+    const { newActionTitle, pickedOwners } = this.state;
 
+    if (isBlank(newActionTitle)) {
+      this.setState({ noTitleError: 'Action title cannot be empty.' });
+      return;
+    }
+
+    if (isBlank(pickedOwners)) {
+      this.setState({ noOwnerError: 'Action owner cannot be empty.' });
+      return;
+    }
+
+    pickedOwners.map(async owner => {
+      const newAction = {
+        title: newActionTitle.capitalize(),
+        itemID: item.id,
+        ownerID: owner.id,
+        groupID: this.props.group.id,
+        boardID: this.props.board.id,
+      };
+      await this.props.postAction(newAction);
+    });
+
+    this.props.hideAddingAction();
     this.setState({
       newActionTitle: '',
-      newActionOwner: null,
+      pickedOwners: [],
     });
   }
 
-  onSetActionOwner(member) {
-    this.setState({ newActionOwner: member });
+  onToggleOwner(member) {
+    if (this.state.pickedOwners.filter(owner => owner.id === member.id).length > 0) {
+      this.setState(state => ({
+        pickedOwners: state.pickedOwners.filter(owner => {
+          return member.id !== owner.id;
+        }),
+      }));
+    } else {
+      this.setState(state => ({
+        pickedOwners: [...state.pickedOwners, member],
+      }));
+    }
   }
 
   onDismissAddingAction() {
@@ -81,49 +116,42 @@ class Action extends React.Component {
 
   render() {
     const { activeItem, group, addingAction } = this.props;
-    const { newActionOwner } = this.state;
+    const { pickedOwners, noTitleError } = this.state;
 
-    const members = group.members.map(member => {
-      return {
-        ...member,
-        text: member.name,
-        onClick: this.onSetActionOwner.bind(this, member),
-      };
-    });
+    const isOwner = (member) => {
+      const owner = pickedOwners.filter(o => o.id === member.id).length > 0;
+      return owner ? PersonaSize.size32 : PersonaSize.size24;
+    };
 
     return (
       <Dialog
+          isDarkOverlay
           hidden={!addingAction}
-          dialogContentProps={{
-            type: DialogType.largeHeader,
-            title: 'New Action',
-          }}
+          dialogContentProps={{ title: 'New Action' }}
+          minWidth={480}
+          className={classNames.dialog}
       >
         <div className={classNames.body}>
-          <div style={{ width: '100%' }}>
+          <div style={{ width: '100%', marginRight: 8, marginBottom: 16 }}>
             <TextField
-                underlined
-                style={{ width: '100%' }}
+                validateOnFocusOut
+                validateOnLoad={false}
+                errorMessage={noTitleError}
                 onChange={this.onChangeNewActionTitle.bind(this)}
             />
           </div>
-          {newActionOwner ?
-            <Button
-                text={newActionOwner.initials}
-                menuProps={{
-                  shouldFocusOnMount: true,
-                  items: members,
-                }}
-            /> :
-            <IconButton
-                primary
-                iconProps={{ iconName: 'AddFriend' }}
-                menuProps={{
-                  shouldFocusOnMount: true,
-                  items: members,
-                }}
-            />
-          }
+          <div style={{ marginLeft: 4, display: 'flex', flexDirection: 'row' }}>
+            {group.members.map(member => (
+              <div style={{ minWidth: 36 }}>
+                <Persona
+                    hidePersonaDetails
+                    text={member.initials}
+                    size={isOwner(member)}
+                    onClick={this.onToggleOwner.bind(this, member)}
+                />
+              </div>
+            ))}
+          </div>
         </div>
         <DialogFooter>
           <PrimaryButton
