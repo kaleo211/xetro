@@ -10,10 +10,11 @@ import {
   TextField,
   Persona,
   PersonaSize,
+  Text,
 } from 'office-ui-fabric-react';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
-import { setActiveItem, hideAddingAction } from '../actions/localActions';
+import { setActiveItem, hideAddingAction, showActions } from '../actions/localActions';
 import {
   deleteItem,
   finishItem,
@@ -34,11 +35,8 @@ const classNames = mergeStyleSets({
   body: {
     display: 'flex',
     verticalAlign: 'middle',
-    height: 68,
+    height: 72,
     flexDirection: 'column',
-  },
-  noOwerError: {
-    color: 'red',
   },
 });
 
@@ -47,9 +45,9 @@ class Action extends React.Component {
     super(props);
 
     this.state = {
-      newActionTitle: '',
-      noOwnerError: '',
-      noTitleError: '',
+      newActionTitle: null,
+      noOwnerError: null,
+      noTitleError: null,
       pickedOwners: [],
     };
   }
@@ -57,7 +55,7 @@ class Action extends React.Component {
   onChangeNewActionTitle(evt) {
     this.setState({
       newActionTitle: evt.target.value,
-      noTitleError: '',
+      noTitleError: null,
     });
   }
 
@@ -89,6 +87,7 @@ class Action extends React.Component {
       await this.props.postAction(newAction);
     });
 
+    this.props.showActions(item.id);
     this.props.hideAddingAction();
     this.setState({
       newActionTitle: '',
@@ -102,10 +101,12 @@ class Action extends React.Component {
         pickedOwners: state.pickedOwners.filter(owner => {
           return member.id !== owner.id;
         }),
+        noOwnerError: null,
       }));
     } else {
       this.setState(state => ({
         pickedOwners: [...state.pickedOwners, member],
+        noOwnerError: null,
       }));
     }
   }
@@ -116,7 +117,7 @@ class Action extends React.Component {
 
   render() {
     const { activeItem, group, addingAction } = this.props;
-    const { pickedOwners, noTitleError } = this.state;
+    const { pickedOwners, noTitleError, noOwnerError } = this.state;
 
     const isOwner = (member) => {
       const owner = pickedOwners.filter(o => o.id === member.id).length > 0;
@@ -132,7 +133,7 @@ class Action extends React.Component {
           className={classNames.dialog}
       >
         <div className={classNames.body}>
-          <div style={{ width: '100%', marginRight: 8, marginBottom: 16 }}>
+          <div style={{ width: '100%', minHeight: 42, marginRight: 8, marginBottom: 4 }}>
             <TextField
                 validateOnFocusOut
                 validateOnLoad={false}
@@ -140,7 +141,7 @@ class Action extends React.Component {
                 onChange={this.onChangeNewActionTitle.bind(this)}
             />
           </div>
-          <div style={{ marginLeft: 4, display: 'flex', flexDirection: 'row' }}>
+          <div style={{ marginLeft: 4, marginTop: 8, display: 'flex', flexDirection: 'row' }}>
             {group.members.map(member => (
               <div style={{ minWidth: 36 }}>
                 <Persona
@@ -151,6 +152,9 @@ class Action extends React.Component {
                 />
               </div>
             ))}
+            {noOwnerError &&
+              <Text style={{ color: 'red' }}>{noOwnerError}</Text>
+            }
           </div>
         </div>
         <DialogFooter>
@@ -186,6 +190,7 @@ const mapDispatchToProps = (dispatch) => ({
   patchItem: (item) => dispatch(patchItem(item)),
   postAction: (action) => dispatch(postAction(action)),
   hideAddingAction: () => dispatch(hideAddingAction()),
+  showActions: (id) => dispatch(showActions(id)),
 });
 
 export default compose(
