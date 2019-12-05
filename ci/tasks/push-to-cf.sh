@@ -31,8 +31,8 @@ push_green_app() {
 }
 EOF
 
-  npm install
-  npm run build
+  yarn install
+  yarn run build
 
   if ! cf app ${APP_NAME}; then
     cf push ${APP_NAME} --no-start -n ${APP_NAME}
