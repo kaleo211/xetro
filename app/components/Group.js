@@ -118,7 +118,8 @@ class Group extends React.Component {
             <Stack.Item key={action.id} align="auto">
               <DocumentCard
                   className={classNames.group}
-                  onMouseEnter={this.onHoverAction.bind(this, action)}
+                  onMouseOver={this.onHoverAction.bind(this, action)}
+                  onFocus={() => {}}
                   onMouseLeave={this.onLeaveHoveredAction.bind(this)}
               >
                 <DocumentCardDetails>

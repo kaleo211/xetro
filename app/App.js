@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { mergeStyleSets, loadTheme } from 'office-ui-fabric-react/lib/Styling';
+import Confetti from 'react-dom-confetti';
+import { IconButton, Image } from 'office-ui-fabric-react';
 
 import Board from './components/Board';
 import Utils from './components/Utils';
@@ -14,6 +16,8 @@ import Group from './components/Group';
 import Home from './components/Home';
 import Menu from './components/Menu';
 import { MICROSOFT_URI } from './constants';
+
+import yay from './public/yay.png';
 
 initializeIcons();
 
@@ -46,11 +50,20 @@ const classNames = mergeStyleSets({
     padding: 8,
     backgroundColor: '#FAF9F8',
   },
+  float: {
+    position: 'fixed',
+    bottom: 16,
+    right: 16,
+  },
 });
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      confetti: false,
+    };
 
     String.prototype.capitalize = function () {
       if (this && this.length > 0) {
@@ -83,8 +96,15 @@ class App extends React.Component {
     }
   }
 
+  async onConfetti() {
+    this.setState({ confetti: true });
+    await Utils.sleep(1000);
+    this.setState({ confetti: false });
+  }
+
   render() {
     const { page, group, board, me } = this.props;
+    const { confetti } = this.state;
 
     return (me &&
       <div className={classNames.app}>
@@ -94,7 +114,20 @@ class App extends React.Component {
         <main className={classNames.content}>
           {page === 'home' && <Home />}
           {page === 'group' && group && <Group />}
-          {page === 'board' && board && <Board />}
+          {page === 'board' && board &&
+            <div>
+              <Board />
+              <div className={classNames.float}>
+                <Image
+                  height={48}
+                  width={48}
+                  src={yay}
+                  onClick={this.onConfetti.bind(this)}
+                />
+                <Confetti active={confetti} config={{ angle: 120, dragFriction: 0.12, startVelocity: 120, elementCount: 200 }} />
+              </div>
+            </div>
+          }
         </main>
       </div>
     );

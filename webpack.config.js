@@ -1,6 +1,6 @@
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const config = require('config');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const definePlugin = new webpack.DefinePlugin({
   SSO_CLIENT_ID: JSON.stringify(config.get('sso.client_id')),
@@ -17,14 +17,21 @@ module.exports = {
     filename: 'bundle.js',
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      exclude: /(node_modules)/,
-      use: { loader: 'babel-loader' },
-    }, {
-      test: /\.css$/,
-      use: ['style-loader', 'css-loader'],
-    }],
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules)/,
+        use: ['babel-loader'],
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: ['file-loader'],
+      },
+    ],
   },
   plugins: [
     new webpack.ProvidePlugin({
@@ -36,6 +43,6 @@ module.exports = {
     definePlugin,
   ],
   optimization: {
-    minimize: false,
+    minimize: true,
   },
 };
