@@ -146,7 +146,7 @@ class Action extends React.Component {
               <div style={{ minWidth: 36 }}>
                 <Persona
                     hidePersonaDetails
-                    text={member.initials}
+                    text={`${member.firstName} ${member.lastName}`}
                     size={isOwner(member)}
                     onClick={this.onToggleOwner.bind(this, member)}
                 />

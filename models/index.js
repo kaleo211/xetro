@@ -22,7 +22,7 @@ fs.readdirSync(__dirname)
   .forEach(file => {
     const model = sequelize['import'](path.join(__dirname, file));
     db[model.name] = model;
-    model.sync({ force: true });
+    model.sync({ force: false });
   });
 
 Object.keys(db).forEach(modelName => {
@@ -31,7 +31,7 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.warn('database tables are created');
 });
 

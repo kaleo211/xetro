@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
 import { mergeStyleSets, loadTheme } from 'office-ui-fabric-react/lib/Styling';
 import Confetti from 'react-dom-confetti';
-import { IconButton, Image } from 'office-ui-fabric-react';
+import { Image } from 'office-ui-fabric-react';
 
 import Board from './components/Board';
 import Utils from './components/Utils';
