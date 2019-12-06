@@ -1,6 +1,6 @@
 {
   "name": "xetro",
-  "version": "0.2.1",
+  "version": "0.3.1",
   "private": true,
   "scripts": {
     "build": "webpack",
@@ -13,7 +13,6 @@
     "node": ">=11.0.0"
   },
   "dependencies": {
-    "@microsoft/microsoft-graph-client": "^1.5.2",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-plugin-inline-react-svg": "^0.5.4",
@@ -35,7 +34,7 @@
     "file-loader": "^5.0.2",
     "html-webpack-plugin": "^3.2.0",
     "msal": "^0.2.4",
-    "mysql2": "^1.6.5",
+    "mysql2": "1.6.5",
     "office-ui-fabric-react": "^7.60.0",
     "pg": "^7.12.1",
     "react": "^16.8.4",
@@ -47,33 +46,11 @@
     "redux-thunk": "^2.3.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "sequelize": "^6.0.0",
+    "sequelize": "5.21.2",
+    "sequelize-cli": "5.5.1",
     "uuid": "^3.3.2",
     "webpack": "^4.16.5",
     "webpack-cli": "^3.3.0"
   },
-  "devDependencies": {
-    "enzyme": "^3.6.0",
-    "enzyme-adapter-react-16": "^1.4.0",
-    "enzyme-to-json": "^3.3.4",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-import": "^2.17.3",
-    "eslint-plugin-jsx-a11y": "^6.2.1",
-    "eslint-plugin-react": "^7.13.0",
-    "fetch-mock": "^7.2.0",
-    "ignore-styles": "^5.0.1",
-    "jasmine": "^3.2.0",
-    "jasmine-enzyme": "^6.0.4",
-    "jest": "^24.9.0",
-    "jsdom": "^12.0.0",
-    "mocha": "^6.0.2",
-    "nightwatch": "^1.0.19",
-    "puppeteer": "^1.11.0",
-    "redux-mock-store": "^1.5.3",
-    "sequelize-cli": "^5.4.0",
-    "start-server-and-test": "^1.7.11",
-    "webdriver": "^5.7.1",
-    "webpack-dev-server": "^3.2.1"
-  }
+  "devDependencies": {}
 }
