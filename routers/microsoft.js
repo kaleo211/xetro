@@ -34,18 +34,30 @@ routes.get('/', async (req, res) => {
       },
     });
     const me = JSON.parse(body);
+    const email = me.mail.toLowerCase();
 
-    model.User.findOrCreate({
-      where: { email: me.mail.toLowerCase() },
-      defaults: {
+    const user = await model.User.findOne({
+      where: { email },
+    });
+
+    if (!user) {
+      console.info(`didn't find user ${email}, creating...`);
+      await model.User.create({
+        email,
         firstName: me.givenName,
         lastName: me.surname,
         microsoftID: me.id,
-      },
-    }).spread(result => {
-      req.session.me = result;
-      req.session.save();
-    });
+      });
+    } else {
+      await model.User.update({
+        microsoftID: me.id,
+      }, {
+        where: { email }
+      });
+    }
+    console.info(`${email} has been added to xetro`);
+    req.session.me = await model.User.findOne({where: { email }});
+    req.session.save();
   } catch (err) {
     console.error('error getting user profile', err);
     res.sendStatus(500);
