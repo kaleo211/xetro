@@ -22,3 +22,4 @@
 # Tmp
 /tmp
 chromedriver.log
+concourse.yml
