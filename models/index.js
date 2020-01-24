@@ -11,18 +11,15 @@ const db = {};
 if (isBlank(config.get('database'))) {
   throw new Error('database is not configurated');
 }
-
 const database = config.get('database.database');
 const username = config.get('database.username');
 const host = config.get('database.host');
 
 let password = '';
-try { password = config.get('database.password'); } catch (e) {};
-
 let dialect = 'mysql';
-try { dialect = config.get('database.dialect'); } catch (e) {};
-
 let force = false;
+try { password = config.get('database.password'); } catch (e) {};
+try { dialect = config.get('database.dialect'); } catch (e) {};
 try { force = config.get('database.force_sync'); } catch (e) {};
 
 const sequelize = new Sequelize(database, username, password,
@@ -49,7 +46,7 @@ Object.keys(db).forEach(modelName => {
 });
 
 sequelize.sync({ force }).then(() => {
-  console.warn('database tables are created');
+  console.warn('database tables created');
 });
 
 db.sequelize = sequelize;

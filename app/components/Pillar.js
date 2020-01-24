@@ -4,29 +4,18 @@ import { compose } from 'redux';
 
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import {
-  DocumentCard,
-  DocumentCardTitle,
-  IconButton,
-  ProgressIndicator,
-  Persona,
-  PersonaSize,
-  Text,
-  Overlay,
+  DocumentCard, DocumentCardTitle, IconButton, ProgressIndicator, Persona, PersonaSize, Text, Overlay
 } from 'office-ui-fabric-react';
 
 import {
-  setActiveItem,
-  showActions,
-  hideActions,
-  showAddingAction,
+  setActiveItem, showActions, hideActions, showAddingAction
 } from '../actions/localActions';
 import {
-  deleteItem,
-  likeItem,
-  finishItem,
-  startItem,
+  deleteItem, likeItem, finishItem, startItem
 } from '../actions/itemActions';
 import Action from './Action';
+
+import { isBlank } from '../../utils/tool';
 
 const iconStyle = {
   fontSize: 18,
@@ -61,6 +50,9 @@ const classes = mergeStyleSets({
     fontWeight: 'bold',
     fontSize: 20,
   },
+  titleTextDone:{
+    textDecorationLine: 'line-through',
+  },
   actions: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -77,7 +69,6 @@ const classes = mergeStyleSets({
 class Pillar extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {};
   }
 
@@ -85,8 +76,12 @@ class Pillar extends React.Component {
     this.props.deleteItem({ ...item, boardID: this.props.board.id });
   }
 
-  onStartItem(item, evt) {
+  async onStartItem(item, evt) {
     evt.stopPropagation();
+    const { activeItem } = this.props;
+    if (!isBlank(activeItem)) {
+      await this.props.finishItem(activeItem)
+    }
     this.props.startItem({ ...item, boardID: this.props.board.id });
   }
 
@@ -100,8 +95,6 @@ class Pillar extends React.Component {
   }
 
   async onClickAddActionButton(item) {
-    await this.onFinishItem(item);
-    this.props.setActiveItem(item);
     this.props.showAddingAction();
   }
 
@@ -139,7 +132,7 @@ class Pillar extends React.Component {
           <div className={classes.title}>
             <DocumentCardTitle
                 title={item.title}
-                className={item.stage !== 'done' ? classes.titleText : null}
+                className={item.stage !== 'done' ? classes.titleText : classes.titleTextDone}
             />
             <div className={classes.actions}>
               {showFoldButton(item) && (
@@ -231,7 +224,7 @@ const mapDispatchToProps = (dispatch) => ({
   deleteItem: (item) => dispatch(deleteItem(item)),
   setActiveItem: (item) => dispatch(setActiveItem(item)),
   likeItem: (id) => dispatch(likeItem(id)),
-  finishItem: (id) => dispatch(finishItem(id)),
+  finishItem: (item) => dispatch(finishItem(item)),
   startItem: (item) => dispatch(startItem(item)),
   showActions: (item) => dispatch(showActions(item)),
   hideActions: (item) => dispatch(hideActions(item)),
