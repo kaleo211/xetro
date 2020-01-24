@@ -3,15 +3,32 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const config = require('config');
 
+const { isBlank } = require('../utils/tool');
+
 const basename = path.basename(__filename);
 const db = {};
 
-const sequelize = new Sequelize(
-  config.get('database.database'),
-  config.get('database.username'),
-  config.get('database.password'), {
-    host: config.get('database.host'),
-    dialect: config.get('database.dialect'),
+if (isBlank(config.get('database'))) {
+  throw new Error('database is not configurated');
+}
+
+const database = config.get('database.database');
+const username = config.get('database.username');
+const host = config.get('database.host');
+
+let password = '';
+try { password = config.get('database.password'); } catch (e) {};
+
+let dialect = 'mysql';
+try { dialect = config.get('database.dialect'); } catch (e) {};
+
+let force = false;
+try { force = config.get('database.force_sync'); } catch (e) {};
+
+const sequelize = new Sequelize(database, username, password,
+  {
+    host,
+    dialect,
     logging: false,
     syncOnAssociation: true,
   },
@@ -31,7 +48,7 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-sequelize.sync({ force: false }).then(() => {
+sequelize.sync({ force }).then(() => {
   console.warn('database tables are created');
 });
 
