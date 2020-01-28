@@ -8,8 +8,8 @@ import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { Breadcrumb } from 'office-ui-fabric-react/lib/Breadcrumb';
 import { Link, Icon } from 'office-ui-fabric-react';
 
-import { setBoard, postBoard } from '../actions/boardActions';
 import { setPage } from '../actions/localActions';
+import { joinOrCreateBoard } from '../actions/boardActions';
 import ActionBar from './ActionBar';
 
 const classes = mergeStyleSets({
@@ -49,27 +49,7 @@ class Menu extends React.Component {
   }
 
   onJoinOrCreateBoard() {
-    const { activeBoard, group } = this.props;
-
-    if (activeBoard) {
-      this.props.setBoard(this.props.activeBoard.id);
-      this.props.setPage('board');
-      return;
-    }
-
-    const now = new Date();
-    const boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
-    const randomIndex = Math.floor(Math.random() * (group.members.length));
-
-    const newBoard = {
-      stage: 'created',
-      groupID: group.id,
-      name: boardName,
-      facilitatorID: group.members[randomIndex].id,
-    };
-
-    this.props.postBoard(newBoard);
-    this.props.setPage('board');
+    this.props.joinOrCreateBoard();
   }
 
   onRenderItem(item) {
@@ -124,9 +104,8 @@ const mapStateToProps = state => ({
   me: state.users.me,
 });
 const mapDispatchToProps = (dispatch) => ({
-  setBoard: (id) => dispatch(setBoard(id)),
   setPage: (page) => dispatch(setPage(page)),
-  postBoard: (board) => dispatch(postBoard(board)),
+  joinOrCreateBoard: () => dispatch(joinOrCreateBoard()),
 });
 
 export default compose(

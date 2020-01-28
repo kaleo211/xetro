@@ -18,6 +18,31 @@ export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
   });
 };
 
+export const joinOrCreateBoard = () => {
+  return (dispatch, getState) => {
+    const { group } = getState().groups;
+    const { activeBoard } = getState().boards;
+
+    if (activeBoard) {
+      dispatch(setBoard(activeBoard.id));
+
+    } else {
+      const now = new Date();
+      const boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
+      const randomIndex = Math.floor(Math.random() * (group.members.length));
+      const newBoard = {
+        stage: 'created',
+        groupID: group.id,
+        name: boardName,
+        facilitatorID: group.members[randomIndex].id,
+      };
+      dispatch(postBoard(newBoard));
+    }
+
+    dispatch(setPage('board'));
+  }
+}
+
 export const postBoard = (newBoard) => async (dispatch) => {
   const board = await Utils.post('boards', newBoard);
   if (board) {

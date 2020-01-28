@@ -14,7 +14,7 @@ import {
 } from 'office-ui-fabric-react';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 
-import { fetchGroupActiveBoard } from '../actions/boardActions';
+import { fetchGroupActiveBoard, joinOrCreateBoard } from '../actions/boardActions';
 import { finishAction, deleteAction } from '../actions/itemActions';
 
 import { date } from '../../utils/tool';
@@ -45,10 +45,11 @@ const classNames = mergeStyleSets({
     marginRight: 16,
   },
   cancel: {
-    fontSize: 20,
-    height: 20,
-    width: 20,
-    marginRight: 8,
+    fontSize: 16,
+    height: 16,
+    width: 16,
+    marginRight: 4,
+    marginTop: -8,
   },
   actions: {
     marginTop: 4,
@@ -59,6 +60,13 @@ const classNames = mergeStyleSets({
     height: 40,
     width: 40,
     color: 'green',
+  },
+  openBoard: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 32,
+    paddingTop: 24,
   },
 });
 
@@ -98,6 +106,10 @@ class Group extends React.Component {
     await this.props.deleteAction(item);
   }
 
+  onJoinOrCreateGroup() {
+    this.props.joinOrCreateBoard();
+  }
+
   render() {
     const { group } = this.props;
     const { hoveredActionID } = this.state;
@@ -113,7 +125,7 @@ class Group extends React.Component {
     const removeIcon = {
       iconName: 'BoxMultiplySolid',
       style: {
-        fontSize: 20,
+        fontSize: 16,
         color: '#d13438',
       },
     };
@@ -121,6 +133,13 @@ class Group extends React.Component {
     return (
       <div className={classNames.actions}>
         <Stack horizontal wrap>
+          <Stack.Item>
+            <DocumentCard className={classNames.group} onClick={this.onJoinOrCreateGroup.bind(this)}>
+              <div className={classNames.openBoard}>
+                Open Board
+              </div>
+            </DocumentCard>
+          </Stack.Item>
           {actions && actions.map(action => (
             <Stack.Item key={action.id} align="auto">
               <DocumentCard
@@ -180,6 +199,7 @@ const mapDispatchToProps = (dispatch) => ({
   deleteAction: action => dispatch(deleteAction(action)),
   fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
   finishAction: action => dispatch(finishAction(action)),
+  joinOrCreateBoard: () => dispatch(joinOrCreateBoard()),
 });
 
 export default compose(
