@@ -1,0 +1,27 @@
+{
+  "sso": {
+    "address": "http://localhost:8888",
+    "client_id": "clientID",
+    "client_secret": "clientSecret",
+    "tenant_id": "tenantID",
+    "redirect_uri": "http://localhost:8080/callback",
+    "scopes": [
+      "user.read"
+    ]
+  },
+  "microsoft": {
+    "api": "http://localhost:8888",
+    "host": "localhost:8888"
+  },
+  "database": {
+    "username": "postgres",
+    "password": "postgres",
+    "host": "localhost",
+    "database": "xetro",
+    "dialect": "postgres",
+    "force_sync": false
+  },
+  "server": {
+    "session_secret": "sessionSecret"
+  }
+}

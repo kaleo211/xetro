@@ -17,7 +17,7 @@
 
 # Configuration
 /config/*
-!/config/test.json
+!/config/example.json
 
 # Tmp
 /tmp
