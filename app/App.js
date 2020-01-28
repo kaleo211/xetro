@@ -7,7 +7,6 @@ import Confetti from 'react-dom-confetti';
 import { Image } from 'office-ui-fabric-react';
 
 import Board from './components/Board';
-import Utils from './components/Utils';
 
 import { searchGroups } from './actions/groupActions';
 import { setPage } from './actions/localActions';
@@ -16,6 +15,8 @@ import Group from './components/Group';
 import Home from './components/Home';
 import Menu from './components/Menu';
 import { MICROSOFT_URI } from './constants';
+
+import { sleep } from '../utils/tool';
 
 import yay from './public/yay.png';
 
@@ -92,13 +93,13 @@ class App extends React.Component {
       } catch (err) {
         console.error('error login microsoft:', err);
       }
-      await Utils.sleep(1000);
+      await sleep(1000);
     }
   }
 
   async onConfetti() {
     this.setState({ confetti: true });
-    await Utils.sleep(1000);
+    await sleep(1000);
     this.setState({ confetti: false });
   }
 

@@ -17,6 +17,8 @@ import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { fetchGroupActiveBoard } from '../actions/boardActions';
 import { finishAction, deleteAction } from '../actions/itemActions';
 
+import { date } from '../../utils/tool';
+
 const classNames = mergeStyleSets({
   group: {
     marginRight: 4,
@@ -25,23 +27,28 @@ const classNames = mergeStyleSets({
   },
   overlay: {
     backgroundColor: 'rgba(0, 0, 0, 0.16)',
-    top: '0',
-    bottom: '0',
+    top: 0,
+    bottom: 0,
     color: 'white',
-    left: '0',
+    left: 0,
     position: 'absolute',
-    right: '0',
+    right: 0,
     display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingTop: 48,
-    paddingRight: 8,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
   },
   icon: {
     fontSize: 40,
     height: 40,
     width: 40,
     marginRight: 16,
+  },
+  cancel: {
+    fontSize: 20,
+    height: 20,
+    width: 20,
+    marginRight: 8,
   },
   actions: {
     marginTop: 4,
@@ -106,7 +113,7 @@ class Group extends React.Component {
     const removeIcon = {
       iconName: 'BoxMultiplySolid',
       style: {
-        fontSize: 40,
+        fontSize: 20,
         color: '#d13438',
       },
     };
@@ -124,21 +131,25 @@ class Group extends React.Component {
               >
                 <DocumentCardDetails>
                   <DocumentCardTitle title={action.title} />
-                  <DocumentCardActivity activity="Oct 13 2019" people={[action.owner]} />
+                  <DocumentCardActivity activity={date(action.createdAt)} people={[action.owner]} />
                 </DocumentCardDetails>
                 {hoveredActionID === action.id &&
                   <Overlay>
                     <div className={classNames.overlay}>
-                      <IconButton
-                          className={classNames.icon}
-                          iconProps={finishIcon}
-                          onClick={this.onFinishAction.bind(this, action)}
-                      />
-                      <IconButton
-                          className={classNames.icon}
-                          iconProps={removeIcon}
-                          onClick={this.onRemoveAction.bind(this, action)}
-                      />
+                      <div>
+                        <IconButton
+                            className={classNames.cancel}
+                            iconProps={removeIcon}
+                            onClick={this.onRemoveAction.bind(this, action)}
+                        />
+                      </div>
+                      <div>
+                        <IconButton
+                            className={classNames.icon}
+                            iconProps={finishIcon}
+                            onClick={this.onFinishAction.bind(this, action)}
+                        />
+                      </div>
                     </div>
                   </Overlay>
                 }

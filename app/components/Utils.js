@@ -1,8 +1,4 @@
 export default {
-  async sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  },
-
   createdAt() {
     return (a, b) => {
       let comparison = 0;

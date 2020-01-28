@@ -7,6 +7,17 @@ const isBlank = (obj) => {
   return isEmptyObj || isEmptyArr;
 };
 
+const date = (str) => {
+  const date = new Date(str).toDateString();
+  return date;
+};
+
+const sleep = async (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
 module.exports = {
+  date,
   isBlank,
+  sleep,
 };
