@@ -1,6 +1,8 @@
 prepare_dev:
 	export NODE_ENV=development
-	./node_modules/.bin/sequelize db:drop
+	docker run --name postgres --rm -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres postgres || \
+		docker restart postgres
+	./node_modules/.bin/sequelize db:drop || true
 	./node_modules/.bin/sequelize db:create
 	perl -pi -e 's/false/true/g' config/development.json
 	node ./models/index.js

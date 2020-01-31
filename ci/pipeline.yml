@@ -30,6 +30,7 @@ jobs:
         CF_USERNAME:              {{cf_username}}
         CF_PASSWORD:              {{cf_password}}
         NODE_ENV:                 production
+        DB_SERVICE_NAME:          {{db_service_name}}
         DB_USERNAME:              {{db_username}}
         DB_PASSWORD:              {{db_password}}
         DB_HOST:                  {{db_host}}
