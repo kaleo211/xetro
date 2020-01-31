@@ -33,6 +33,7 @@ EOF
 
   yarn install
   yarn run build
+  rm -rf node_modules/.cache
 
   if ! cf app ${APP_NAME}; then
     cf push ${APP_NAME} --no-start -n ${APP_NAME}
