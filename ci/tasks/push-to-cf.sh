@@ -57,7 +57,7 @@ switch_blue_with_green() {
 }
 
 main() {
-  cf api http://api.${CF_ENDPOINT} --skip-ssl-validation
+  cf api https://api.${CF_ENDPOINT} --skip-ssl-validation
   cf auth ${CF_USERNAME} "${CF_PASSWORD}"
   cf target -o ${CF_ORG} -s ${CF_SPACE}
 
