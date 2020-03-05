@@ -20,7 +20,7 @@ push_green_app() {
       "client_secret": "${SSO_DELL_CLIENT_SECRET}",
       "auth_domain": "${SSO_DELL_AUTH_DOMAIN}",
       "userinfo": "${SSO_DELL_USERINFO_URL}"
-    },
+    }
   },
   "database": {
     "username": "${DB_USERNAME}",

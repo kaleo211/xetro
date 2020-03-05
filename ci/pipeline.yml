@@ -43,7 +43,7 @@ jobs:
         SSO_DELL_CLIENT_ID:             {{sso_dell_client_id}}
         SSO_DELL_CLIENT_SECRET:         {{sso_dell_client_secret}}
         SSO_DELL_AUTH_DOMAIN:           {{sso_dell_auth_domain}}
-        SSO_DELL_USERINFO:              {{sso_dell_userinfo}}
+        SSO_DELL_USERINFO_URL:          {{sso_dell_userinfo_url}}
 
 resources:
 - name: xetro
