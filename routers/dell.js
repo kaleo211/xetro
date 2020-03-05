@@ -79,8 +79,7 @@ router.get('/callback', async (req, res, next) => {
     }
     req.session.me = await models.User.findOne({where: { email: meFromDB.email }});
     req.session.save();
-    res.set('Content-Type', 'text/html');
-    res.send(Buffer.from('<html><head><script>window.close();</script></head></html>'));
+    res.redirect('/');
   } catch (err) {
     console.error('error trying to log into dell: ', err.message);
     res.sendStatus(500);

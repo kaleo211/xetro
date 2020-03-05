@@ -84,7 +84,7 @@ class App extends React.Component {
   async handleDellLogin() {
     await this.props.getMe();
     if (this.props.me == null) {
-      window.open('/dell', 'Dell', 'height=500,width=620');
+      window.open('/dell', '_self');
     }
 
     while (this.props.me == null) {
