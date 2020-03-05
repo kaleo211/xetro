@@ -5,18 +5,22 @@ push_green_app() {
   cat > config/${NODE_ENV}.json <<EOF
 {
   "sso": {
-    "address": "https://login.microsoftonline.com",
-    "client_id": "${SSO_CLIENT_ID}",
-    "client_secret": "${SSO_CLIENT_SECRET}",
-    "tenant_id": "${SSO_TENANT_ID}",
-    "redirect_uri": "${SSO_REDIRECT_URI}",
-    "scopes": [
-        "user.read"
-    ]
-  },
-  "microsoft": {
-    "api": "https://graph.microsoft.com/v1.0/",
-    "host": "graph.microsoft.com"
+    "microsoft": {
+      "api": "https://graph.microsoft.com/v1.0/",
+      "host": "graph.microsoft.com",
+      "address": "https://login.microsoftonline.com",
+      "client_id": "${SSO_MICROSOFT_CLIENT_ID}",
+      "client_secret": "${SSO_MICROSOFT_CLIENT_SECRET}",
+      "tenant_id": "${SSO_MICROSOFT_TENANT_ID}",
+      "redirect_uri": "${SSO_MICROSOFT_REDIRECT_URI}",
+      "scopes": ["user.read"]
+    },
+    "dell": {
+      "client_id": "${SSO_DELL_CLIENT_ID}",
+      "client_secret": "${SSO_DELL_CLIENT_SECRET}",
+      "auth_domain": "${SSO_DELL_AUTH_DOMAIN}",
+      "userinfo": "${SSO_DELL_USERINFO_URL}"
+    },
   },
   "database": {
     "username": "${DB_USERNAME}",
@@ -26,6 +30,7 @@ push_green_app() {
     "dialect": "${DB_DIALECT}"
   },
   "server": {
+    "address": "https://${APP_NAME}.${CF_DOMAIN}",
     "session_secret": "D25F7461-7A32-4C76-BDB1-840B50642EDA"
   }
 }

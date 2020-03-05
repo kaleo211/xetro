@@ -10,6 +10,7 @@ const { formatUserToSave } = require('../utils/tool');
 const ssoClientID = config.get('sso.dell.client_id');
 const ssoClientSecret = config.get('sso.dell.client_secret');
 const ssoAuthDomain = config.get('sso.dell.auth_domain');
+const ssoUserinfo = config.get('sso.dell.userinfo');
 
 const oauth2client = oauth.create({
   client: {
@@ -51,7 +52,7 @@ router.get('/callback', async (req, res, next) => {
       },
     };
 
-    let resp = await fetch(config.get('services.userinfo.url'), userInfoRequest);
+    let resp = await fetch(ssoUserinfo, userInfoRequest);
     const meFromSSO = await resp.json();
     let meFromDB = await models.User.findOne({
       where: { email: meFromSSO.email },

@@ -22,24 +22,28 @@ jobs:
       run:
         path: xetro/ci/tasks/push-to-cf.sh
       params:
-        APP_NAME:                 xetro
-        CF_DOMAIN:                {{cf_domain}}
-        CF_ENDPOINT:              {{cf_endpoint}}
-        CF_ORG:                   {{cf_org}}
-        CF_SPACE:                 {{cf_space}}
-        CF_USERNAME:              {{cf_username}}
-        CF_PASSWORD:              {{cf_password}}
-        NODE_ENV:                 production
-        DB_SERVICE_NAME:          {{db_service_name}}
-        DB_USERNAME:              {{db_username}}
-        DB_PASSWORD:              {{db_password}}
-        DB_HOST:                  {{db_host}}
-        DB_NAME:                  {{db_name}}
-        DB_DIALECT:               {{db_dialect}}
-        SSO_CLIENT_ID:            {{sso_client_id}}
-        SSO_CLIENT_SECRET:        {{sso_client_secret}}
-        SSO_TENANT_ID:            {{sso_tenant_id}}
-        SSO_REDIRECT_URI:         {{sso_redirect_uri}}
+        APP_NAME:                       xetro
+        CF_DOMAIN:                      {{cf_domain}}
+        CF_ENDPOINT:                    {{cf_endpoint}}
+        CF_ORG:                         {{cf_org}}
+        CF_SPACE:                       {{cf_space}}
+        CF_USERNAME:                    {{cf_username}}
+        CF_PASSWORD:                    {{cf_password}}
+        NODE_ENV:                       production
+        DB_SERVICE_NAME:                {{db_service_name}}
+        DB_USERNAME:                    {{db_username}}
+        DB_PASSWORD:                    {{db_password}}
+        DB_HOST:                        {{db_host}}
+        DB_NAME:                        {{db_name}}
+        DB_DIALECT:                     {{db_dialect}}
+        SSO_MICROSOFT_CLIENT_ID:        {{sso_microsoft_client_id}}
+        SSO_MICROSOFT_CLIENT_SECRET:    {{sso_microsoft_client_secret}}
+        SSO_MICROSOFT_TENANT_ID:        {{sso_microsoft_tenant_id}}
+        SSO_MICROSOFT_REDIRECT_URI:     {{sso_microsoft_redirect_uri}}
+        SSO_DELL_CLIENT_ID:             {{sso_dell_client_id}}
+        SSO_DELL_CLIENT_SECRET:         {{sso_dell_client_secret}}
+        SSO_DELL_AUTH_DOMAIN:           {{sso_dell_auth_domain}}
+        SSO_DELL_USERINFO:              {{sso_dell_userinfo}}
 
 resources:
 - name: xetro
