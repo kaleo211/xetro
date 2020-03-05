@@ -1,9 +1,6 @@
 const routes = require('express').Router();
-const Sequelize = require('sequelize');
 const model = require('../models');
 const boardSvc = require('../services/board');
-
-const Op = Sequelize.Op;
 
 const associations = [
   {
