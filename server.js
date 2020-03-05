@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const session = require('express-session');
 const config = require('config');
-const microsoftRouter = require('./routers/microsoft');
+const dellRouter = require('./routers/dell');
 const groupRouter = require('./routers/group');
 const userRouter = require('./routers/user');
 const boardRouter = require('./routers/board');
@@ -41,7 +41,7 @@ server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json());
 server.use(cookieParser());
 
-server.use('/callback', microsoftRouter);
+server.use('/dell', dellRouter);
 server.use('/groups', isAuthenticated, groupRouter);
 server.use('/users', isAuthenticated, userRouter);
 server.use('/boards', isAuthenticated, boardRouter);

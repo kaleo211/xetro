@@ -76,9 +76,25 @@ class App extends React.Component {
 
   async componentWillMount() {
     document.body.style.margin = 0;
-    await this.handleMicrosoftLogin();
+    await this.handleDellLogin();
     this.props.fetchUsers();
     await this.props.searchGroups();
+  }
+
+  async handleDellLogin() {
+    await this.props.getMe();
+    if (this.props.me == null) {
+      window.open('/dell', 'Dell', 'height=500,width=620');
+    }
+
+    while (this.props.me == null) {
+      try {
+        await this.props.getMe();
+      } catch (err) {
+        console.error('error login Dell:', err);
+      }
+      await sleep(1000);
+    }
   }
 
   async handleMicrosoftLogin() {

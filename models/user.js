@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
+    username: DataTypes.STRING,
+    badgeID: DataTypes.STRING,
+    title: DataTypes.STRING,
     name: {
       type: new DataTypes.VIRTUAL(DataTypes.STRING),
       get() {
