@@ -5,8 +5,8 @@ const rp = require('request-promise');
 const model = require('../models');
 
 routes.get('/', async (req, res) => {
-  const address = config.get('sso.address');
-  const tenantID = config.get('sso.tenant_id');
+  const address = config.get('sso.microsoft.address');
+  const tenantID = config.get('sso.microsoft.tenant_id');
   const tokenURL = `${address}/${tenantID}/oauth2/v2.0/token`;
 
   try {
@@ -15,10 +15,10 @@ routes.get('/', async (req, res) => {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       form: {
         grant_type: 'authorization_code',
-        client_id: config.get('sso.client_id'),
-        client_secret: config.get('sso.client_secret'),
+        client_id: config.get('sso.microsoft.client_id'),
+        client_secret: config.get('sso.microsoft.client_secret'),
         code: req.query.code,
-        redirect_uri: config.get('sso.redirect_uri'),
+        redirect_uri: config.get('sso.microsoft.redirect_uri'),
       },
     });
     const accessToken = JSON.parse(body).access_token;
