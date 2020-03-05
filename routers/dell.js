@@ -54,30 +54,26 @@ router.get('/callback', async (req, res, next) => {
     let resp = await fetch(config.get('services.userinfo.url'), userInfoRequest);
     const meFromSSO = await resp.json();
     let meFromDB = await models.User.findOne({
-      where: { username: meFromSSO.user_name },
+      where: { email: meFromSSO.email },
     });
     const meToAdd = formatUserToSave(meFromSSO);
 
     if (!meFromDB) {
       resp = await models.User.findOrCreate({
-        where: { username: meFromSSO.user_name },
+        where: { email: meFromSSO.email },
         defaults: meToAdd,
       });
       if (!resp || resp.length !== 2) {
         throw new Error('invalid response from sequelize');
       }
       meFromDB = resp[0].toJSON();
-    } else if (!meFromDB.user_id || !(meFromDB.manager_username == meToAdd.manager_username)) {
-      await models.User.update(meToAdd, {
-        where: { id: meFromDB.id },
-      });
     } else {
       const dataToAlwaysUpdate = {
         name: meToAdd.name,
         title: meToAdd.title,
       };
       await models.User.update(dataToAlwaysUpdate, {
-        where: { id: meFromDB.id },
+        where: { email: meFromDB.email },
       });
     }
     req.session.me = await models.User.findOne({where: { email: meFromDB.email }});
