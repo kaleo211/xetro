@@ -1,16 +1,12 @@
-const express = require('express');
+const app = require('express')();
 
-const app = express();
-const port = 8888;
-
+// Microsoft
 app.get('/tenantID/oauth2/authorize', (req, res) => {
-  res.redirect('http://localhost:8080/callback');
+  res.redirect('http://localhost:8080/microsoft/callback');
 });
-
 app.post('/tenantID/oauth2/v2.0/token', (req, res) => {
   res.json({ access_token: 'fake_access_token' });
 });
-
 app.get('/me', (req, res) => {
   res.json({
     mail: 'fakeEamil',
@@ -20,4 +16,24 @@ app.get('/me', (req, res) => {
   });
 });
 
-app.listen(port, () => console.warn(`Dummy SSO server listening on port ${port}!`));
+// Dell
+app.get('/oauth/authorize', (req, res) => {
+  res.redirect('http://localhost:8080/dell/callback');
+});
+app.post('/oauth/token', (req, res) => {
+  res.json({ access_token: 'fake_access_token' });
+});
+app.get('/dell/userinfo', (req, res) => {
+  res.json({
+    "email": "fakeEmail",
+    "family_name": "fakeFamilyName",
+    "given_name": "fakeGivenName",
+    "name": "fakeGivenName fakeFamilyName",
+  });
+});
+
+const port = 8888;
+app.listen(
+  port,
+  () => console.warn(`Dummy SSO server listening on port ${port}!`),
+);
