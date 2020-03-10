@@ -4,7 +4,7 @@ import { compose } from 'redux';
 
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import {
-  DocumentCard, DocumentCardTitle, IconButton, ProgressIndicator, Persona, PersonaSize, Text, Overlay
+  DocumentCard, DocumentCardTitle, IconButton, ProgressIndicator, Persona, PersonaSize, Text, Overlay, CommandButton
 } from 'office-ui-fabric-react';
 
 import {
@@ -160,10 +160,10 @@ class Pillar extends React.Component {
               }
               {!board.locked &&
                 <div>
-                  <IconButton
-                      primary
-                      className={classes.iconButton}
-                      iconProps={{ iconName: 'Like', style: iconStyle }}
+                  <CommandButton
+                      style={{marginTop: 8}}
+                      iconProps={{ iconName: 'Add', style: {fontSize: 14, color: '#222222', marginRight: -2}}}
+                      text={item.likes}
                       onClick={this.onLikeItem.bind(this, item)}
                   />
                 </div>

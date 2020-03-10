@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     likes: {
       type: DataTypes.INTEGER,
-      defaultValue: 0,
+      defaultValue: 1,
     },
     stage: {
       type: DataTypes.STRING,
