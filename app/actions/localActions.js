@@ -1,6 +1,7 @@
 import {
   SHOW_PAGE,
   SET_ITEM,
+  SET_HOVER_ITEM,
   UPDATE_SHOW_ACTION_MAP,
   UPDATE_SHOW_ADDING_ACTION,
 } from './types';
@@ -13,6 +14,11 @@ export const setPage = (page) => ({
 export const setActiveItem = (item) => ({
   type: SET_ITEM,
   activeItem: item,
+});
+
+export const setHoverItem = (item) => ({
+  type: SET_HOVER_ITEM,
+  hoveredItem: item,
 });
 
 export const showActions = (itemID) => ({

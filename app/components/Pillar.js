@@ -1,14 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import classNames from 'classnames/bind';
 
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import {
   DocumentCard, DocumentCardTitle, IconButton, ProgressIndicator, Persona, PersonaSize, Text, Overlay, CommandButton
 } from 'office-ui-fabric-react';
+import { Depths } from '@uifabric/fluent-theme/lib/fluent/FluentDepths';
 
 import {
-  setActiveItem, showActions, hideActions, showAddingAction
+  setActiveItem, showActions, hideActions, showAddingAction, setHoverItem
 } from '../actions/localActions';
 import {
   deleteItem, likeItem, finishItem, startItem
@@ -27,6 +29,9 @@ const classes = mergeStyleSets({
     maxWidth: '33vw',
     minWidth: 320,
     marginTop: 4,
+  },
+  hovered: {
+    boxShadow: Depths.depth8,
   },
   actionCard: {
     maxWidth: '33vw',
@@ -65,6 +70,7 @@ const classes = mergeStyleSets({
     marginTop: 36,
   },
 });
+const cx = classNames.bind(classes);
 
 class Pillar extends React.Component {
   constructor(props) {
@@ -106,8 +112,17 @@ class Pillar extends React.Component {
     this.props.showActions(item.id);
   }
 
+  onHoverItem(item) {
+    console.log(item.id);
+    this.props.setHoverItem(item);
+  }
+
+  onLeaveHoveredItem() {
+    this.props.setHoverItem({});
+  }
+
   render() {
-    const { activeItem, itemProgress, pillar, board, showActionMap, addingAction } = this.props;
+    const { activeItem, itemProgress, hoveredItem, pillar, board, showActionMap, addingAction } = this.props;
     const items = pillar.items;
 
     const showTimer = (item) => {
@@ -128,7 +143,13 @@ class Pillar extends React.Component {
 
     return items.map(item => (
       <div key={item.id}>
-        <DocumentCard key={item.id} className={classes.card}>
+        <DocumentCard
+            key={item.id}
+            className={cx({card: true, hovered: hoveredItem.id===item.id})}
+            onMouseOver={this.onHoverItem.bind(this, item)}
+            onFocus={() => {}}
+            onMouseLeave={this.onLeaveHoveredItem.bind(this)}
+        >
           <div className={classes.title}>
             <DocumentCardTitle
                 title={item.title}
@@ -216,6 +237,7 @@ const mapStateToProps = state => ({
   board: state.boards.board,
   group: state.groups.group,
   activeItem: state.local.activeItem,
+  hoveredItem: state.local.hoveredItem,
   showActionMap: state.local.showActionMap,
   addingAction: state.local.addingAction,
 });
@@ -223,6 +245,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => ({
   deleteItem: (item) => dispatch(deleteItem(item)),
   setActiveItem: (item) => dispatch(setActiveItem(item)),
+  setHoverItem: (item) => dispatch(setHoverItem(item)),
   likeItem: (id) => dispatch(likeItem(id)),
   finishItem: (item) => dispatch(finishItem(item)),
   startItem: (item) => dispatch(startItem(item)),

@@ -4,6 +4,7 @@ import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 
 import {
   SET_ITEM,
+  SET_HOVER_ITEM,
   SHOW_PAGE,
   UPDATE_SHOW_ACTION_MAP,
   UPDATE_SHOW_ADDING_ACTION,
@@ -18,6 +19,7 @@ const persistConfig = {
 const initialState = {
   page: 'home',
   activeItem: {},
+  hoveredItem: {},
   showActionMap: {},
 };
 
@@ -33,6 +35,12 @@ const localReducer = (state = initialState, action) => {
       return {
         ...state,
         activeItem: action.activeItem,
+      };
+
+    case SET_HOVER_ITEM:
+      return {
+        ...state,
+        hoveredItem: action.hoveredItem,
       };
 
     case UPDATE_SHOW_ACTION_MAP:
