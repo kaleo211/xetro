@@ -66,6 +66,11 @@ const classes = mergeStyleSets({
   iconButton: {
     marginTop: 12,
   },
+  deleteButton: {
+    position: 'absolute',
+    top: -14,
+    right: -14,
+  },
   progress: {
     marginTop: 36,
   },
@@ -113,7 +118,6 @@ class Pillar extends React.Component {
   }
 
   onHoverItem(item) {
-    console.log(item.id);
     this.props.setHoverItem(item);
   }
 
@@ -150,6 +154,14 @@ class Pillar extends React.Component {
             onFocus={() => {}}
             onMouseLeave={this.onLeaveHoveredItem.bind(this)}
         >
+          {!board.locked && hoveredItem.id===item.id &&
+            <IconButton
+                primary
+                className={classes.deleteButton}
+                iconProps={{ iconName: 'Cancel', style: {fontSize: 12, color: 'red'} }}
+                onClick={this.onDeleteItem.bind(this, item)}
+            />
+          }
           <div className={classes.title}>
             <DocumentCardTitle
                 title={item.title}
@@ -172,17 +184,9 @@ class Pillar extends React.Component {
                   />
               )}
               {!board.locked &&
-                <IconButton
-                    primary
-                    className={classes.iconButton}
-                    iconProps={{ iconName: 'Delete', style: iconStyle }}
-                    onClick={this.onDeleteItem.bind(this, item)}
-                />
-              }
-              {!board.locked &&
                 <div>
                   <CommandButton
-                      style={{marginTop: 8}}
+                      style={{marginTop: 8, fontSize: 18}}
                       iconProps={{ iconName: 'Add', style: {fontSize: 14, color: '#222222', marginRight: -2}}}
                       text={item.likes}
                       onClick={this.onLikeItem.bind(this, item)}
