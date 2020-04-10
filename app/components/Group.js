@@ -11,13 +11,25 @@ import {
   IconButton,
   Overlay,
   Stack,
+  Separator,
+  Dropdown,
+  Label,
 } from 'office-ui-fabric-react';
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
+import { mergeStyleSets, createTheme } from 'office-ui-fabric-react/lib/Styling';
 
 import { fetchGroupActiveBoard, joinOrCreateBoard } from '../actions/boardActions';
 import { finishAction, deleteAction } from '../actions/itemActions';
-
+import { setFacilitator } from '../actions/groupActions';
 import { date } from '../../utils/tool';
+
+const theme = createTheme({
+  fonts: {
+    medium: {
+      fontFamily: 'Monaco, Menlo, Consolas',
+      fontSize: '30px'
+    }
+  }
+});
 
 const classNames = mergeStyleSets({
   group: {
@@ -61,12 +73,21 @@ const classNames = mergeStyleSets({
     width: 40,
     color: 'green',
   },
-  openBoard: {
+  actionCard: {
+    marginRight: 4,
+    width: 240,
+    height: 72,
+    padding: 8,
+    paddingLeft: 16,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    fontSize: 32,
-    paddingTop: 24,
+  },
+  actionTitle: {
+    fontSize: 24,
+  },
+  facilitatorCard: {
+    fontSize: 24,
   },
 });
 
@@ -76,7 +97,10 @@ class Group extends React.Component {
 
     this.state = {
       hoveredActionID: '',
+      isFacilitatorHovered: false,
     };
+
+    this.onSetFacilitator = this.onSetFacilitator.bind(this);
   }
 
   async componentDidMount() {
@@ -98,6 +122,14 @@ class Group extends React.Component {
     this.setState({ hoveredActionID: '' });
   }
 
+  onHoverFacilitator() {
+    this.setState({ isFacilitatorHovered: true });
+  }
+
+  onLeaveHoveredFacilitator() {
+    this.setState({ isFacilitatorHovered: false });
+  }
+
   async onFinishAction(item) {
     await this.props.finishAction(item);
   }
@@ -106,13 +138,18 @@ class Group extends React.Component {
     await this.props.deleteAction(item);
   }
 
+  async onSetFacilitator(evt, facilitator) {
+    await this.props.setFacilitator(facilitator.key);
+    this.setState({ isFacilitatorHovered: false });
+  }
+
   onJoinOrCreateGroup() {
     this.props.joinOrCreateBoard();
   }
 
   render() {
     const { group } = this.props;
-    const { hoveredActionID } = this.state;
+    const { hoveredActionID, isFacilitatorHovered } = this.state;
 
     const actions = group.actions;
     const finishIcon = {
@@ -129,17 +166,35 @@ class Group extends React.Component {
         color: '#d13438',
       },
     };
+    console.log('group', group);
+
+    const members = group.members.map(member => ({key: member.id, text: member.name}));
 
     return (
       <div className={classNames.actions}>
+        <div style={{display:'flex'}}>
+          <DocumentCard className={classNames.actionCard}
+              onMouseOver={this.onHoverFacilitator.bind(this)}
+              onFocus={() => {}}
+              onMouseLeave={this.onLeaveHoveredFacilitator.bind(this)}
+          >
+            <div className={classNames.facilitatorCard}>
+              <Dropdown
+                  label="Facilitator of the Week"
+                  options={members}
+                  selectedKey={group.facilitator.id}
+                  onChange={(evt, facilitator) => this.onSetFacilitator(evt, facilitator)}
+              />
+            </div>
+          </DocumentCard>
+          <DocumentCard className={classNames.actionCard} onClick={this.onJoinOrCreateGroup.bind(this)}>
+            <div className={classNames.actionTitle}>
+              Open Board
+            </div>
+          </DocumentCard>
+        </div>
+        <Separator theme={theme} styles={{content: {backgroundColor: 'rgba(0,0,0,0)'}}}>Action Items</Separator>
         <Stack horizontal wrap>
-          <Stack.Item>
-            <DocumentCard className={classNames.group} onClick={this.onJoinOrCreateGroup.bind(this)}>
-              <div className={classNames.openBoard}>
-                Open Board
-              </div>
-            </DocumentCard>
-          </Stack.Item>
           {actions && actions.map(action => (
             <Stack.Item key={action.id} align="auto">
               <DocumentCard
@@ -200,6 +255,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
   finishAction: action => dispatch(finishAction(action)),
   joinOrCreateBoard: () => dispatch(joinOrCreateBoard()),
+  setFacilitator: (id) => dispatch(setFacilitator(id)),
 });
 
 export default compose(

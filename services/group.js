@@ -20,6 +20,21 @@ const search = async (query) => {
   return groups;
 };
 
+const setFacilitator = async (groupID, facilitatorID) => {
+  const group = await model.Group.findOne({where: {id: groupID}});
+  if (!group) {
+    throw new Error('no group found');
+  }
+
+  const facilitator = await  model.User.findOne({where: {id: facilitatorID}});
+  if (!facilitator) {
+    throw new Error('no facilitator found');
+  }
+
+  await group.setFacilitator(facilitator);
+}
+
 module.exports = {
   search,
+  setFacilitator,
 };

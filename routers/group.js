@@ -2,7 +2,7 @@ const routes = require('express').Router();
 const { Op } = require('sequelize');
 const model = require('../models');
 
-const { search } = require('../services/group');
+const { search, setFacilitator } = require('../services/group');
 
 const respondWithGroup = async (res, id) => {
   try {
@@ -21,6 +21,10 @@ const respondWithGroup = async (res, id) => {
             },
             required: false,
           }],
+        },
+        {
+          model: model.User,
+          as: 'facilitator',
         },
         {
           model: model.Board,
@@ -44,6 +48,7 @@ const respondWithGroup = async (res, id) => {
       where: { id },
     });
     if (group) {
+      console.log(group.facilitator);
       res.json(group);
     } else {
       res.sendStatus(404);
@@ -121,5 +126,16 @@ routes.post('/member', async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+routes.post('/setFacilitator', async (req, res) => {
+  try {
+    const { groupID, facilitatorID } = req.body;
+    await setFacilitator(groupID, facilitatorID);
+    await respondWithGroup(res, groupID);
+  } catch (err) {
+    console.error('error patch group:', err);
+    res.sendStatus(500);
+  }
+})
 
 module.exports = routes;

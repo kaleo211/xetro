@@ -76,3 +76,17 @@ export const addUserToGroup = (userID, groupID) => async (dispatch) => {
     console.error('error patching groups for adding user', returnedGroup);
   }
 };
+
+export const setFacilitator = (facilitatorID) => async (dispatch, getState) => {
+  const { group } = getState().groups;
+  const body = { facilitatorID, groupID: group.id }
+  const returnedGroup = await Utils.post('groups/setFacilitator', body);
+  if (returnedGroup) {
+    dispatch({
+      type: SET_GROUP,
+      group: returnedGroup
+    });
+  } else {
+    console.error('error set facilitator', group);
+  }
+};
