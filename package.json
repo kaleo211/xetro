@@ -15,7 +15,7 @@
   "dependencies": {
     "@types/react": "16.9.19",
     "@types/react-dom": "16.9.5",
-    "@uifabric/fluent-theme": "^7.1.35",
+    "@uifabric/fluent-theme": "7.1.35",
     "babel-core": "6.26.3",
     "babel-loader": "7.1.5",
     "babel-plugin-inline-react-svg": "0.5.4",
@@ -53,10 +53,10 @@
     "sequelize": "5.21.3",
     "simple-oauth2": "3.3.0",
     "uuid": "3.4.0",
-    "webpack": "4.41.5"
+    "webpack": "4.41.5",
+    "webpack-cli": "3.3.10"
   },
   "devDependencies": {
-    "sequelize-cli": "5.5.1",
-    "webpack-cli": "^3.3.10"
+    "sequelize-cli": "5.5.1"
   }
 }
