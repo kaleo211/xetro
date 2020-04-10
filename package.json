@@ -1,6 +1,6 @@
 {
   "name": "xetro",
-  "version": "0.3.1",
+  "version": "0.4.1",
   "private": true,
   "scripts": {
     "build": "webpack",
@@ -38,7 +38,7 @@
     "html-webpack-plugin": "3.2.0",
     "msal": "1.2.1",
     "mysql2": "2.1.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "2.6.0",
     "office-ui-fabric-react": "7.105.11",
     "pg": "7.12.1",
     "react": "16.8.4",
