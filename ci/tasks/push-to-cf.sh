@@ -27,7 +27,8 @@ push_green_app() {
     "password": "${DB_PASSWORD}",
     "host": "${DB_HOST}",
     "database": "${DB_NAME}",
-    "dialect": "${DB_DIALECT}"
+    "dialect": "${DB_DIALECT}",
+    "force_sync": true
   },
   "server": {
     "address": "https://${APP_NAME}.${CF_DOMAIN}",
