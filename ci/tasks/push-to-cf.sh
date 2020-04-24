@@ -28,7 +28,7 @@ push_green_app() {
     "host": "${DB_HOST}",
     "database": "${DB_NAME}",
     "dialect": "${DB_DIALECT}",
-    "force_sync": true
+    "force_sync": false
   },
   "server": {
     "address": "https://${APP_NAME}.${CF_DOMAIN}",

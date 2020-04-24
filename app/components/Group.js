@@ -149,7 +149,7 @@ class Group extends React.Component {
 
   render() {
     const { group } = this.props;
-    const { hoveredActionID, isFacilitatorHovered } = this.state;
+    const { hoveredActionID } = this.state;
 
     const actions = group.actions;
     const finishIcon = {
@@ -182,7 +182,7 @@ class Group extends React.Component {
               <Dropdown
                   label="Facilitator of the Week"
                   options={members}
-                  selectedKey={group.facilitator.id}
+                  selectedKey={group.facilitator && group.facilitator.id}
                   onChange={(evt, facilitator) => this.onSetFacilitator(evt, facilitator)}
               />
             </div>
@@ -200,7 +200,6 @@ class Group extends React.Component {
               <DocumentCard
                   className={classNames.group}
                   onMouseOver={this.onHoverAction.bind(this, action)}
-                  onFocus={() => {}}
                   onMouseLeave={this.onLeaveHoveredAction.bind(this)}
               >
                 <DocumentCardDetails>
