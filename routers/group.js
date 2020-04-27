@@ -48,7 +48,6 @@ const respondWithGroup = async (res, id) => {
       where: { id },
     });
     if (group) {
-      console.log(group.facilitator);
       res.json(group);
     } else {
       res.sendStatus(404);

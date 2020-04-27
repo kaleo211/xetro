@@ -1,8 +1,11 @@
 const app = require('express')();
+const config = require('config');
+
+const serverAddr = config.get('server.address');
 
 // Microsoft
 app.get('/tenantID/oauth2/authorize', (req, res) => {
-  res.redirect('http://localhost:8080/microsoft/callback');
+  res.redirect(`${serverAddr}/microsoft/callback`);
 });
 app.post('/tenantID/oauth2/v2.0/token', (req, res) => {
   res.json({ access_token: 'fake_access_token' });
@@ -18,7 +21,7 @@ app.get('/me', (req, res) => {
 
 // Dell
 app.get('/oauth/authorize', (req, res) => {
-  res.redirect('http://localhost:8080/dell/callback');
+  res.redirect(`${serverAddr}/dell/callback`);
 });
 app.post('/oauth/token', (req, res) => {
   res.json({ access_token: 'fake_access_token' });

@@ -1,50 +1,11 @@
 const routes = require('express').Router();
 const model = require('../models');
 const boardSvc = require('../services/board');
+const pillarSvc = require('../services/pillar');
 
-const associations = [
-  {
-    model: model.User,
-    as: 'facilitator',
-  },
-  {
-    model: model.Group,
-    as: 'group',
-  },
-  {
-    model: model.Pillar,
-    as: 'pillars',
-    include: [{
-      model: model.Item,
-      as: 'items',
-      include: [{
-        model: model.Action,
-        as: 'actions',
-        include: [{
-          model: model.User,
-          as: 'owner',
-        }],
-      }],
-    }],
-  },
-];
-
-const respondWithBoard = async (res, where) => {
+const respondWithBoard = async (res, whereCl) => {
   try {
-    const board = await model.Board.findOne({
-      include: associations,
-      order: [
-        [{ model: model.Pillar, as: 'pillars' }, 'position', 'ASC'],
-        [{ model: model.Pillar, as: 'pillars' },
-          { model: model.Item, as: 'items' }, 'likes', 'DESC'],
-        [{ model: model.Pillar, as: 'pillars' },
-          { model: model.Item, as: 'items' }, 'createdAt', 'ASC'],
-        [{ model: model.Pillar, as: 'pillars' },
-          { model: model.Item, as: 'items' },
-          { model: model.Action, as: 'actions' }, 'createdAt', 'ASC'],
-      ],
-      where,
-    });
+    const board = boardSvc.findOne(whereCl);
     if (board) {
       res.json(board);
     } else {
@@ -101,17 +62,8 @@ routes.get('/:id/unlock', async (req, res) => {
 // List
 routes.get('/group/:id', async (req, res) => {
   try {
-    const boards = await model.Board.findAll({
-      include: [{
-        model: model.User,
-        as: 'facilitator',
-      }, {
-        model: model.Group,
-        as: 'group',
-      }],
-      where: {
-        groupID: req.params.id,
-      },
+    const boards = await boardSvc.findAll({
+      groupID: req.params.id,
     });
     res.json(boards);
   } catch (err) {
@@ -124,7 +76,7 @@ routes.get('/group/:id', async (req, res) => {
 routes.post('/', async (req, res) => {
   const board = req.body;
   try {
-    const newBoard = await boardSvc.create(board.name, board.facilitatorID, board.groupID);
+    const newBoard = await boardSvc.create(board.name, board.facilitatorID, board.groupID, pillarSvc);
     await respondWithBoard(res, { id: newBoard.id });
   } catch (err) {
     console.error('error post board:', err);
@@ -135,9 +87,7 @@ routes.post('/', async (req, res) => {
 // Update
 routes.patch('/:id', async (req, res) => {
   try {
-    const board = await model.Board.findOne({
-      where: { id: req.params.id },
-    });
+    const board = await boardSvc.findOne({ id: req.params.id });
     await board.setFacilitator(req.body.facilitatorID);
     await respondWithBoard(res, { id: board.id });
   } catch (err) {

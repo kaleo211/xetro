@@ -1,11 +1,11 @@
 {
   "presets": [
-    "react",
-    "es2015"
+    "@babel/preset-react",
+    "@babel/preset-env"
   ],
   "plugins": [
-    "transform-class-properties",
-    "inline-react-svg",
-    "transform-object-rest-spread"
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread",
+    "inline-react-svg"
   ]
 }

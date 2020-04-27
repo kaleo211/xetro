@@ -9,10 +9,10 @@ prepare_dev:
 	perl -pi -e 's/false/true/g' config/development.json
 	node ./models/index.js
 	perl -pi -e 's/true/false/g' config/development.json
-	./node_modules/.bin/sequelize db:seed:all --seeders-path tests/seeders
+	./node_modules/.bin/sequelize db:seed:all --seeders-path utils/seeders
 
 	-kill -9 $$(lsof -i :8888 | awk 'FNR==2 {print $$2}')
-	node ./tests/helper/dummy-sso-server.js &
+	node ./utils/dummy-sso-server.js &
 	./node_modules/.bin/webpack --watch
 
 start_dev:
