@@ -166,7 +166,6 @@ class Group extends React.Component {
         color: '#d13438',
       },
     };
-    console.log('group', group);
 
     const members = group.members.map(member => ({key: member.id, text: member.name}));
 

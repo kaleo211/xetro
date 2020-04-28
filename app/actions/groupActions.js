@@ -80,7 +80,7 @@ export const addUserToGroup = (userID, groupID) => async (dispatch) => {
 export const setFacilitator = (facilitatorID) => async (dispatch, getState) => {
   const { group } = getState().groups;
   const body = { facilitatorID, groupID: group.id }
-  const returnedGroup = await Utils.post('groups/setFacilitator', body);
+  const returnedGroup = await Utils.post('groups/facilitator', body);
   if (returnedGroup) {
     dispatch({
       type: SET_GROUP,

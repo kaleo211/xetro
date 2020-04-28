@@ -6,6 +6,7 @@ import {
 } from './types';
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
+import { isBlank } from '../../utils/tool';
 
 
 export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
@@ -24,19 +25,16 @@ export const joinOrCreateBoard = () => {
   return (dispatch, getState) => {
     const { group } = getState().groups;
     const { activeBoard } = getState().boards;
-
-    if (activeBoard) {
+    if (!isBlank(activeBoard) && activeBoard.id) {
       dispatch(setBoard(activeBoard.id));
 
     } else {
       const now = new Date();
       const boardName = `${now.getMonth()}/${now.getDate()}/${now.getFullYear()}`;
-      const randomIndex = Math.floor(Math.random() * (group.members.length));
       const newBoard = {
         stage: 'created',
         groupID: group.id,
         name: boardName,
-        facilitatorID: group.members[randomIndex].id,
       };
       dispatch(postBoard(newBoard));
     }

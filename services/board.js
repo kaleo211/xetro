@@ -1,6 +1,5 @@
 import models from '../models/index.js';
 const { Action, Board, Group, Item, Pillar, User } = models;
-
 import { isBlank } from '../utils/tool';
 
 
@@ -37,17 +36,17 @@ const includes = [
   },
 ];
 
-const create = async (name, facilitatorID, groupID, pillarSvc) => {
+
+const create = async (name, groupID, pillarSvc) => {
   if (isBlank(name)) {}
 
   const newBoard = await Board.create({
     name,
     stage: 'created',
   });
+  console.info('New board created:', newBoard.name, newBoard.id);
 
-  await newBoard.setFacilitator(facilitatorID);
   await newBoard.setGroup(groupID);
-
   await pillarSvc.create(':)', newBoard.id, 0);
   await pillarSvc.create(':|', newBoard.id, 1);
   await pillarSvc.create(':(', newBoard.id, 2);

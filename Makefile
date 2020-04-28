@@ -1,9 +1,17 @@
 prepare_dev:
 	export NODE_ENV=development
-	docker run --name postgres --rm -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres postgres:10 || \
-		docker restart postgres
 
-	./node_modules/.bin/sequelize db:drop || true
+	@if lsof -n -i4TCP:5432 | grep LISTEN ; then \
+		if docker ps -a --filter name=postgres | grep postgres ; then \
+			docker run --name postgres --rm -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres postgres:10; \
+		else \
+			docker restart postgres; \
+		fi; \
+	fi;
+
+	sleep 3
+
+	-./node_modules/.bin/sequelize db:drop
 	./node_modules/.bin/sequelize db:create
 
 	perl -pi -e 's/false/true/g' config/development.json

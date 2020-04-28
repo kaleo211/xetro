@@ -26,10 +26,6 @@ const oauth2client = oauth.create({
 });
 const selfAddress = config.get('server.address');
 
-console.log(userSvc);
-console.log(userSvc.findOne);
-
-
 routes.get('/', (req, res) => {
   const authorizationUri = oauth2client.authorizationCode.authorizeURL({
     redirect_uri: selfAddress + '/dell/callback',

@@ -31,6 +31,7 @@ routes.post('/search', async (req, res) => {
   }
 });
 
+
 routes.post('/', async (req, res) => {
   const group = req.body;
   try {
@@ -68,7 +69,8 @@ routes.post('/member', async (req, res) => {
   }
 });
 
-routes.post('/setFacilitator', async (req, res) => {
+
+routes.post('/facilitator', async (req, res) => {
   try {
     const { groupID, facilitatorID } = req.body;
     await groupSvc.setFacilitator(groupID, facilitatorID);

@@ -47,17 +47,19 @@ routes.get('/group/:id', async (req, res) => {
   }
 });
 
+
 // Create
 routes.post('/', async (req, res) => {
   const board = req.body;
   try {
-    const newBoard = await boardSvc.create(board.name, board.facilitatorID, board.groupID, pillarSvc);
+    const newBoard = await boardSvc.create(board.name, board.groupID, pillarSvc);
     await respondWithBoard(res, { id: newBoard.id });
   } catch (err) {
     console.error('error post board:', err);
     res.sendStatus(500);
   }
 });
+
 
 // Update
 routes.patch('/:id', async (req, res) => {
