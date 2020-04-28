@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
 
   Item.associate = (models) => {
     Item.belongsTo(models.Group, { as: 'group', foreignKey: 'groupID' });
-    Item.belongsTo(models.Board, { as: 'board', foreignKey: 'boardID' });
     Item.belongsTo(models.Pillar, { as: 'pillar', foreignKey: 'pillarID' });
     Item.belongsTo(models.User, { as: 'owner', foreignKey: 'ownerID' });
     Item.hasMany(models.Action, { as: 'actions', foreignKey: 'itemID' });

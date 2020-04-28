@@ -23,7 +23,7 @@ routes.delete('/:id', async (req, res) => {
 routes.post('/search', async (req, res) => {
   const { name } = req.body;
   try {
-    const groups = await groupSvc.search({ name });
+    const groups = await groupSvc.searchByName(name);
     res.json(groups);
   } catch (err) {
     console.error('error search group:', err);

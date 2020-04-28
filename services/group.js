@@ -88,9 +88,7 @@ const remove = async (id) => {
 };
 
 
-const search = async (query) => {
-  const { name } = query;
-
+const searchByName = async (name) => {
   const where = {};
   if (!isBlank(name)) {
     where.name = { [Op.iLike]: `%${name}%` };
@@ -107,7 +105,7 @@ const setFacilitator = async (groupID, facilitatorID) => {
     throw new Error('no group found');
   }
 
-  const facilitator = await  User.findOne({where: {id: facilitatorID}});
+  const facilitator = await User.findOne({where: {id: facilitatorID}});
   if (!facilitator) {
     throw new Error('no facilitator found');
   }
@@ -121,6 +119,6 @@ export default {
   findOne,
   findOrCreateByName,
   remove,
-  search,
+  searchByName,
   setFacilitator,
 };

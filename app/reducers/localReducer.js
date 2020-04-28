@@ -5,7 +5,7 @@ import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import {
   SET_ITEM,
   SET_HOVER_ITEM,
-  SHOW_PAGE,
+  SET_PAGE,
   UPDATE_SHOW_ACTION_MAP,
   UPDATE_SHOW_ADDING_ACTION,
 } from '../actions/types';
@@ -25,7 +25,7 @@ const initialState = {
 
 const localReducer = (state = initialState, action) => {
   switch (action.type) {
-    case SHOW_PAGE:
+    case SET_PAGE:
       return {
         ...state,
         page: action.page,

@@ -1,5 +1,5 @@
 import {
-  SHOW_PAGE,
+  SET_PAGE,
   SET_ITEM,
   SET_HOVER_ITEM,
   UPDATE_SHOW_ACTION_MAP,
@@ -7,7 +7,7 @@ import {
 } from './types';
 
 export const setPage = (page) => ({
-  type: SHOW_PAGE,
+  type: SET_PAGE,
   page,
 });
 
@@ -34,7 +34,7 @@ export const hideActions = (itemID) => ({
 });
 
 export const showGroupPage = () => ({
-  type: SHOW_PAGE,
+  type: SET_PAGE,
   page: 'group',
 });
 

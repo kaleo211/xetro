@@ -16,11 +16,10 @@ describe('Board', () => {
       models.Board.create = jest.fn(async () => fakeCreatedBoard);
 
       // Execution
-      await boardSvc.create('fakeName', 'fakeFacilitatorID', 'fakeGroupID', fakePillarSvc);
+      await boardSvc.create('fakeName', 'fakeGroupID', fakePillarSvc);
 
       // Assertion
       expect(models.Board.create).toHaveBeenCalledWith({name: 'fakeName', stage: 'created'});
-      expect(fakeCreatedBoard.setFacilitator).toHaveBeenCalledWith('fakeFacilitatorID');
       expect(fakeCreatedBoard.setGroup).toHaveBeenCalledWith('fakeGroupID');
       expect(fakePillarSvc.create).toHaveBeenCalledTimes(3);
     });

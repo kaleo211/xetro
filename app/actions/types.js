@@ -1,4 +1,4 @@
-export const SHOW_PAGE = 'SHOW_PAGE';
+export const SET_PAGE = 'SET_PAGE';
 
 export const SET_GROUP = 'SET_GROUP';
 export const SET_GROUPS = 'SET_GROUPS';

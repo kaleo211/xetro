@@ -21,13 +21,12 @@ const includes = [
 ];
 
 
-const create = async (title, ownerID, groupID, boardID, pillarID) => {
-  const newItem = await model.Item.create({title});
+const create = async (title, ownerID, groupID, pillarID) => {
+  const newItem = await Item.create({title});
 
   await newItem.setOwner(ownerID);
   await newItem.setPillar(pillarID);
   await newItem.setGroup(groupID);
-  await newItem.setBoard(boardID);
 
   return newItem;
 };

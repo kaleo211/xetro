@@ -58,9 +58,9 @@ routes.get('/', async (req, res) => {
 
 // Create
 routes.post('/', async (req, res) => {
-  const { title, ownerID, groupID, pillarID, boardID} = req.body.item;
+  const { title, ownerID, groupID, pillarID} = req.body.item;
   try {
-    await itemSvc.create(title, ownerID, groupID, boardID, pillarID);
+    await itemSvc.create(title, ownerID, groupID, pillarID);
     await respondWithItem(res, newItem.id);
   } catch (err) {
     console.error('error post item:', err);
