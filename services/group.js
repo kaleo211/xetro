@@ -82,7 +82,7 @@ const findOrCreateByName = async (name) => {
 
 
 const remove = async (id) => {
-  await Item.destroy({
+  await Group.destroy({
     where: { id },
   });
 };

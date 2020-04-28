@@ -24,4 +24,31 @@ describe('Board', () => {
       expect(fakePillarSvc.create).toHaveBeenCalledTimes(3);
     });
   });
+
+  // WIP
+  describe('findAll', () => {
+    it('should findAll the boards with the given condition', async () => {
+      // Preparation
+      const fakeCreatedBoard = {
+        setFacilitator: jest.fn(),
+        setGroup: jest.fn(),
+      };
+      models.Board.findAll = jest.fn(async () => fakeCreatedBoard);
+      const fakeWhereCondn = 'this is a fake query';
+      const result = 
+      { 
+        include: [{
+          model: "group", 
+          as: 'group'}],
+        where: fakeWhereCondn,
+      };
+      // Execution
+      await boardSvc.findAll(fakeWhereCondn);
+
+      // Assertion
+      expect(models.Board.findAll).toHaveBeenCalledWith(result);
+      // expect(fakeCreatedBoard.setGroup).toHaveBeenCalledWith('fakeGroupID');
+      // expect(fakePillarSvc.create).toHaveBeenCalledTimes(3);
+    });
+  });
 });

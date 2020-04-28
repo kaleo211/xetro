@@ -2,15 +2,15 @@ prepare_dev:
 	export NODE_ENV=development
 
 	@if lsof -n -i4TCP:5432 | grep LISTEN ; then \
+		echo postgres is running; \
+	else \
 		if docker ps -a --filter name=postgres | grep postgres ; then \
-			echo starting postgres; \
-			docker run --name postgres --rm -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres postgres:10; \
-		else \
 			echo restarting postgres; \
 			docker restart postgres; \
+		else \
+			echo starting postgres; \
+			docker run --name postgres --rm -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres postgres:10; \
 		fi; \
-	else \
-		echo postgres is running; \
 	fi;
 
 	sleep 3

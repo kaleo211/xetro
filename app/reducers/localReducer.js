@@ -3,11 +3,14 @@ import { persistReducer } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 
 import {
+  SET_ELMO,
   SET_ITEM,
   SET_HOVER_ITEM,
   SET_PAGE,
   UPDATE_SHOW_ACTION_MAP,
   UPDATE_SHOW_ADDING_ACTION,
+  SET_ACTIVE_ITEM_PROGRESS,
+  SET_ACTIVE_ITEM_PROGRESS_TIMER,
 } from '../actions/types';
 
 const persistConfig = {
@@ -21,6 +24,8 @@ const initialState = {
   activeItem: {},
   hoveredItem: {},
   showActionMap: {},
+  elmo: false,
+  secondsPerItem: 7,
 };
 
 const localReducer = (state = initialState, action) => {
@@ -56,6 +61,24 @@ const localReducer = (state = initialState, action) => {
       return {
         ...state,
         addingAction: action.addingAction,
+      };
+
+    case SET_ELMO:
+      return {
+        ...state,
+        elmo: action.elmo,
+      };
+
+    case SET_ACTIVE_ITEM_PROGRESS:
+      return {
+        ...state,
+        activeItemProgress: action.activeItemProgress,
+      };
+
+    case SET_ACTIVE_ITEM_PROGRESS_TIMER:
+      return {
+        ...state,
+        activeItemProgressTimer: action.activeItemProgressTimer,
       };
 
     default:

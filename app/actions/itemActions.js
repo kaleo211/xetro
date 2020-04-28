@@ -14,14 +14,17 @@ export const likeItem = (item) => async (dispatch) => {
   dispatch(setBoard(item.boardID));
 };
 
-export const finishItem = (item) => async (dispatch) => {
+export const finishItem = (item) => async (dispatch, getState) => {
+  const { board } = getState().boards;
   await Utils.fetch(`/items/${item.id}/finish`);
-  dispatch(getMe());
-  dispatch(setBoard(item.boardID));
+  dispatch(setBoard(board.id));
 };
 
-export const startItem = (item) => async (dispatch) => {
-  const activeItem = await Utils.fetch(`/items/${item.id}/start`);
+export const startItem = (item) => async (dispatch, getState) => {
+  const { secondsPerItem } = getState().local;
+  const now = new Date();
+  now.setSeconds(now.getSeconds() + secondsPerItem);
+  const activeItem = await Utils.post(`items/${item.id}/start`, {end: new Date(now)});
   if (activeItem) {
     dispatch(setBoard(item.boardID));
     dispatch(setActiveItem(activeItem));

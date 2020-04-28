@@ -21,10 +21,9 @@ routes.get('/:id/finish', async (req, res) => {
 });
 
 // Start
-routes.get('/:id/start', async (req, res) => {
-  const now = new Date();
-  now.setMinutes(now.getMinutes() + 5);
-  await updateItem(res, req.params.id, { stage: 'active', end: new Date(now) });
+routes.post('/:id/start', async (req, res) => {
+  const { end } = req.body;
+  await updateItem(res, req.params.id, { stage: 'active', end });
 });
 
 // Group Active Items
@@ -58,9 +57,9 @@ routes.get('/', async (req, res) => {
 
 // Create
 routes.post('/', async (req, res) => {
-  const { title, ownerID, groupID, pillarID} = req.body.item;
+  const { title, ownerID, groupID, pillarID} = req.body;
   try {
-    await itemSvc.create(title, ownerID, groupID, pillarID);
+    const newItem = await itemSvc.create(title, ownerID, groupID, pillarID);
     await respondWithItem(res, newItem.id);
   } catch (err) {
     console.error('error post item:', err);
@@ -83,7 +82,6 @@ routes.patch('/:id', async (req, res) => {
     res.sendStatus(500);
   }
 });
-
 
 
 const respondWithItem = async (res, id) => {

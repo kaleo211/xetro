@@ -83,7 +83,7 @@ class ActionBar extends React.Component {
       style: iconStyle,
     };
 
-    return page === 'board' && board.stage !== 'archived' &&
+    return page === 'board' && board && board.stage !== 'archived' &&
       <div style={{ marginLeft: 8 }}>
         {board.locked &&
           <IconButton

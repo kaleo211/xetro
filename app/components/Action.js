@@ -17,7 +17,6 @@ import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { setActiveItem, hideAddingAction, showActions } from '../actions/localActions';
 import {
   deleteItem,
-  finishItem,
   likeItem,
   patchItem,
   postAction,
@@ -185,7 +184,6 @@ const mapDispatchToProps = (dispatch) => ({
   setBoard: (id) => dispatch(setBoard(id)),
   setActiveItem: (item) => dispatch(setActiveItem(item)),
   likeItem: (id) => dispatch(likeItem(id)),
-  finishItem: (id) => dispatch(finishItem(id)),
   startItem: (item) => dispatch(startItem(item)),
   patchItem: (item) => dispatch(patchItem(item)),
   postAction: (action) => dispatch(postAction(action)),

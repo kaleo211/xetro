@@ -10,11 +10,9 @@ import {
 import { Depths } from '@uifabric/fluent-theme/lib/fluent/FluentDepths';
 
 import {
-  setActiveItem, showActions, hideActions, showAddingAction, setHoverItem
+  setActiveItem, showActions, hideActions, showAddingAction, setHoverItem, startActiveItemTimer, clearActiveItemTimer
 } from '../actions/localActions';
-import {
-  deleteItem, likeItem, finishItem, startItem
-} from '../actions/itemActions';
+import { deleteItem, likeItem, finishItem, startItem } from '../actions/itemActions';
 import Action from './Action';
 
 import { isBlank } from '../../utils/tool';
@@ -72,7 +70,7 @@ const classes = mergeStyleSets({
     right: -14,
   },
   progress: {
-    marginTop: 36,
+    marginTop: 40,
   },
 });
 const cx = classNames.bind(classes);
@@ -93,7 +91,9 @@ class Pillar extends React.Component {
     if (!isBlank(activeItem)) {
       await this.props.finishItem(activeItem)
     }
-    this.props.startItem({ ...item, boardID: this.props.board.id });
+    await this.props.startItem({ ...item, boardID: this.props.board.id });
+
+    this.props.startActiveItemTimer();
   }
 
   onLikeItem(item, evt) {
@@ -102,7 +102,8 @@ class Pillar extends React.Component {
   }
 
   async onFinishItem(item) {
-    await this.props.finishItem({ ...item, boardID: this.props.board.id });
+    await this.props.clearActiveItemTimer();
+    await this.props.finishItem(item);
   }
 
   async onClickAddActionButton(item) {
@@ -126,7 +127,7 @@ class Pillar extends React.Component {
   }
 
   render() {
-    const { activeItem, itemProgress, hoveredItem, pillar, board, showActionMap, addingAction } = this.props;
+    const { activeItem, activeItemProgress, hoveredItem, pillar, board, showActionMap, addingAction } = this.props;
     const items = pillar.items;
 
     const showTimer = (item) => {
@@ -222,7 +223,7 @@ class Pillar extends React.Component {
           {showAddAction(item) && <Action />}
           {board.locked && item.id === activeItem.id && item.stage === 'active' &&
             <Overlay className={classes.progress}>
-              <ProgressIndicator percentComplete={1 - itemProgress} barHeight={10} />
+              <ProgressIndicator percentComplete={1 - activeItemProgress} barHeight={6} />
             </Overlay>
           }
         </DocumentCard>
@@ -241,6 +242,7 @@ const mapStateToProps = state => ({
   board: state.boards.board,
   group: state.groups.group,
   activeItem: state.local.activeItem,
+  activeItemProgress: state.local.activeItemProgress,
   hoveredItem: state.local.hoveredItem,
   showActionMap: state.local.showActionMap,
   addingAction: state.local.addingAction,
@@ -256,6 +258,8 @@ const mapDispatchToProps = (dispatch) => ({
   showActions: (item) => dispatch(showActions(item)),
   hideActions: (item) => dispatch(hideActions(item)),
   showAddingAction: () => dispatch(showAddingAction()),
+  startActiveItemTimer: () => dispatch(startActiveItemTimer()),
+  clearActiveItemTimer: () => dispatch(clearActiveItemTimer()),
 });
 
 export default compose(

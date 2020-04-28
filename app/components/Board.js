@@ -3,12 +3,14 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
-import { DocumentCard, Text, TextField } from 'office-ui-fabric-react';
+import { DocumentCard, Text, TextField, Modal, Image } from 'office-ui-fabric-react';
 
 import { setBoard } from '../actions/boardActions';
 import { postItem } from '../actions/itemActions';
 import { patchPillar, postPillar, deletePillar } from '../actions/pillarActions';
+import { setELMO } from '../actions/localActions';
 import Pillar from './Pillar';
+import elmoGif from '../public/elmo.gif';
 
 const classNames = mergeStyleSets({
   board: {
@@ -49,29 +51,7 @@ class Board extends React.Component {
       titleOfPillar: [],
       progressTimer: null,
       itemProgress: 0,
-      secondsPerItem: 300,
     };
-  }
-
-  componentDidMount() {
-    this.state.progressTimer = setInterval(() => {
-      const item = this.props.activeItem;
-      if (item && item.end) {
-        const difference = (new Date(item.end).getTime() - new Date().getTime()) / 1000;
-        if (difference > 0 && difference < this.state.secondsPerItem) {
-          this.setState(state => ({
-            ...state,
-            itemProgress: (state.secondsPerItem - difference) / state.secondsPerItem,
-          }));
-        } else {
-          this.setState({ itemProgress: 1 });
-        }
-      }
-    }, 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.state.progressTimer);
   }
 
   changePillarTitle(id, title) {
@@ -134,8 +114,12 @@ class Board extends React.Component {
     }
   }
 
+  onClickELMO() {
+    this.props.setELMO(false);
+  }
+
   render() {
-    const { board } = this.props;
+    const { board, elmo } = this.props;
     const { newItemInPillar, itemProgress } = this.state;
 
     const pillars = board.pillars;
@@ -180,6 +164,9 @@ class Board extends React.Component {
             <Pillar pillar={pillar} itemProgress={itemProgress} />
           </div>
         ))}
+        <Modal isOpen={elmo} isBlocking={true}>
+          <Image src={elmoGif} onClick={this.onClickELMO.bind(this)} />
+        </Modal>
       </div>
     );
   }
@@ -187,6 +174,7 @@ class Board extends React.Component {
 
 const mapStateToProps = state => ({
   activeItem: state.local.activeItem,
+  elmo: state.local.elmo,
   board: state.boards.board,
   group: state.groups.group,
 });
@@ -197,6 +185,7 @@ const mapDispatchToProps = (dispatch) => ({
   postItem: (item, bID) => dispatch(postItem(item, bID)),
   postPillar: (pillar, bID) => dispatch(postPillar(pillar, bID)),
   setBoard: (id) => dispatch(setBoard(id)),
+  setELMO: (on) => dispatch(setELMO(on)),
 });
 
 export default compose(

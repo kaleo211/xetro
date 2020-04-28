@@ -81,7 +81,7 @@ const findOne = async (whereCl) => {
 
 
 const update = async (id, fields) => {
-  await Item.update(
+  await Board.update(
     fields,
     { where: { id } },
   );

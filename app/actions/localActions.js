@@ -1,10 +1,14 @@
 import {
+  SET_ELMO,
   SET_PAGE,
   SET_ITEM,
   SET_HOVER_ITEM,
   UPDATE_SHOW_ACTION_MAP,
   UPDATE_SHOW_ADDING_ACTION,
+  SET_ACTIVE_ITEM_PROGRESS,
+  SET_ACTIVE_ITEM_PROGRESS_TIMER,
 } from './types';
+import { finishItem } from './itemActions';
 
 export const setPage = (page) => ({
   type: SET_PAGE,
@@ -47,3 +51,44 @@ export const hideAddingAction = () => ({
   type: UPDATE_SHOW_ADDING_ACTION,
   addingAction: false,
 });
+
+export const setELMO = (elmo) => ({
+  type: SET_ELMO,
+  elmo,
+});
+
+export const startActiveItemTimer = () => (dispatch, getState) => {
+  const { activeItem, secondsPerItem } = getState().local;
+  if (activeItem && activeItem.end) {
+    const timer = setInterval(() => {
+      console.log(new Date().getTime());
+      const difference = (new Date(activeItem.end).getTime() - new Date().getTime()) / 1000;
+      let progress = 1;
+      if (difference > 0 && difference < secondsPerItem) {
+        progress = (secondsPerItem - difference) / secondsPerItem;
+      } else {
+        clearInterval(timer);
+        dispatch(finishItem(activeItem));
+        dispatch(setELMO(true));
+      }
+      console.log('progress', activeItem, secondsPerItem, difference, progress);
+      dispatch({
+        type: SET_ACTIVE_ITEM_PROGRESS,
+        activeItemProgress: progress,
+      });
+    }, 200);
+    dispatch({
+      type: SET_ACTIVE_ITEM_PROGRESS_TIMER,
+      activeItemProgressTimer: timer,
+    });
+  }
+};
+
+export const clearActiveItemTimer = () => (dispatch, getState) => {
+  const { activeItemProgressTimer } = getState().local;
+  clearInterval(activeItemProgressTimer);
+  dispatch({
+    type: SET_ACTIVE_ITEM_PROGRESS_TIMER,
+    activeItemProgressTimer: null,
+  });
+};
