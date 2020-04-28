@@ -55,6 +55,15 @@ const includesForEach = [
 ];
 
 
+const addMember = async (groupID, userID) => {
+  const group = await Group.findOne({ where: {id: groupID }});
+  if (group) {
+    await group.addMembers(userID);
+    console.info('new user is added to group', group.name);
+  }
+}
+
+
 const findOne = async (whereCl) => {
   const group = await Group.findOne({
     include: includesForEach,
@@ -65,7 +74,7 @@ const findOne = async (whereCl) => {
 
 
 const findOrCreateByName = async (name) => {
-  const newGroups = await groupSvc.findOrCreate({
+  const newGroups = await Group.findOrCreate({
     where: { name },
   });
   return newGroups;
@@ -108,6 +117,7 @@ const setFacilitator = async (groupID, facilitatorID) => {
 
 
 export default {
+  addMember,
   findOne,
   findOrCreateByName,
   remove,

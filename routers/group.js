@@ -56,12 +56,11 @@ routes.post('/', async (req, res) => {
 routes.post('/member', async (req, res) => {
   try {
     const { userID, groupID } = req.body;
-    const group = await groupSvc.findOne({ id: groupID });
-    if (group) {
-      await group.addMembers(userID);
+    if (userID && groupID) {
+      await groupSvc.addMember(groupID, userID);
       await respondWithGroup(res, groupID);
     } else {
-      res.sendStatus(500);
+      res.sendStatus(400);
     }
   } catch (err) {
     console.error('error patch group:', err);

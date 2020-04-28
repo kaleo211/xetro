@@ -3,10 +3,14 @@ prepare_dev:
 
 	@if lsof -n -i4TCP:5432 | grep LISTEN ; then \
 		if docker ps -a --filter name=postgres | grep postgres ; then \
+			echo starting postgres; \
 			docker run --name postgres --rm -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres postgres:10; \
 		else \
+			echo restarting postgres; \
 			docker restart postgres; \
 		fi; \
+	else \
+		echo postgres is running; \
 	fi;
 
 	sleep 3

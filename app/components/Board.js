@@ -138,13 +138,12 @@ class Board extends React.Component {
     const { board } = this.props;
     const { newItemInPillar, itemProgress } = this.state;
 
-    const facilitator = board.facilitator;
     const pillars = board.pillars;
     const enabled = (board.stage !== 'archived' && !board.locked);
 
     return (
       <div className={classNames.board}>
-        {facilitator && pillars && pillars.map(pillar => (
+        {pillars && pillars.map(pillar => (
           <div key={pillar.id} className={classNames.pillar}>
             <DocumentCard className={classNames.card}>
               {enabled &&

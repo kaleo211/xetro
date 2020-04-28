@@ -3,7 +3,7 @@ import models from '../models/index.js';
 const { Action, Group, User } = models;
 
 const create = async (email, firstName, lastName, microsoftID) => {
-  await userSvc.create({
+  await User.create({
     email,
     firstName,
     lastName,

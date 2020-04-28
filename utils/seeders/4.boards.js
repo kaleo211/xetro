@@ -7,7 +7,7 @@ module.exports = {
       { id: '87DC40EC-6E38-4BE0-8A06-FD4657217A07',
         name: 'Retro',
         chat: 'fakeLink',
-        stage: 'started',
+        stage: 'created',
         locked: false,
         timer: 60,
         groupID: '87DC40EC-6E38-4BE0-8A06-FD4657217A07',

@@ -76,7 +76,7 @@ routes.patch('/:id', async (req, res) => {
 
 const respondWithBoard = async (res, whereCl) => {
   try {
-    const board = boardSvc.findOne(whereCl);
+    const board = await boardSvc.findOne(whereCl);
     if (board) {
       res.json(board);
     } else {

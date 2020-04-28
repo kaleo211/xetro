@@ -72,6 +72,7 @@ routes.get('/callback', async (req, res, next) => {
       };
       await userSvc.updateByEmail(meFromDB.email, dataToAlwaysUpdate);
     }
+    console.info('logged successfully with user email', meFromDB.email);
     req.session.me = await userSvc.findOne({ email: meFromDB.email });
     req.session.save();
     res.redirect('/');

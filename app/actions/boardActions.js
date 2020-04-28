@@ -14,6 +14,7 @@ export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
   if (!board) {
     console.error('error fetching active board');
   }
+  console.info('fetched active board:', board);
   dispatch({
     type: SET_ACTIVE_BOARD,
     activeBoard: board,

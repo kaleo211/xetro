@@ -49,8 +49,7 @@ const remove = async (id) => {
 const updateTitle = async (id, title) => {
   await Pillar.update(
     { title },
-    { where: { id },
-    },
+    { where: { id } },
   );
 }
 

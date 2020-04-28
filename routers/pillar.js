@@ -27,7 +27,7 @@ routes.post('/', async (req, res) => {
 
 routes.patch('/:id', async (req, res) => {
   try {
-    await pillar.updateTitle(req.params.id, req.body.title);
+    await pillarSvc.updateTitle(req.params.id, req.body.title);
     await respondWithPillar(res, req.params.id);
   } catch (err) {
     console.error('error patch pillar:', err);

@@ -5,10 +5,6 @@ import { isBlank } from '../utils/tool';
 
 const includes = [
   {
-    model: User,
-    as: 'facilitator',
-  },
-  {
     model: Group,
     as: 'group',
   },
@@ -58,9 +54,6 @@ const create = async (name, groupID, pillarSvc) => {
 const findAll = async (whereCl) => {
   const boards = await Board.findAll({
     include: [{
-      model: User,
-      as: 'facilitator',
-    }, {
       model: Group,
       as: 'group',
     }],
