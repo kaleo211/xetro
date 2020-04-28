@@ -1,11 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const fetch = require('node-fetch');
-const config = require('config');
-const oauth = require('simple-oauth2');
+import config from 'config';
+import express from 'express';
+import fetch from 'node-fetch';
+import oauth from 'simple-oauth2';
 
-const models = require('../models');
-const { formatUserToSave } = require('../utils/tool');
+import { formatUserToSave } from '../utils/tool';
+import userSvc from '../services/user';
+
+const routes = express.Router();
 
 const ssoClientID = config.get('sso.dell.client_id');
 const ssoClientSecret = config.get('sso.dell.client_secret');
@@ -25,7 +26,11 @@ const oauth2client = oauth.create({
 });
 const selfAddress = config.get('server.address');
 
-router.get('/', (req, res) => {
+console.log(userSvc);
+console.log(userSvc.findOne);
+
+
+routes.get('/', (req, res) => {
   const authorizationUri = oauth2client.authorizationCode.authorizeURL({
     redirect_uri: selfAddress + '/dell/callback',
     scope: ['openid', 'roles', 'uaa.resource', 'user_attributes'],
@@ -33,7 +38,8 @@ router.get('/', (req, res) => {
   res.redirect(authorizationUri);
 });
 
-router.get('/callback', async (req, res, next) => {
+
+routes.get('/callback', async (req, res, next) => {
   const authCode = req.query.code;
   const options = {
     code: authCode,
@@ -54,16 +60,11 @@ router.get('/callback', async (req, res, next) => {
 
     let resp = await fetch(ssoUserinfo, userInfoRequest);
     const meFromSSO = await resp.json();
-    let meFromDB = await models.User.findOne({
-      where: { email: meFromSSO.email },
-    });
+    let meFromDB = await userSvc.findOne({ email: meFromSSO.email });
     const meToAdd = formatUserToSave(meFromSSO);
 
     if (!meFromDB) {
-      resp = await models.User.findOrCreate({
-        where: { email: meFromSSO.email },
-        defaults: meToAdd,
-      });
+      resp = await userSvc.findOrCreateByEmail(meFromSSO.email, meToAdd);
       if (!resp || resp.length !== 2) {
         throw new Error('invalid response from sequelize');
       }
@@ -73,11 +74,9 @@ router.get('/callback', async (req, res, next) => {
         name: meToAdd.name,
         title: meToAdd.title,
       };
-      await models.User.update(dataToAlwaysUpdate, {
-        where: { email: meFromDB.email },
-      });
+      await userSvc.updateByEmail(meFromDB.email, dataToAlwaysUpdate);
     }
-    req.session.me = await models.User.findOne({where: { email: meFromDB.email }});
+    req.session.me = await userSvc.findOne({ email: meFromDB.email });
     req.session.save();
     res.redirect('/');
   } catch (err) {
@@ -86,4 +85,5 @@ router.get('/callback', async (req, res, next) => {
   }
 });
 
-module.exports = router;
+
+export default routes;

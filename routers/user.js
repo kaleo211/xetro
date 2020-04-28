@@ -1,18 +1,11 @@
-const routes = require('express').Router();
-const Sequelize = require('sequelize');
-const model = require('../models');
+import express from 'express';
+import userSvc from '../services/user';
 
-const Op = Sequelize.Op;
+const routes = express.Router();
 
 routes.get('/', async (req, res) => {
   try {
-    const users = await model.User.findAll({
-      include: [{
-        model: model.Group,
-        as: 'groups',
-        through: {},
-      }],
-    });
+    const users =userSvc.findAll();
     res.json(users);
   } catch (err) {
     console.error('error find group users:', err);
@@ -22,29 +15,17 @@ routes.get('/', async (req, res) => {
 
 routes.get('/me', (req, res) => {
   const me = req.session.me;
-
-  model.User.findOne({
-    include: [{
-      model: model.Group,
-      as: 'groups',
-      through: {},
-    }, {
-      model: model.Action,
-      as: 'actions',
-      where: {
-        stage: {
-          [Op.ne]: 'done',
-        },
-      },
-      required: false,
-    }],
-    where: { id: me.id },
-  }).then(user => {
-    res.json(user);
-  }).catch(err => {
+  try {
+    const user = userSvc.findOne({id: me.id});
+    if (user) {
+      res.json(user);
+    } else {
+      res.sendStatus(401);
+    }
+  } catch (err) {
     console.error('error get me:', err);
     res.sendStatus(500);
-  });
+  }
 });
 
-module.exports = routes;
+export default routes;

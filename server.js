@@ -1,20 +1,21 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const path = require('path');
-const session = require('express-session');
-const config = require('config');
-const dellRouter = require('./routers/dell');
-const groupRouter = require('./routers/group');
-const userRouter = require('./routers/user');
-const boardRouter = require('./routers/board');
-const pillarRouter = require('./routers/pillar');
-const itemRouter = require('./routers/item');
-const actionRouter = require('./routers/action');
+import bodyParser from 'body-parser';
+import config from 'config';
+import cookieParser from 'cookie-parser';
+import express from 'express';
+import path from 'path';
+import session from 'express-session';
+
+import actionRouter from './routers/action.js';
+import boardRouter from './routers/board.js';
+import dellRouter from './routers/dell.js';
+import groupRouter from './routers/group.js';
+import itemRouter from './routers/item.js';
+import pillarRouter from './routers/pillar.js';
+import userRouter from './routers/user.js';
+
+import model from './models/index.js';
 
 const server = express();
-
-const model = require('./models');
 
 server.use(session({
   secret: config.get('server.session_secret'),
@@ -42,12 +43,13 @@ server.use(bodyParser.json());
 server.use(cookieParser());
 
 server.use('/dell', dellRouter);
-server.use('/groups', isAuthenticated, groupRouter);
-server.use('/users', isAuthenticated, userRouter);
-server.use('/boards', isAuthenticated, boardRouter);
-server.use('/pillars', isAuthenticated, pillarRouter);
-server.use('/items', isAuthenticated, itemRouter);
+
 server.use('/actions', isAuthenticated, actionRouter);
+server.use('/boards', isAuthenticated, boardRouter);
+server.use('/groups', isAuthenticated, groupRouter);
+server.use('/items', isAuthenticated, itemRouter);
+server.use('/pillars', isAuthenticated, pillarRouter);
+server.use('/users', isAuthenticated, userRouter);
 
 server.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
@@ -59,4 +61,4 @@ server.listen(port, () => {
   console.warn('Xetro is listenning on port:', port);
 });
 
-module.exports = server;
+export default server;

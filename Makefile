@@ -7,7 +7,7 @@ prepare_dev:
 	./node_modules/.bin/sequelize db:create
 
 	perl -pi -e 's/false/true/g' config/development.json
-	node ./models/index.js
+	node -r esm ./models/index.js
 	perl -pi -e 's/true/false/g' config/development.json
 	./node_modules/.bin/sequelize db:seed:all --seeders-path utils/seeders
 

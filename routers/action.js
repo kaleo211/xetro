@@ -1,73 +1,7 @@
-const routes = require('express').Router();
-const model = require('../models');
+import express from 'express';
+import actionSvc from '../services/action.js';
 
-const associations = [
-  {
-    model: model.User,
-    as: 'owner',
-  },
-  {
-    model: model.Group,
-    as: 'group',
-  },
-  {
-    model: model.Item,
-    as: 'item',
-  },
-];
-
-const respondWithAction = async (res, id) => {
-  try {
-    const action = await model.Action.findOne({
-      include: associations,
-      where: {
-        id,
-      },
-    });
-    if (action) {
-      res.json(action);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    console.error('error get action', err);
-    res.sendStatus(500);
-  }
-};
-
-const respondWithActions = async (res, query) => {
-  try {
-    const actions = await model.Action.findAll({
-      include: associations,
-      where: {
-        ...query,
-        stage: ['created', 'started'],
-      },
-      order: [['createdAt', 'DESC']],
-    });
-    if (actions) {
-      res.json(actions);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    console.error('error get active actions', err);
-    res.sendStatus(500);
-  }
-};
-
-const updateAction = async (res, id, fields) => {
-  try {
-    await model.Action.update(
-      fields,
-      { where: { id } },
-    );
-    respondWithAction(res, id);
-  } catch (err) {
-    console.error('error update board', err);
-    res.sendStatus(500);
-  }
-};
+const routes = express.Router();
 
 // Finish
 routes.get('/:id/finish', async (req, res) => {
@@ -90,9 +24,7 @@ routes.get('/group/:id', async (req, res) => {
 // Delete
 routes.delete('/:id', async (req, res) => {
   try {
-    await model.Action.destroy({
-      where: { id: req.params.id },
-    });
+    actionSvc.remove(req.params.id);
     res.sendStatus(204);
   } catch (err) {
     console.error('error delete action', err);
@@ -102,15 +34,9 @@ routes.delete('/:id', async (req, res) => {
 
 // Create
 routes.post('/', async (req, res) => {
-  const action = req.body;
+  const { title, ownerID, groupID, boardID, itemID } = req.body.action;
   try {
-    const newAction = await model.Action.create({
-      title: action.title,
-    });
-    await newAction.setOwner(action.ownerID);
-    await newAction.setGroup(action.groupID);
-    await newAction.setBoard(action.boardID);
-    await newAction.setItem(action.itemID);
+    const newAction = actionSvc.create(title, ownerID, groupID, boardID, itemID);
     await respondWithAction(res, newAction.id);
   } catch (err) {
     console.error('error post action:', err);
@@ -121,11 +47,7 @@ routes.post('/', async (req, res) => {
 // Update
 routes.patch('/:id', async (req, res) => {
   try {
-    const action = await model.Action.findOne({
-      where: {
-        id: req.params.id,
-      },
-    });
+    const action = await actionSvc.findOne({id: req.params.id});
     if (action) {
       action.setOwner(req.body.ownerID);
     } else {
@@ -138,4 +60,46 @@ routes.patch('/:id', async (req, res) => {
   }
 });
 
-module.exports = routes;
+const respondWithAction = async (res, id) => {
+  try {
+    const action = await actionSvc.findOne({id});
+    if (action) {
+      res.json(action);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.error('error get action', err);
+    res.sendStatus(500);
+  }
+};
+
+const respondWithActions = async (res, query) => {
+  try {
+    const actions = await actionSvc.findAll({
+      ...query,
+      stage: ['created', 'started'],
+    });
+    if (actions) {
+      res.json(actions);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.error('error get active actions', err);
+    res.sendStatus(500);
+  }
+};
+
+const updateAction = async (res, id, fields) => {
+  try {
+
+    respondWithAction(res, id);
+  } catch (err) {
+    console.error('error update board', err);
+    res.sendStatus(500);
+  }
+};
+
+
+export default routes;

@@ -1,12 +1,83 @@
-const { Op } = require('sequelize');
-const model = require('../models');
-const { isBlank } = require('../utils/tool');
+import { Op } from 'sequelize';
+import models from '../models/index.js';
+const { Action, Board, Group, Item, User } = models;
+import { isBlank } from '../utils/tool';
 
-const include = [{
-  model: model.User,
-  as: 'members',
-  through: {},
-}];
+const include = [
+  {
+    model: User,
+    as: 'members',
+    through: {},
+  }
+];
+
+const includesForEach = [
+  {
+    model: User,
+    as: 'members',
+    include: [
+      {
+        model: Action,
+        as: 'actions',
+        where: {
+          stage: {
+            [Op.ne]: 'done',
+          },
+        },
+        required: false,
+      }
+    ],
+  },
+  {
+    model: User,
+    as: 'facilitator',
+  },
+  {
+    model: Board,
+    as: 'boards',
+  },
+  {
+    model: Action,
+    as: 'actions',
+    where: {
+      stage: {
+        [Op.ne]: 'done',
+      },
+    },
+    required: false,
+    include: [
+      {
+        model: User,
+        as: 'owner',
+      }
+    ],
+  },
+];
+
+
+const findOne = async (whereCl) => {
+  const group = await Group.findOne({
+    include: includesForEach,
+    where: whereCl,
+  });
+  return group;
+}
+
+
+const findOrCreateByName = async (name) => {
+  const newGroups = await groupSvc.findOrCreate({
+    where: { name },
+  });
+  return newGroups;
+}
+
+
+const remove = async (id) => {
+  await Item.destroy({
+    where: { id },
+  });
+};
+
 
 const search = async (query) => {
   const { name } = query;
@@ -16,17 +87,18 @@ const search = async (query) => {
     where.name = { [Op.iLike]: `%${name}%` };
   }
 
-  const groups = await model.Group.findAll({ include, where });
+  const groups = await Group.findAll({ include, where });
   return groups;
 };
 
+
 const setFacilitator = async (groupID, facilitatorID) => {
-  const group = await model.Group.findOne({where: {id: groupID}});
+  const group = await Group.findOne({where: {id: groupID}});
   if (!group) {
     throw new Error('no group found');
   }
 
-  const facilitator = await  model.User.findOne({where: {id: facilitatorID}});
+  const facilitator = await  User.findOne({where: {id: facilitatorID}});
   if (!facilitator) {
     throw new Error('no facilitator found');
   }
@@ -34,7 +106,11 @@ const setFacilitator = async (groupID, facilitatorID) => {
   await group.setFacilitator(facilitator);
 }
 
-module.exports = {
+
+export default {
+  findOne,
+  findOrCreateByName,
+  remove,
   search,
   setFacilitator,
 };

@@ -1,72 +1,17 @@
-const routes = require('express').Router();
-const { Op } = require('sequelize');
-const model = require('../models');
+import express from 'express';
+import groupSvc from '../services/group.js';
 
-const { search, setFacilitator } = require('../services/group');
+const routes = express.Router();
 
-const respondWithGroup = async (res, id) => {
-  try {
-    const group = await model.Group.findOne({
-      include: [
-        {
-          model: model.User,
-          as: 'members',
-          include: [{
-            model: model.Action,
-            as: 'actions',
-            where: {
-              stage: {
-                [Op.ne]: 'done',
-              },
-            },
-            required: false,
-          }],
-        },
-        {
-          model: model.User,
-          as: 'facilitator',
-        },
-        {
-          model: model.Board,
-          as: 'boards',
-        },
-        {
-          model: model.Action,
-          as: 'actions',
-          where: {
-            stage: {
-              [Op.ne]: 'done',
-            },
-          },
-          required: false,
-          include: [{
-            model: model.User,
-            as: 'owner',
-          }],
-        },
-      ],
-      where: { id },
-    });
-    if (group) {
-      res.json(group);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    console.error('error get group', err);
-    res.sendStatus(500);
-  }
-};
 
 routes.get('/:id', async (req, res) => {
   respondWithGroup(res, req.params.id);
 });
 
+
 routes.delete('/:id', async (req, res) => {
   try {
-    await model.Group.destroy({
-      where: { id: req.params.id },
-    });
+    await groupSvc.remove(req.params.id);
     res.sendStatus(204);
   } catch (err) {
     console.error('error delete group', err);
@@ -74,10 +19,11 @@ routes.delete('/:id', async (req, res) => {
   }
 });
 
+
 routes.post('/search', async (req, res) => {
   const { name } = req.body;
   try {
-    const groups = await search({ name });
+    const groups = await groupSvc.search({ name });
     res.json(groups);
   } catch (err) {
     console.error('error search group:', err);
@@ -87,11 +33,8 @@ routes.post('/search', async (req, res) => {
 
 routes.post('/', async (req, res) => {
   const group = req.body;
-
   try {
-    const newGroups = await model.Group.findOrCreate({
-      where: { name: group.name },
-    });
+    const newGroups = await groupSvc.findOrCreateByName(group.name);
     if (newGroups.length !== 2) {
       console.error('error finding unique group:');
       res.sendStatus(500);
@@ -108,12 +51,11 @@ routes.post('/', async (req, res) => {
   }
 });
 
+
 routes.post('/member', async (req, res) => {
   try {
     const { userID, groupID } = req.body;
-    const group = await model.Group.findOne({
-      where: { id: groupID },
-    });
+    const group = await groupSvc.findOne({ id: groupID });
     if (group) {
       await group.addMembers(userID);
       await respondWithGroup(res, groupID);
@@ -129,12 +71,28 @@ routes.post('/member', async (req, res) => {
 routes.post('/setFacilitator', async (req, res) => {
   try {
     const { groupID, facilitatorID } = req.body;
-    await setFacilitator(groupID, facilitatorID);
+    await groupSvc.setFacilitator(groupID, facilitatorID);
     await respondWithGroup(res, groupID);
   } catch (err) {
     console.error('error patch group:', err);
     res.sendStatus(500);
   }
-})
+});
 
-module.exports = routes;
+
+const respondWithGroup = async (res, id) => {
+  try {
+    const group = await groupSvc.findOne({ id });
+    if (group) {
+      res.json(group);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.error('error get group', err);
+    res.sendStatus(500);
+  }
+};
+
+
+export default routes;

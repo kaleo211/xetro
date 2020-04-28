@@ -1,4 +1,6 @@
-const { Board, User, Pillar, Item, Action, } = require('../models');
+import models from '../models/index.js';
+const { Action, Board, Group, Item, Pillar, User } = models;
+
 import { isBlank } from '../utils/tool';
 
 
@@ -70,7 +72,7 @@ const findAll = async (whereCl) => {
 }
 
 
-const fineOne = async (whereCl) => {
+const findOne = async (whereCl) => {
   const board = await Board.findOne({
     include: includes,
     order: [
@@ -86,8 +88,17 @@ const fineOne = async (whereCl) => {
 }
 
 
-module.exports = {
+const update = async (id, fields) => {
+  await Item.update(
+    fields,
+    { where: { id } },
+  );
+}
+
+
+export default {
   create,
   findAll,
-  fineOne,
+  findOne,
+  update,
 };

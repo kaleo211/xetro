@@ -7,6 +7,7 @@ import {
 import Utils from '../components/Utils';
 import { setPage } from './localActions';
 
+
 export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
   const board = await Utils.fetch(`/boards/active/${groupID}`);
   if (!board) {
@@ -17,6 +18,7 @@ export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
     activeBoard: board,
   });
 };
+
 
 export const joinOrCreateBoard = () => {
   return (dispatch, getState) => {
@@ -43,6 +45,7 @@ export const joinOrCreateBoard = () => {
   }
 }
 
+
 export const postBoard = (newBoard) => async (dispatch) => {
   const board = await Utils.post('boards', newBoard);
   if (board) {
@@ -54,6 +57,7 @@ export const postBoard = (newBoard) => async (dispatch) => {
     console.error('error posting new board');
   }
 };
+
 
 export const listBoards = (groupID) => async (dispatch) => {
   const boards = await Utils.fetch(`/boards/group/${groupID}`);
@@ -67,6 +71,7 @@ export const listBoards = (groupID) => async (dispatch) => {
   }
 };
 
+
 export const setBoards = () => async (dispatch) => {
   const boards = await Utils.fetch('boards');
   if (boards) {
@@ -76,6 +81,7 @@ export const setBoards = () => async (dispatch) => {
     });
   }
 };
+
 
 export const setBoard = (boardID) => async (dispatch) => {
   if (boardID == null || boardID === '') {
@@ -96,15 +102,18 @@ export const setBoard = (boardID) => async (dispatch) => {
   }
 };
 
+
 export const archiveBoard = (boardID) => async (dispatch) => {
   await Utils.fetch(`/boards/${boardID}/archive`);
   dispatch(setPage('group'));
 };
 
+
 export const lockBoard = (boardID) => async (dispatch) => {
   await Utils.fetch(`/boards/${boardID}/lock`);
   dispatch(setBoard(boardID));
 };
+
 
 export const unlockBoard = (boardID) => async (dispatch) => {
   await Utils.fetch(`/boards/${boardID}/unlock`);

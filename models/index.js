@@ -1,9 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-const config = require('config');
+import fs from 'fs';
+import path from 'path';
+import Sequelize from 'sequelize';
+import config from 'config';
 
-const { isBlank } = require('../utils/tool');
+import { isBlank } from '../utils/tool';
 
 const basename = path.basename(__filename);
 const db = {};
@@ -52,4 +52,5 @@ sequelize.sync({ force }).then(() => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-module.exports = db;
+
+export default db;

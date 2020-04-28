@@ -123,6 +123,9 @@ class App extends React.Component {
     const { page, group, board, me } = this.props;
     const { confetti } = this.state;
 
+    console.log('board', board);
+
+
     return (me &&
       <div className={classNames.app}>
         <div className={classNames.nav}>

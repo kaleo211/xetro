@@ -1,34 +1,9 @@
-const routes = require('express').Router();
-const model = require('../models');
-const boardSvc = require('../services/board');
-const pillarSvc = require('../services/pillar');
+import express from 'express';
+import boardSvc from '../services/board.js';
+import pillarSvc from '../services/pillar.js';
 
-const respondWithBoard = async (res, whereCl) => {
-  try {
-    const board = boardSvc.findOne(whereCl);
-    if (board) {
-      res.json(board);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    console.error('error get board', err);
-    res.sendStatus(500);
-  }
-};
+const routes = express.Router();
 
-const updateBoard = async (res, id, fields) => {
-  try {
-    await model.Board.update(
-      fields,
-      { where: { id } },
-    );
-    res.json({});
-  } catch (err) {
-    console.error('error update board', err);
-    res.sendStatus(500);
-  }
-};
 
 // Get
 routes.get('/:id', async (req, res) => {
@@ -96,4 +71,30 @@ routes.patch('/:id', async (req, res) => {
   }
 });
 
-module.exports = routes;
+
+const respondWithBoard = async (res, whereCl) => {
+  try {
+    const board = boardSvc.findOne(whereCl);
+    if (board) {
+      res.json(board);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.error('error get board', err);
+    res.sendStatus(500);
+  }
+};
+
+const updateBoard = async (res, id, fields) => {
+  try {
+    await boardSvc.update(id, fields);
+    res.json({});
+  } catch (err) {
+    console.error('error update board', err);
+    res.sendStatus(500);
+  }
+};
+
+
+export default routes;

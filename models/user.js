@@ -1,5 +1,5 @@
-const Sequelize = require('sequelize');
-const uuid = require('uuid/v4');
+import Sequelize from 'sequelize';
+import uuid from 'uuid/v4';
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {

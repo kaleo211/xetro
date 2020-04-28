@@ -1,8 +1,9 @@
-const config = require('config');
-const routes = require('express').Router();
-const rp = require('request-promise');
+import config from 'config';
+import express from 'express';
+import rp from 'request-promise';
+import userSvc from '../services/user.ja';
 
-const model = require('../models');
+const routes = express.Router();
 
 routes.get('/', async (req, res) => {
   const address = config.get('sso.microsoft.address');
@@ -36,27 +37,18 @@ routes.get('/', async (req, res) => {
     const me = JSON.parse(body);
     const email = me.mail.toLowerCase();
 
-    const user = await model.User.findOne({
+    const user = await userSvc.findOne({
       where: { email },
     });
 
     if (!user) {
       console.info(`didn't find user ${email}, creating...`);
-      await model.User.create({
-        email,
-        firstName: me.givenName,
-        lastName: me.surname,
-        microsoftID: me.id,
-      });
+      await userSvc.create(email, me.givenName, me.surname, me.id);
     } else {
-      await model.User.update({
-        microsoftID: me.id,
-      }, {
-        where: { email }
-      });
+      await userSvc.updateMicrosoftID(email, me.id);
     }
     console.info(`${email} has been added to xetro`);
-    req.session.me = await model.User.findOne({where: { email }});
+    req.session.me = await userSvc.findOne({where: { email }});
     req.session.save();
   } catch (err) {
     console.error('error getting user profile', err);
@@ -67,4 +59,4 @@ routes.get('/', async (req, res) => {
   res.send(Buffer.from('<html><head><script>window.close();</script></head></html>'));
 });
 
-module.exports = routes;
+export default routes;

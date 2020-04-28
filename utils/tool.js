@@ -1,4 +1,4 @@
-const isBlank = (obj) => {
+export const isBlank = (obj) => {
   if (obj === '' || obj == null || obj === undefined) {
     return true;
   }
@@ -7,16 +7,16 @@ const isBlank = (obj) => {
   return isEmptyObj || isEmptyArr;
 };
 
-const date = (str) => {
+export const date = (str) => {
   const date = new Date(str).toDateString();
   return date;
 };
 
-const sleep = async (ms) => {
+export const sleep = async (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 };
 
-const formatUserToSave = (user) => {
+export const formatUserToSave = (user) => {
   const userToSave = {};
   if (isBlank(user)) {
     throw new Error('user is not valid');
@@ -35,7 +35,8 @@ const formatUserToSave = (user) => {
   return userToSave;
 }
 
-module.exports = {
+
+export default {
   date,
   isBlank,
   sleep,

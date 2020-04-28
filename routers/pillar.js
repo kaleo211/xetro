@@ -1,44 +1,12 @@
-const routes = require('express').Router();
-const model = require('../models');
-const pillarSvc = require('../services/pillar');
+import express from 'express';
+import pillarSvc from '../services/pillar.js';
 
-const respondWithPillar = async (res, id) => {
-  try {
-    const pillar = await model.Pillar.findOne({
-      include: [{
-        model: model.Board,
-        as: 'board',
-      }, {
-        model: model.Item,
-        as: 'items',
-        order: [['createdAt', 'ASC']],
-        include: [{
-          model: model.Action,
-          as: 'actions',
-          include: [{
-            model: model.User,
-            as: 'owner',
-          }],
-        }],
-      }],
-      where: { id },
-    });
-    if (pillar) {
-      res.json(pillar);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    console.error('error get pillar', err);
-    res.sendStatus(500);
-  }
-};
+const routes = express.Router();
+
 
 routes.delete('/:id', async (req, res) => {
   try {
-    await model.Pillar.destroy({
-      where: { id: req.params.id },
-    });
+    await pillarSvc.remove(req.params.id);
     res.sendStatus(204);
   } catch (err) {
     console.error('error delete pillar', err);
@@ -59,13 +27,7 @@ routes.post('/', async (req, res) => {
 
 routes.patch('/:id', async (req, res) => {
   try {
-    await model.Pillar.update(
-      {
-        title: req.body.title,
-      }, {
-        where: { id: req.params.id },
-      },
-    );
+    await pillar.updateTitle(req.params.id, req.body.title);
     await respondWithPillar(res, req.params.id);
   } catch (err) {
     console.error('error patch pillar:', err);
@@ -73,4 +35,20 @@ routes.patch('/:id', async (req, res) => {
   }
 });
 
-module.exports = routes;
+
+const respondWithPillar = async (res, id) => {
+  try {
+    const pillar = await pillarSvc.findOne({id});
+    if (pillar) {
+      res.json(pillar);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.error('error get pillar', err);
+    res.sendStatus(500);
+  }
+};
+
+
+export default routes;

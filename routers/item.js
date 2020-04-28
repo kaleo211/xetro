@@ -1,78 +1,9 @@
-const routes = require('express').Router();
-const sequelize = require('sequelize');
-const model = require('../models');
+import express from 'express';
+import sequelize from 'sequelize';
+import itemSvc from '../services/item.js';
 
-const associations = [
-  {
-    model: model.User,
-    as: 'owner',
-  },
-  {
-    model: model.Group,
-    as: 'group',
-  },
-  {
-    model: model.Pillar,
-    as: 'pillar',
-  },
-  {
-    model: model.Action,
-    as: 'actions',
-  },
-];
+const routes = express.Router();
 
-const respondWithItem = async (res, id) => {
-  try {
-    const item = await model.Item.findOne({
-      include: associations,
-      where: {
-        id,
-      },
-    });
-    if (item) {
-      res.json(item);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    console.error('error get item', err);
-    res.sendStatus(500);
-  }
-};
-
-const respondWithActiveItems = async (res, query) => {
-  try {
-    const item = await model.Item.findAll({
-      include: associations,
-      where: {
-        ...query,
-        stage: 'active',
-      },
-      order: [['createdAt', 'DESC']],
-    });
-    if (item) {
-      res.json(item);
-    } else {
-      res.sendStatus(404);
-    }
-  } catch (err) {
-    console.error('error get active item', err);
-    res.sendStatus(500);
-  }
-};
-
-const updateItem = async (res, id, fields) => {
-  try {
-    await model.Item.update(
-      fields,
-      { where: { id } },
-    );
-    respondWithItem(res, id);
-  } catch (err) {
-    console.error('error update board', err);
-    res.sendStatus(500);
-  }
-};
 
 // Get
 routes.get('/:id', async (req, res) => {
@@ -102,17 +33,11 @@ routes.get('/group/:id', async (req, res) => {
   await respondWithActiveItems(res, query);
 });
 
-// User Items
-// routes.get('/user/:id', async (req, res) => {
-//   await respondWithUserItems(res, { ownerID: req.params.id });
-// });
 
 // Delete
 routes.delete('/:id', async (req, res) => {
   try {
-    await model.Item.destroy({
-      where: { id: req.params.id },
-    });
+    await itemSvc.remove(req.params.id);
     res.sendStatus(204);
   } catch (err) {
     console.error('error delete item', err);
@@ -123,15 +48,7 @@ routes.delete('/:id', async (req, res) => {
 // List
 routes.get('/', async (req, res) => {
   try {
-    const items = await model.Item.findAll({
-      include: [{
-        model: model.User,
-        as: 'facilitator',
-      }, {
-        model: model.Group,
-        as: 'group',
-      }],
-    });
+    const items = await itemSvc.findAll();
     res.json(items);
   } catch (err) {
     console.error('error list items', err);
@@ -141,15 +58,9 @@ routes.get('/', async (req, res) => {
 
 // Create
 routes.post('/', async (req, res) => {
-  const item = req.body;
+  const { title, ownerID, groupID, pillarID, boardID} = req.body.item;
   try {
-    const newItem = await model.Item.create({
-      title: item.title,
-    });
-    await newItem.setOwner(item.ownerID);
-    await newItem.setPillar(item.pillarID);
-    await newItem.setGroup(item.groupID);
-    await newItem.setBoard(item.boardID);
+    await itemSvc.create(title, ownerID, groupID, boardID, pillarID);
     await respondWithItem(res, newItem.id);
   } catch (err) {
     console.error('error post item:', err);
@@ -160,12 +71,7 @@ routes.post('/', async (req, res) => {
 // Update
 routes.patch('/:id', async (req, res) => {
   try {
-    const item = await model.Item.findOne({
-      include: associations,
-      where: {
-        id: req.params.id,
-      },
-    });
+    const item = await itemSvc.findOne({id: req.params.id});
     if (item) {
       item.setOwner(req.body.ownerID);
     } else {
@@ -178,4 +84,45 @@ routes.patch('/:id', async (req, res) => {
   }
 });
 
-module.exports = routes;
+
+
+const respondWithItem = async (res, id) => {
+  try {
+    const item = await itemSvc.findOne({ id });
+    if (item) {
+      res.json(item);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.error('error get item', err);
+    res.sendStatus(500);
+  }
+};
+
+const respondWithActiveItems = async (res, query) => {
+  try {
+    const item = await itemSvc.findAll();
+    if (item) {
+      res.json(item);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (err) {
+    console.error('error get active item', err);
+    res.sendStatus(500);
+  }
+};
+
+const updateItem = async (res, id, fields) => {
+  try {
+    await itemSvc.update(id, fields);
+    respondWithItem(res, id);
+  } catch (err) {
+    console.error('error update board', err);
+    res.sendStatus(500);
+  }
+};
+
+
+export default routes;
