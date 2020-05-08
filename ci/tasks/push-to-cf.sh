@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -e -x
 
-push_green_app() {
-  cat > config/${NODE_ENV}.json <<EOF
+source xetro/ci/tasks/utils.sh
+
+build_config() {
+  cat > config/production.json <<EOF
 {
   "sso": {
     "microsoft": {
@@ -23,12 +25,7 @@ push_green_app() {
     }
   },
   "database": {
-    "username": "${DB_USERNAME}",
-    "password": "${DB_PASSWORD}",
-    "host": "${DB_HOST}",
-    "database": "${DB_NAME}",
-    "dialect": "${DB_DIALECT}",
-    "force_sync": false
+    "forceSync": false
   },
   "server": {
     "address": "https://${APP_NAME}.${CF_DOMAIN}",
@@ -36,19 +33,19 @@ push_green_app() {
   }
 }
 EOF
+}
 
+push_green_app() {
   if ! cf app ${APP_NAME}; then
     cf push ${APP_NAME} --no-start -n ${APP_NAME}
   fi
 
   cf push ${green_app} --no-start -n ${green_app}
-  cf set-env ${green_app} NODE_ENV ${NODE_ENV}
   cf bind-service ${green_app} ${DB_SERVICE_NAME}
-
   cf start ${green_app}
 }
 
-switch_blue_with_green() {
+replace_blue_with_green() {
   cf map-route ${green_app} ${CF_DOMAIN} -n ${APP_NAME}
   cf unmap-route ${APP_NAME} ${CF_DOMAIN} -n ${APP_NAME}
   cf unmap-route ${green_app} ${CF_DOMAIN} -n ${green_app}
@@ -59,15 +56,12 @@ switch_blue_with_green() {
 }
 
 main() {
-  cf api https://api.${CF_ENDPOINT} --skip-ssl-validation
-  cf auth ${CF_USERNAME} "${CF_PASSWORD}"
-  cf target -o ${CF_ORG} -s ${CF_SPACE}
-
   pushd xetro
     green_app="${APP_NAME}-green"
-
+    login_to_cf
+    build_config
     push_green_app
-    switch_blue_with_green
+    replace_blue_with_green
   popd
 }
 main

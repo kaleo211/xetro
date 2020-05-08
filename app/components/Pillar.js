@@ -82,7 +82,7 @@ class Pillar extends React.Component {
   }
 
   onDeleteItem(item) {
-    this.props.deleteItem({ ...item, boardID: this.props.board.id });
+    this.props.deleteItem(item);
   }
 
   async onStartItem(item, evt) {
@@ -91,14 +91,14 @@ class Pillar extends React.Component {
     if (!isBlank(activeItem)) {
       await this.props.finishItem(activeItem)
     }
-    await this.props.startItem({ ...item, boardID: this.props.board.id });
+    await this.props.startItem(item);
 
     this.props.startActiveItemTimer();
   }
 
   onLikeItem(item, evt) {
     evt.stopPropagation();
-    this.props.likeItem({ ...item, boardID: this.props.board.id });
+    this.props.likeItem(item);
   }
 
   async onFinishItem(item) {
@@ -106,7 +106,7 @@ class Pillar extends React.Component {
     await this.props.finishItem(item);
   }
 
-  async onClickAddActionButton(item) {
+  async onClickAddActionButton() {
     this.props.showAddingAction();
   }
 

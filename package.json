@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build:dev": "webpack --watch",
-    "build": "webpack",
+    "build": "webpack --production",
     "start": "node -r esm server.js",
     "start:dev": "webpack-dev-server --host 0.0.0.0",
     "test": "jest --silent"
@@ -32,7 +32,7 @@
     "cookie-parser": "1.4.4",
     "css-loader": "3.4.2",
     "es6-promise": "4.2.8",
-    "esm": "^3.2.25",
+    "esm": "3.2.25",
     "express": "4.17.1",
     "express-session": "1.15.6",
     "file-loader": "5.0.2",

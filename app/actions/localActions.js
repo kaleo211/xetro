@@ -61,7 +61,6 @@ export const startActiveItemTimer = () => (dispatch, getState) => {
   const { activeItem, secondsPerItem } = getState().local;
   if (activeItem && activeItem.end) {
     const timer = setInterval(() => {
-      console.log(new Date().getTime());
       const difference = (new Date(activeItem.end).getTime() - new Date().getTime()) / 1000;
       let progress = 1;
       if (difference > 0 && difference < secondsPerItem) {
@@ -71,12 +70,11 @@ export const startActiveItemTimer = () => (dispatch, getState) => {
         dispatch(finishItem(activeItem));
         dispatch(setELMO(true));
       }
-      console.log('progress', activeItem, secondsPerItem, difference, progress);
       dispatch({
         type: SET_ACTIVE_ITEM_PROGRESS,
         activeItemProgress: progress,
       });
-    }, 200);
+    }, 100);
     dispatch({
       type: SET_ACTIVE_ITEM_PROGRESS_TIMER,
       activeItemProgressTimer: timer,

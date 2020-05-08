@@ -14,7 +14,6 @@ export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
   if (!board) {
     console.error('error fetching active board');
   }
-  console.info('fetched active board:', board);
   dispatch({
     type: SET_ACTIVE_BOARD,
     activeBoard: board,
@@ -98,6 +97,28 @@ export const setBoard = (boardID) => async (dispatch) => {
     } else {
       console.error('error getting board');
     }
+  }
+};
+
+
+export const refreshBoard = () => async (dispatch, getState) => {
+  const { board } = getState().boards;
+
+  if (board && board.id) {
+    const refreshedBoard = await Utils.get('boards', board.id);
+    if (refreshedBoard) {
+      dispatch({
+        type: SET_BOARD,
+        board: refreshedBoard,
+      });
+    } else {
+      console.error('error freshing board');
+    }
+  } else {
+    dispatch({
+      type: SET_BOARD,
+      board: null,
+    });
   }
 };
 

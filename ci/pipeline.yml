@@ -1,15 +1,55 @@
 groups:
 - name: Xetro
   jobs:
+  - backup-database
   - push-to-cf
 
 jobs:
+- name: backup-database
+  serial: true
+  plan:
+  - in_parallel:
+    - { get: xetro, trigger: true, passed: [] }
+  - task: backup-database
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: {{docker_repo}}
+      inputs:
+      - name: xetro
+      run:
+        path: xetro/ci/tasks/backup-database.sh
+      params: &cf
+        APP_NAME:                       xetro
+        CF_DOMAIN:                      {{cf_domain}}
+        CF_ENDPOINT:                    {{cf_endpoint}}
+        CF_ORG:                         {{cf_org}}
+        CF_SPACE:                       {{cf_space}}
+        CF_USERNAME:                    {{cf_username}}
+        CF_PASSWORD:                    {{cf_password}}
+        CF_DB_SERVICE_NAME:             {{cf_db_service_name}}
+        SSO_MICROSOFT_CLIENT_ID:        {{sso_microsoft_client_id}}
+        SSO_MICROSOFT_CLIENT_SECRET:    {{sso_microsoft_client_secret}}
+        SSO_MICROSOFT_TENANT_ID:        {{sso_microsoft_tenant_id}}
+        SSO_MICROSOFT_REDIRECT_URI:     {{sso_microsoft_redirect_uri}}
+        SSO_DELL_CLIENT_ID:             {{sso_dell_client_id}}
+        SSO_DELL_CLIENT_SECRET:         {{sso_dell_client_secret}}
+        SSO_DELL_AUTH_DOMAIN:           {{sso_dell_auth_domain}}
+        SSO_DELL_USERINFO_URL:          {{sso_dell_userinfo_url}}
+        DATABASE_BACKUP_HOST_SSH_KEY:   {{database_backup_host_ssh_key}}
+        DATABASE_BACKUP_HOST_IP:        {{database_backup_host_ip}}
+        DATABASE_BACKUP_HOST_USER:      {{database_backup_host_user}}
+        DATABASE_BACKUP_MAX_DAYS:       7
+
 - name: push-to-cf
   serial: true
   plan:
   - in_parallel:
     - get: xetro
       trigger: true
+      passed: [backup-database]
   - task: push-to-cf
     config:
       platform: linux
@@ -22,28 +62,7 @@ jobs:
       run:
         path: xetro/ci/tasks/push-to-cf.sh
       params:
-        APP_NAME:                       xetro
-        CF_DOMAIN:                      {{cf_domain}}
-        CF_ENDPOINT:                    {{cf_endpoint}}
-        CF_ORG:                         {{cf_org}}
-        CF_SPACE:                       {{cf_space}}
-        CF_USERNAME:                    {{cf_username}}
-        CF_PASSWORD:                    {{cf_password}}
-        NODE_ENV:                       production
-        DB_SERVICE_NAME:                {{db_service_name}}
-        DB_USERNAME:                    {{db_username}}
-        DB_PASSWORD:                    {{db_password}}
-        DB_HOST:                        {{db_host}}
-        DB_NAME:                        {{db_name}}
-        DB_DIALECT:                     {{db_dialect}}
-        SSO_MICROSOFT_CLIENT_ID:        {{sso_microsoft_client_id}}
-        SSO_MICROSOFT_CLIENT_SECRET:    {{sso_microsoft_client_secret}}
-        SSO_MICROSOFT_TENANT_ID:        {{sso_microsoft_tenant_id}}
-        SSO_MICROSOFT_REDIRECT_URI:     {{sso_microsoft_redirect_uri}}
-        SSO_DELL_CLIENT_ID:             {{sso_dell_client_id}}
-        SSO_DELL_CLIENT_SECRET:         {{sso_dell_client_secret}}
-        SSO_DELL_AUTH_DOMAIN:           {{sso_dell_auth_domain}}
-        SSO_DELL_USERINFO_URL:          {{sso_dell_userinfo_url}}
+        <<: *cf
 
 resources:
 - name: xetro

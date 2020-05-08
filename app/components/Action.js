@@ -142,7 +142,7 @@ class Action extends React.Component {
           </div>
           <div style={{ marginLeft: 4, marginTop: 8, display: 'flex', flexDirection: 'row' }}>
             {group.members.map(member => (
-              <div style={{ minWidth: 36 }}>
+              <div key={member.id} style={{ minWidth: 36 }}>
                 <Persona
                     hidePersonaDetails
                     text={`${member.firstName} ${member.lastName}`}
