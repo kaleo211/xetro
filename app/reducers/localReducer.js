@@ -25,7 +25,7 @@ const initialState = {
   hoveredItem: {},
   showActionMap: {},
   elmo: false,
-  secondsPerItem: 7,
+  secondsPerItem: 300,
 };
 
 const localReducer = (state = initialState, action) => {
