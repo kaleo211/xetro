@@ -4,17 +4,19 @@ import path from 'path';
 import Sequelize from 'sequelize';
 
 let dbFromVCAP;
-// try {
-//   dbFromVCAP = JSON.parse(process.env.VCAP_SERVICES)['p.mysql'][0].credentials;
-// } catch (err) {
-//   console.error('error parsing database creds from VCAP_SERVICES');
-// }
+try {
+  dbFromVCAP = JSON.parse(process.env.VCAP_SERVICES)['p.mysql'][0].credentials;
+  dbFromVCAP.dialect = 'mysql';
+} catch (err) {
+  console.error('error parsing database creds from VCAP_SERVICES');
+}
 const dbFromConfig = config.get('database');
 const dbCreds = dbFromVCAP || dbFromConfig;
 
 const sequelize = new Sequelize(dbCreds.name, dbCreds.username, dbCreds.password, {
   host: dbCreds.hostname,
   dialect: dbCreds.dialect || 'postgres',
+  port: dbCreds.port || 5432,
   logging: false,
   syncOnAssociation: true,
 });

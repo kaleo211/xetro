@@ -41,7 +41,7 @@ push_green_app() {
   fi
 
   cf push ${green_app} --no-start -n ${green_app}
-  cf bind-service ${green_app} ${DB_SERVICE_NAME}
+  cf bind-service ${green_app} ${CF_DB_SERVICE_NAME}
   cf start ${green_app}
 }
 
@@ -49,7 +49,7 @@ replace_blue_with_green() {
   cf map-route ${green_app} ${CF_DOMAIN} -n ${APP_NAME}
   cf unmap-route ${APP_NAME} ${CF_DOMAIN} -n ${APP_NAME}
   cf unmap-route ${green_app} ${CF_DOMAIN} -n ${green_app}
-  cf unbind-service ${APP_NAME} ${DB_SERVICE_NAME}
+  cf unbind-service ${APP_NAME} ${CF_DB_SERVICE_NAME}
 
   cf delete ${APP_NAME} -f
   cf rename ${green_app} ${APP_NAME}

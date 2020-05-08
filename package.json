@@ -2,7 +2,6 @@
   "name": "xetro",
   "version": "0.6.1",
   "private": true,
-  "type": "module",
   "scripts": {
     "build:dev": "webpack --watch",
     "build": "webpack --production",

@@ -7,4 +7,5 @@ applications:
   command: yarn run build && yarn run start
   health-check-timeout: 180
   env:
+    CF_STARTUP_TIMEOUT: 5
     NODE_ENV: production
