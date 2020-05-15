@@ -12,6 +12,7 @@ import groupRouter from './routers/group.js';
 import itemRouter from './routers/item.js';
 import pillarRouter from './routers/pillar.js';
 import userRouter from './routers/user.js';
+import microsoftRouter from './routers/microsoft.js';
 
 import model from './models/index.js';
 
@@ -43,6 +44,7 @@ server.use(bodyParser.json());
 server.use(cookieParser());
 
 server.use('/dell', dellRouter);
+server.use('/microsoft', microsoftRouter);
 
 server.use('/actions', isAuthenticated, actionRouter);
 server.use('/boards', isAuthenticated, boardRouter);

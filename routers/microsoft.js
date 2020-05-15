@@ -1,11 +1,11 @@
 import config from 'config';
 import express from 'express';
 import rp from 'request-promise';
-import userSvc from '../services/user.ja';
+import userSvc from '../services/user.js';
 
 const routes = express.Router();
 
-routes.get('/', async (req, res) => {
+routes.get('/callback', async (req, res) => {
   const address = config.get('sso.microsoft.address');
   const tenantID = config.get('sso.microsoft.tenant_id');
   const tokenURL = `${address}/${tenantID}/oauth2/v2.0/token`;
@@ -28,10 +28,10 @@ routes.get('/', async (req, res) => {
     }
 
     body = await rp.get({
-      url: `${config.get('microsoft.api')}/me`,
+      url: `${config.get('sso.microsoft.api')}/me`,
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        Host: config.get('microsoft.host'),
+        Host: config.get('sso.microsoft.host'),
       },
     });
     const me = JSON.parse(body);

@@ -77,6 +77,7 @@ class App extends React.Component {
   async componentWillMount() {
     document.body.style.margin = 0;
     await this.handleDellLogin();
+    // await this.handleMicrosoftLogin();
     this.props.fetchUsers();
     await this.props.searchGroups();
   }

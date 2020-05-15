@@ -4,7 +4,7 @@
     "client_id": "clientID",
     "client_secret": "clientSecret",
     "tenant_id": "tenantID",
-    "redirect_uri": "http://localhost:8080/callback",
+    "redirect_uri": "http://localhost:8080/dell/callback",
     "scopes": [
       "user.read"
     ]
