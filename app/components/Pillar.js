@@ -184,16 +184,6 @@ class Pillar extends React.Component {
                       onClick={this.onHideActions.bind(this, item)}
                   />
               )}
-              {!board.locked &&
-                <div>
-                  <CommandButton
-                      style={{marginTop: 8, fontSize: 18}}
-                      iconProps={{ iconName: 'Add', style: {fontSize: 14, color: '#222222', marginRight: -2}}}
-                      text={item.likes}
-                      onClick={this.onLikeItem.bind(this, item)}
-                  />
-                </div>
-              }
               {showTimer(item) &&
                 <IconButton
                     primary
@@ -218,6 +208,15 @@ class Pillar extends React.Component {
                     onClick={this.onClickAddActionButton.bind(this, item)}
                 />
               }
+              <div>
+                <CommandButton
+                    style={{marginTop: 8, fontSize: 18}}
+                    iconProps={{ iconName: 'Add', style: {fontSize: 14, color: '#222222', marginRight: -2}}}
+                    text={item.likes}
+                    disabled={board.locked}
+                    onClick={this.onLikeItem.bind(this, item)}
+                />
+              </div>
             </div>
           </div>
           {showAddAction(item) && <Action />}
