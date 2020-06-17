@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
 import { IconButton } from 'office-ui-fabric-react';
 
-import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard } from '../actions/boardActions';
+import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard, refreshBoard } from '../actions/boardActions';
 import { setGroup } from '../actions/groupActions';
 import { setPage } from '../actions/localActions';
 import { finishItem } from '../actions/itemActions';
@@ -37,7 +37,7 @@ class ActionBar extends React.Component {
   }
 
   onRefreshBoard() {
-    this.props.setBoard(this.props.board.id);
+    this.props.refreshBoard();
   }
 
   onViewHistory() {
@@ -66,30 +66,19 @@ class ActionBar extends React.Component {
   render() {
     const { board, page } = this.props;
 
-    const videoIcon = {
-      iconName: 'PresenceChickletVideo',
-      style: iconStyle,
-    };
-    const saveIcon = {
-      iconName: 'archive',
-      style: iconStyle,
-    };
-    const lockIcon = {
-      iconName: 'Lock',
-      style: iconStyle,
-    };
-    const unlockIcon = {
-      iconName: 'Permissions',
-      style: iconStyle,
-    };
-
     return page === 'board' && board && board.stage !== 'archived' &&
       <div style={{ marginLeft: 8 }}>
+        <IconButton
+            primary
+            className={classNames.iconButton}
+            iconProps={{iconName: 'Refresh', style: iconStyle}}
+            onClick={this.onRefreshBoard.bind(this)}
+        />
         {board.locked &&
           <IconButton
               primary
               className={classNames.iconButton}
-              iconProps={unlockIcon}
+              iconProps={{iconName: 'Permissions', style: iconStyle}}
               onClick={this.onUnlockBoard.bind(this)}
           />
         }
@@ -97,7 +86,7 @@ class ActionBar extends React.Component {
           <IconButton
               primary
               className={classNames.iconButton}
-              iconProps={lockIcon}
+              iconProps={{iconName: 'Lock', style: iconStyle}}
               onClick={this.onLockBoard.bind(this)}
           />
         }
@@ -105,14 +94,14 @@ class ActionBar extends React.Component {
           <IconButton
               primary
               className={classNames.iconButton}
-              iconProps={videoIcon}
+              iconProps={{iconName: 'PresenceChickletVideo', style: iconStyle}}
           />
         }
         {board.stage === 'created' &&
           <IconButton
               primary
               className={classNames.iconButton}
-              iconProps={saveIcon}
+              iconProps={{iconName: 'archive', style: iconStyle}}
               onClick={this.onArchiveBoard.bind(this)}
           />
         }
@@ -135,6 +124,7 @@ const mapDispatchToProps = (dispatch) => ({
   setGroup: id => dispatch(setGroup(id)),
   setPage: page => dispatch(setPage(page)),
   unlockBoard: id => dispatch(unlockBoard(id)),
+  refreshBoard: () => dispatch(refreshBoard()),
 });
 
 export default compose(

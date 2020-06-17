@@ -48,10 +48,27 @@ class Board extends React.Component {
 
     this.state = {
       newItemInPillar: [],
-      titleOfPillar: [],
+      titleOfPillar: {},
       progressTimer: null,
       itemProgress: 0,
     };
+  }
+
+  componentWillMount() {
+    this.initTitleOfPillar(this.props.board);
+  }
+
+  componentWillReceiveProps(props) {
+    this.initTitleOfPillar(props.board);
+  }
+
+  initTitleOfPillar(board) {
+    const titleOfPillar = {};
+    board.pillars.map(pillar => {
+      titleOfPillar[pillar.id] = pillar.title;
+    });
+    console.log('titleofPillar', titleOfPillar);
+    this.setState({titleOfPillar});
   }
 
   changePillarTitle(id, title) {
@@ -114,15 +131,20 @@ class Board extends React.Component {
     }
   }
 
+  onResetPillarTitle(pillar) {
+    this.changePillarTitle(pillar.id, pillar.title);
+  }
+
   onClickELMO() {
     this.props.setELMO(false);
   }
 
   render() {
     const { board, elmo } = this.props;
-    const { newItemInPillar, itemProgress } = this.state;
+    const { newItemInPillar, itemProgress, titleOfPillar } = this.state;
 
     const pillars = board.pillars;
+    console.log('board', board);
     const enabled = (board.stage !== 'archived' && !board.locked);
 
     return (
@@ -135,9 +157,11 @@ class Board extends React.Component {
                   <TextField
                       borderless
                       inputClassName={classNames.titleText}
-                      defaultValue={pillar.title}
+                      value={titleOfPillar[pillar.id]}
+                      
                       onChange={this.onChangePillarTitle.bind(this, pillar)}
                       onKeyPress={this.onSetPillarTitle.bind(this, pillar)}
+                      onBlur={this.onResetPillarTitle.bind(this, pillar)}
                   />
                 </div>
               }

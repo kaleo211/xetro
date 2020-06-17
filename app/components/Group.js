@@ -143,7 +143,7 @@ class Group extends React.Component {
     this.setState({ isFacilitatorHovered: false });
   }
 
-  onJoinOrCreateGroup() {
+  onJoinOrCreateBoard() {
     this.props.joinOrCreateBoard();
   }
 
@@ -186,7 +186,7 @@ class Group extends React.Component {
               />
             </div>
           </DocumentCard>
-          <DocumentCard className={classNames.actionCard} onClick={this.onJoinOrCreateGroup.bind(this)}>
+          <DocumentCard className={classNames.actionCard} onClick={this.onJoinOrCreateBoard.bind(this)}>
             <div className={classNames.actionTitle}>
               Open Board
             </div>

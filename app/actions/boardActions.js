@@ -43,6 +43,17 @@ export const joinOrCreateBoard = () => {
   }
 }
 
+export const refreshBoard = () => {
+  return (dispatch, getState) => {
+    const { activeBoard } = getState().boards;
+    if (!isBlank(activeBoard) && activeBoard.id) {
+      dispatch(setBoard(activeBoard.id));
+    } else {
+      console.error('error refreshing board');
+    }
+  }
+}
+
 
 export const postBoard = (newBoard) => async (dispatch) => {
   const board = await Utils.post('boards', newBoard);
@@ -99,29 +110,6 @@ export const setBoard = (boardID) => async (dispatch) => {
     }
   }
 };
-
-
-export const refreshBoard = () => async (dispatch, getState) => {
-  const { board } = getState().boards;
-
-  if (board && board.id) {
-    const refreshedBoard = await Utils.get('boards', board.id);
-    if (refreshedBoard) {
-      dispatch({
-        type: SET_BOARD,
-        board: refreshedBoard,
-      });
-    } else {
-      console.error('error freshing board');
-    }
-  } else {
-    dispatch({
-      type: SET_BOARD,
-      board: null,
-    });
-  }
-};
-
 
 export const archiveBoard = (boardID) => async (dispatch) => {
   await Utils.fetch(`/boards/${boardID}/archive`);

@@ -106,7 +106,6 @@ class Group extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  board: state.boards.board,
   group: state.groups.group,
   groups: state.groups.groups,
   me: state.users.me,
