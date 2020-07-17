@@ -36,14 +36,20 @@ const includes = [
 const create = async (name, groupID, pillarSvc) => {
   if (isBlank(name)) {}
 
-  const newBoard = await Board.create({
-    name,
-    stage: 'created',
+  const [newBoard, created] = await Board.findOrCreate({
+    where: {
+      groupID,
+      stage: 'created',
+    },
+    defaults: {
+      name,
+      stage: 'created',
+    },
   });
-  console.info('New board created:', newBoard.name, newBoard.id);
+  console.info(created ? 'created new' : 'found existing', newBoard.name);
 
   await newBoard.setGroup(groupID);
-  await pillarSvc.create(':)', newBoard.id, 0);
+  await pillarSvc.create(':D', newBoard.id, 0);
   await pillarSvc.create(':|', newBoard.id, 1);
   await pillarSvc.create(':(', newBoard.id, 2);
 

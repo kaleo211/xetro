@@ -66,7 +66,7 @@ class Menu extends React.Component {
   }
 
   render() {
-    const { group, board, page } = this.props;
+    const { group, board, page, me } = this.props;
 
     const bread = [{ text: 'Xetro', key: 'home', onClick: () => this.props.setPage('home') }];
     if (group) {
@@ -88,7 +88,7 @@ class Menu extends React.Component {
           />
         </div>
         <div className={classes.profile}>
-          <Text className={classes.text} variant="xLarge">Xuebin</Text>
+          <Text className={classes.text} variant="xLarge">{me.firstName}</Text>
         </div>
       </div>
     );
@@ -96,11 +96,9 @@ class Menu extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  groups: state.groups.groups,
   group: state.groups.group,
   board: state.boards.board,
   page: state.local.page,
-  activeBoard: state.boards.activeBoard,
   me: state.users.me,
 });
 const mapDispatchToProps = (dispatch) => ({

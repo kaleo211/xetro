@@ -64,7 +64,9 @@ class ActionBar extends React.Component {
   }
 
   render() {
-    const { board, page } = this.props;
+    const { board, page, me, group } = this.props;
+
+    const isFacilitator = me.id == group.facilitatorID;
 
     return page === 'board' && board && board.stage !== 'archived' &&
       <div style={{ marginLeft: 8 }}>
@@ -74,7 +76,7 @@ class ActionBar extends React.Component {
             iconProps={{iconName: 'Refresh', style: iconStyle}}
             onClick={this.onRefreshBoard.bind(this)}
         />
-        {board.locked &&
+        {board.locked && isFacilitator &&
           <IconButton
               primary
               className={classNames.iconButton}
@@ -82,7 +84,7 @@ class ActionBar extends React.Component {
               onClick={this.onUnlockBoard.bind(this)}
           />
         }
-        {!board.locked &&
+        {!board.locked && isFacilitator &&
           <IconButton
               primary
               className={classNames.iconButton}
@@ -97,7 +99,7 @@ class ActionBar extends React.Component {
               iconProps={{iconName: 'PresenceChickletVideo', style: iconStyle}}
           />
         }
-        {board.stage === 'created' &&
+        {board.stage === 'created' && isFacilitator &&
           <IconButton
               primary
               className={classNames.iconButton}
@@ -113,6 +115,7 @@ const mapStateToProps = state => ({
   group: state.groups.group,
   board: state.boards.board,
   page: state.local.page,
+  me: state.users.me,
 });
 
 const mapDispatchToProps = (dispatch) => ({

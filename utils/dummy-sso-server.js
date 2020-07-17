@@ -35,7 +35,7 @@ app.get('/dell/userinfo', (req, res) => {
   });
 });
 
-const port = 8888;
+const port = 8843;
 app.listen(
   port,
   () => console.warn(`Dummy SSO server listening on port ${port}!`),

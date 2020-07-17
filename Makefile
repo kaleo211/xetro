@@ -1,6 +1,5 @@
+prepare_dev: export NODE_ENV=dev
 prepare_dev:
-	export NODE_ENV=development
-
 	@if lsof -n -i4TCP:5432 | grep LISTEN ; then \
 		echo postgres is running; \
 	else \
@@ -18,9 +17,9 @@ prepare_dev:
 	-./node_modules/.bin/sequelize db:drop
 	./node_modules/.bin/sequelize db:create
 
-	perl -pi -e 's/false/true/g' config/development.json
+	perl -pi -e 's/false/true/g' config/dev.json
 	node -r esm ./models/index.js
-	perl -pi -e 's/true/false/g' config/development.json
+	perl -pi -e 's/true/false/g' config/dev.json
 	./node_modules/.bin/sequelize db:seed:all --seeders-path utils/seeders
 
 	-kill -9 $$(lsof -i :8888 | awk 'FNR==2 {print $$2}')
