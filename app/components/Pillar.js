@@ -106,7 +106,8 @@ class Pillar extends React.Component {
     await this.props.finishItem(item);
   }
 
-  async onClickAddActionButton() {
+  async onClickAddActionButton(item) {
+    this.props.setActiveItem(item);
     this.props.showAddingAction();
   }
 
@@ -140,7 +141,7 @@ class Pillar extends React.Component {
       return board.locked && board.stage === 'created' && item.stage !== 'created';
     };
     const showAddAction = (item) => {
-      return board.locked && board.stage === 'created' && item.id === activeItem.id && addingAction;
+      return board.locked && board.stage === 'created' && addingAction;
     };
     const showFoldButton = (item) => {
       return item.actions.length > 0;

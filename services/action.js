@@ -46,7 +46,7 @@ const findAll = async (whereCl) => {
 }
 
 
-const fineOne = async (whereCl) => {
+const findOne = async (whereCl) => {
   const action = await Action.findOne({
     include: includes,
     where: whereCl,
@@ -67,6 +67,6 @@ export default {
   create,
   remove,
   findAll,
-  fineOne,
+  findOne,
   update,
 };

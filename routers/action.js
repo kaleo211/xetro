@@ -24,7 +24,7 @@ routes.get('/group/:id', async (req, res) => {
 // Delete
 routes.delete('/:id', async (req, res) => {
   try {
-    actionSvc.remove(req.params.id);
+    await actionSvc.remove(req.params.id);
     res.sendStatus(204);
   } catch (err) {
     console.error('error delete action', err);
@@ -34,9 +34,9 @@ routes.delete('/:id', async (req, res) => {
 
 // Create
 routes.post('/', async (req, res) => {
-  const { title, ownerID, groupID, boardID, itemID } = req.body.action;
+  const { title, ownerID, groupID, boardID, itemID } = req.body;
   try {
-    const newAction = actionSvc.create(title, ownerID, groupID, boardID, itemID);
+    const newAction = await actionSvc.create(title, ownerID, groupID, boardID, itemID);
     await respondWithAction(res, newAction.id);
   } catch (err) {
     console.error('error post action:', err);
@@ -93,8 +93,7 @@ const respondWithActions = async (res, query) => {
 
 const updateAction = async (res, id, fields) => {
   try {
-
-    respondWithAction(res, id);
+    await respondWithAction(res, id);
   } catch (err) {
     console.error('error update board', err);
     res.sendStatus(500);
