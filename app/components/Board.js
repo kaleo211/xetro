@@ -67,7 +67,6 @@ class Board extends React.Component {
     board.pillars.map(pillar => {
       titleOfPillar[pillar.id] = pillar.title;
     });
-    console.log('titleofPillar', titleOfPillar);
     this.setState({titleOfPillar});
   }
 
@@ -144,7 +143,6 @@ class Board extends React.Component {
     const { newItemInPillar, itemProgress, titleOfPillar } = this.state;
 
     const pillars = board.pillars;
-    console.log('board', board);
     const enabled = (board.stage !== 'archived' && !board.locked);
 
     return (
@@ -158,7 +156,7 @@ class Board extends React.Component {
                       borderless
                       inputClassName={classNames.titleText}
                       value={titleOfPillar[pillar.id]}
-                      
+
                       onChange={this.onChangePillarTitle.bind(this, pillar)}
                       onKeyPress={this.onSetPillarTitle.bind(this, pillar)}
                       onBlur={this.onResetPillarTitle.bind(this, pillar)}

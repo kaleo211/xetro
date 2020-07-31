@@ -37,6 +37,7 @@
     "file-loader": "5.0.2",
     "html-webpack-plugin": "3.2.0",
     "jest": "25.4.0",
+    "morgan": "1.10.0",
     "msal": "1.2.1",
     "mysql2": "2.1.0",
     "node-fetch": "2.6.0",

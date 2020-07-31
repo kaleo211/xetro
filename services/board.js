@@ -46,12 +46,14 @@ const create = async (name, groupID, pillarSvc) => {
       stage: 'created',
     },
   });
-  console.info(created ? 'created new' : 'found existing', newBoard.name);
-
   await newBoard.setGroup(groupID);
-  await pillarSvc.create(':D', newBoard.id, 0);
-  await pillarSvc.create(':|', newBoard.id, 1);
-  await pillarSvc.create(':(', newBoard.id, 2);
+
+  console.info(created ? 'created new' : 'found existing', newBoard.name);
+  if (created) {
+    await pillarSvc.create(':D', newBoard.id, 0);
+    await pillarSvc.create(':|', newBoard.id, 1);
+    await pillarSvc.create(':(', newBoard.id, 2);
+  }
 
   return newBoard;
 };

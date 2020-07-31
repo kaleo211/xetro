@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import path from 'path';
 import session from 'express-session';
+import morgan from 'morgan';
 
 import actionRouter from './routers/action.js';
 import boardRouter from './routers/board.js';
@@ -17,6 +18,8 @@ import microsoftRouter from './routers/microsoft.js';
 import model from './models/index.js';
 
 const server = express();
+
+server.use(morgan(':method :status :url :response-time'));
 
 server.use(session({
   secret: config.get('server.session_secret'),
