@@ -40,7 +40,7 @@
     "morgan": "1.10.0",
     "msal": "1.2.1",
     "mysql2": "2.1.0",
-    "node-fetch": "2.6.0",
+    "node-fetch": "2.6.1",
     "office-ui-fabric-react": "7.105.11",
     "pg": "7.12.1",
     "react": "16.8.4",
