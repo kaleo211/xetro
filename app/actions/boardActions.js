@@ -1,7 +1,6 @@
 import {
   SET_BOARD,
   SET_BOARDS,
-  SET_ACTIVE_BOARD,
   SET_HISTORY_BOARDS,
 } from './types';
 import Utils from '../components/Utils';
@@ -15,8 +14,8 @@ export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
     console.error('error fetching active board');
   }
   dispatch({
-    type: SET_ACTIVE_BOARD,
-    activeBoard: board,
+    type: SET_BOARD,
+    board,
   });
 };
 
@@ -24,9 +23,9 @@ export const fetchGroupActiveBoard = (groupID) => async (dispatch) => {
 export const joinOrCreateBoard = () => {
   return (dispatch, getState) => {
     const { group } = getState().groups;
-    const { activeBoard } = getState().boards;
-    if (!isBlank(activeBoard) && activeBoard.id) {
-      dispatch(setBoard(activeBoard.id));
+    const { board } = getState().boards;
+    if (!isBlank(board) && board.id) {
+      dispatch(setBoard(board.id));
 
     } else {
       const now = new Date();
@@ -45,9 +44,9 @@ export const joinOrCreateBoard = () => {
 
 export const refreshBoard = () => {
   return (dispatch, getState) => {
-    const { activeBoard } = getState().boards;
-    if (!isBlank(activeBoard) && activeBoard.id) {
-      dispatch(setBoard(activeBoard.id));
+    const { board } = getState().boards;
+    if (!isBlank(board) && board.id) {
+      dispatch(setBoard(board.id));
     } else {
       console.error('error refreshing board');
     }

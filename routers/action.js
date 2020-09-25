@@ -5,6 +5,7 @@ const routes = express.Router();
 
 // Finish
 routes.get('/:id/finish', async (req, res) => {
+  console.log('wowow')
   await updateAction(res, req.params.id, { stage: 'done' });
 });
 
@@ -93,6 +94,7 @@ const respondWithActions = async (res, query) => {
 
 const updateAction = async (res, id, fields) => {
   try {
+    await actionSvc.update(id, fields);
     await respondWithAction(res, id);
   } catch (err) {
     console.error('error update board', err);

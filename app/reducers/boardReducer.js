@@ -3,7 +3,6 @@ import {
   SET_BOARDS,
   SET_PILLARS,
   SET_HISTORY_BOARDS,
-  SET_ACTIVE_BOARD,
 } from '../actions/types';
 
 const initialState = {
@@ -30,12 +29,6 @@ export default function (state = initialState, action) {
       return {
         ...state,
         pillars: action.pillars,
-      };
-
-    case SET_ACTIVE_BOARD:
-      return {
-        ...state,
-        activeBoard: action.activeBoard,
       };
 
     case SET_HISTORY_BOARDS:
