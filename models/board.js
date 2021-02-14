@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
 
   Board.associate = (models) => {
-    Board.belongsTo(models.Group, { as: 'group', foreignKey: 'groupID' });
+    Board.belongsTo(models.Group, { as: 'group', foreignKey: 'groupID', targetKey: 'id' });
     Board.hasMany(models.Pillar, { as: 'pillars', foreignKey: 'boardID' });
     Board.hasMany(models.Action, { as: 'actions', foreignKey: 'boardID' });
   };

@@ -35,8 +35,8 @@ app.get('/dell/userinfo', (req, res) => {
   });
 });
 
-const port = 8843;
+const port = 8888;
 app.listen(
   port,
-  () => console.warn(`Dummy SSO server listening on port ${port}!`),
+  () => console.warn(`Xetro dummy SSO server is listening on port: ${port}!`),
 );

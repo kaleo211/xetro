@@ -13,10 +13,10 @@ try {
 const dbFromConfig = config.get('database');
 const dbCreds = dbFromVCAP || dbFromConfig;
 
-const sequelize = new Sequelize(dbCreds.name, dbCreds.username, dbCreds.password, {
+const sequelize = new Sequelize(dbCreds.database, dbCreds.username, dbCreds.password, {
   host: dbCreds.hostname,
-  dialect: dbCreds.dialect || 'postgres',
-  port: dbCreds.port || 5432,
+  dialect: dbCreds.dialect || 'mysql',
+  port: dbCreds.port || 3306,
   logging: false,
   syncOnAssociation: true,
 });
@@ -37,8 +37,7 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-
-sequelize.sync({ force: dbFromConfig.forceSync || false }).then(() => {
+sequelize.sync({ force: dbFromConfig.forceSync }).then(() => {
   console.warn('database tables created');
 });
 
