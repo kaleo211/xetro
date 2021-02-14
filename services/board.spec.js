@@ -1,7 +1,12 @@
 import '@babel/polyfill';
 import boardSvc from './board';
 
-jest.mock('../models', () => ({Board: {create: jest.fn()}}));
+jest.mock('../models', () => ({
+  Board: {
+    findOrCreate: jest.fn(),
+  },
+  Group: 'group',
+}));
 import models from '../models'; // import after mock
 const fakePillarSvc = {create: jest.fn()}
 
@@ -13,13 +18,17 @@ describe('Board', () => {
         setFacilitator: jest.fn(),
         setGroup: jest.fn(),
       };
-      models.Board.create = jest.fn(async () => fakeCreatedBoard);
+      models.Board.findOrCreate = jest.fn(async () => [fakeCreatedBoard, true]);
 
       // Execution
       await boardSvc.create('fakeName', 'fakeGroupID', fakePillarSvc);
 
       // Assertion
-      expect(models.Board.create).toHaveBeenCalledWith({name: 'fakeName', stage: 'created'});
+      const expectedArguments = {
+        where: { groupID: 'fakeGroupID', stage: 'created' },
+        defaults: { name: 'fakeName', stage: 'created' },
+      };
+      expect(models.Board.findOrCreate).toHaveBeenCalledWith(expectedArguments);
       expect(fakeCreatedBoard.setGroup).toHaveBeenCalledWith('fakeGroupID');
       expect(fakePillarSvc.create).toHaveBeenCalledTimes(3);
     });
@@ -34,16 +43,16 @@ describe('Board', () => {
         setGroup: jest.fn(),
       };
       models.Board.findAll = jest.fn(async () => fakeCreatedBoard);
-      const fakeWhereCondn = 'this is a fake query';
-      const result = 
-      { 
+      const fakeWhereClause = 'this is a fake query';
+      const result = {
         include: [{
-          model: "group", 
-          as: 'group'}],
-        where: fakeWhereCondn,
+          model: 'group',
+          as: 'group',
+        }],
+        where: fakeWhereClause,
       };
       // Execution
-      await boardSvc.findAll(fakeWhereCondn);
+      await boardSvc.findAll(fakeWhereClause);
 
       // Assertion
       expect(models.Board.findAll).toHaveBeenCalledWith(result);

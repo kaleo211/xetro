@@ -1,10 +1,10 @@
 {
   "sso": {
     "address": "http://localhost:8888",
-    "client_id": "clientID",
-    "client_secret": "clientSecret",
-    "tenant_id": "tenantID",
-    "redirect_uri": "http://localhost:8080/dell/callback",
+    "clientID": "clientID",
+    "clientSecret": "clientSecret",
+    "tenantID": "tenantID",
+    "redirectURI": "http://localhost:8080/dell/callback",
     "scopes": [
       "user.read"
     ]
@@ -22,6 +22,6 @@
     "force_sync": false
   },
   "server": {
-    "session_secret": "sessionSecret"
+    "sessionSecret": "sessionSecret"
   }
 }

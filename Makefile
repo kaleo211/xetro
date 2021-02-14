@@ -15,3 +15,6 @@ start_dev:
 clean:
 	-kill -9 $$(lsof -i :8888 | awk 'FNR==2 {print $$2}')
 	-kill -9 $$(lsof -i :8080 | awk 'FNR==2 {print $$2}')
+
+test:
+	./node_modules/jest/bin/jest.js --silent

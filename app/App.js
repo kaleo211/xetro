@@ -14,7 +14,6 @@ import { fetchUsers, getMe } from './actions/userActions';
 import Group from './components/Group';
 import Home from './components/Home';
 import Menu from './components/Menu';
-import { MICROSOFT_URI } from './constants';
 
 import { sleep } from '../utils/tool';
 
@@ -93,22 +92,6 @@ class App extends React.Component {
         await this.props.getMe();
       } catch (err) {
         console.error('error login Dell:', err);
-      }
-      await sleep(1000);
-    }
-  }
-
-  async handleMicrosoftLogin() {
-    await this.props.getMe();
-    if (this.props.me == null) {
-      window.open(MICROSOFT_URI, 'microsoft', 'height=500,width=620');
-    }
-
-    while (this.props.me == null) {
-      try {
-        await this.props.getMe();
-      } catch (err) {
-        console.error('error login microsoft:', err);
       }
       await sleep(1000);
     }

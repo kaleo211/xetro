@@ -1,15 +1,33 @@
 groups:
 - name: Xetro
   jobs:
+  - tests
   - backup-database
   - push-to-cf
 
 jobs:
-- name: backup-database
+- name: tests
   serial: true
   plan:
   - in_parallel:
     - { get: xetro, trigger: true, passed: [] }
+  - task: tests
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: {{docker_repo}}
+      inputs:
+      - name: xetro
+      run:
+        path: xetro/ci/tasks/run-tests.sh
+
+- name: backup-database
+  serial: true
+  plan:
+  - in_parallel:
+    - { get: xetro, trigger: true, passed: [tests] }
   - task: backup-database
     config:
       platform: linux

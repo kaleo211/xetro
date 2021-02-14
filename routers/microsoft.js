@@ -7,7 +7,7 @@ const routes = express.Router();
 
 routes.get('/callback', async (req, res) => {
   const address = config.get('sso.microsoft.address');
-  const tenantID = config.get('sso.microsoft.tenant_id');
+  const tenantID = config.get('sso.microsoft.tenantID');
   const tokenURL = `${address}/${tenantID}/oauth2/v2.0/token`;
 
   try {
@@ -16,10 +16,10 @@ routes.get('/callback', async (req, res) => {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       form: {
         grant_type: 'authorization_code',
-        client_id: config.get('sso.microsoft.client_id'),
-        client_secret: config.get('sso.microsoft.client_secret'),
+        client_id: config.get('sso.microsoft.clientID'),
+        client_secret: config.get('sso.microsoft.clientSecret'),
         code: req.query.code,
-        redirect_uri: config.get('sso.microsoft.redirect_uri'),
+        redirect_uri: config.get('sso.microsoft.redirectURI'),
       },
     });
     const accessToken = JSON.parse(body).access_token;

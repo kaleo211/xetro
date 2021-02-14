@@ -22,7 +22,7 @@ const server = express();
 server.use(morgan(':method :status :url :response-time'));
 
 server.use(session({
-  secret: config.get('server.session_secret'),
+  secret: config.get('server.sessionSecret'),
   resave: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,

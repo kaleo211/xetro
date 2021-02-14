@@ -8,9 +8,9 @@ import userSvc from '../services/user';
 
 const routes = express.Router();
 
-const ssoClientID = config.get('sso.dell.client_id');
-const ssoClientSecret = config.get('sso.dell.client_secret');
-const ssoAuthDomain = config.get('sso.dell.auth_domain');
+const ssoClientID = config.get('sso.dell.clientID');
+const ssoClientSecret = config.get('sso.dell.clientSecret');
+const ssoAuthDomain = config.get('sso.dell.authDomain');
 const ssoUserinfo = config.get('sso.dell.userinfo');
 
 const oauth2client = oauth.create({
