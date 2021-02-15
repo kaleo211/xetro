@@ -7,19 +7,9 @@ build_config() {
   cat > config/production.json <<EOF
 {
   "sso": {
-    "microsoft": {
-      "api": "https://graph.microsoft.com/v1.0/",
-      "host": "graph.microsoft.com",
-      "address": "https://login.microsoftonline.com",
-      "clientID": "${SSO_MICROSOFT_CLIENT_ID}",
-      "clientSecret": "${SSO_MICROSOFT_clientSecret}",
-      "tenantID": "${SSO_MICROSOFT_TENANT_ID}",
-      "redirectURI": "${SSO_MICROSOFT_REDIRECT_URI}",
-      "scopes": ["user.read"]
-    },
     "dell": {
       "clientID": "${SSO_DELL_CLIENT_ID}",
-      "clientSecret": "${SSO_DELL_clientSecret}",
+      "clientSecret": "${SSO_DELL_CLIENT_SECRET}",
       "authDomain": "${SSO_DELL_AUTH_DOMAIN}",
       "userinfo": "${SSO_DELL_USERINFO_URL}"
     }

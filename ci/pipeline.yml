@@ -48,10 +48,6 @@ jobs:
         CF_USERNAME:                    {{cf_username}}
         CF_PASSWORD:                    {{cf_password}}
         CF_DB_SERVICE_NAME:             {{cf_db_service_name}}
-        SSO_MICROSOFT_CLIENT_ID:        {{sso_microsoft_client_id}}
-        SSO_MICROSOFT_CLIENT_SECRET:    {{sso_microsoft_client_secret}}
-        SSO_MICROSOFT_TENANT_ID:        {{sso_microsoft_tenant_id}}
-        SSO_MICROSOFT_REDIRECT_URI:     {{sso_microsoft_redirect_uri}}
         SSO_DELL_CLIENT_ID:             {{sso_dell_client_id}}
         SSO_DELL_CLIENT_SECRET:         {{sso_dell_client_secret}}
         SSO_DELL_AUTH_DOMAIN:           {{sso_dell_auth_domain}}
@@ -85,7 +81,7 @@ jobs:
 resources:
 - name: xetro
   type: git
-  icon: github-circle
+  icon: github
   source:
     uri: https://github.com/kaleo211/xetro
     branch: master

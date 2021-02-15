@@ -5,7 +5,7 @@ FROM debian:stretch
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
                 curl jq openssl sshpass openssh-client \
-                ca-certificates apt-transport-https
+                ca-certificates apt-transport-https make
 
 # CF CLI
 RUN curl -sL -k "https://cli.run.pivotal.io/stable?release=linux64-binary&source=github&version=6.51.0" \
@@ -27,7 +27,7 @@ RUN mkdir ~/.gnupg && echo "disable-ipv6" >> ~/.gnupg/dirmngr.conf && \
 # NODEJS
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
     echo 'deb https://deb.nodesource.com/node_12.x stretch main' > /etc/apt/sources.list.d/nodesource.list && \
-    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - && \
+    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list &&\
     apt-get update && \
     apt-get install -y --no-install-recommends nodejs yarn
