@@ -10,10 +10,12 @@ try {
 } catch (err) {
   console.error('error parsing database creds from VCAP_SERVICES');
 }
+
 const dbFromConfig = config.get('database');
+
 const dbCreds = dbFromVCAP || dbFromConfig;
 
-const sequelize = new Sequelize(dbCreds.database, dbCreds.username, dbCreds.password, {
+const sequelize = new Sequelize(dbCreds.name || dbCreds.database, dbCreds.username, dbCreds.password, {
   host: dbCreds.hostname,
   dialect: dbCreds.dialect || 'mysql',
   port: dbCreds.port || 3306,
