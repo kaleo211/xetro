@@ -14,14 +14,18 @@ import itemRouter from './routers/item.js';
 import pillarRouter from './routers/pillar.js';
 import userRouter from './routers/user.js';
 import microsoftRouter from './routers/microsoft.js';
+import socketRouter from './routers/socket.js';
+
+import socketIO from 'socket.io';
+import http from 'http';
 
 import model from './models/index.js';
 
-const server = express();
+const app = express();
 
-server.use(morgan(':method :status :url :response-time'));
+app.use(morgan(':method :status :url :response-time'));
 
-server.use(session({
+app.use(session({
   secret: config.get('server.sessionSecret'),
   resave: true,
   cookie: {
@@ -42,28 +46,54 @@ const isAuthenticated = (req, res, next) => {
   }
 };
 
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json());
-server.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
-server.use('/dell', dellRouter);
-server.use('/microsoft', microsoftRouter);
+app.use('/dell', dellRouter);
+app.use('/microsoft', microsoftRouter);
 
-server.use('/actions', isAuthenticated, actionRouter);
-server.use('/boards', isAuthenticated, boardRouter);
-server.use('/groups', isAuthenticated, groupRouter);
-server.use('/items', isAuthenticated, itemRouter);
-server.use('/pillars', isAuthenticated, pillarRouter);
-server.use('/users', isAuthenticated, userRouter);
+app.use('/socket', isAuthenticated, socketRouter);
+app.use('/actions', isAuthenticated, actionRouter);
+app.use('/boards', isAuthenticated, boardRouter);
+app.use('/groups', isAuthenticated, groupRouter);
+app.use('/items', isAuthenticated, itemRouter);
+app.use('/pillars', isAuthenticated, pillarRouter);
+app.use('/users', isAuthenticated, userRouter);
 
-server.get('/', (req, res) => {
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
-server.use(express.static('dist'));
+app.use(express.static('dist'));
 
 const port = process.env.PORT || 8080;
-server.listen(port, () => {
-  console.warn('Xetro is listenning on port:', port);
+// server.listen(port, () => {
+//   console.warn('Xetro is listenning on port:', port);
+// });
+
+const server = http.createServer(app);
+const io = socketIO(server);
+
+let interval;
+
+io.on('connection', (socket) => {
+  if (interval) {
+    clearInterval(interval);
+  }
+
+  interval = setInterval(() => getApiAndEmit(socket), 1000);
+
+  socket.on('disconnect', () => {
+    clearInterval(interval);
+  })
 });
+
+server.listen(port, () => console.log(`listening on port ${port}`));
+
+const getApiAndEmit = socket => {
+  const response = new Date();
+  socket.emit('FromAPI', response);
+}
+
 
 export default server;

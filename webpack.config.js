@@ -1,5 +1,10 @@
+const config = require('config');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const definePlugin = new webpack.DefinePlugin({
+  SOCKETIO_ADDRESS: JSON.stringify(config.get('server.address')),
+});
 
 module.exports = {
   entry: './app/index.js',
@@ -32,6 +37,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: 'app/public/index.html',
     }),
+    definePlugin,
   ],
   optimization: {
     minimize: true,

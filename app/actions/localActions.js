@@ -7,8 +7,14 @@ import {
   UPDATE_SHOW_ADDING_ACTION,
   SET_ACTIVE_ITEM_PROGRESS,
   SET_ACTIVE_ITEM_PROGRESS_TIMER,
+  SET_SOCKETIO_CLIENT,
 } from './types';
 import { finishItem } from './itemActions';
+
+export const setSocketIOClient = (socketIOClient) => ({
+  type: SET_SOCKETIO_CLIENT,
+  socketIOClient,
+});
 
 export const setPage = (page) => ({
   type: SET_PAGE,

@@ -11,6 +11,7 @@ import {
   UPDATE_SHOW_ADDING_ACTION,
   SET_ACTIVE_ITEM_PROGRESS,
   SET_ACTIVE_ITEM_PROGRESS_TIMER,
+  SET_SOCKETIO_CLIENT,
 } from '../actions/types';
 
 const persistConfig = {
@@ -26,6 +27,7 @@ const initialState = {
   showActionMap: {},
   elmo: false,
   secondsPerItem: 300,
+  socketIOClient: {},
 };
 
 const localReducer = (state = initialState, action) => {
@@ -79,6 +81,12 @@ const localReducer = (state = initialState, action) => {
       return {
         ...state,
         activeItemProgressTimer: action.activeItemProgressTimer,
+      };
+
+    case SET_SOCKETIO_CLIENT:
+      return {
+        ...state,
+        socketIOClient: action.socketIOClient,
       };
 
     default:

@@ -6,10 +6,12 @@ import { mergeStyleSets, loadTheme } from 'office-ui-fabric-react/lib/Styling';
 import Confetti from 'react-dom-confetti';
 import { Image } from 'office-ui-fabric-react';
 
+import socketIOClient from 'socket.io-client';
+
 import Board from './components/Board';
 
 import { searchGroups } from './actions/groupActions';
-import { setPage } from './actions/localActions';
+import { setPage, setSocketIOClient } from './actions/localActions';
 import { fetchUsers, getMe } from './actions/userActions';
 import Group from './components/Group';
 import Home from './components/Home';
@@ -79,6 +81,8 @@ class App extends React.Component {
     // await this.handleMicrosoftLogin();
     this.props.fetchUsers();
     await this.props.searchGroups();
+
+    this.props.setSocketIOClient(socketIOClient(SOCKETIO_ADDRESS));
   }
 
   async handleDellLogin() {
@@ -147,4 +151,5 @@ export default connect(mapStateToProps, {
   getMe,
   searchGroups,
   setPage,
+  setSocketIOClient,
 })(App);
