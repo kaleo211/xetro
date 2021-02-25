@@ -3,7 +3,7 @@ applications:
 - name: xetro
   memory: 1G
   instances: 1
-  buildpacks: [nodejs_buildpack]
+  buildpacks: [dicf_nodejs_buildpack_1739_cflinuxfs3]
   command: yarn run build && yarn run start
   health-check-timeout: 180
   env:
