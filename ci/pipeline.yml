@@ -107,7 +107,7 @@ jobs:
         DB_DIALECT:                     {{db_dialect}}
         DB_USERNAME:                    {{db_username}}
         DB_PASSWORD:                    {{db_password}}
-
+        DB_FORCE_SYNC:                  {{db_force_sync}}
 resources:
 - name: xetro
   type: git

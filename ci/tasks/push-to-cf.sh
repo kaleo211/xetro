@@ -21,7 +21,7 @@ build_config() {
     "dialect": "${DB_DIALECT}",
     "username": "${DB_USERNAME}",
     "password": "${DB_PASSWORD}",
-    "forceSync": false
+    "forceSync": ${DB_FORCE_SYNC}
   },
   "server": {
     "address": "https://${APP_NAME}.${CF_DOMAIN}",
