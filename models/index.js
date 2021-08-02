@@ -3,23 +3,19 @@ import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
 
-let dbFromVCAP;
+let dbCreds;
 try {
-  dbFromVCAP = JSON.parse(process.env.VCAP_SERVICES)['p.mysql'][0].credentials;
-  dbFromVCAP.dialect = 'mysql';
+  dbCreds = JSON.parse(process.env.VCAP_SERVICES)['p.mysql'][0].credentials;
 } catch (err) {
   console.error('error parsing database creds from VCAP_SERVICES');
+  dbCreds = config.get('database');
 }
-
-const dbFromConfig = config.get('database');
-
-const dbCreds = dbFromVCAP || dbFromConfig;
 
 const sequelize = new Sequelize(dbCreds.name || dbCreds.database, dbCreds.username, dbCreds.password, {
   host: dbCreds.hostname,
   dialect: dbCreds.dialect || 'mysql',
   port: dbCreds.port || 3306,
-  logging: false,
+  logging: dbCreds.logging || false,
   syncOnAssociation: true,
 });
 
@@ -39,7 +35,7 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-sequelize.sync({ force: dbFromConfig.forceSync }).then(() => {
+sequelize.sync({ force: dbCreds.forceSync || false }).then(() => {
   console.warn('database tables created');
 });
 

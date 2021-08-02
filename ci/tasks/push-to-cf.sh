@@ -21,6 +21,7 @@ build_config() {
     "dialect": "${DB_DIALECT}",
     "username": "${DB_USERNAME}",
     "password": "${DB_PASSWORD}",
+    "logging": ${DB_LOGGING},
     "forceSync": ${DB_FORCE_SYNC}
   },
   "server": {
