@@ -1,5 +1,5 @@
 groups:
-- name: Xetro
+- name: xetro
   jobs:
   - tests
   - backup-database
@@ -58,7 +58,12 @@ jobs:
         DATABASE_BACKUP_HOST_IP:        {{database_backup_host_ip}}
         DATABASE_BACKUP_HOST_USER:      {{database_backup_host_user}}
         DATABASE_BACKUP_MAX_DAYS:       7
-
+        DB_HOSTNAME:                    {{db_hostname}}
+        DB_PORT:                        {{db_port}}
+        DB_NAME:                        {{db_name}}
+        DB_DIALECT:                     {{db_dialect}}
+        DB_USERNAME:                    {{db_username}}
+        DB_PASSWORD:                    {{db_password}}
 - name: push-to-cf
   serial: true
   plan:

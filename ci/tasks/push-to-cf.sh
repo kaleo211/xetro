@@ -15,6 +15,12 @@ build_config() {
     }
   },
   "database": {
+    "hostname": "${DB_HOSTNAME}",
+    "port": ${DB_PORT},
+    "name": "${DB_NAME}",
+    "dialect": "${DB_DIALECT}",
+    "username": "${DB_USERNAME}",
+    "password": "${DB_PASSWORD}",
     "forceSync": false
   },
   "server": {
