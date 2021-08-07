@@ -21,12 +21,15 @@ app.get('/me', (req, res) => {
 
 // Dell
 app.get('/oauth/authorize', (req, res) => {
+  console.log("invoked authorize");
   res.redirect(`${serverAddr}/dell/callback`);
 });
 app.post('/oauth/token', (req, res) => {
+  console.log("invoked token");
   res.json({ access_token: 'fake_access_token' });
 });
 app.get('/dell/userinfo', (req, res) => {
+  console.log("invoked userinfo");
   res.json({
     "email": "fakeEmail",
     "family_name": "fakeFamilyName",
