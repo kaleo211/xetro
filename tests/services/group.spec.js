@@ -1,11 +1,11 @@
 import '@babel/polyfill';
-import groupSvc from './group';
+import groupSvc from '../../services/group';
 
 jest.mock('../models', () => ({
   User: {},
   Group: {},
 }));
-import models from '../models'; // import after mock
+import models from '../../models'; // import after mock
 
 describe('Group', () => {
   describe('setFacilitator', () => {
@@ -16,11 +16,11 @@ describe('Group', () => {
       models.User.findOne = jest.fn(async () => ({name: 'fakeName'}));
 
       // Execution
-      await groupSvc.setFacilitator('fakeGroupID', 'fakeUserID');
+      await groupSvc.setFacilitator('fakeGroupTD', 'fakeUserTD');
 
       // Assertion
-      expect(models.Group.findOne).toHaveBeenCalledWith({where: {id: 'fakeGroupID'}});
-      expect(models.User.findOne).toHaveBeenCalledWith({where: {id: 'fakeUserID'}});
+      expect(models.Group.findOne).toHaveBeenCalledWith({where: {id: 'fakeGroupTD'}});
+      expect(models.User.findOne).toHaveBeenCalledWith({where: {id: 'fakeUserTD'}});
       expect(fakeReturnedGroup.setFacilitator).toHaveBeenCalledWith({name: 'fakeName'});
     });
   });

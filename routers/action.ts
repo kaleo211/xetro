@@ -1,11 +1,10 @@
 import express from 'express';
-import actionSvc from '../services/action.js';
+import { service } from 'server';
 
 const routes = express.Router();
 
 // Finish
 routes.get('/:id/finish', async (req, res) => {
-  console.log('wowow')
   await updateAction(res, req.params.id, { stage: 'done' });
 });
 
@@ -25,7 +24,7 @@ routes.get('/group/:id', async (req, res) => {
 // Delete
 routes.delete('/:id', async (req, res) => {
   try {
-    await actionSvc.remove(req.params.id);
+    await service.action.remove(req.params.id);
     res.sendStatus(204);
   } catch (err) {
     console.error('error delete action', err);
@@ -37,7 +36,7 @@ routes.delete('/:id', async (req, res) => {
 routes.post('/', async (req, res) => {
   const { title, ownerID, groupID, boardID, itemID } = req.body;
   try {
-    const newAction = await actionSvc.create(title, ownerID, groupID, boardID, itemID);
+    const newAction = await service.action.create(title, ownerID, groupID, boardID, itemID);
     await respondWithAction(res, newAction.id);
   } catch (err) {
     console.error('error post action:', err);
@@ -48,7 +47,7 @@ routes.post('/', async (req, res) => {
 // Update
 routes.patch('/:id', async (req, res) => {
   try {
-    const action = await actionSvc.findOne({id: req.params.id});
+    const action = await service.action.findOne({id: req.params.id});
     if (action) {
       action.setOwner(req.body.ownerID);
     } else {
@@ -61,9 +60,9 @@ routes.patch('/:id', async (req, res) => {
   }
 });
 
-const respondWithAction = async (res, id) => {
+const respondWithAction = async (res: express.Response, id: string) => {
   try {
-    const action = await actionSvc.findOne({id});
+    const action = await service.action.findOne({id});
     if (action) {
       res.json(action);
     } else {
@@ -75,9 +74,9 @@ const respondWithAction = async (res, id) => {
   }
 };
 
-const respondWithActions = async (res, query) => {
+const respondWithActions = async (res: express.Response, query: object) => {
   try {
-    const actions = await actionSvc.findAll({
+    const actions = await service.action.findAll({
       ...query,
       stage: ['created', 'started'],
     });
@@ -92,9 +91,9 @@ const respondWithActions = async (res, query) => {
   }
 };
 
-const updateAction = async (res, id, fields) => {
+const updateAction = async (res: express.Response, id: string, fields: object) => {
   try {
-    await actionSvc.update(id, fields);
+    await service.action.update(id, fields);
     await respondWithAction(res, id);
   } catch (err) {
     console.error('error update board', err);

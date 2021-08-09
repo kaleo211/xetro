@@ -1,5 +1,5 @@
 import '@babel/polyfill';
-import boardSvc from './board';
+import boardSvc from '../../services/board';
 
 jest.mock('../models', () => ({
   Board: {
@@ -7,7 +7,7 @@ jest.mock('../models', () => ({
   },
   Group: 'group',
 }));
-import models from '../models'; // import after mock
+import models from '../../models'; // import after mock
 const fakePillarSvc = {create: jest.fn()}
 
 describe('Board', () => {
@@ -21,15 +21,15 @@ describe('Board', () => {
       models.Board.findOrCreate = jest.fn(async () => [fakeCreatedBoard, true]);
 
       // Execution
-      await boardSvc.create('fakeName', 'fakeGroupID', fakePillarSvc);
+      await boardSvc.create('fakeName', 'fakeGroupTD', fakePillarSvc);
 
       // Assertion
       const expectedArguments = {
-        where: { groupID: 'fakeGroupID', stage: 'created' },
+        where: { groupID: 'fakeGroupTD', stage: 'created' },
         defaults: { name: 'fakeName', stage: 'created' },
       };
       expect(models.Board.findOrCreate).toHaveBeenCalledWith(expectedArguments);
-      expect(fakeCreatedBoard.setGroup).toHaveBeenCalledWith('fakeGroupID');
+      expect(fakeCreatedBoard.setGroup).toHaveBeenCalledWith('fakeGroupTD');
       expect(fakePillarSvc.create).toHaveBeenCalledTimes(3);
     });
   });
@@ -56,7 +56,7 @@ describe('Board', () => {
 
       // Assertion
       expect(models.Board.findAll).toHaveBeenCalledWith(result);
-      // expect(fakeCreatedBoard.setGroup).toHaveBeenCalledWith('fakeGroupID');
+      // expect(fakeCreatedBoard.setGroup).toHaveBeenCalledWith('fakeGroupTD');
       // expect(fakePillarSvc.create).toHaveBeenCalledTimes(3);
     });
   });

@@ -1,8 +1,8 @@
 import '@babel/polyfill';
-import userSvc from './user';
+import userSvc from '../../services/user';
 
 jest.mock('../models', () => ({User: {create: jest.fn()}}));
-import models from '../models'; // import after mock
+import models from '../../models'; // import after mock
 
 describe('User', () => {
   describe('create', () => {

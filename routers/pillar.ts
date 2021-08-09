@@ -1,12 +1,12 @@
 import express from 'express';
-import pillarSvc from '../services/pillar.js';
+import { service } from 'server';
 
 const routes = express.Router();
 
 
 routes.delete('/:id', async (req, res) => {
   try {
-    await pillarSvc.remove(req.params.id);
+    await service.pillar.remove(req.params.id);
     res.sendStatus(204);
   } catch (err) {
     console.error('error delete pillar', err);
@@ -17,7 +17,7 @@ routes.delete('/:id', async (req, res) => {
 routes.post('/', async (req, res) => {
   const pillar = req.body;
   try {
-    const newPillar = await pillarSvc.create(pillar.title, pillar.boardID);
+    const newPillar = await service.pillar.create(pillar.title, pillar.boardID);
     await respondWithPillar(res, newPillar.id);
   } catch (err) {
     console.error('error post pillar:', err);
@@ -27,7 +27,7 @@ routes.post('/', async (req, res) => {
 
 routes.patch('/:id', async (req, res) => {
   try {
-    await pillarSvc.updateTitle(req.params.id, req.body.title);
+    await service.pillar.updateTitle(req.params.id, req.body.title);
     await respondWithPillar(res, req.params.id);
   } catch (err) {
     console.error('error patch pillar:', err);
@@ -36,9 +36,9 @@ routes.patch('/:id', async (req, res) => {
 });
 
 
-const respondWithPillar = async (res, id) => {
+const respondWithPillar = async (res: express.Response, id: string) => {
   try {
-    const pillar = await pillarSvc.findOne({id});
+    const pillar = await service.pillar.findOne({id});
     if (pillar) {
       res.json(pillar);
     } else {

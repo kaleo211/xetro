@@ -1,11 +1,11 @@
 import express from 'express';
-import userSvc from '../services/user';
+import { service } from 'server';
 
 const routes = express.Router();
 
 routes.get('/', async (req, res) => {
   try {
-    const users = await userSvc.findAll();
+    const users = await service.user.findAll();
     res.json(users);
   } catch (err) {
     console.error('error find group users:', err);
@@ -16,7 +16,7 @@ routes.get('/', async (req, res) => {
 routes.get('/me', async (req, res) => {
   const me = req.session.me;
   try {
-    const user = await userSvc.findOne({id: me.id});
+    const user = await service.user.findOne({id: me.id});
     if (user) {
       res.json(user);
     } else {

@@ -1,9 +1,7 @@
 import express from 'express';
-import boardSvc from '../services/board.js';
-import pillarSvc from '../services/pillar.js';
+import { service } from 'server';
 
 const routes = express.Router();
-
 
 // Get
 routes.get('/:id', async (req, res) => {
@@ -37,7 +35,7 @@ routes.get('/:id/unlock', async (req, res) => {
 // List
 routes.get('/group/:id', async (req, res) => {
   try {
-    const boards = await boardSvc.findAll({
+    const boards = await service.board.findAll({
       groupID: req.params.id,
     });
     res.json(boards);
@@ -52,7 +50,7 @@ routes.get('/group/:id', async (req, res) => {
 routes.post('/', async (req, res) => {
   const board = req.body;
   try {
-    const newBoard = await boardSvc.create(board.name, board.groupID, pillarSvc);
+    const newBoard = await service.board.create(board.name, board.groupID);
     await respondWithBoard(res, { id: newBoard.id });
   } catch (err) {
     console.error('error post board:', err);
@@ -64,8 +62,7 @@ routes.post('/', async (req, res) => {
 // Update
 routes.patch('/:id', async (req, res) => {
   try {
-    const board = await boardSvc.findOne({ id: req.params.id });
-    await board.setFacilitator(req.body.facilitatorID);
+    const board = await service.board.findOne({ id: req.params.id });
     await respondWithBoard(res, { id: board.id });
   } catch (err) {
     console.error('error patch board:', err);
@@ -74,9 +71,9 @@ routes.patch('/:id', async (req, res) => {
 });
 
 
-const respondWithBoard = async (res, whereCl) => {
+const respondWithBoard = async (res: express.Response, whereCl: object) => {
   try {
-    const board = await boardSvc.findOne(whereCl);
+    const board = await service.board.findOne(whereCl);
     if (board) {
       res.json(board);
     } else {
@@ -88,9 +85,9 @@ const respondWithBoard = async (res, whereCl) => {
   }
 };
 
-const updateBoard = async (res, id, fields) => {
+const updateBoard = async (res: express.Response, id: string, fields: object) => {
   try {
-    await boardSvc.update(id, fields);
+    await service.board.update(id, fields);
     res.json({});
   } catch (err) {
     console.error('error update board', err);

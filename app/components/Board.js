@@ -47,7 +47,7 @@ class Board extends React.Component {
     super(props);
 
     this.state = {
-      newItemInPillar: [],
+      newItemTnPillar: [],
       titleOfPillar: {},
       progressTimer: null,
       itemProgress: 0,
@@ -81,13 +81,13 @@ class Board extends React.Component {
   changeItemTitle(id, title) {
     this.setState(state => {
       const newState = state;
-      newState.newItemInPillar[id] = title;
+      newState.newItemTnPillar[id] = title;
       return newState;
     });
   }
 
   onAddItem(pillarID, event) {
-    const newItemTitle = this.state.newItemInPillar[pillarID];
+    const newItemTitle = this.state.newItemTnPillar[pillarID];
     if (event && event.key === 'Enter' && newItemTitle !== '') {
       const newItem = {
         pillarID,
@@ -140,7 +140,7 @@ class Board extends React.Component {
 
   render() {
     const { board, elmo } = this.props;
-    const { newItemInPillar, itemProgress, titleOfPillar } = this.state;
+    const { newItemTnPillar, itemProgress, titleOfPillar } = this.state;
 
     const pillars = board.pillars;
     const enabled = (board.stage !== 'archived' && !board.locked);
@@ -168,7 +168,7 @@ class Board extends React.Component {
                   <TextField
                       underlined
                       label="New:"
-                      value={newItemInPillar[pillar.id]}
+                      value={newItemTnPillar[pillar.id]}
                       name={pillar.id}
                       onChange={this.onChangeNewItemTitle.bind(this, pillar.id)}
                       onKeyPress={this.onAddItem.bind(this, pillar.id)}

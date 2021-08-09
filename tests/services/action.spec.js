@@ -1,8 +1,8 @@
 import '@babel/polyfill';
-import actionSvc from './action';
+import actionSvc from '../../services/action';
 
 jest.mock('../models', () => ({Action: {create: jest.fn()}}));
-import models from '../models'; // import after mock
+import models from '../../models'; // import after mock
 
 describe('Action', () => {
   describe('create', () => {
@@ -17,14 +17,14 @@ describe('Action', () => {
       models.Action.create = jest.fn(async () => fakeCreatedAction);
 
       // Execution
-      await actionSvc.create('fakeTitle', 'fakeOwnerID', 'fakeGroupID', 'fakeBoardID', 'fakeItemID');
+      await actionSvc.create('fakeTitle', 'fakeOwnerID', 'fakeGroupTD', 'fakeboardID', 'fakeItemTD');
 
       // Assertion
       expect(models.Action.create).toHaveBeenCalledWith({title: 'fakeTitle'});
       expect(fakeCreatedAction.setOwner).toHaveBeenCalledWith('fakeOwnerID');
-      expect(fakeCreatedAction.setGroup).toHaveBeenCalledWith('fakeGroupID');
-      expect(fakeCreatedAction.setBoard).toHaveBeenCalledWith('fakeBoardID');
-      expect(fakeCreatedAction.setItem).toHaveBeenCalledWith('fakeItemID');
+      expect(fakeCreatedAction.setGroup).toHaveBeenCalledWith('fakeGroupTD');
+      expect(fakeCreatedAction.setBoard).toHaveBeenCalledWith('fakeboardID');
+      expect(fakeCreatedAction.setItem).toHaveBeenCalledWith('fakeItemTD');
     });
   });
 });

@@ -1,25 +1,50 @@
-import bodyParser from 'body-parser';
 import config from 'config';
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import morgan from 'morgan';
 import path from 'path';
 import session from 'express-session';
-import morgan from 'morgan';
 
-import actionRouter from './routers/action.js';
-import boardRouter from './routers/board.js';
-import dellRouter from './routers/dell.js';
-import groupRouter from './routers/group.js';
-import itemRouter from './routers/item.js';
-import pillarRouter from './routers/pillar.js';
-import userRouter from './routers/user.js';
-import microsoftRouter from './routers/microsoft.js';
-import socketRouter from './routers/socket.js';
-
-import socketIO from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import http from 'http';
 
-import model from './models/index.js';
+import actionRouter from './routers/action';
+import boardRouter from './routers/board';
+import dellRouter from './routers/dell';
+import groupRouter from './routers/group';
+import itemRouter from './routers/item';
+import pillarRouter from './routers/pillar';
+import userRouter from './routers/user';
+import socketRouter from './routers/socket';
+import { Database } from './models/index';
+import { User } from './models/user';
+import { Sequelize } from 'sequelize/types';
+import { Service } from 'services';
+
+let dbCreds;
+try {
+  dbCreds = JSON.parse(process.env.VCAP_SERVICES)['p.mysql'][0].credentials;
+} catch (err) {
+  console.error('error parsing database creds from VCAP_SERVICES');
+  dbCreds = config.get('database');
+}
+
+const sequelize = new Sequelize(dbCreds.name || dbCreds.database, dbCreds.username, dbCreds.password, {
+  host: dbCreds.hostname,
+  dialect: dbCreds.dialect || 'mysql',
+  port: dbCreds.port || 3306,
+  logging: dbCreds.logging || false,
+});
+
+const database = new Database(sequelize);
+
+sequelize.sync({ force: dbCreds.forceSync || false }).then(() => {
+  console.warn('database tables created');
+});
+
+export const service = new Service(database);
+
+
 
 const app = express();
 
@@ -34,11 +59,17 @@ app.use(session({
   saveUninitialized: true,
 }));
 
-const isAuthenticated = (req, res, next) => {
+declare module 'express-session' {
+  interface SessionData {
+    me: User;
+  }
+}
+
+const isAuthenticated = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (!req.session.me) {
     res.status(403).send('Nice Try! May be Try Login Instead.');
   } else {
-    model.User.update(
+    database.user.update(
       { last: new Date() },
       { where: { id: req.session.me.id } },
     );
@@ -46,13 +77,9 @@ const isAuthenticated = (req, res, next) => {
   }
 };
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use('/dell', dellRouter);
-app.use('/microsoft', microsoftRouter);
-
 app.use('/socket', isAuthenticated, socketRouter);
 app.use('/actions', isAuthenticated, actionRouter);
 app.use('/boards', isAuthenticated, boardRouter);
@@ -72,15 +99,14 @@ const port = process.env.PORT || 8080;
 // });
 
 const server = http.createServer(app);
-const io = socketIO(server);
+const io = new Server(server);
 
-let interval;
+let interval: NodeJS.Timeout;
 
-io.on('connection', (socket) => {
+io.on('connection', (socket: Socket) => {
   if (interval) {
     clearInterval(interval);
   }
-
   interval = setInterval(() => getApiAndEmit(socket), 1000);
 
   socket.on('disconnect', () => {
@@ -90,7 +116,7 @@ io.on('connection', (socket) => {
 
 server.listen(port, () => console.log(`listening on port ${port}`));
 
-const getApiAndEmit = socket => {
+const getApiAndEmit = (socket: Socket) => {
   const response = new Date();
   socket.emit('FromAPI', response);
 }

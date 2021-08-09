@@ -1,6 +1,6 @@
 import express from 'express';
 import sequelize from 'sequelize';
-import itemSvc from '../services/item.js';
+import { service } from 'server';
 
 const routes = express.Router();
 
@@ -28,15 +28,15 @@ routes.post('/:id/start', async (req, res) => {
 
 // Group Active Items
 routes.get('/group/:id', async (req, res) => {
-  const query = { groupID: req.params.id };
-  await respondWithActiveItems(res, query);
+  // const query = { groupID: req.params.id };
+  await respondWithActiveItems(res);
 });
 
 
 // Delete
 routes.delete('/:id', async (req, res) => {
   try {
-    await itemSvc.remove(req.params.id);
+    await service.item.remove(req.params.id);
     res.sendStatus(204);
   } catch (err) {
     console.error('error delete item', err);
@@ -47,7 +47,7 @@ routes.delete('/:id', async (req, res) => {
 // List
 routes.get('/', async (req, res) => {
   try {
-    const items = await itemSvc.findAll();
+    const items = await service.item.findAll();
     res.json(items);
   } catch (err) {
     console.error('error list items', err);
@@ -59,7 +59,7 @@ routes.get('/', async (req, res) => {
 routes.post('/', async (req, res) => {
   const { title, ownerID, groupID, pillarID} = req.body;
   try {
-    const newItem = await itemSvc.create(title, ownerID, groupID, pillarID);
+    const newItem = await service.item.create(title, ownerID, groupID, pillarID);
     await respondWithItem(res, newItem.id);
   } catch (err) {
     console.error('error post item:', err);
@@ -70,7 +70,7 @@ routes.post('/', async (req, res) => {
 // Update
 routes.patch('/:id', async (req, res) => {
   try {
-    const item = await itemSvc.findOne({id: req.params.id});
+    const item = await service.item.findOne({id: req.params.id});
     if (item) {
       item.setOwner(req.body.ownerID);
     } else {
@@ -84,9 +84,9 @@ routes.patch('/:id', async (req, res) => {
 });
 
 
-const respondWithItem = async (res, id) => {
+const respondWithItem = async (res: express.Response, id: string) => {
   try {
-    const item = await itemSvc.findOne({ id });
+    const item = await service.item.findOne({ id });
     if (item) {
       res.json(item);
     } else {
@@ -98,9 +98,9 @@ const respondWithItem = async (res, id) => {
   }
 };
 
-const respondWithActiveItems = async (res, query) => {
+const respondWithActiveItems = async (res: express.Response) => {
   try {
-    const item = await itemSvc.findAll();
+    const item = await service.item.findAll();
     if (item) {
       res.json(item);
     } else {
@@ -112,9 +112,9 @@ const respondWithActiveItems = async (res, query) => {
   }
 };
 
-const updateItem = async (res, id, fields) => {
+const updateItem = async (res: express.Response, id: string, fields: object) => {
   try {
-    await itemSvc.update(id, fields);
+    await service.item.update(id, fields);
     respondWithItem(res, id);
   } catch (err) {
     console.error('error update board', err);

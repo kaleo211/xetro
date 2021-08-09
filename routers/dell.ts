@@ -1,19 +1,19 @@
 import config from 'config';
 import express from 'express';
 import fetch from 'node-fetch';
-import oauth from 'simple-oauth2';
+import { service } from 'server';
+import * as oauth from 'simple-oauth2';
 
 import { formatUserToSave } from '../utils/tool';
-import userSvc from '../services/user';
 
 const routes = express.Router();
 
-const ssoClientID = config.get('sso.dell.clientID');
-const ssoClientSecret = config.get('sso.dell.clientSecret');
-const ssoAuthDomain = config.get('sso.dell.authDomain');
-const ssoUserinfo = config.get('sso.dell.userinfo');
+const ssoClientID: string = config.get('sso.dell.clientID');
+const ssoClientSecret: string = config.get('sso.dell.clientSecret');
+const ssoAuthDomain: string = config.get('sso.dell.authDomain');
+const ssoUserinfo: string = config.get('sso.dell.userinfo');
 
-const oauth2client = oauth.create({
+const credentials: oauth.ModuleOptions = {
   client: {
     id: ssoClientID,
     secret: ssoClientSecret,
@@ -23,11 +23,12 @@ const oauth2client = oauth.create({
     tokenPath: '/oauth/token',
     authorizePath: '/oauth/authorize',
   },
-});
+};
 const selfAddress = config.get('server.address');
 
 routes.get('/', (req, res) => {
-  const authorizationUri = oauth2client.authorizationCode.authorizeURL({
+  const oauth2Code = new oauth.AuthorizationCode(credentials);
+  const authorizationUri = oauth2Code.authorizeURL({
     redirect_uri: selfAddress + '/dell/callback',
     scope: ['openid', 'roles', 'uaa.resource', 'user_attributes'],
   });
@@ -35,8 +36,8 @@ routes.get('/', (req, res) => {
 });
 
 
-routes.get('/callback', async (req, res, next) => {
-  const authCode = req.query.code;
+routes.get('/callback', async (req: express.Request, res: express.Response) => {
+  const authCode = req.query.code as string;
   const options = {
     code: authCode,
     redirect_uri: selfAddress + '/dell/callback',
@@ -44,8 +45,9 @@ routes.get('/callback', async (req, res, next) => {
   };
 
   try {
-    const result = await oauth2client.authorizationCode.getToken(options);
-    const token = oauth2client.accessToken.create(result);
+    const oauth2Code = new oauth.AuthorizationCode(credentials);
+    const result = await oauth2Code.getToken(options);
+    const token = oauth2Code.createToken(result);
 
     const userInfoRequest = {
       method: 'GET',
@@ -56,26 +58,25 @@ routes.get('/callback', async (req, res, next) => {
 
     let resp = await fetch(ssoUserinfo, userInfoRequest);
     const meFromSSO = await resp.json();
-    let meFromDB = await userSvc.findOne({ email: meFromSSO.email });
+    let meFromDB = await service.user.findOne({ email: meFromSSO.email });
     const meToAdd = formatUserToSave(meFromSSO);
 
     if (!meFromDB) {
-      resp = await userSvc.findOrCreateByEmail(meFromSSO.email, meToAdd);
-      if (!resp || resp.length !== 2) {
+      meFromDB = await service.user.findOrCreateByEmail(meFromSSO.email, meToAdd);
+      if (!meFromDB) {
         throw new Error('invalid response from sequelize');
       }
-      meFromDB = resp[0].toJSON();
     } else {
       const dataToAlwaysUpdate = {
         name: meToAdd.name,
-        title: meToAdd.title,
       };
-      await userSvc.updateByEmail(meFromDB.email, dataToAlwaysUpdate);
+      await service.user.updateByEmail(meFromDB.email, dataToAlwaysUpdate);
     }
     console.info('logged successfully with user email', meFromDB.email);
-    req.session.me = await userSvc.findOne({ email: meFromDB.email });
+    req.session.me = await service.user.findOne({ email: meFromDB.email });
     req.session.save();
     res.redirect('/');
+
   } catch (err) {
     console.error('error trying to log into dell: ', err.message);
     res.sendStatus(500);

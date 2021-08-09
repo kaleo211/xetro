@@ -1,8 +1,8 @@
 import '@babel/polyfill';
-import itemSvc from './item';
+import itemSvc from '../../services/item';
 
 jest.mock('../models', () => ({Item: {create: jest.fn()}}));
-import models from '../models'; // import after mock
+import models from '../../models'; // import after mock
 
 describe('Item', () => {
   describe('create', () => {
@@ -16,14 +16,14 @@ describe('Item', () => {
       models.Item.create = jest.fn(async () => fakeCreatedItem);
 
       // Execution
-      const returnedItem = await itemSvc.create('fakeTitle', 'fakeOwnerID', 'fakeGroupID', 'fakePillarID');
+      const returnedItem = await itemSvc.create('fakeTitle', 'fakeOwnerID', 'fakeGroupTD', 'fakePillarTD');
 
       // Assertion
       expect(returnedItem).toEqual(fakeCreatedItem);
       expect(models.Item.create).toHaveBeenCalledWith({title: 'fakeTitle'});
       expect(fakeCreatedItem.setOwner).toHaveBeenCalledWith('fakeOwnerID');
-      expect(fakeCreatedItem.setGroup).toHaveBeenCalledWith('fakeGroupID');
-      expect(fakeCreatedItem.setPillar).toHaveBeenCalledWith('fakePillarID');
+      expect(fakeCreatedItem.setGroup).toHaveBeenCalledWith('fakeGroupTD');
+      expect(fakeCreatedItem.setPillar).toHaveBeenCalledWith('fakePillarTD');
     });
   });
 });

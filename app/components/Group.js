@@ -96,7 +96,7 @@ class Group extends React.Component {
     super(props);
 
     this.state = {
-      hoveredActionID: '',
+      hoveredActionTD: '',
       isFacilitatorHovered: false,
     };
 
@@ -115,11 +115,11 @@ class Group extends React.Component {
   }
 
   onHoverAction(action) {
-    this.setState({ hoveredActionID: action.id });
+    this.setState({ hoveredActionTD: action.id });
   }
 
   onLeaveHoveredAction() {
-    this.setState({ hoveredActionID: '' });
+    this.setState({ hoveredActionTD: '' });
   }
 
   onHoverFacilitator() {
@@ -149,7 +149,7 @@ class Group extends React.Component {
 
   render() {
     const { group } = this.props;
-    const { hoveredActionID } = this.state;
+    const { hoveredActionTD } = this.state;
 
     const actions = group.actions;
     const finishIcon = {
@@ -205,7 +205,7 @@ class Group extends React.Component {
                   <DocumentCardTitle title={action.title} />
                   <DocumentCardActivity activity={date(action.createdAt)} people={[action.owner]} />
                 </DocumentCardDetails>
-                {hoveredActionID === action.id &&
+                {hoveredActionTD === action.id &&
                   <Overlay>
                     <div className={classNames.overlay}>
                       <div>
