@@ -33,18 +33,11 @@ export class PillarService implements PillarServiceI {
           model: this.db.item,
           as: 'items',
           order: [['createdAt', 'ASC']],
-          include: [
-            {
-              model: this.db.action,
-              as: 'actions',
-              include: [
-                {
-                  model: this.db.user,
-                  as: 'owner',
-                }
-              ],
-            }
-          ],
+          include: [{
+            model: this.db.action,
+            as: 'actions',
+            include: [{ model: this.db.user, as: 'owner' }],
+          }],
         }
       ],
       where: whereCl,

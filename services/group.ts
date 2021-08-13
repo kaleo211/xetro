@@ -1,25 +1,14 @@
-import { Action } from '../models/action';
-import { Board } from '../models/board';
-import { User } from '../models/user';
 import { Op } from 'sequelize';
 import { Database } from '../models/index';
 import { keyable } from '../utils/tool';
 import { Group } from '../models/group';
-
-const include = [
-  {
-    model: User,
-    as: 'members',
-    through: {},
-  }
-];
 
 export interface GroupServiceI {
   addMember(groupID:string, userID:string): Promise<void>,
   findOne(whereCl:keyable): Promise<Group>,
   findOrCreateByName(name:string): Promise<Group>,
   remove(id:string): Promise<void>,
-  // searchByName(name:string): Promise<Group[]>,
+  searchByName(name:string): Promise<Group[]>,
   setFacilitator(groupID:string, facilitatorID:string): Promise<void>,
 };
 
@@ -102,15 +91,18 @@ export class GroupService implements GroupServiceI {
   };
 
 
-  // public searchByName = async (name: string) => {
-  //   const where = {};
-  //   if (name && name != "") {
-  //     where.name = { [Op.iLike]: `%${name}%` };
-  //   }
+  public searchByName = async (name: string) => {
+    const where:keyable = {};
+    if (name && name != "") {
+      where.name = { [Op.iLike]: `%${name}%` };
+    }
 
-  //   const groups = await this.db.group.findAll({ include, where });
-  //   return groups;
-  // };
+    const groups = await this.db.group.findAll({
+      include: [{ model: this.db.user, as: 'members', through: {} }],
+      where,
+    });
+    return groups;
+  };
 
 
   public setFacilitator = async (groupID: string, facilitatorID: string) => {

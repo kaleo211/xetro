@@ -29,14 +29,11 @@ const sequelize = new Sequelize(dbCreds.name || dbCreds.database, dbCreds.userna
   logging: dbCreds.logging || false,
 });
 const database = new Database(sequelize);
-
-
 export const service = new Service(database);
 export const routers = new Routers(service);
 
-
 const app = express();
-
+app.use(express.json());
 app.use(morgan(':method :status :url :response-time'));
 
 app.use(session({

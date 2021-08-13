@@ -36,14 +36,8 @@ export class ItemService implements ItemServiceI {
   public findAll = async () => {
     const items = await this.db.item.findAll({
       include: [
-        {
-          model: this.db.user,
-          as: 'facilitator',
-        },
-        {
-          model: this.db.group,
-          as: 'group',
-        }
+        { model: this.db.user, as: 'facilitator' },
+        { model: this.db.group, as: 'group' },
       ],
     });
     return items;
@@ -52,22 +46,10 @@ export class ItemService implements ItemServiceI {
   public findOne = async (whereCl: keyable) => {
     const item = await this.db.item.findOne({
       include: [
-        {
-          model: this.db.user,
-          as: 'owner',
-        },
-        {
-          model: this.db.group,
-          as: 'group',
-        },
-        {
-          model: this.db.pillar,
-          as: 'pillar',
-        },
-        {
-          model: this.db.action,
-          as: 'actions',
-        },
+        { model: this.db.user, as: 'owner' },
+        { model: this.db.group, as: 'group' },
+        { model: this.db.pillar, as: 'pillar' },
+        { model: this.db.action, as: 'actions' },
       ],
       where: whereCl,
     });

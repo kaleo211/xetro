@@ -45,7 +45,7 @@ export class Database {
 
     this.action.belongsTo(this.group, { as: 'group', foreignKey: 'groupID' });
     this.action.belongsTo(this.board, { as: 'board', foreignKey: 'boardID' });
-    this.action.belongsTo(this.action, { as: 'owner', foreignKey: 'ownerID' });
+    this.action.belongsTo(this.user, { as: 'owner', foreignKey: 'ownerID' });
     this.action.belongsTo(this.item, { as: 'item', foreignKey: 'itemID' });
 
     sequelize.sync({ force: true }).then(() => {

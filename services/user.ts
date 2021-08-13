@@ -19,22 +19,12 @@ export class UserService implements UserServiceI {
   }
 
   public create = async (email: string, firstName: string, lastName: string) => {
-    await this.db.user.create({
-      email,
-      firstName,
-      lastName,
-    });
+    await this.db.user.create({ email, firstName, lastName });
   }
 
   public findAll = async () => {
     const users = await this.db.user.findAll({
-      include: [
-        {
-          model: this.db.group,
-          as: 'groups',
-          through: {},
-        }
-      ],
+      include: [{ model: this.db.group, as: 'groups', through: {} }],
     });
     return users;
   }
@@ -42,11 +32,7 @@ export class UserService implements UserServiceI {
   public findOne = async (whereCl: keyable) => {
     const user = await this.db.user.findOne({
       include: [
-        {
-          model: this.db.group,
-          as: 'groups',
-          through: {},
-        },
+        { model: this.db.group, as: 'groups', through: {} },
         {
           model: this.db.action,
           as: 'actions',

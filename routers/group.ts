@@ -11,7 +11,6 @@ export class GroupRouter {
       respondWithGroup(res, req.params.id);
     });
 
-
     this.router.delete('/:id', async (req, res) => {
       try {
         await service.group.remove(req.params.id);
@@ -22,18 +21,16 @@ export class GroupRouter {
       }
     });
 
-
-    // this.router.post('/search', async (req, res) => {
-    //   const { name } = req.body;
-    //   try {
-    //     const groups = await service.group.searchByName(name);
-    //     res.json(groups);
-    //   } catch (err) {
-    //     console.error('error search group:', err);
-    //     res.sendStatus(500);
-    //   }
-    // });
-
+    this.router.post('/search', async (req, res) => {
+      const { name } = req.body;
+      try {
+        const groups = await service.group.searchByName(name);
+        res.json(groups);
+      } catch (err) {
+        console.error('error search group:', err);
+        res.sendStatus(500);
+      }
+    });
 
     this.router.post('/', async (req, res) => {
       const group = req.body;
@@ -54,7 +51,6 @@ export class GroupRouter {
       }
     });
 
-
     this.router.post('/member', async (req, res) => {
       try {
         const { userID, groupID } = req.body;
@@ -70,7 +66,6 @@ export class GroupRouter {
       }
     });
 
-
     this.router.post('/facilitator', async (req, res) => {
       try {
         const { groupID, facilitatorID } = req.body;
@@ -81,7 +76,6 @@ export class GroupRouter {
         res.sendStatus(500);
       }
     });
-
 
     const respondWithGroup = async (res: express.Response, id: string) => {
       try {
