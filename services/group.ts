@@ -2,9 +2,9 @@ import { Action } from '../models/action';
 import { Board } from '../models/board';
 import { User } from '../models/user';
 import { Op } from 'sequelize';
-import { Database } from 'models';
-import { keyable } from 'utils/tool';
-import { Group } from 'models/group';
+import { Database } from '../models/index';
+import { keyable } from '../utils/tool';
+import { Group } from '../models/group';
 
 const include = [
   {
@@ -12,49 +12,6 @@ const include = [
     as: 'members',
     through: {},
   }
-];
-
-const includesForEach = [
-  {
-    model: User,
-    as: 'members',
-    include: [
-      {
-        model: Action,
-        as: 'actions',
-        where: {
-          stage: {
-            [Op.ne]: 'done',
-          },
-        },
-        required: false,
-      }
-    ],
-  },
-  {
-    model: User,
-    as: 'facilitator',
-  },
-  {
-    model: Board,
-    as: 'boards',
-  },
-  {
-    model: Action,
-    as: 'actions',
-    where: {
-      stage: {
-        [Op.ne]: 'done',
-      },
-    },
-    required: false,
-    include: [
-      {
-        model: User,
-        as: 'owner',
-      }
-    ],
-  },
 ];
 
 export interface GroupServiceI {
@@ -83,7 +40,48 @@ export class GroupService implements GroupServiceI {
 
   public findOne = async (whereCl: keyable) => {
     const group = await this.db.group.findOne({
-      include: includesForEach,
+      include: [
+        {
+          model: this.db.user,
+          as: 'members',
+          include: [
+            {
+              model: this.db.action,
+              as: 'actions',
+              where: {
+                stage: {
+                  [Op.ne]: 'done',
+                },
+              },
+              required: false,
+            }
+          ],
+        },
+        {
+          model: this.db.user,
+          as: 'facilitator',
+        },
+        {
+          model: this.db.board,
+          as: 'boards',
+        },
+        {
+          model: this.db.action,
+          as: 'actions',
+          where: {
+            stage: {
+              [Op.ne]: 'done',
+            },
+          },
+          required: false,
+          include: [
+            {
+              model: this.db.user,
+              as: 'owner',
+            }
+          ],
+        },
+      ],
       where: whereCl,
     });
     return group;
@@ -121,7 +119,7 @@ export class GroupService implements GroupServiceI {
       throw new Error('no group found');
     }
 
-    const facilitator = await User.findOne({where: {id: facilitatorID}});
+    const facilitator = await this.db.user.findOne({where: {id: facilitatorID}});
     if (!facilitator) {
       throw new Error('no facilitator found');
     }

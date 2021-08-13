@@ -8,18 +8,11 @@ import session from 'express-session';
 import { Server, Socket } from 'socket.io';
 import http from 'http';
 
-import actionRouter from './routers/action';
-import boardRouter from './routers/board';
-import dellRouter from './routers/dell';
-import groupRouter from './routers/group';
-import itemRouter from './routers/item';
-import pillarRouter from './routers/pillar';
-import userRouter from './routers/user';
-import socketRouter from './routers/socket';
 import { Database } from './models/index';
 import { User } from './models/user';
-import { Sequelize } from 'sequelize/types';
-import { Service } from 'services';
+import { Sequelize } from 'sequelize';
+import { Service } from './services/index';
+import { Routers } from './routers/index';
 
 let dbCreds;
 try {
@@ -35,15 +28,11 @@ const sequelize = new Sequelize(dbCreds.name || dbCreds.database, dbCreds.userna
   port: dbCreds.port || 3306,
   logging: dbCreds.logging || false,
 });
-
 const database = new Database(sequelize);
 
-sequelize.sync({ force: dbCreds.forceSync || false }).then(() => {
-  console.warn('database tables created');
-});
 
 export const service = new Service(database);
-
+export const routers = new Routers(service);
 
 
 const app = express();
@@ -79,17 +68,17 @@ const isAuthenticated = (req: express.Request, res: express.Response, next: expr
 
 app.use(cookieParser());
 
-app.use('/dell', dellRouter);
-app.use('/socket', isAuthenticated, socketRouter);
-app.use('/actions', isAuthenticated, actionRouter);
-app.use('/boards', isAuthenticated, boardRouter);
-app.use('/groups', isAuthenticated, groupRouter);
-app.use('/items', isAuthenticated, itemRouter);
-app.use('/pillars', isAuthenticated, pillarRouter);
-app.use('/users', isAuthenticated, userRouter);
+app.use('/dell', routers.dell.router);
+app.use('/socket', isAuthenticated, routers.socket.router);
+app.use('/actions', isAuthenticated, routers.action.router);
+app.use('/boards', isAuthenticated, routers.board.router);
+app.use('/groups', isAuthenticated, routers.group.router);
+app.use('/items', isAuthenticated, routers.item.router);
+app.use('/pillars', isAuthenticated, routers.pillar.router);
+app.use('/users', isAuthenticated, routers.user.router);
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 app.use(express.static('dist'));
 
@@ -120,6 +109,5 @@ const getApiAndEmit = (socket: Socket) => {
   const response = new Date();
   socket.emit('FromAPI', response);
 }
-
 
 export default server;

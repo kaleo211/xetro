@@ -1,29 +1,6 @@
-import { Item } from "models/item";
-import { keyable } from "utils/tool";
+import { Item } from "../models/item";
+import { keyable } from "../utils/tool";
 import { Database } from "../models";
-import { Action } from "../models/action";
-import { Group } from "../models/group";
-import { Pillar } from "../models/pillar";
-import { User } from "../models/user";
-
-const includes = [
-  {
-    model: User,
-    as: 'owner',
-  },
-  {
-    model: Group,
-    as: 'group',
-  },
-  {
-    model: Pillar,
-    as: 'pillar',
-  },
-  {
-    model: Action,
-    as: 'actions',
-  },
-];
 
 export interface ItemServiceI {
   create(title:string, ownerID:string, groupID:string, pillarID:string): Promise<Item>,
@@ -60,11 +37,11 @@ export class ItemService implements ItemServiceI {
     const items = await this.db.item.findAll({
       include: [
         {
-          model: User,
+          model: this.db.user,
           as: 'facilitator',
         },
         {
-          model: Group,
+          model: this.db.group,
           as: 'group',
         }
       ],
@@ -74,7 +51,24 @@ export class ItemService implements ItemServiceI {
 
   public findOne = async (whereCl: keyable) => {
     const item = await this.db.item.findOne({
-      include: includes,
+      include: [
+        {
+          model: this.db.user,
+          as: 'owner',
+        },
+        {
+          model: this.db.group,
+          as: 'group',
+        },
+        {
+          model: this.db.pillar,
+          as: 'pillar',
+        },
+        {
+          model: this.db.action,
+          as: 'actions',
+        },
+      ],
       where: whereCl,
     });
 

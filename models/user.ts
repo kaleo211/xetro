@@ -1,19 +1,39 @@
 import { v4 as uuid} from 'uuid';
-import { Model, Sequelize, STRING, BuildOptions, UUID, VIRTUAL, BOOLEAN, DATE } from 'sequelize';
+import { Model, Sequelize, STRING, BuildOptions, UUID, VIRTUAL, BOOLEAN, DATE, Optional, INTEGER } from 'sequelize';
 
-export class User extends Model {
-  id: string;
+export interface UserI {
+  id?: string;
   firstName: string;
   lastName: string;
-  name: string;
-  initials: string;
+  name?: string;
+  initials?: string;
   email: string;
-  last: Date;
-  active: boolean;
-  accessToken: string;
+  last?: Date;
+  // active: boolean;
+  accessToken?: string;
+}
+interface UserCreationAttributesI extends Optional<UserI, 'id'|'name'|'initials'|'last'|'accessToken'> {}
+
+
+export class User extends Model<UserI> {
+  public firstName: string;
+  public lastName: string;
+  public email: string;
+
+  public id: string;
+  public name: string;
+  public initials: string;
+  public accessToken: string;
+
+  // constructor(firstName: string, lastName: string, email: string) {
+  //   // super({ id: uuid(), firstName, lastName, email });
+  //   this.firstName = firstName;
+  //   this.lastName = lastName;
+  //   this.email = email;
+  // }
 }
 
-export type UserStatic = typeof Model & {
+export type UserStatic = (typeof Model) & {
   new(values?: object, options?: BuildOptions): User;
 }
 
@@ -36,8 +56,8 @@ export function UserFactory(sequelize: Sequelize): UserStatic {
     initials: {
       type: new VIRTUAL(STRING),
       get() {
-        const first = this.get('firstName');
-        const last = this.get('lastName');
+        const first = this.get('firstName') as string;
+        const last = this.get('lastName') as string;
         if (first && last) {
           return first.charAt(0).toUpperCase() + last.charAt(0).toUpperCase();
         }
@@ -46,13 +66,13 @@ export function UserFactory(sequelize: Sequelize): UserStatic {
     },
     email: STRING,
     last: DATE,
-    active: {
-      type: new VIRTUAL(BOOLEAN),
-      get() {
-        const gap = new Date().getTime() - new Date(this.get('last')).getTime();
-        return gap < 3 * 60 * 1000;
-      },
-    },
+    // active: {
+    //   type: new VIRTUAL(BOOLEAN),
+    //   get() {
+    //     const gap = new Date().getTime() - new Date(this.get('last')).getTime();
+    //     return gap < 3 * 60 * 1000;
+    //   },
+    // },
     accessToken: STRING(2000),
-  })
+  });
 }

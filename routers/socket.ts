@@ -1,8 +1,14 @@
-import express from 'express';
-const routers = express.Router();
+import express, { Router } from 'express';
+import { Service } from 'services';
 
-routers.get('/', (req, res) => {
-  res.send({ response: 'I am alive' }).status(200);
-});
+export class SocketRouter {
+  public router: Router;
 
-export default routers;
+  constructor(service: Service) {
+    this.router = express.Router();
+
+    this.router.get('/', (req, res) => {
+      res.send({ response: 'I am alive' }).status(200);
+    });
+  }
+}

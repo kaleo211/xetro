@@ -1,11 +1,11 @@
-import { Database } from "models";
-import { Action } from "models/action";
-import { Board } from "models/board";
-import { Group } from "models/group";
-import { Item } from "models/item";
-import { Pillar } from "models/pillar";
-import { User } from "models/user";
-import { keyable } from "utils/tool";
+import { Database } from "../models/index";
+import { Action } from "../models/action";
+import { Board } from "../models/board";
+import { Group } from "../models/group";
+import { Item } from "../models/item";
+import { Pillar } from "../models/pillar";
+import { User } from "../models/user";
+import { keyable } from "../utils/tool";
 import { PillarServiceI } from "./pillar";
 
 

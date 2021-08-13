@@ -1,15 +1,13 @@
-import { Group } from '../models/group';
 import { Op } from 'sequelize';
 import { Database } from '../models/index';
-import { Action } from '../models/action';
-import { User } from '../models/user';
-import { keyable } from 'utils/tool';
+import { User, UserI } from '../models/user';
+import { keyable } from '../utils/tool';
 
 export interface UserServiceI {
   create(email:string, firstName:string, lastName:string): Promise<void>,
   findAll(): Promise<User[]>,
   findOne(whereCL:keyable): Promise<User>,
-  findOrCreateByEmail(email:string, user:User): Promise<User>,
+  findOrCreateByEmail(email:string, user:UserI): Promise<User>,
   updateByEmail(email:string, user:keyable): Promise<void>,
 };
 
@@ -32,13 +30,12 @@ export class UserService implements UserServiceI {
     const users = await this.db.user.findAll({
       include: [
         {
-          model: Group,
+          model: this.db.group,
           as: 'groups',
           through: {},
         }
       ],
     });
-
     return users;
   }
 
@@ -46,12 +43,12 @@ export class UserService implements UserServiceI {
     const user = await this.db.user.findOne({
       include: [
         {
-          model: Group,
+          model: this.db.group,
           as: 'groups',
           through: {},
         },
         {
-          model: Action,
+          model: this.db.action,
           as: 'actions',
           where: {
             stage: {
@@ -62,7 +59,7 @@ export class UserService implements UserServiceI {
         }
       ],
       where: whereCl,
-    })
+    });
 
     return user;
   };

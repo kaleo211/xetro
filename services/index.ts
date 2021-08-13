@@ -1,4 +1,4 @@
-import { Database } from "models";
+import { Database } from "../models/index";
 import { ActionService, ActionServiceI } from "./action";
 import { BoardService, BoardServiceI } from "./board";
 import { GroupService, GroupServiceI } from "./group";
@@ -33,3 +33,4 @@ export class Service implements ServiceI {
 		this.board = new BoardService(database, this.pillar);
 	}
 }
+

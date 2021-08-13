@@ -1,4 +1,3 @@
-import config from 'config';
 import { Sequelize } from 'sequelize';
 import { ActionFactory, ActionStatic } from './action';
 import { BoardFactor, BoardStatic } from './board';
@@ -19,10 +18,10 @@ export class Database {
   constructor(sequelize: Sequelize) {
     this.action = ActionFactory(sequelize);
     this.board = BoardFactor(sequelize);
-    this.user = UserFactory(sequelize);
-    this.pillar = PillarFactory(sequelize);
     this.group = GroupFactory(sequelize);
     this.item = ItemFactory(sequelize);
+    this.pillar = PillarFactory(sequelize);
+    this.user = UserFactory(sequelize);
 
     this.user.belongsToMany(this.group, { as: 'groups', through: 'GroupMember', foreignKey: 'userID' });
     this.user.hasMany(this.action, { as: 'actions', foreignKey: 'ownerID' });
@@ -48,6 +47,10 @@ export class Database {
     this.action.belongsTo(this.board, { as: 'board', foreignKey: 'boardID' });
     this.action.belongsTo(this.action, { as: 'owner', foreignKey: 'ownerID' });
     this.action.belongsTo(this.item, { as: 'item', foreignKey: 'itemID' });
+
+    sequelize.sync({ force: true }).then(() => {
+      console.warn('database tables created');
+    });
   }
 }
 

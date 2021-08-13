@@ -1,24 +1,6 @@
-import { Database } from "models";
-import { Action } from "models/action";
-import { keyable } from "utils/tool";
-import { Group } from "../models/group";
-import { Item } from "../models/item";
-import { User } from "../models/user";
-
-const includes = [
-  {
-    model: User,
-    as: 'owner',
-  },
-  {
-    model: Group,
-    as: 'group',
-  },
-  {
-    model: Item,
-    as: 'item',
-  },
-];
+import { Database } from "../models/index";
+import { Action } from "../models/action";
+import { keyable } from "../utils/tool";
 
 export interface ActionServiceI {
   create(title:string, ownerID:string, groupID:string, boardID:string, itemID:string): Promise<Action>,
@@ -54,7 +36,11 @@ export class ActionService implements ActionServiceI {
 
   public findAll = async (whereCl: keyable) => {
     const actions = await this.db.action.findAll({
-      include: includes,
+      include: [
+        { model: this.db.user, as: 'owner' },
+        { model: this.db.group, as: 'group' },
+        { model: this.db.item, as: 'item' },
+      ],
       where: whereCl,
       order: [['createdAt', 'DESC']],
     });
@@ -64,7 +50,11 @@ export class ActionService implements ActionServiceI {
 
   public findOne = async (whereCl: keyable) => {
     const action = await this.db.action.findOne({
-      include: includes,
+      include: [
+        { model: this.db.user, as: 'owner' },
+        { model: this.db.group, as: 'group' },
+        { model: this.db.item, as: 'item' },
+      ],
       where: whereCl,
     });
 

@@ -1,10 +1,6 @@
-import { Item } from '../models/item';
-import { Board } from '../models/board';
 import { Database } from '../models/index';
-import { Action } from '../models/action';
-import { User } from '../models/user';
-import { Pillar } from 'models/pillar';
-import { keyable } from 'utils/tool';
+import { Pillar } from '../models/pillar';
+import { keyable } from '../utils/tool';
 
 export interface PillarServiceI {
   create(title:string, boardID:string): Promise<Pillar>,
@@ -30,20 +26,20 @@ export class PillarService implements PillarServiceI {
     const pillar = await this.db.pillar.findOne({
       include: [
         {
-          model: Board,
+          model: this.db.board,
           as: 'board',
         },
         {
-          model: Item,
+          model: this.db.item,
           as: 'items',
           order: [['createdAt', 'ASC']],
           include: [
             {
-              model: Action,
+              model: this.db.action,
               as: 'actions',
               include: [
                 {
-                  model: User,
+                  model: this.db.user,
                   as: 'owner',
                 }
               ],
