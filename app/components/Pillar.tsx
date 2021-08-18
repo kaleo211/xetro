@@ -1,21 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
-import classNames from 'classnames/bind';
+import { compose, Dispatch } from 'redux';
 
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
-import {
-  DocumentCard, DocumentCardTitle, IconButton, ProgressIndicator, Persona, PersonaSize, Text, Overlay, CommandButton
-} from 'office-ui-fabric-react';
-import { Depths } from '@uifabric/fluent-theme/lib/fluent/FluentDepths';
+import { mergeStyleSets } from '@fluentui/react/lib/Styling';
+import { DocumentCard, DocumentCardTitle, IconButton, ProgressIndicator, Persona, PersonaSize, Text, Overlay, CommandButton } from '@fluentui/react';
+import { Depths } from '@fluentui/theme/lib/effects/FluentDepths';
 
-import {
-  setActiveItem, showActions, hideActions, showAddingAction, setHoverItem, startActiveItemTimer, clearActiveItemTimer
-} from '../actions/localActions';
-import { deleteItem, likeItem, finishItem, startItem } from '../actions/itemActions';
+import { setActiveItem, showActions, hideActions, showAddingAction, setHoverItem, startActiveItemTimer, clearActiveItemTimer } from '../store/local/action';
+import { deleteItem, likeItem, finishItem, startItem } from '../store/item/action';
 import Action from './Action';
-
-import { isBlank } from '../../utils/tool';
+import { BoardI, ItemI, PillarI } from '../../types/models';
+import { ApplicationState } from '../store/types';
+import { keyable } from '../../utils/tool';
 
 const iconStyle = {
   fontSize: 18,
@@ -73,77 +69,100 @@ const classes = mergeStyleSets({
     marginTop: 40,
   },
 });
-const cx = classNames.bind(classes);
 
-class Pillar extends React.Component {
-  constructor(props) {
+interface PropsI {
+  activeItem: ItemI;
+  pillar: PillarI;
+  activeItemProgress: number,
+  hoveredItem: ItemI,
+  board: BoardI
+  showActionMap: keyable
+  addingAction: boolean
+
+  deleteItem(item: ItemI): Promise<void>;
+  finishItem(item: ItemI): Promise<void>;
+  startItem(item: ItemI): Promise<void>;
+  startActiveItemTimer(): void;
+  clearActiveItemTimer(): void;
+  setActiveItem(Item: ItemI): void;
+  likeItem(item: ItemI): Promise<void>;
+  showAddingAction(): void;
+  hideActions(id: string): void;
+  showActions(id: string): void;
+  setHoverItem(item: ItemI): void;
+}
+
+interface StateI {}
+
+class Pillar extends React.Component<PropsI, StateI> {
+  constructor(props:any) {
     super(props);
     this.state = {};
   }
 
-  onDeleteItem(item) {
+  onDeleteItem(item:ItemI) {
     this.props.deleteItem(item);
   }
 
-  async onStartItem(item, evt) {
+  async onStartItem(item:ItemI, evt:React.MouseEvent) {
     evt.stopPropagation();
     const { activeItem } = this.props;
-    if (!isBlank(activeItem)) {
-      await this.props.finishItem(activeItem)
+    if (activeItem != null) {
+      await this.props.finishItem(activeItem);
     }
     await this.props.startItem(item);
 
     this.props.startActiveItemTimer();
   }
 
-  onLikeItem(item, evt) {
+  onLikeItem(item:ItemI, evt:React.MouseEvent) {
     evt.stopPropagation();
     this.props.likeItem(item);
   }
 
-  async onFinishItem(item) {
+  async onFinishItem(item:ItemI) {
     await this.props.clearActiveItemTimer();
     await this.props.finishItem(item);
   }
 
-  async onClickAddActionButton(item) {
+  async onClickAddActionButton(item:ItemI) {
     this.props.setActiveItem(item);
     this.props.showAddingAction();
   }
 
-  onHideActions(item) {
+  onHideActions(item:ItemI) {
     this.props.hideActions(item.id);
   }
 
-  onShowActions(item) {
+  onShowActions(item:ItemI) {
     this.props.showActions(item.id);
   }
 
-  onHoverItem(item) {
+  onHoverItem(item:ItemI) {
     this.props.setHoverItem(item);
   }
 
   onLeaveHoveredItem() {
-    this.props.setHoverItem({});
+    this.props.setHoverItem(null);
   }
 
   render() {
     const { activeItem, activeItemProgress, hoveredItem, pillar, board, showActionMap, addingAction } = this.props;
     const items = pillar.items;
 
-    const showTimer = (item) => {
+    const showTimer = (item:ItemI) => {
       return board.locked && board.stage === 'created' && item.stage === 'created';
     };
-    const showFinishButton = (item) => {
+    const showFinishButton = (item:ItemI) => {
       return board.locked && board.stage === 'created' && item.stage === 'active';
     };
-    const showActionButton = (item) => {
+    const showActionButton = (item:ItemI) => {
       return board.locked && board.stage === 'created' && item.stage !== 'created';
     };
-    const showAddAction = (item) => {
+    const showAddAction = (item:ItemI) => {
       return board.locked && board.stage === 'created' && addingAction;
     };
-    const showFoldButton = (item) => {
+    const showFoldButton = (item:ItemI) => {
       return item.actions.length > 0;
     };
 
@@ -151,7 +170,7 @@ class Pillar extends React.Component {
       <div key={item.id}>
         <DocumentCard
             key={item.id}
-            className={cx({card: true, hovered: hoveredItem.id===item.id})}
+            // className={cx({card: true, hovered: hoveredItem.id===item.id})}
             onMouseOver={this.onHoverItem.bind(this, item)}
             onFocus={() => {}}
             onMouseLeave={this.onLeaveHoveredItem.bind(this)}
@@ -213,7 +232,7 @@ class Pillar extends React.Component {
                 <CommandButton
                     style={{marginTop: 8, fontSize: 18}}
                     iconProps={{ iconName: 'Add', style: {fontSize: 14, color: '#222222', marginRight: -2}}}
-                    text={item.likes}
+                    text={item.likes.toString()}
                     disabled={board.locked}
                     onClick={this.onLikeItem.bind(this, item)}
                 />
@@ -238,9 +257,9 @@ class Pillar extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  board: state.boards.board,
-  group: state.groups.group,
+const mapStateToProps = (state:ApplicationState) => ({
+  board: state.board.board,
+  group: state.group.group,
   activeItem: state.local.activeItem,
   activeItemProgress: state.local.activeItemProgress,
   hoveredItem: state.local.hoveredItem,
@@ -248,15 +267,15 @@ const mapStateToProps = state => ({
   addingAction: state.local.addingAction,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  deleteItem: (item) => dispatch(deleteItem(item)),
-  setActiveItem: (item) => dispatch(setActiveItem(item)),
-  setHoverItem: (item) => dispatch(setHoverItem(item)),
-  likeItem: (id) => dispatch(likeItem(id)),
-  finishItem: (item) => dispatch(finishItem(item)),
-  startItem: (item) => dispatch(startItem(item)),
-  showActions: (item) => dispatch(showActions(item)),
-  hideActions: (item) => dispatch(hideActions(item)),
+const mapDispatchToProps = (dispatch:Dispatch) => ({
+  deleteItem: (item:ItemI) => dispatch(deleteItem(item)),
+  setActiveItem: (item:ItemI) => dispatch(setActiveItem(item)),
+  setHoverItem: (item:ItemI) => dispatch(setHoverItem(item)),
+  likeItem: (item:ItemI) => dispatch(likeItem(item)),
+  finishItem: (item:ItemI) => dispatch(finishItem(item)),
+  startItem: (item:ItemI) => dispatch(startItem(item)),
+  showActions: (id:string) => dispatch(showActions(id)),
+  hideActions: (id:string) => dispatch(hideActions(id)),
   showAddingAction: () => dispatch(showAddingAction()),
   startActiveItemTimer: () => dispatch(startActiveItemTimer()),
   clearActiveItemTimer: () => dispatch(clearActiveItemTimer()),

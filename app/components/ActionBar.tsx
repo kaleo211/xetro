@@ -1,14 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { compose, Dispatch } from 'redux';
 
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
-import { IconButton } from 'office-ui-fabric-react';
+import { mergeStyleSets } from '@fluentui/react/lib/Styling';
+import { IconButton } from '@fluentui/react';
 
-import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard, refreshBoard } from '../actions/boardActions';
-import { setGroup } from '../actions/groupActions';
-import { setPage } from '../actions/localActions';
-import { finishItem } from '../actions/itemActions';
+import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard, refreshBoard } from '../store/board/action';
+import { setGroup } from '../store/group/action';
+import { setPage } from '../store/local/action';
+import { finishItem } from '../store/item/action';
+import { BoardI, GroupI, ItemI, UserI } from '../../types/models';
+import { ApplicationState } from '../store/types';
 
 const iconStyle = {
   fontSize: 20,
@@ -24,14 +26,34 @@ const classNames = mergeStyleSets({
   },
 });
 
-class ActionBar extends React.Component {
-  constructor(props) {
+interface PropI {
+  group: GroupI;
+  board: BoardI;
+  page: string;
+  me: UserI;
+
+  setBoards(): Promise<void>;
+  setBoard(id: string): Promise<void>;
+  refreshBoard(): Promise<void>;
+  archiveBoard(id: string): Promise<void>;
+  setGroup(id: string): Promise<void>;
+  finishItem(): Promise<void>;
+  setPage(page: string): void;
+  lockBoard(id:string): Promise<void>;
+  unlockBoard(id:string): Promise<void>;
+}
+
+interface StateI {
+}
+
+class ActionBar extends React.Component<PropI, StateI> {
+  constructor(props: any) {
     super(props);
 
     this.state = {};
   }
 
-  onVideoOpen(url) {
+  onVideoOpen(url:string) {
     const win = window.open(url, '_blank');
     win.focus();
   }
@@ -49,10 +71,6 @@ class ActionBar extends React.Component {
     await this.props.archiveBoard(this.props.board.id);
     await this.props.setGroup(this.props.group.id);
     this.props.setBoard(null);
-  }
-
-  onActionCheck(action) {
-    this.props.finishItem(action);
   }
 
   onLockBoard() {
@@ -92,13 +110,13 @@ class ActionBar extends React.Component {
               onClick={this.onLockBoard.bind(this)}
           />
         }
-        {board.video &&
+        {/* {board.video &&
           <IconButton
               primary
               className={classNames.iconButton}
               iconProps={{iconName: 'PresenceChickletVideo', style: iconStyle}}
           />
-        }
+        } */}
         {board.stage === 'created' && isFacilitator &&
           <IconButton
               primary
@@ -111,22 +129,22 @@ class ActionBar extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  group: state.groups.group,
-  board: state.boards.board,
+const mapStateToProps = (state:ApplicationState) => ({
+  group: state.group.group,
+  board: state.board.board,
   page: state.local.page,
-  me: state.users.me,
+  me: state.user.me,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  archiveBoard: id => dispatch(archiveBoard(id)),
-  finishItem: item => dispatch(finishItem(item)),
-  lockBoard: id => dispatch(lockBoard(id)),
-  setBoard: id => dispatch(setBoard(id)),
+const mapDispatchToProps = (dispatch:Dispatch) => ({
+  archiveBoard: (id:string) => dispatch(archiveBoard(id)),
+  finishItem: (item:ItemI) => dispatch(finishItem(item)),
+  lockBoard: (id:string) => dispatch(lockBoard(id)),
+  setBoard: (id:string) => dispatch(setBoard(id)),
   setBoards: () => dispatch(setBoards()),
-  setGroup: id => dispatch(setGroup(id)),
-  setPage: page => dispatch(setPage(page)),
-  unlockBoard: id => dispatch(unlockBoard(id)),
+  setGroup: (id:string) => dispatch(setGroup(id)),
+  setPage: (page:string) => dispatch(setPage(page)),
+  unlockBoard: (id:string) => dispatch(unlockBoard(id)),
   refreshBoard: () => dispatch(refreshBoard()),
 });
 

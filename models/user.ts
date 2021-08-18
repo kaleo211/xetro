@@ -1,18 +1,7 @@
 import { v4 as uuid} from 'uuid';
 import { Model, Sequelize, STRING, BuildOptions, UUID, VIRTUAL, BOOLEAN, DATE, Optional, INTEGER } from 'sequelize';
-
-export interface UserI {
-  id?: string;
-  firstName: string;
-  lastName: string;
-  name?: string;
-  initials?: string;
-  email: string;
-  last?: Date;
-  // active: boolean;
-  accessToken?: string;
-}
-interface UserCreationAttributesI extends Optional<UserI, 'id'|'name'|'initials'|'last'|'accessToken'> {}
+import { UserI } from '../types/models';
+// interface UserCreationAttributesI extends Optional<UserI, 'id'|'name'|'initials'|'last'|'accessToken'> {}
 
 
 export class User extends Model<UserI> {

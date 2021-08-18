@@ -1,6 +1,8 @@
+import { keyable } from "../../utils/tool";
+
 export default {
   createdAt() {
-    return (a, b) => {
+    return (a:keyable, b:keyable) => {
       let comparison = 0;
       if (a.createdAt > b.createdAt) {
         comparison = 1;
@@ -11,7 +13,7 @@ export default {
     };
   },
 
-  search(type, body) {
+  search(type:string, body:keyable): Promise<keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}/search`, {
         method: 'POST',
@@ -23,13 +25,13 @@ export default {
         if (resp.ok) {
           resolve(resp.json());
         } else {
-          reject(Error('failed to search:', type, body));
+          reject(Error(`failed to search: ${type}`));
         }
       });
     });
   },
 
-  fetch(uri) {
+  fetch(uri:string): Promise<keyable> {
     return new Promise(resolve => {
       fetch(uri)
         .then(resp => {
@@ -42,33 +44,33 @@ export default {
     });
   },
 
-  get(type, id) {
+  get(type:string, id:string): Promise<keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}/${id}`)
         .then(resp => {
           if (resp.ok) {
             resolve(resp.json());
           } else {
-            reject(Error('failed to get:', type, id));
+            reject(Error(`failed to get: ${type}`));
           }
         });
     });
   },
 
-  list(type) {
+  list(type:string): Promise<keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}`)
         .then(resp => {
           if (resp.ok) {
             resolve(resp.json());
           } else {
-            reject(Error('failed to get:', type));
+            reject(Error(`failed to get: ${type}`));
           }
         });
     });
   },
 
-  post(type, body) {
+  post(type:string, body:keyable): Promise<keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}`, {
         method: 'POST',
@@ -80,13 +82,13 @@ export default {
         if (resp.ok) {
           resolve(resp.json());
         } else {
-          reject(Error('failed to post:', type, body));
+          reject(Error(`failed to post: ${type}`));
         }
       });
     });
   },
 
-  patch(type, body) {
+  patch(type:string, body:keyable): Promise<keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}/${body.id}`, {
         method: 'PATCH',
@@ -98,21 +100,21 @@ export default {
         if (resp.ok) {
           resolve(resp.json());
         } else {
-          reject(Error('failed to patch:', type, body));
+          reject(Error(`failed to patch: ${type}`));
         }
       });
     });
   },
 
-  delete(resource, id) {
+  delete(type:string, id:string): Promise<keyable> {
     return new Promise((resolve, reject) => {
-      fetch(`/${resource}/${id}`, {
+      fetch(`/${type}/${id}`, {
         method: 'DELETE',
       }).then(resp => {
         if (resp.ok) {
           resolve(resp);
         } else {
-          reject(Error('failed to delete:'));
+          reject(Error(`failed to delete: ${type}`));
         }
       });
     });

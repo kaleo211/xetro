@@ -1,26 +1,16 @@
 import React from 'react';
-import { compose } from 'redux';
+import { compose, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
-import {
-  DocumentCard,
-  DocumentCardActivity,
-  DocumentCardDetails,
-  DocumentCardTitle,
-  FontIcon,
-  IconButton,
-  Overlay,
-  Stack,
-  Separator,
-  Dropdown,
-  Label,
-} from 'office-ui-fabric-react';
-import { mergeStyleSets, createTheme } from 'office-ui-fabric-react/lib/Styling';
+import { DocumentCard, DocumentCardActivity, DocumentCardDetails, DocumentCardTitle, FontIcon, IconButton, Overlay, Stack, Separator, Dropdown, IDocumentCardActivityPerson } from '@fluentui/react';
+import { mergeStyleSets, createTheme } from '@fluentui/react/lib/Styling';
 
-import { fetchGroupActiveBoard, joinOrCreateBoard } from '../actions/boardActions';
-import { finishAction, deleteAction } from '../actions/itemActions';
-import { setFacilitator } from '../actions/groupActions';
-import { date } from '../../utils/tool';
+import { fetchGroupActiveBoard, joinOrCreateBoard } from '../store/board/action';
+import { finishAction, deleteAction } from '../store/item/action';
+import { setFacilitator } from '../store/group/action';
+import { date, keyable } from '../../utils/tool';
+import { ApplicationState } from '../store/types';
+import { ActionI, GroupI } from '../../types/models';
 
 const theme = createTheme({
   fonts: {
@@ -91,8 +81,24 @@ const classNames = mergeStyleSets({
   },
 });
 
-class Group extends React.Component {
-  constructor(props) {
+
+interface PropsI {
+  group: GroupI;
+
+  fetchGroupActiveBoard(id: string): Promise<void>;
+  finishAction(action: ActionI): Promise<void>;
+  deleteAction(action: ActionI): Promise<void>;
+  setFacilitator(id: string): Promise<void>;
+  joinOrCreateBoard(): void;
+}
+
+interface StateI {
+  hoveredActionTD: string,
+  isFacilitatorHovered: boolean,
+}
+
+class Group extends React.Component<PropsI, StateI> {
+  constructor(props: any) {
     super(props);
 
     this.state = {
@@ -107,14 +113,7 @@ class Group extends React.Component {
     await this.props.fetchGroupActiveBoard(this.props.group.id);
   }
 
-  getDate() {
-    const now = new Date();
-    const numbers = this.state.endTime.split(':');
-    now.setHours(numbers[0], numbers[1], 0);
-    return now;
-  }
-
-  onHoverAction(action) {
+  onHoverAction(action:ActionI) {
     this.setState({ hoveredActionTD: action.id });
   }
 
@@ -130,15 +129,15 @@ class Group extends React.Component {
     this.setState({ isFacilitatorHovered: false });
   }
 
-  async onFinishAction(item) {
-    await this.props.finishAction(item);
+  async onFinishAction(action:ActionI) {
+    await this.props.finishAction(action);
   }
 
-  async onRemoveAction(item) {
-    await this.props.deleteAction(item);
+  async onRemoveAction(action:ActionI) {
+    await this.props.deleteAction(action);
   }
 
-  async onSetFacilitator(evt, facilitator) {
+  async onSetFacilitator(evt:any, facilitator: keyable) {
     await this.props.setFacilitator(facilitator.key);
     this.setState({ isFacilitatorHovered: false });
   }
@@ -181,7 +180,7 @@ class Group extends React.Component {
               <Dropdown
                   label="Facilitator of the Week"
                   options={members}
-                  selectedKey={group.facilitator && group.facilitator.id}
+                  selectedKey={group.facilitatorID}
                   onChange={(evt, facilitator) => this.onSetFacilitator(evt, facilitator)}
               />
             </div>
@@ -203,7 +202,7 @@ class Group extends React.Component {
               >
                 <DocumentCardDetails>
                   <DocumentCardTitle title={action.title} />
-                  <DocumentCardActivity activity={date(action.createdAt)} people={[action.owner]} />
+                  <DocumentCardActivity activity={date(action.createdAt)} people={[{ ...action.owner, profileImageSrc: '', name: action.owner.name }]} />
                 </DocumentCardDetails>
                 {hoveredActionTD === action.id &&
                   <Overlay>
@@ -244,16 +243,16 @@ class Group extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  group: state.groups.group,
-  me: state.users.me,
+const mapStateToProps = (state: ApplicationState) => ({
+  group: state.group.group,
+  me: state.user.me,
 });
-const mapDispatchToProps = (dispatch) => ({
-  deleteAction: action => dispatch(deleteAction(action)),
-  fetchGroupActiveBoard: id => dispatch(fetchGroupActiveBoard(id)),
-  finishAction: action => dispatch(finishAction(action)),
+const mapDispatchToProps = (dispatch:Dispatch) => ({
+  deleteAction: (action:ActionI) => dispatch(deleteAction(action)),
+  fetchGroupActiveBoard: (id:string) => dispatch(fetchGroupActiveBoard(id)),
+  finishAction: (action:ActionI) => dispatch(finishAction(action)),
   joinOrCreateBoard: () => dispatch(joinOrCreateBoard()),
-  setFacilitator: (id) => dispatch(setFacilitator(id)),
+  setFacilitator: (id:string) => dispatch(setFacilitator(id)),
 });
 
 export default compose(

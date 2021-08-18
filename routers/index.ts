@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Service } from "services";
+import { Service } from "../services";
 import { ActionRouter } from "./action";
 import { BoardRouter } from "./board";
 import { DellRouter } from "./dell";

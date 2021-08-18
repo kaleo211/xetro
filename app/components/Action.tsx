@@ -1,31 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { compose, Dispatch } from 'redux';
 
-import {
-  DefaultButton,
-  Dialog,
-  DialogFooter,
-  PrimaryButton,
-  TextField,
-  Persona,
-  PersonaSize,
-  Text,
-} from 'office-ui-fabric-react';
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
+import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField, Persona, PersonaSize, Text } from '@fluentui/react';
+import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 
-import { setActiveItem, hideAddingAction, showActions } from '../actions/localActions';
-import {
-  deleteItem,
-  likeItem,
-  patchItem,
-  postAction,
-  postItem,
-  startItem,
-} from '../actions/itemActions';
-import { setBoard } from '../actions/boardActions';
-
-import { isBlank } from '../../utils/tool';
+import { setActiveItem, hideAddingAction, showActions } from '../store/local/action';
+import { postAction } from '../store/item/action';
+import { ItemI, BoardI, GroupI, ActionI, UserI } from '../../types/models';
+import { ApplicationState } from '../store/types';
 
 const classNames = mergeStyleSets({
   dialog: {
@@ -39,45 +22,65 @@ const classNames = mergeStyleSets({
   },
 });
 
-class Action extends React.Component {
-  constructor(props) {
+
+interface PropsI {
+  group: GroupI;
+  board: BoardI;
+  activeItem: ItemI;
+  addingAction: boolean;
+
+  hideAddingAction(): void;
+  setActiveItem(item: ItemI): void;
+  showActions(id: string): void;
+  postAction(item: ActionI): void;
+}
+
+interface StateI {
+  newActionTitle: string;
+  noOwnerError: string;
+  noTitleError: string;
+  pickedOwners: UserI[];
+}
+
+class Action extends React.Component<PropsI, StateI> {
+  constructor(props: any) {
     super(props);
 
     this.state = {
-      newActionTitle: null,
+      newActionTitle: '',
       noOwnerError: null,
       noTitleError: null,
       pickedOwners: [],
     };
   }
 
-  onChangeNewActionTitle(evt) {
+  onChangeNewActionTitle(evt: React.ChangeEvent<HTMLInputElement>) {
     this.setState({
       newActionTitle: evt.target.value,
       noTitleError: null,
     });
   }
 
-  async onClickAddActionButton(item) {
+  async onClickAddActionButton(item:ItemI) {
     this.props.setActiveItem(item);
   }
 
-  async onSaveAction(item) {
+  async onSaveAction(item:ItemI) {
     const { newActionTitle, pickedOwners } = this.state;
 
-    if (isBlank(newActionTitle)) {
+    if (newActionTitle == '') {
       this.setState({ noTitleError: 'Action title cannot be empty.' });
       return;
     }
 
-    if (isBlank(pickedOwners)) {
+    if (pickedOwners == null) {
       this.setState({ noOwnerError: 'Action owner cannot be empty.' });
       return;
     }
 
     pickedOwners.map(async owner => {
-      const newAction = {
-        title: newActionTitle.capitalize(),
+      const newAction: ActionI = {
+        title: newActionTitle,
         itemID: item.id,
         ownerID: owner.id,
         groupID: this.props.group.id,
@@ -94,13 +97,13 @@ class Action extends React.Component {
     });
   }
 
-  onToggleOwner(member) {
+  onToggleOwner(member:UserI) {
     if (this.state.pickedOwners.filter(owner => owner.id === member.id).length > 0) {
       this.setState(state => ({
         pickedOwners: state.pickedOwners.filter(owner => {
           return member.id !== owner.id;
         }),
-        noOwnerError: null,
+        noOwnerError: '',
       }));
     } else {
       this.setState(state => ({
@@ -118,7 +121,7 @@ class Action extends React.Component {
     const { activeItem, group, addingAction } = this.props;
     const { pickedOwners, noTitleError, noOwnerError } = this.state;
 
-    const isOwner = (member) => {
+    const isOwner = (member:UserI) => {
       const owner = pickedOwners.filter(o => o.id === member.id).length > 0;
       return owner ? PersonaSize.size32 : PersonaSize.size24;
     };
@@ -171,24 +174,18 @@ class Action extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  board: state.boards.board,
-  group: state.groups.group,
+const mapStateToProps = (state:ApplicationState) => ({
+  board: state.board.board,
+  group: state.group.group,
   activeItem: state.local.activeItem,
   addingAction: state.local.addingAction,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  postItem: (i, item, boardID) => dispatch(postItem(i, item, boardID)),
-  deleteItem: (item) => dispatch(deleteItem(item)),
-  setBoard: (id) => dispatch(setBoard(id)),
-  setActiveItem: (item) => dispatch(setActiveItem(item)),
-  likeItem: (id) => dispatch(likeItem(id)),
-  startItem: (item) => dispatch(startItem(item)),
-  patchItem: (item) => dispatch(patchItem(item)),
-  postAction: (action) => dispatch(postAction(action)),
+const mapDispatchToProps = (dispatch:Dispatch) => ({
   hideAddingAction: () => dispatch(hideAddingAction()),
-  showActions: (id) => dispatch(showActions(id)),
+  postAction: (action:ActionI) => dispatch(postAction(action)),
+  setActiveItem: (item:ItemI) => dispatch(setActiveItem(item)),
+  showActions: (id:string) => dispatch(showActions(id)),
 });
 
 export default compose(

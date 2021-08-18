@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import sequelize from 'sequelize';
-import { Service } from 'services';
+import { Service } from '../services';
 
 export class ItemRouter {
   public router: Router;

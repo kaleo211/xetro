@@ -1,16 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { compose, Dispatch } from 'redux';
 
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
-import { DocumentCard, Text, TextField, Modal, Image } from 'office-ui-fabric-react';
+import { mergeStyleSets } from '@fluentui/react/lib/Styling';
+import { DocumentCard, Text, TextField, Modal, Image } from '@fluentui/react';
 
-import { setBoard } from '../actions/boardActions';
-import { postItem } from '../actions/itemActions';
-import { patchPillar, postPillar, deletePillar } from '../actions/pillarActions';
-import { setELMO } from '../actions/localActions';
+import { postItem } from '../store/item/action';
+import { patchPillar, postPillar, deletePillar } from '../store/pillar/action';
+import { setELMO } from '../store/local/action';
 import Pillar from './Pillar';
 import elmoGif from '../public/elmo.gif';
+import { keyable } from '../../utils/tool';
+import { BoardI, GroupI, ItemI, PillarI } from '../../types/models';
+import { ApplicationState } from '../store/types';
 
 const classNames = mergeStyleSets({
   board: {
@@ -42,15 +44,30 @@ const classNames = mergeStyleSets({
   },
 });
 
-class Board extends React.Component {
-  constructor(props) {
+interface PropsI {
+  board: BoardI
+  group: GroupI
+  elmo: boolean
+
+  postPillar(pillar: PillarI): Promise<void>
+  patchPillar(pillar: PillarI): Promise<void>
+  postItem(item:ItemI): Promise<void>
+  setELMO(val: boolean): void
+  deletePillar(pillar: PillarI): Promise<void>
+}
+
+interface StateI {
+  newItemTnPillar: keyable,
+  titleOfPillar: keyable,
+}
+
+class Board extends React.Component<PropsI, StateI> {
+  constructor(props:any) {
     super(props);
 
     this.state = {
-      newItemTnPillar: [],
+      newItemTnPillar: {},
       titleOfPillar: {},
-      progressTimer: null,
-      itemProgress: 0,
     };
   }
 
@@ -58,19 +75,19 @@ class Board extends React.Component {
     this.initTitleOfPillar(this.props.board);
   }
 
-  componentWillReceiveProps(props) {
+  componentWillReceiveProps(props: PropsI) {
     this.initTitleOfPillar(props.board);
   }
 
-  initTitleOfPillar(board) {
-    const titleOfPillar = {};
+  initTitleOfPillar(board: BoardI) {
+    const titleOfPillar:keyable = {};
     board.pillars.map(pillar => {
       titleOfPillar[pillar.id] = pillar.title;
     });
     this.setState({titleOfPillar});
   }
 
-  changePillarTitle(id, title) {
+  changePillarTitle(id: string, title:string) {
     this.setState(state => {
       const newState = state;
       newState.titleOfPillar[id] = title;
@@ -78,18 +95,18 @@ class Board extends React.Component {
     });
   }
 
-  changeItemTitle(id, title) {
-    this.setState(state => {
+  changeItemTitle(id:string, title:string) {
+    this.setState((state:StateI) => {
       const newState = state;
       newState.newItemTnPillar[id] = title;
       return newState;
     });
   }
 
-  onAddItem(pillarID, event) {
+  onAddItem(pillarID: string, event: React.KeyboardEvent<HTMLInputElement>) {
     const newItemTitle = this.state.newItemTnPillar[pillarID];
     if (event && event.key === 'Enter' && newItemTitle !== '') {
-      const newItem = {
+      const newItem:ItemI = {
         pillarID,
         title: newItemTitle,
         boardID: this.props.board.id,
@@ -100,37 +117,39 @@ class Board extends React.Component {
     }
   }
 
-  onChangeNewItemTitle(pillarID, evt) {
+  onChangeNewItemTitle(pillarID: string, evt: React.ChangeEvent<HTMLInputElement>) {
     this.changeItemTitle(pillarID, evt.target.value);
   }
 
   onAddPillar() {
-    const pillar = {
+    const pillar: PillarI = {
       title: 'ChangeTitle',
       boardID: this.props.board.id,
     };
     this.props.postPillar(pillar);
   }
 
-  onDeletePillar(pillar) {
+  onDeletePillar(pillar:PillarI) {
     this.props.deletePillar(pillar);
   }
 
-  onChangePillarTitle(pillar, evt) {
+  onChangePillarTitle(pillar:PillarI, evt:React.ChangeEvent<HTMLInputElement>) {
     this.changePillarTitle(pillar.id, evt.target.value);
   }
 
-  onSetPillarTitle(pillar, evt) {
-    if (evt && evt.key === 'Enter') {
-      if (evt.target.value !== '') {
-        this.props.patchPillar({ ...pillar, title: evt.target.value });
+  onSetPillarTitle(pillar:PillarI, evt:React.KeyboardEvent<HTMLInputElement>) {
+    if (evt) {
+      if (evt.key == 'Enter') {
+        if (this.state.titleOfPillar[pillar.id] != '') {
+          this.props.patchPillar(pillar);
+        }
       } else {
         this.changePillarTitle(pillar.id, pillar.title);
       }
     }
   }
 
-  onResetPillarTitle(pillar) {
+  onResetPillarTitle(pillar:PillarI) {
     this.changePillarTitle(pillar.id, pillar.title);
   }
 
@@ -140,7 +159,7 @@ class Board extends React.Component {
 
   render() {
     const { board, elmo } = this.props;
-    const { newItemTnPillar, itemProgress, titleOfPillar } = this.state;
+    const { newItemTnPillar, titleOfPillar } = this.state;
 
     const pillars = board.pillars;
     const enabled = (board.stage !== 'archived' && !board.locked);
@@ -183,7 +202,7 @@ class Board extends React.Component {
                 </div>
               }
             </DocumentCard>
-            <Pillar pillar={pillar} itemProgress={itemProgress} />
+            <Pillar pillar={pillar} />
           </div>
         ))}
         <Modal isOpen={elmo} isBlocking={true}>
@@ -194,20 +213,18 @@ class Board extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  activeItem: state.local.activeItem,
+const mapStateToProps = (state:ApplicationState) => ({
   elmo: state.local.elmo,
-  board: state.boards.board,
-  group: state.groups.group,
+  board: state.board.board,
+  group: state.group.group,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  deletePillar: (pillar) => dispatch(deletePillar(pillar)),
-  patchPillar: (p, pillar, bID) => dispatch(patchPillar(p, pillar, bID)),
-  postItem: (item, bID) => dispatch(postItem(item, bID)),
-  postPillar: (pillar, bID) => dispatch(postPillar(pillar, bID)),
-  setBoard: (id) => dispatch(setBoard(id)),
-  setELMO: (on) => dispatch(setELMO(on)),
+const mapDispatchToProps = (dispatch:Dispatch) => ({
+  deletePillar: (pillar:PillarI) => dispatch(deletePillar(pillar)),
+  patchPillar: (pillar:PillarI) => dispatch(patchPillar(pillar)),
+  postItem: (item:ItemI) => dispatch(postItem(item)),
+  postPillar: (pillar:PillarI) => dispatch(postPillar(pillar)),
+  setELMO: (on:boolean) => dispatch(setELMO(on)),
 });
 
 export default compose(

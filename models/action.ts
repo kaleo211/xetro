@@ -4,8 +4,9 @@ import { User } from './user';
 import { Group } from './group';
 import { Board } from './board';
 import { Item } from './item';
+import { ActionI } from '../types/models';
 
-export class Action extends Model {
+export class Action extends Model<ActionI> {
   id: string;
   title: string;
   stage: string;

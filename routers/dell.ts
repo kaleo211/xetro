@@ -1,8 +1,8 @@
 import config from 'config';
 import express, { Router } from 'express';
-import { UserI } from '../models/user';
+import { UserI } from '../types/models';
 import fetch from 'node-fetch';
-import { Service } from 'services';
+import { Service } from '../services';
 import * as oauth from 'simple-oauth2';
 
 export class DellRouter {

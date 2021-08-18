@@ -1,21 +1,17 @@
 import React from 'react';
-import { compose } from 'redux';
+import { compose, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
-import {
-  DefaultButton,
-  DocumentCard,
-  DocumentCardActivity,
-  DocumentCardTitle,
-  Stack,
-  Text,
-} from 'office-ui-fabric-react';
-import { SearchBox } from 'office-ui-fabric-react/lib/SearchBox';
-import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
-import { mergeStyleSets } from 'office-ui-fabric-react/lib/Styling';
+import { DefaultButton, DocumentCard, DocumentCardTitle, Stack, Text } from '@fluentui/react';
+import { SearchBox } from '@fluentui/react/lib/SearchBox';
+import { TooltipHost } from '@fluentui/react/lib/Tooltip';
+import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 
-import { setGroup, searchGroups, addUserToGroup, postGroup } from '../actions/groupActions';
-import { showGroupPage } from '../actions/localActions';
+import { setGroup, searchGroups, addUserToGroup, postGroup } from '../store/group/action';
+import { showGroupPage } from '../store/local/action';
+import { GroupI, UserI } from '../../types/models';
+import { keyable } from '../../utils/tool';
+import { ApplicationState } from '../store/types';
 
 const classNames = mergeStyleSets({
   group: {
@@ -26,24 +22,39 @@ const classNames = mergeStyleSets({
   },
 });
 
-class Group extends React.Component {
-  constructor(props) {
+interface PropsI {
+  me: UserI;
+  groups: GroupI[];
+
+  setGroup(groupID: string): void;
+  showGroupPage(): void;
+  searchGroups(query: keyable): Promise<void>;
+  postGroup(group: GroupI): Promise<void>;
+  addUserToGroup(userID: string, groupID: string): Promise<void>;
+}
+
+interface StateI {
+  newGroupName: string,
+}
+
+class Group extends React.Component<PropsI, StateI> {
+  constructor(props:any) {
     super(props);
     this.state = {
       newGroupName: '',
     };
   }
 
-  onSetGroup(group) {
+  async onSetGroup(group:GroupI) {
     const isMember = group.members.filter(member => member.id === this.props.me.id).length !== 0;
     if (!isMember) {
-      this.props.addUserToGroup(this.props.me.id, group.id);
+      await this.props.addUserToGroup(this.props.me.id, group.id);
     }
     this.props.setGroup(group.id);
     this.props.showGroupPage();
   }
 
-  async onSearchGroup(evt) {
+  async onSearchGroup(evt:React.ChangeEvent<HTMLInputElement>) {
     const name = evt.target.value;
     this.setState({ newGroupName: name });
     await this.props.searchGroups({ name });
@@ -75,7 +86,7 @@ class Group extends React.Component {
                     onClick={this.onSetGroup.bind(this, g)}
                 >
                   <DocumentCardTitle title={g.name} />
-                  <DocumentCardActivity people={g.members} />
+                  {/* <DocumentCardActivity people={g.members} /> */}
                   <DocumentCardTitle title="No ongoing meeting" showAsSecondaryTitle />
                 </DocumentCard>
               </TooltipHost>
@@ -105,16 +116,16 @@ class Group extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  group: state.groups.group,
-  groups: state.groups.groups,
-  me: state.users.me,
+const mapStateToProps = (state:ApplicationState) => ({
+  group: state.group.group,
+  groups: state.group.groups,
+  me: state.user.me,
 });
-const mapDispatchToProps = (dispatch) => ({
-  addUserToGroup: (userID, groupID) => dispatch(addUserToGroup(userID, groupID)),
-  postGroup: (group) => dispatch(postGroup(group)),
-  searchGroups: (query) => dispatch(searchGroups(query)),
-  setGroup: (id) => dispatch(setGroup(id)),
+const mapDispatchToProps = (dispatch:Dispatch) => ({
+  addUserToGroup: (userID:string, groupID:string) => dispatch(addUserToGroup(userID, groupID)),
+  postGroup: (group:GroupI) => dispatch(postGroup(group)),
+  searchGroups: (query:keyable) => dispatch(searchGroups(query)),
+  setGroup: (id:string) => dispatch(setGroup(id)),
   showGroupPage: () => dispatch(showGroupPage()),
 });
 

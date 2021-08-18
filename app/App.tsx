@@ -1,31 +1,30 @@
 import React from 'react';
+import { Dispatch, compose } from 'redux';
 import { connect } from 'react-redux';
 
-import { initializeIcons } from 'office-ui-fabric-react/lib/Icons';
-import { mergeStyleSets, loadTheme } from 'office-ui-fabric-react/lib/Styling';
+import { initializeIcons } from '@fluentui/react/lib/Icons';
+import { mergeStyleSets, loadTheme } from '@fluentui/react/lib/Styling';
 import Confetti from 'react-dom-confetti';
-import { Image } from 'office-ui-fabric-react';
-
-import socketIOClient from 'socket.io-client';
+import { Image } from '@fluentui/react';
+import { io, Socket } from 'socket.io-client';
 
 import Board from './components/Board';
-
-import { searchGroups } from './actions/groupActions';
-import { setPage, setSocketIOClient } from './actions/localActions';
-import { fetchUsers, getMe } from './actions/userActions';
 import Group from './components/Group';
 import Home from './components/Home';
 import Menu from './components/Menu';
-
-import { sleep } from '../utils/tool';
-
+import { searchGroups } from './store/group/action';
+import { setPage, setSocketIOClient } from './store/local/action';
+import { fetchUsers, getMe } from './store/user/action';
+import { keyable, sleep } from '../utils/tool';
 import yay from './public/yay.png';
+import { BoardI, GroupI, UserI } from '../types/models';
+import { ApplicationState } from './store/types';
 
 initializeIcons();
 
 loadTheme({
   palette: {
-    primary: '#0078d4',
+    themePrimary: '#0078d4',
     black: '#1d1d1d',
     white: '#fafafa',
   },
@@ -59,30 +58,40 @@ const classNames = mergeStyleSets({
   },
 });
 
-class App extends React.Component {
-  constructor(props) {
+
+interface PropsI {
+  me: UserI;
+  page: string;
+  group: GroupI;
+  board: BoardI;
+
+  getMe(): void;
+  fetchUsers(): void;
+  searchGroups(query: keyable): Promise<void>;
+  setSocketIOClient(client: Socket): void;
+}
+
+interface StateI {
+  confetti: boolean;
+}
+
+class App extends React.Component<PropsI, StateI> {
+  constructor(props: any) {
     super(props);
 
     this.state = {
       confetti: false,
     };
-
-    String.prototype.capitalize = function () {
-      if (this && this.length > 0) {
-        return this.charAt(0).toUpperCase() + this.slice(1);
-      }
-      return '';
-    };
   }
 
   async componentWillMount() {
-    document.body.style.margin = 0;
+    document.body.style.margin = '0';
     await this.handleDellLogin();
     // await this.handleMicrosoftLogin();
     this.props.fetchUsers();
-    await this.props.searchGroups();
+    await this.props.searchGroups({});
 
-    this.props.setSocketIOClient(socketIOClient(SOCKETIO_ADDRESS));
+    this.props.setSocketIOClient(io('SOCKETIO_ADDRESS'));
   }
 
   async handleDellLogin() {
@@ -139,17 +148,21 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  board: state.boards.board,
-  group: state.groups.group,
-  me: state.users.me,
+const mapStateToProps = (state:ApplicationState) => ({
+  board: state.board.board,
+  group: state.group.group,
+  me: state.user.me,
   page: state.local.page,
 });
 
-export default connect(mapStateToProps, {
-  fetchUsers,
-  getMe,
-  searchGroups,
-  setPage,
-  setSocketIOClient,
-})(App);
+const mapDispatchToProps = (dispatch:Dispatch) => ({
+  fetchUsers: () => dispatch(fetchUsers()),
+  getMe: () => dispatch(getMe()),
+  searchGroups: (query:keyable) => dispatch(searchGroups(query)),
+  setPage: (page:string) => dispatch(setPage(page)),
+  setSocketIOClient: (client:Socket) => dispatch(setSocketIOClient(client)),
+});
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+)(App);

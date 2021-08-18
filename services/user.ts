@@ -1,6 +1,7 @@
+import { User } from '../models/user';
 import { Op } from 'sequelize';
+import { UserI } from '../types/models';
 import { Database } from '../models/index';
-import { User, UserI } from '../models/user';
 import { keyable } from '../utils/tool';
 
 export interface UserServiceI {
