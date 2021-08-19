@@ -13,12 +13,10 @@ export class Board extends Model {
   public setGroup!: BelongsToSetAssociationMixin<Group, string>;
 }
 
-export type BoardStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): Board;
-}
+export type BoardStatic = typeof Model & (new (values?: object, options?: BuildOptions) => Board);
 
 export function BoardFactor(sequelize: Sequelize): BoardStatic {
-  return <BoardStatic>sequelize.define("Board", {
+  return sequelize.define("Board", {
     id: {
       allowNull: false,
       primaryKey: true,
@@ -33,5 +31,5 @@ export function BoardFactor(sequelize: Sequelize): BoardStatic {
       defaultValue: false,
     },
     timer: INTEGER,
-  });
+  }) as BoardStatic;
 }

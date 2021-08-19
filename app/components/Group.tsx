@@ -8,7 +8,8 @@ import { mergeStyleSets, createTheme } from '@fluentui/react/lib/Styling';
 import { fetchGroupActiveBoard, joinOrCreateBoard } from '../store/board/action';
 import { finishAction, deleteAction } from '../store/item/action';
 import { setFacilitator } from '../store/group/action';
-import { date, keyable } from '../../utils/tool';
+import { date } from '../../utils/tool';
+import { Keyable } from '../../types/common';
 import { ApplicationState } from '../store/types';
 import { ActionI, GroupI } from '../../types/models';
 
@@ -137,7 +138,7 @@ class Group extends React.Component<PropsI, StateI> {
     await this.props.deleteAction(action);
   }
 
-  async onSetFacilitator(evt:any, facilitator: keyable) {
+  async onSetFacilitator(evt:any, facilitator: Keyable) {
     await this.props.setFacilitator(facilitator.key);
     this.setState({ isFacilitatorHovered: false });
   }
@@ -173,7 +174,6 @@ class Group extends React.Component<PropsI, StateI> {
         <div style={{display:'flex'}}>
           <DocumentCard className={classNames.actionCard}
               onMouseOver={this.onHoverFacilitator.bind(this)}
-              onFocus={() => {}}
               onMouseLeave={this.onLeaveHoveredFacilitator.bind(this)}
           >
             <div className={classNames.facilitatorCard}>

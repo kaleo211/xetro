@@ -2,7 +2,7 @@ import { BoardActionTypes, ApplicationState, AppThunk } from '../types';
 import Utils from '../../components/Utils';
 import { setPage } from '../local/action';
 import { Dispatch } from 'redux';
-import { keyable } from '../../../utils/tool';
+import { Keyable } from '../../../types/common';
 
 export const fetchGroupActiveBoard = (groupID:string): AppThunk => {
   return async (dispatch: Dispatch): Promise<void> => {
@@ -51,7 +51,7 @@ export const refreshBoard = (): AppThunk => {
   }
 }
 
-export const postBoard = (newBoard:keyable): AppThunk => {
+export const postBoard = (newBoard:Keyable): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
     const board = await Utils.post('boards', newBoard);
     if (board) {
@@ -94,7 +94,7 @@ export const setBoards = ():AppThunk => {
 
 export const setBoard = (boardID: string): AppThunk => {
   return async (dispatch: Dispatch): Promise<void> => {
-    if (boardID == null || boardID == '') {
+    if (boardID == null || boardID === '') {
       dispatch({
         type: BoardActionTypes.SET_BOARD,
         board: null,

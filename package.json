@@ -4,7 +4,8 @@
   "main": "dist/server/server.js",
   "type": "commonjs",
   "scripts": {
-    "build:front": "./node_modules/.bin/webpack-cli",
+    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "build-front": "./node_modules/.bin/webpack-cli",
     "build": "npx tsc",
     "prestart": "yarn run build",
     "start": "node ."

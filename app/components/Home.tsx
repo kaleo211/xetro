@@ -10,7 +10,7 @@ import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { setGroup, searchGroups, addUserToGroup, postGroup } from '../store/group/action';
 import { showGroupPage } from '../store/local/action';
 import { GroupI, UserI } from '../../types/models';
-import { keyable } from '../../utils/tool';
+import { Keyable } from '../../types/common';
 import { ApplicationState } from '../store/types';
 
 const classNames = mergeStyleSets({
@@ -28,7 +28,7 @@ interface PropsI {
 
   setGroup(groupID: string): void;
   showGroupPage(): void;
-  searchGroups(query: keyable): Promise<void>;
+  searchGroups(query: Keyable): Promise<void>;
   postGroup(group: GroupI): Promise<void>;
   addUserToGroup(userID: string, groupID: string): Promise<void>;
 }
@@ -124,7 +124,7 @@ const mapStateToProps = (state:ApplicationState) => ({
 const mapDispatchToProps = (dispatch:Dispatch) => ({
   addUserToGroup: (userID:string, groupID:string) => dispatch(addUserToGroup(userID, groupID)),
   postGroup: (group:GroupI) => dispatch(postGroup(group)),
-  searchGroups: (query:keyable) => dispatch(searchGroups(query)),
+  searchGroups: (query:Keyable) => dispatch(searchGroups(query)),
   setGroup: (id:string) => dispatch(setGroup(id)),
   showGroupPage: () => dispatch(showGroupPage()),
 });

@@ -2,14 +2,14 @@ import { User } from '../models/user';
 import { Op } from 'sequelize';
 import { UserI } from '../types/models';
 import { Database } from '../models/index';
-import { keyable } from '../utils/tool';
+import { Keyable } from "../types/common";
 
 export interface UserServiceI {
   create(email:string, firstName:string, lastName:string): Promise<void>,
   findAll(): Promise<User[]>,
-  findOne(whereCL:keyable): Promise<User>,
+  findOne(whereCL:Keyable): Promise<User>,
   findOrCreateByEmail(email:string, user:UserI): Promise<User>,
-  updateByEmail(email:string, user:keyable): Promise<void>,
+  updateByEmail(email:string, user:Keyable): Promise<void>,
 };
 
 export class UserService implements UserServiceI {
@@ -30,7 +30,7 @@ export class UserService implements UserServiceI {
     return users;
   }
 
-  public findOne = async (whereCl: keyable) => {
+  public findOne = async (whereCl: Keyable) => {
     const user = await this.db.user.findOne({
       include: [
         { model: this.db.group, as: 'groups', through: {} },
@@ -61,7 +61,7 @@ export class UserService implements UserServiceI {
   }
 
 
-  public updateByEmail = async (email: string, user: keyable) => {
+  public updateByEmail = async (email: string, user: Keyable) => {
     await this.db.user.update(user, {
       where: { email },
     });

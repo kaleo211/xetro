@@ -1,10 +1,7 @@
-export interface keyable {
-  [key: string]: any
-}
 
 export const date = (str: string) => {
-  const date = new Date(str).toDateString();
-  return date;
+  const d = new Date(str).toDateString();
+  return d;
 };
 
 export const sleep = async (ms: number) => {

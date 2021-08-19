@@ -41,9 +41,11 @@ export class GroupRouter {
           res.sendStatus(500);
           return;
         }
-        group.members && group.members.map(async (id: string) => {
-          await newGroup.addMembers(id);
-        });
+        if (group.members) {
+          group.members.map(async (id: string) => {
+            await newGroup.addMembers(id);
+          });
+        }
         await respondWithGroup(res, newGroup.id);
       } catch (err) {
         console.error('error post group:', err);

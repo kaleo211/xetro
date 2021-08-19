@@ -1,13 +1,13 @@
 import { Database } from "../models/index";
 import { Board } from "../models/board";
-import { keyable } from "../utils/tool";
+import { Keyable } from "../types/common";
 import { PillarServiceI } from "./pillar";
 
 export interface BoardServiceI {
   create(name:string, groupID:string): Promise<Board>,
-  findAll(whereCl:keyable): Promise<Board[]>,
-  findOne(whereCl:keyable): Promise<Board>,
-  update(id:string, fields:keyable): Promise<void>,
+  findAll(whereCl:Keyable): Promise<Board[]>,
+  findOne(whereCl:Keyable): Promise<Board>,
+  update(id:string, fields:Keyable): Promise<void>,
 }
 
 export class BoardService implements BoardServiceI {
@@ -20,7 +20,7 @@ export class BoardService implements BoardServiceI {
   }
 
   public create = async (name: string, groupID: string) => {
-    if (name == '') {}
+    // if (name === '') {}
 
     const [newBoard, created] = await this.db.board.findOrCreate({
       where: {
@@ -44,7 +44,7 @@ export class BoardService implements BoardServiceI {
     return newBoard;
   };
 
-  public findAll = async (whereCl: keyable) => {
+  public findAll = async (whereCl: Keyable) => {
     const boards = await this.db.board.findAll({
       include: [{
         model: this.db.group,
@@ -56,7 +56,7 @@ export class BoardService implements BoardServiceI {
     return boards;
   }
 
-  public findOne = async (whereCl: keyable) => {
+  public findOne = async (whereCl: Keyable) => {
     const board = await this.db.board.findOne({
       include: [
         { model: this.db.group, as: 'group' },
@@ -95,7 +95,7 @@ export class BoardService implements BoardServiceI {
     return board;
   }
 
-  public update = async (id: string, fields: keyable) => {
+  public update = async (id: string, fields: Keyable) => {
     await this.db.board.update(
       fields,
       { where: { id } },

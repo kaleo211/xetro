@@ -84,7 +84,7 @@ class ActionBar extends React.Component<PropI, StateI> {
   render() {
     const { board, page, me, group } = this.props;
 
-    const isFacilitator = me.id == group.facilitatorID;
+    const isFacilitator = me.id === group.facilitatorID;
 
     return page === 'board' && board && board.stage !== 'archived' &&
       <div style={{ marginLeft: 8 }}>

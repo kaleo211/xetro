@@ -11,7 +11,7 @@ import { deleteItem, likeItem, finishItem, startItem } from '../store/item/actio
 import Action from './Action';
 import { BoardI, ItemI, PillarI } from '../../types/models';
 import { ApplicationState } from '../store/types';
-import { keyable } from '../../utils/tool';
+import { Keyable } from '../../types/common';
 
 const iconStyle = {
   fontSize: 18,
@@ -76,7 +76,7 @@ interface PropsI {
   activeItemProgress: number,
   hoveredItem: ItemI,
   board: BoardI
-  showActionMap: keyable
+  showActionMap: Keyable
   addingAction: boolean
 
   deleteItem(item: ItemI): Promise<void>;
@@ -172,7 +172,6 @@ class Pillar extends React.Component<PropsI, StateI> {
             key={item.id}
             // className={cx({card: true, hovered: hoveredItem.id===item.id})}
             onMouseOver={this.onHoverItem.bind(this, item)}
-            onFocus={() => {}}
             onMouseLeave={this.onLeaveHoveredItem.bind(this)}
         >
           {!board.locked && hoveredItem.id===item.id &&

@@ -15,10 +15,11 @@ import Menu from './components/Menu';
 import { searchGroups } from './store/group/action';
 import { setPage, setSocketIOClient } from './store/local/action';
 import { fetchUsers, getMe } from './store/user/action';
-import { keyable, sleep } from '../utils/tool';
+import { sleep } from '../utils/tool';
 import yay from './public/yay.png';
 import { BoardI, GroupI, UserI } from '../types/models';
 import { ApplicationState } from './store/types';
+import { Keyable } from 'types/common';
 
 initializeIcons();
 
@@ -67,7 +68,7 @@ interface PropsI {
 
   getMe(): void;
   fetchUsers(): void;
-  searchGroups(query: keyable): Promise<void>;
+  searchGroups(query: Keyable): Promise<void>;
   setSocketIOClient(client: Socket): void;
 }
 
@@ -158,7 +159,7 @@ const mapStateToProps = (state:ApplicationState) => ({
 const mapDispatchToProps = (dispatch:Dispatch) => ({
   fetchUsers: () => dispatch(fetchUsers()),
   getMe: () => dispatch(getMe()),
-  searchGroups: (query:keyable) => dispatch(searchGroups(query)),
+  searchGroups: (query:Keyable) => dispatch(searchGroups(query)),
   setPage: (page:string) => dispatch(setPage(page)),
   setSocketIOClient: (client:Socket) => dispatch(setSocketIOClient(client)),
 });

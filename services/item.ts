@@ -1,13 +1,13 @@
 import { Item } from "../models/item";
-import { keyable } from "../utils/tool";
+import { Keyable } from "../types/common";
 import { Database } from "../models";
 
 export interface ItemServiceI {
   create(title:string, ownerID:string, groupID:string, pillarID:string): Promise<Item>,
   remove(id:string): Promise<void>,
   findAll(): Promise<Item[]>,
-  findOne(whereCL:keyable): Promise<Item>,
-  update(id:string, fields:keyable): Promise<void>,
+  findOne(whereCL:Keyable): Promise<Item>,
+  update(id:string, fields:Keyable): Promise<void>,
 };
 
 export class ItemService implements ItemServiceI {
@@ -43,7 +43,7 @@ export class ItemService implements ItemServiceI {
     return items;
   }
 
-  public findOne = async (whereCl: keyable) => {
+  public findOne = async (whereCl: Keyable) => {
     const item = await this.db.item.findOne({
       include: [
         { model: this.db.user, as: 'owner' },
@@ -57,7 +57,7 @@ export class ItemService implements ItemServiceI {
     return item;
   }
 
-  public update = async (id: string, fields: keyable) => {
+  public update = async (id: string, fields: Keyable) => {
     await this.db.item.update(
       fields,
       { where: { id } },

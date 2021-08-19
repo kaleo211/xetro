@@ -3,10 +3,10 @@ import { getMe } from '../user/action';
 import { setPage } from '../local/action';
 import Utils from '../../components/Utils';
 import { fetchGroupActiveBoard, setBoard } from '../board/action';
-import { keyable } from '../../../utils/tool';
+import { Keyable } from '../../../types/common';
 import { Dispatch } from 'redux';
 
-export const searchGroups = (query:keyable): AppThunk => {
+export const searchGroups = (query:Keyable): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
     const groups = await Utils.post('groups/search', query || {});
     if (groups) {
@@ -20,9 +20,9 @@ export const searchGroups = (query:keyable): AppThunk => {
   }
 };
 
-export const postGroup = (newGroup:keyable): AppThunk => {
+export const postGroup = (newGroup:Keyable): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
-    const resp: keyable = await Utils.post('groups', newGroup);
+    const resp: Keyable = await Utils.post('groups', newGroup);
     if (resp) {
       const groups = await Utils.post('groups/search', {});
       if (groups) {

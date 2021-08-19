@@ -1,9 +1,9 @@
 import * as config from 'config';
-import * as cookieParser from 'cookie-parser';
-import * as express from 'express';
-import * as morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import express from 'express';
+import morgan from 'morgan';
 import * as path from 'path';
-import * as session from 'express-session';
+import session from 'express-session';
 
 import { Server, Socket } from 'socket.io';
 import * as http from 'http';

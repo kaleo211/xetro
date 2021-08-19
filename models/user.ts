@@ -22,12 +22,10 @@ export class User extends Model<UserI> {
   // }
 }
 
-export type UserStatic = (typeof Model) & {
-  new(values?: object, options?: BuildOptions): User;
-}
+export type UserStatic = (typeof Model) & (new (values?: object, options?: BuildOptions) => User);
 
 export function UserFactory(sequelize: Sequelize): UserStatic {
-  return <UserStatic>sequelize.define("User", {
+  return sequelize.define("User", {
     id: {
       allowNull: false,
       primaryKey: true,
@@ -63,5 +61,5 @@ export function UserFactory(sequelize: Sequelize): UserStatic {
     //   },
     // },
     accessToken: STRING(2000),
-  });
+  }) as UserStatic;
 }

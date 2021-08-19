@@ -1,11 +1,11 @@
 import { Op } from 'sequelize';
 import { Database } from '../models/index';
-import { keyable } from '../utils/tool';
+import { Keyable } from "../types/common";
 import { Group } from '../models/group';
 
 export interface GroupServiceI {
   addMember(groupID:string, userID:string): Promise<void>,
-  findOne(whereCl:keyable): Promise<Group>,
+  findOne(whereCl:Keyable): Promise<Group>,
   findOrCreateByName(name:string): Promise<Group>,
   remove(id:string): Promise<void>,
   searchByName(name:string): Promise<Group[]>,
@@ -27,7 +27,7 @@ export class GroupService implements GroupServiceI {
     }
   }
 
-  public findOne = async (whereCl: keyable) => {
+  public findOne = async (whereCl: Keyable) => {
     const group = await this.db.group.findOne({
       include: [
         {
@@ -92,8 +92,8 @@ export class GroupService implements GroupServiceI {
 
 
   public searchByName = async (name: string) => {
-    const where:keyable = {};
-    if (name && name != "") {
+    const where:Keyable = {};
+    if (name && name !== '') {
       where.name = { [Op.iLike]: `%${name}%` };
     }
 

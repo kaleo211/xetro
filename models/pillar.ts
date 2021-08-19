@@ -11,12 +11,10 @@ export class Pillar extends Model {
   public setBoard!: BelongsToSetAssociationMixin<Board, string>;
 }
 
-export type PillarStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): Pillar;
-}
+export type PillarStatic = typeof Model & (new (values?: object, options?: BuildOptions) => Pillar);
 
 export function PillarFactory(sequelize: Sequelize): PillarStatic {
-  return <PillarStatic>sequelize.define("Pillar", {
+  return sequelize.define("Pillar", {
     id: {
       allowNull: false,
       primaryKey: true,
@@ -28,5 +26,5 @@ export function PillarFactory(sequelize: Sequelize): PillarStatic {
       type: INTEGER,
       autoIncrement: true,
     }
-  });
+  }) as PillarStatic;
 }

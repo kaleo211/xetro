@@ -10,7 +10,7 @@ import { patchPillar, postPillar, deletePillar } from '../store/pillar/action';
 import { setELMO } from '../store/local/action';
 import Pillar from './Pillar';
 import elmoGif from '../public/elmo.gif';
-import { keyable } from '../../utils/tool';
+import { Keyable } from '../../types/common';
 import { BoardI, GroupI, ItemI, PillarI } from '../../types/models';
 import { ApplicationState } from '../store/types';
 
@@ -57,8 +57,8 @@ interface PropsI {
 }
 
 interface StateI {
-  newItemTnPillar: keyable,
-  titleOfPillar: keyable,
+  newItemTnPillar: Keyable,
+  titleOfPillar: Keyable,
 }
 
 class Board extends React.Component<PropsI, StateI> {
@@ -80,7 +80,7 @@ class Board extends React.Component<PropsI, StateI> {
   }
 
   initTitleOfPillar(board: BoardI) {
-    const titleOfPillar:keyable = {};
+    const titleOfPillar:Keyable = {};
     board.pillars.map(pillar => {
       titleOfPillar[pillar.id] = pillar.title;
     });
@@ -139,8 +139,8 @@ class Board extends React.Component<PropsI, StateI> {
 
   onSetPillarTitle(pillar:PillarI, evt:React.KeyboardEvent<HTMLInputElement>) {
     if (evt) {
-      if (evt.key == 'Enter') {
-        if (this.state.titleOfPillar[pillar.id] != '') {
+      if (evt.key === 'Enter') {
+        if (this.state.titleOfPillar[pillar.id] !== '') {
           this.props.patchPillar(pillar);
         }
       } else {

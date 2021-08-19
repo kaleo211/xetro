@@ -1,13 +1,13 @@
 import { Database } from "../models/index";
 import { Action } from "../models/action";
-import { keyable } from "../utils/tool";
+import { Keyable } from "../types/common";
 
 export interface ActionServiceI {
   create(title:string, ownerID:string, groupID:string, boardID:string, itemID:string): Promise<Action>,
   remove(id:string): Promise<void>,
-  findAll(whereCl:keyable): Promise<Action[]>,
-  findOne(whereCl:keyable): Promise<Action>,
-  update(id:string, fields:keyable): Promise<void>,
+  findAll(whereCl:Keyable): Promise<Action[]>,
+  findOne(whereCl:Keyable): Promise<Action>,
+  update(id:string, fields:Keyable): Promise<void>,
 }
 
 export class ActionService implements ActionServiceI {
@@ -34,7 +34,7 @@ export class ActionService implements ActionServiceI {
     });
   }
 
-  public findAll = async (whereCl: keyable) => {
+  public findAll = async (whereCl: Keyable) => {
     const actions = await this.db.action.findAll({
       include: [
         { model: this.db.user, as: 'owner' },
@@ -48,7 +48,7 @@ export class ActionService implements ActionServiceI {
     return actions;
   }
 
-  public findOne = async (whereCl: keyable) => {
+  public findOne = async (whereCl: Keyable) => {
     const action = await this.db.action.findOne({
       include: [
         { model: this.db.user, as: 'owner' },
@@ -61,7 +61,7 @@ export class ActionService implements ActionServiceI {
     return action;
   }
 
-  public update = async (id: string, fields: keyable) => {
+  public update = async (id: string, fields: Keyable) => {
     await this.db.action.update(
       fields,
       { where: { id } },

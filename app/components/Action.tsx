@@ -68,7 +68,7 @@ class Action extends React.Component<PropsI, StateI> {
   async onSaveAction(item:ItemI) {
     const { newActionTitle, pickedOwners } = this.state;
 
-    if (newActionTitle == '') {
+    if (newActionTitle === '') {
       this.setState({ noTitleError: 'Action title cannot be empty.' });
       return;
     }

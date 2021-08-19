@@ -8,6 +8,8 @@
     "skipLibCheck": true,
     "target": "es6",
     "jsx": "react",
+    "esModuleInterop": true,
     "typeRoots" : ["node_modules/@types", "types"]
-  }
+  },
+  "exclude": []
 }

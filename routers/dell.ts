@@ -59,7 +59,7 @@ export class DellRouter {
           },
         };
 
-        let resp = await fetch(ssoUserinfo, userInfoRequest);
+        const resp = await fetch(ssoUserinfo, userInfoRequest);
         const meFromSSO = await resp.json();
 
         await service.user.findAll();

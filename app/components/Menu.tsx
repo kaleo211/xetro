@@ -12,7 +12,7 @@ import { joinOrCreateBoard } from '../store/board/action';
 import ActionBar from './ActionBar';
 import { BoardI, GroupI, UserI } from '../../types/models';
 import { ApplicationState } from '../store/types';
-import { keyable } from '../../utils/tool';
+import { Keyable } from '../../types/common';
 
 const classNames = mergeStyleSets({
   root: {
@@ -67,7 +67,7 @@ class Menu extends React.Component<PropsI, StateI> {
     this.props.joinOrCreateBoard();
   }
 
-  onRenderItem(item:keyable) {
+  onRenderItem(item:Keyable) {
     return item.key === 'action' ?
       <ActionBar /> :
       <Link onClick={item.onClick}>

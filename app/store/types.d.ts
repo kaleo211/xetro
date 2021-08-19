@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { BoardI, GroupI, ItemI, UserI } from "types/models";
-import { keyable } from "utils/tool";
+import { Keyable } from "utils/tool";
 
 export enum LocalActionTypes {
   SET_PAGE = 1,
@@ -22,7 +22,7 @@ export interface LocalStateI {
   page: string
   activeItem: ItemI
   hoveredItem: ItemI
-  showActionMap: keyable
+  showActionMap: Keyable
   elmo: boolean
   addingAction: boolean
   secondsPerItem: number

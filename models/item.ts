@@ -16,12 +16,10 @@ export class Item extends Model {
   public setGroup!: BelongsToSetAssociationMixin<Group, string>;
 }
 
-export type ItemStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): Item;
-}
+export type ItemStatic = typeof Model & (new (values?: object, options?: BuildOptions) => Item);
 
 export function ItemFactory(sequelize: Sequelize): ItemStatic {
-  return <ItemStatic>sequelize.define("Item", {
+  return sequelize.define("Item", {
     id: {
       allowNull: false,
       primaryKey: true,
@@ -38,5 +36,5 @@ export function ItemFactory(sequelize: Sequelize): ItemStatic {
       defaultValue: 'created',
     },
     end: DATE,
-  });
+  }) as ItemStatic;
 }

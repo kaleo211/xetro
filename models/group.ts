@@ -10,12 +10,10 @@ export class Group extends Model {
   public setFacilitator!: BelongsToManyAddAssociationMixin<User, string>;
 }
 
-export type GroupStatic = typeof Model & {
-  new(values?: object, options?: BuildOptions): Group;
-}
+export type GroupStatic = typeof Model & (new (values?: object, options?: BuildOptions) => Group);
 
 export function GroupFactory(sequelize: Sequelize): GroupStatic {
-  return <GroupStatic>sequelize.define("Group", {
+  return sequelize.define("Group", {
     id: {
       allowNull: false,
       primaryKey: true,
@@ -23,5 +21,5 @@ export function GroupFactory(sequelize: Sequelize): GroupStatic {
       defaultValue: () => uuid(),
     },
     name: STRING,
-  });
+  }) as GroupStatic;
 }

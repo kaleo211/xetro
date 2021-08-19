@@ -1,8 +1,8 @@
-import { keyable } from "../../utils/tool";
+import { Keyable } from '../../types/common';
 
 export default {
   createdAt() {
-    return (a:keyable, b:keyable) => {
+    return (a:Keyable, b:Keyable) => {
       let comparison = 0;
       if (a.createdAt > b.createdAt) {
         comparison = 1;
@@ -13,7 +13,7 @@ export default {
     };
   },
 
-  search(type:string, body:keyable): Promise<keyable> {
+  search(type:string, body:Keyable): Promise<Keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}/search`, {
         method: 'POST',
@@ -31,7 +31,7 @@ export default {
     });
   },
 
-  fetch(uri:string): Promise<keyable> {
+  fetch(uri:string): Promise<Keyable> {
     return new Promise(resolve => {
       fetch(uri)
         .then(resp => {
@@ -44,7 +44,7 @@ export default {
     });
   },
 
-  get(type:string, id:string): Promise<keyable> {
+  get(type:string, id:string): Promise<Keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}/${id}`)
         .then(resp => {
@@ -57,7 +57,7 @@ export default {
     });
   },
 
-  list(type:string): Promise<keyable> {
+  list(type:string): Promise<Keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}`)
         .then(resp => {
@@ -70,7 +70,7 @@ export default {
     });
   },
 
-  post(type:string, body:keyable): Promise<keyable> {
+  post(type:string, body:Keyable): Promise<Keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}`, {
         method: 'POST',
@@ -88,7 +88,7 @@ export default {
     });
   },
 
-  patch(type:string, body:keyable): Promise<keyable> {
+  patch(type:string, body:Keyable): Promise<Keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}/${body.id}`, {
         method: 'PATCH',
@@ -106,7 +106,7 @@ export default {
     });
   },
 
-  delete(type:string, id:string): Promise<keyable> {
+  delete(type:string, id:string): Promise<Keyable> {
     return new Promise((resolve, reject) => {
       fetch(`/${type}/${id}`, {
         method: 'DELETE',

@@ -17,12 +17,10 @@ export class Action extends Model<ActionI> {
   public setItem!: BelongsToSetAssociationMixin<Item, string>;
 }
 
-export type ActionStatic = typeof Model & {
-  new (values?: object, options?: BuildOptions): Action;
-}
+export type ActionStatic = typeof Model & (new (values?: object, options?: BuildOptions) => Action);
 
 export function ActionFactory(sequelize: Sequelize): ActionStatic {
-  return <ActionStatic>sequelize.define("Action", {
+  return sequelize.define("Action", {
     id: {
       allowNull: false,
       primaryKey: true,
@@ -36,5 +34,5 @@ export function ActionFactory(sequelize: Sequelize): ActionStatic {
       type: STRING,
       defaultValue: 'created',
     },
-  });
+  }) as ActionStatic;
 }

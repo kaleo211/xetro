@@ -1,10 +1,10 @@
 import { Database } from '../models/index';
 import { Pillar } from '../models/pillar';
-import { keyable } from '../utils/tool';
+import { Keyable } from "../types/common";
 
 export interface PillarServiceI {
   create(title:string, boardID:string): Promise<Pillar>,
-  findOne(whereCl:keyable): Promise<Pillar>,
+  findOne(whereCl:Keyable): Promise<Pillar>,
   remove(id:string): Promise<void>,
   updateTitle(id:string, title:string): Promise<void>,
 }
@@ -22,7 +22,7 @@ export class PillarService implements PillarServiceI {
     return newPillar;
   };
 
-  public findOne = async (whereCl: keyable) => {
+  public findOne = async (whereCl: Keyable) => {
     const pillar = await this.db.pillar.findOne({
       include: [
         {
