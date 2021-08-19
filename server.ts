@@ -1,12 +1,12 @@
-import config from 'config';
-import cookieParser from 'cookie-parser';
-import express from 'express';
-import morgan from 'morgan';
-import path from 'path';
-import session from 'express-session';
+import * as config from 'config';
+import * as cookieParser from 'cookie-parser';
+import * as express from 'express';
+import * as morgan from 'morgan';
+import * as path from 'path';
+import * as session from 'express-session';
 
 import { Server, Socket } from 'socket.io';
-import http from 'http';
+import * as http from 'http';
 
 import { Database } from './models/index';
 import { User } from './models/user';

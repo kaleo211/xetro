@@ -1,12 +1,12 @@
-import config from 'config';
-import express, { Router } from 'express';
+import * as config from 'config';
+import * as express from 'express';
 import { UserI } from '../types/models';
 import fetch from 'node-fetch';
 import { Service } from '../services';
 import * as oauth from 'simple-oauth2';
 
 export class DellRouter {
-  public router: Router;
+  public router: express.Router;
 
   constructor(service: Service) {
     this.router = express.Router();

@@ -1,12 +1,12 @@
-import config from 'config';
-import webpack, { Configuration, ProvidePlugin } from 'webpack';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
+import * as config from 'config';
+import * as webpack from 'webpack';
+import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 
 const definePlugin = new webpack.DefinePlugin({
   SOCKETIO_ADDRESS: JSON.stringify(config.get('server.address')),
 });
 
-const webpackConfig: Configuration = {
+const webpackConfig: webpack.Configuration = {
   entry: './app/index.js',
   mode: 'development',
   output: {
@@ -36,7 +36,7 @@ const webpackConfig: Configuration = {
     ],
   },
   plugins: [
-    new ProvidePlugin({
+    new webpack.ProvidePlugin({
       React: 'react',
     }),
     new HtmlWebpackPlugin({

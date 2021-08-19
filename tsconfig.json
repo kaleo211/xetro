@@ -1,16 +1,13 @@
 {
-	"compilerOptions": {
-		"esModuleInterop": true,
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"noImplicitAny": true,
-		"outDir": "dist/server",
-		"skipLibCheck": true,
-		"target": "es6",
-		"jsx": "react",
-		"typeRoots" : ["node_modules/@types", "types"]
-	},
-	"exclude": [
-		"tmp"
-	]
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "outDir": "dist/server",
+    "skipLibCheck": true,
+    "target": "es6",
+    "jsx": "react",
+    "typeRoots" : ["node_modules/@types", "types"]
+  }
 }

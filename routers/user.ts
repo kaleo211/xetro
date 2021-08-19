@@ -1,8 +1,8 @@
-import express, { Router } from 'express';
+import * as express from 'express';
 import { Service } from '../services';
 
 export class UserRouter {
-  public router: Router;
+  public router: express.Router;
 
   constructor(service: Service) {
     this.router = express.Router();

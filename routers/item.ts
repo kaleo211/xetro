@@ -1,9 +1,9 @@
-import express, { Router } from 'express';
-import sequelize from 'sequelize';
+import * as express from 'express';
+import * as sequelize from 'sequelize';
 import { Service } from '../services';
 
 export class ItemRouter {
-  public router: Router;
+  public router: express.Router;
 
   constructor(service: Service) {
     this.router = express.Router();
