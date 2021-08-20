@@ -1,4 +1,4 @@
-import * as config from 'config';
+import config from 'config';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import morgan from 'morgan';

@@ -38,9 +38,6 @@ const webpackConfig: webpack.Configuration = {
       template: 'app/public/index.html',
     }),
   ],
-  optimization: {
-    minimize: true,
-  },
 }
 
 export default webpackConfig;

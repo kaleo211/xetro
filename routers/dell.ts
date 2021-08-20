@@ -1,4 +1,4 @@
-import * as config from 'config';
+import config from 'config';
 import * as express from 'express';
 import { UserI } from '../types/models';
 import fetch from 'node-fetch';
