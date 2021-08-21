@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { Service } from "../services";
-import { ActionRouter } from "./action";
+import { TaskRouter } from "./task";
 import { BoardRouter } from "./board";
 import { DellRouter } from "./dell";
 import { GroupRouter } from "./group";
@@ -14,7 +14,7 @@ export interface RouterFactory {
 }
 
 export class Routers {
-	public action: RouterFactory;
+	public task: RouterFactory;
 	public board: RouterFactory;
 	public dell: RouterFactory;
 	public group: RouterFactory;
@@ -24,7 +24,7 @@ export class Routers {
 	public user: RouterFactory;
 
 	constructor(service: Service) {
-		this.action = new ActionRouter(service);
+		this.task = new TaskRouter(service);
 		this.board = new BoardRouter(service);
 		this.dell = new DellRouter(service);
 		this.group = new GroupRouter(service);

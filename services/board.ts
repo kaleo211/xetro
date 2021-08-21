@@ -69,8 +69,8 @@ export class BoardService implements BoardServiceI {
               as: 'items',
               include: [
                 {
-                  model: this.db.action,
-                  as: 'actions',
+                  model: this.db.task,
+                  as: 'tasks',
                   include: [
                     {
                       model: this.db.user,
@@ -87,7 +87,7 @@ export class BoardService implements BoardServiceI {
         [{ model: this.db.pillar, as: 'pillars' }, 'position', 'ASC'],
         [{ model: this.db.pillar, as: 'pillars' }, { model: this.db.item, as: 'items' }, 'likes', 'DESC'],
         [{ model: this.db.pillar, as: 'pillars' }, { model: this.db.item, as: 'items' }, 'createdAt', 'ASC'],
-        [{ model: this.db.pillar, as: 'pillars' }, { model: this.db.item, as: 'items' }, { model: this.db.action, as: 'actions' }, 'createdAt', 'ASC'],
+        [{ model: this.db.pillar, as: 'pillars' }, { model: this.db.item, as: 'items' }, { model: this.db.task, as: 'tasks' }, 'createdAt', 'ASC'],
       ],
       where: whereCl,
     });

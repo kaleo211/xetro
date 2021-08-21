@@ -2,7 +2,7 @@
 // import { persistReducer } from 'redux-persist';
 // import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 
-import { LocalActionTypes, LocalStateI } from '../types';
+import { LocalTaskTypes, LocalStateI } from '../types';
 import { Reducer } from 'redux';
 
 // const persistConfig = {
@@ -15,72 +15,72 @@ const initialState: LocalStateI = {
   page: 'home',
   activeItem: null,
   hoveredItem: null,
-  showActionMap: null,
+  showTaskMap: {},
   elmo: false,
   secondsPerItem: 300,
   socketIOClient: null,
   activeItemProgressTimer: null,
-  addingAction: false,
+  addingTask: false,
   activeItemProgress: 0,
 };
 
-const reducer: Reducer<LocalStateI> = (state = initialState, action) => {
-  switch (action.type) {
-    case LocalActionTypes.SET_PAGE:
+const reducer: Reducer<LocalStateI> = (state = initialState, task) => {
+  switch (task.type) {
+    case LocalTaskTypes.SET_PAGE:
       return {
         ...state,
-        page: action.page,
+        page: task.page,
       };
 
-    case LocalActionTypes.SET_ITEM:
+    case LocalTaskTypes.SET_ITEM:
       return {
         ...state,
-        activeItem: action.activeItem,
+        activeItem: task.activeItem,
       };
 
-    case LocalActionTypes.SET_HOVER_ITEM:
+    case LocalTaskTypes.SET_HOVER_ITEM:
       return {
         ...state,
-        hoveredItem: action.hoveredItem,
+        hoveredItem: task.hoveredItem,
       };
 
-    case LocalActionTypes.UPDATE_SHOW_ACTION_MAP:
+    case LocalTaskTypes.UPDATE_SHOW_ACTION_MAP:
       return {
         ...state,
-        showActionMap: {
-          ...state.showActionMap,
-          [action.itemID]: action.show,
+        showTaskMap: {
+          ...state.showTaskMap,
+          [task.itemID]: task.show,
         },
       };
 
-    case LocalActionTypes.UPDATE_SHOW_ADDING_ACTION:
+    case LocalTaskTypes.UPDATE_SHOW_ADDING_ACTION:
       return {
         ...state,
-        addingAction: action.addingAction,
+        addingTask: task.addingTask,
       };
 
-    case LocalActionTypes.SET_ELMO:
+    case LocalTaskTypes.SET_ELMO:
       return {
         ...state,
-        elmo: action.elmo,
+        elmo: task.elmo,
       };
 
-    case LocalActionTypes.SET_ACTIVE_ITEM_PROGRESS:
+    case LocalTaskTypes.SET_ACTIVE_ITEM_PROGRESS:
       return {
         ...state,
-        activeItemProgress: action.activeItemProgress,
+        activeItemProgress: task.activeItemProgress,
       };
 
-    case LocalActionTypes.SET_ACTIVE_ITEM_PROGRESS_TIMER:
+    case LocalTaskTypes.SET_ACTIVE_ITEM_PROGRESS_TIMER:
       return {
         ...state,
-        activeItemProgressTimer: action.activeItemProgressTimer,
+        activeItemProgressTimer: task.activeItemProgressTimer,
       };
 
-    case LocalActionTypes.SET_SOCKETIO_CLIENT:
+    case LocalTaskTypes.SET_SOCKETIO_CLIENT:
       return {
         ...state,
-        socketIOClient: action.socketIOClient,
+        socketIOClient: task.socketIOClient,
       };
 
     default:

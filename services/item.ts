@@ -3,11 +3,12 @@ import { Keyable } from "../types/common";
 import { Database } from "../models";
 
 export interface ItemServiceI {
-  create(title:string, ownerID:string, groupID:string, pillarID:string): Promise<Item>,
-  remove(id:string): Promise<void>,
-  findAll(): Promise<Item[]>,
-  findOne(whereCL:Keyable): Promise<Item>,
-  update(id:string, fields:Keyable): Promise<void>,
+  create(title:string, ownerID:string, groupID:string, pillarID:string): Promise<Item>
+  remove(id:string): Promise<void>
+  findAll(): Promise<Item[]>
+  findOne(whereCL:Keyable): Promise<Item>
+  update(id: string, fields: Keyable): Promise<void>
+  like(id: string): Promise<void>
 };
 
 export class ItemService implements ItemServiceI {
@@ -49,7 +50,7 @@ export class ItemService implements ItemServiceI {
         { model: this.db.user, as: 'owner' },
         { model: this.db.group, as: 'group' },
         { model: this.db.pillar, as: 'pillar' },
-        { model: this.db.action, as: 'actions' },
+        { model: this.db.task, as: 'tasks' },
       ],
       where: whereCl,
     });
@@ -62,6 +63,10 @@ export class ItemService implements ItemServiceI {
       fields,
       { where: { id } },
     );
+  }
+
+  public like = async (id: string) => {
+    await this.db.item.increment('likes', {where: {id}});
   }
 }
 

@@ -34,8 +34,8 @@ export class PillarService implements PillarServiceI {
           as: 'items',
           order: [['createdAt', 'ASC']],
           include: [{
-            model: this.db.action,
-            as: 'actions',
+            model: this.db.task,
+            as: 'tasks',
             include: [{ model: this.db.user, as: 'owner' }],
           }],
         }

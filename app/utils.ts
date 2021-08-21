@@ -1,122 +1,76 @@
 import { Keyable } from '../types/common';
 
-export default {
-  createdAt() {
-    return (a:Keyable, b:Keyable) => {
-      let comparison = 0;
-      if (a.createdAt > b.createdAt) {
-        comparison = 1;
-      } else {
-        comparison = -1;
-      }
-      return comparison;
-    };
-  },
+export const createdAt = () => {
+  return (a: Keyable, b: Keyable) => {
+    let comparison = 0;
+    if (a.createdAt > b.createdAt) {
+      comparison = 1;
+    } else {
+      comparison = -1;
+    }
+    return comparison;
+  };
+};
 
-  search(type:string, body:Keyable): Promise<Keyable> {
-    return new Promise((resolve, reject) => {
-      fetch(`/${type}/search`, {
-        method: 'POST',
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-        body: JSON.stringify(body),
-      }).then(resp => {
-        if (resp.ok) {
-          resolve(resp.json());
-        } else {
-          reject(Error(`failed to search: ${type}`));
-        }
-      });
-    });
-  },
 
-  fetch(uri:string): Promise<Keyable> {
-    return new Promise(resolve => {
-      fetch(uri)
-        .then(resp => {
-          if (resp.ok) {
-            resolve(resp.json());
-          } else {
-            resolve(undefined);
-          }
-        });
+export const makeRequest = async (url: string, method: string, body: Keyable, expectingStatus: number, expectingJSON: boolean): Promise<Keyable> => {
+  try {
+    const resp = await fetch(url, {
+      method,
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(body),
     });
-  },
 
-  get(type:string, id:string): Promise<Keyable> {
-    return new Promise((resolve, reject) => {
-      fetch(`/${type}/${id}`)
-        .then(resp => {
-          if (resp.ok) {
-            resolve(resp.json());
-          } else {
-            reject(Error(`failed to get: ${type}`));
-          }
-        });
-    });
-  },
+    if (resp.status != expectingStatus) {
+      console.error('error receiving unexpected status code:', resp.status);
+      return {};
+    }
 
-  list(type:string): Promise<Keyable> {
-    return new Promise((resolve, reject) => {
-      fetch(`/${type}`)
-        .then(resp => {
-          if (resp.ok) {
-            resolve(resp.json());
-          } else {
-            reject(Error(`failed to get: ${type}`));
-          }
-        });
-    });
-  },
+    if (expectingJSON) {
+      return await resp.json();
+    }
 
-  post(type:string, body:Keyable): Promise<Keyable> {
-    return new Promise((resolve, reject) => {
-      fetch(`/${type}`, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-      }).then(resp => {
-        if (resp.ok) {
-          resolve(resp.json());
-        } else {
-          reject(Error(`failed to post: ${type}`));
-        }
-      });
-    });
-  },
+    return {};
 
-  patch(type:string, body:Keyable): Promise<Keyable> {
-    return new Promise((resolve, reject) => {
-      fetch(`/${type}/${body.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(body),
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-      }).then(resp => {
-        if (resp.ok) {
-          resolve(resp.json());
-        } else {
-          reject(Error(`failed to patch: ${type}`));
-        }
-      });
-    });
-  },
+  } catch (err) {
+    console.log('error making request to backend:', err);
+    return {};
+  }
+}
 
-  delete(type:string, id:string): Promise<Keyable> {
-    return new Promise((resolve, reject) => {
-      fetch(`/${type}/${id}`, {
-        method: 'DELETE',
-      }).then(resp => {
-        if (resp.ok) {
-          resolve(resp);
-        } else {
-          reject(Error(`failed to delete: ${type}`));
-        }
-      });
-    });
-  },
+export const searchReq = async (type:string, body:Keyable): Promise<Keyable> => {
+  const receivedBody = await makeRequest(`/${type}/search`, 'POST', body, 200, true);
+  return receivedBody;
+}
+
+export const fetchReq = async (url: string): Promise<Keyable> => {
+  const receivedBody = await makeRequest(url, 'GET', null, 200, true);
+  return receivedBody;
+};
+
+export const getReq = async (resource: string, id: string): Promise<Keyable> => {
+  const receivedBody = await makeRequest(`/${resource}/${id}`, 'GET', null, 200, true);
+  return receivedBody;
+};
+
+export const listReq = async (resource: string): Promise<Keyable> => {
+  const receivedBody = await makeRequest(`/${resource}`, 'GET', null, 200, true);
+  return receivedBody;
+};
+
+export const postReq = async (resource: string, body: Keyable): Promise<Keyable> => {
+  const receivedBody = await makeRequest(`/${resource}`, 'POST', body, 200, true);
+  return receivedBody;
+};
+
+export const patchReq = async (resource: string, body: Keyable): Promise<Keyable> => {
+  const receivedBody = await makeRequest(`/${resource}/${body.id}`, 'PATCH', body, 200, true);
+  return receivedBody;
+};
+
+export const deleteReq = async (resource: string, id: string): Promise<Keyable> => {
+  const receivedBody = await makeRequest(`/${resource}/${id}`, 'PATCH', null, 200, true);
+  return receivedBody;
 };

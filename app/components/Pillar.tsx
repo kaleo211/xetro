@@ -6,9 +6,9 @@ import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { DocumentCard, DocumentCardTitle, IconButton, ProgressIndicator, Persona, PersonaSize, Text, Overlay, CommandButton } from '@fluentui/react';
 import { Depths } from '@fluentui/theme/lib/effects/FluentDepths';
 
-import { setActiveItem, showActions, hideActions, showAddingAction, setHoverItem, startActiveItemTimer, clearActiveItemTimer } from '../store/local/action';
-import { deleteItem, likeItem, finishItem, startItem } from '../store/item/action';
-import Action from './Action';
+import { setActiveItem, showTasks, hideTasks, showAddingTask, setHoverItem, startActiveItemTimer, clearActiveItemTimer } from '../store/local/action';
+import { deleteItemThunk, likeItemThunk, finishItemThunk, startItemThunk } from '../store/item/action';
+import Task from './Task';
 import { BoardI, ItemI, PillarI } from '../../types/models';
 import { ApplicationState } from '../store/types';
 import { Keyable } from '../../types/common';
@@ -27,7 +27,7 @@ const classes = mergeStyleSets({
   hovered: {
     boxShadow: Depths.depth8,
   },
-  actionCard: {
+  taskCard: {
     maxWidth: '33vw',
     marginTop: 2,
     minHeight: 40,
@@ -52,7 +52,7 @@ const classes = mergeStyleSets({
   titleTextDone:{
     textDecorationLine: 'line-through',
   },
-  actions: {
+  tasks: {
     display: 'flex',
     justifyContent: 'flex-end',
     paddingRight: 4,
@@ -71,25 +71,26 @@ const classes = mergeStyleSets({
 });
 
 interface PropsI {
-  activeItem: ItemI;
-  pillar: PillarI;
   activeItemProgress: number,
-  hoveredItem: ItemI,
-  board: BoardI
-  showActionMap: Keyable
-  addingAction: boolean
+  addingTask: boolean
 
-  clearActiveItemTimer(): void;
-  deleteItem(item: ItemI): Promise<void>;
-  finishItem(item: ItemI): Promise<void>;
-  hideActions(id: string): void;
-  likeItem(item: ItemI): Promise<void>;
-  setActiveItem(Item: ItemI): void;
-  setHoverItem(item: ItemI): void;
-  showActions(id: string): void;
-  showAddingAction(): void;
-  startActiveItemTimer(): void;
-  startItem(item: ItemI): Promise<void>;
+  activeItem: ItemI
+  board: BoardI
+  hoveredItem: ItemI
+  pillar: PillarI
+  showTaskMap: Keyable
+
+  clearActiveItemTimer(): void
+  deleteItemThunk(item: ItemI): Promise<void>
+  finishItemThunk(item: ItemI): Promise<void>
+  hideTasks(id: string): void
+  likeItemThunk(item: ItemI): Promise<void>
+  setActiveItem(Item: ItemI): void
+  setHoverItem(item: ItemI): void
+  showTasks(id: string): void
+  showAddingTask(): void
+  startActiveItemTimer(): void
+  startItemThunk(item: ItemI): Promise<void>
 }
 
 interface StateI {}
@@ -100,42 +101,42 @@ class Pillar extends React.Component<PropsI, StateI> {
     this.state = {};
   }
 
-  onDeleteItem(item:ItemI) {
-    this.props.deleteItem(item);
+  ondeleteItemThunk(item:ItemI) {
+    this.props.deleteItemThunk(item);
   }
 
-  async onStartItem(item:ItemI, evt:React.MouseEvent) {
+  async onstartItemThunk(item:ItemI, evt:React.MouseEvent) {
     evt.stopPropagation();
     const { activeItem } = this.props;
     if (activeItem != null) {
-      await this.props.finishItem(activeItem);
+      await this.props.finishItemThunk(activeItem);
     }
-    await this.props.startItem(item);
+    await this.props.startItemThunk(item);
 
     this.props.startActiveItemTimer();
   }
 
-  onLikeItem(item:ItemI, evt:React.MouseEvent) {
+  onlikeItemThunk(item:ItemI, evt:React.MouseEvent) {
     evt.stopPropagation();
-    this.props.likeItem(item);
+    this.props.likeItemThunk(item);
   }
 
-  async onFinishItem(item:ItemI) {
+  async onfinishItemThunk(item:ItemI) {
     await this.props.clearActiveItemTimer();
-    await this.props.finishItem(item);
+    await this.props.finishItemThunk(item);
   }
 
-  async onClickAddActionButton(item:ItemI) {
+  async onClickAddTaskButton(item:ItemI) {
     this.props.setActiveItem(item);
-    this.props.showAddingAction();
+    this.props.showAddingTask();
   }
 
-  onHideActions(item:ItemI) {
-    this.props.hideActions(item.id);
+  onHideTasks(item:ItemI) {
+    this.props.hideTasks(item.id);
   }
 
-  onShowActions(item:ItemI) {
-    this.props.showActions(item.id);
+  onShowTasks(item:ItemI) {
+    this.props.showTasks(item.id);
   }
 
   onHoverItem(item:ItemI) {
@@ -147,7 +148,7 @@ class Pillar extends React.Component<PropsI, StateI> {
   }
 
   render() {
-    const { activeItem, activeItemProgress, hoveredItem, pillar, board, showActionMap, addingAction } = this.props;
+    const { activeItem, activeItemProgress, hoveredItem, pillar, board, showTaskMap, addingTask } = this.props;
     const items = pillar.items;
 
     const showTimer = (item:ItemI) => {
@@ -156,17 +157,17 @@ class Pillar extends React.Component<PropsI, StateI> {
     const showFinishButton = (item:ItemI) => {
       return board.locked && board.stage === 'created' && item.stage === 'active';
     };
-    const showActionButton = (item:ItemI) => {
+    const showTaskButton = (item:ItemI) => {
       return board.locked && board.stage === 'created' && item.stage !== 'created';
     };
-    const showAddAction = (item:ItemI) => {
-      return board.locked && board.stage === 'created' && addingAction;
+    const showAddTask = (item:ItemI) => {
+      return board.locked && board.stage === 'created' && addingTask;
     };
     const showFoldButton = (item:ItemI) => {
-      return item.actions.length > 0;
+      return item.tasks.length > 0;
     };
 
-    return items.map(item => (
+    return items.map(item => item && (
       <div key={item.id}>
         <DocumentCard
             key={item.id}
@@ -174,12 +175,12 @@ class Pillar extends React.Component<PropsI, StateI> {
             onMouseOver={this.onHoverItem.bind(this, item)}
             onMouseLeave={this.onLeaveHoveredItem.bind(this)}
         >
-          {!board.locked && hoveredItem.id===item.id &&
+          {!board.locked && hoveredItem && hoveredItem.id===item.id &&
             <IconButton
                 primary
                 className={classes.deleteButton}
                 iconProps={{ iconName: 'Cancel', style: {fontSize: 12, color: 'red'} }}
-                onClick={this.onDeleteItem.bind(this, item)}
+                onClick={this.ondeleteItemThunk.bind(this, item)}
             />
           }
           <div className={classes.title}>
@@ -187,20 +188,20 @@ class Pillar extends React.Component<PropsI, StateI> {
                 title={item.title}
                 className={item.stage !== 'done' ? classes.titleText : classes.titleTextDone}
             />
-            <div className={classes.actions}>
+            <div className={classes.tasks}>
               {showFoldButton(item) && (
-                typeof showActionMap[item.id] === 'undefined' || !showActionMap[item.id] ?
+                typeof showTaskMap[item.id] === 'undefined' || !showTaskMap[item.id] ?
                   <IconButton
                       primary
                       className={classes.iconButton}
                       iconProps={{ iconName: 'ChevronUp', style: iconStyle }}
-                      onClick={this.onShowActions.bind(this, item)}
+                      onClick={this.onShowTasks.bind(this, item)}
                   /> :
                   <IconButton
                       primary
                       className={classes.iconButton}
                       iconProps={{ iconName: 'ChevronDown', style: iconStyle }}
-                      onClick={this.onHideActions.bind(this, item)}
+                      onClick={this.onHideTasks.bind(this, item)}
                   />
               )}
               {showTimer(item) &&
@@ -208,7 +209,7 @@ class Pillar extends React.Component<PropsI, StateI> {
                     primary
                     className={classes.iconButton}
                     iconProps={{ iconName: 'Stopwatch', style: iconStyle }}
-                    onClick={this.onStartItem.bind(this, item)}
+                    onClick={this.onstartItemThunk.bind(this, item)}
                 />
               }
               {showFinishButton(item) &&
@@ -216,15 +217,15 @@ class Pillar extends React.Component<PropsI, StateI> {
                     primary
                     className={classes.iconButton}
                     iconProps={{ iconName: 'CheckMark', style: iconStyle }}
-                    onClick={this.onFinishItem.bind(this, item)}
+                    onClick={this.onfinishItemThunk.bind(this, item)}
                 />
               }
-              {showActionButton(item) &&
+              {showTaskButton(item) &&
                 <IconButton
                     primary
                     className={classes.iconButton}
                     iconProps={{ iconName: 'MyMoviesTV', style: iconStyle }}
-                    onClick={this.onClickAddActionButton.bind(this, item)}
+                    onClick={this.onClickAddTaskButton.bind(this, item)}
                 />
               }
               <div>
@@ -233,22 +234,22 @@ class Pillar extends React.Component<PropsI, StateI> {
                     iconProps={{ iconName: 'Add', style: {fontSize: 14, color: '#222222', marginRight: -2}}}
                     text={item.likes.toString()}
                     disabled={board.locked}
-                    onClick={this.onLikeItem.bind(this, item)}
+                    onClick={this.onlikeItemThunk.bind(this, item)}
                 />
               </div>
             </div>
           </div>
-          {showAddAction(item) && <Action />}
+          {showAddTask(item) && <Task />}
           {board.locked && item.id === activeItem.id && item.stage === 'active' &&
             <Overlay className={classes.progress}>
               <ProgressIndicator percentComplete={1 - activeItemProgress} barHeight={6} />
             </Overlay>
           }
         </DocumentCard>
-        {showActionMap[item.id] && item.actions.map(action => (
-          <DocumentCard key={action.id} className={classes.actionCard}>
-            <Text variant="medium">{action.title}</Text>
-            <Persona text={action.owner.initials} hidePersonaDetails size={PersonaSize.size24} />
+        {showTaskMap[item.id] && item.tasks.map(task => (
+          <DocumentCard key={task.id} className={classes.taskCard}>
+            <Text variant="medium">{task.title}</Text>
+            <Persona text={task.owner.initials} hidePersonaDetails size={PersonaSize.size24} />
           </DocumentCard>
         ))}
       </div>
@@ -262,10 +263,10 @@ const mapStateToProps = (state:ApplicationState) => ({
   activeItem: state.local.activeItem,
   activeItemProgress: state.local.activeItemProgress,
   hoveredItem: state.local.hoveredItem,
-  showActionMap: state.local.showActionMap,
-  addingAction: state.local.addingAction,
+  showTaskMap: state.local.showTaskMap,
+  addingTask: state.local.addingTask,
 });
-const mapDispatchToProps = { deleteItem, setActiveItem, setHoverItem, likeItem, finishItem, startItem, showActions, hideActions, showAddingAction, startActiveItemTimer, clearActiveItemTimer };
+const mapDispatchToProps = { deleteItemThunk, setActiveItem, setHoverItem, likeItemThunk, finishItemThunk, startItemThunk, showTasks, hideTasks, showAddingTask, startActiveItemTimer, clearActiveItemTimer };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

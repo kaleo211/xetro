@@ -1,23 +1,24 @@
-import { GroupActionTypes, GroupStateI } from '../types';
 import { Reducer } from "redux";
+
+import { GroupTaskTypes, GroupStateI } from '../types';
 
 const initialState: GroupStateI = {
   groups: [],
   group: null,
 };
 
-const reducer: Reducer<GroupStateI> = (state = initialState, action) => {
-  switch (action.type) {
-    case GroupActionTypes.SET_GROUPS:
+const reducer: Reducer<GroupStateI> = (state = initialState, task) => {
+  switch (task.type) {
+    case GroupTaskTypes.SET_GROUPS:
       return {
         ...state,
-        groups: action.groups,
+        groups: task.groups,
       };
 
-    case GroupActionTypes.SET_GROUP:
+    case GroupTaskTypes.SET_GROUP:
       return {
         ...state,
-        group: action.group,
+        group: task.group,
       }
 
     default:

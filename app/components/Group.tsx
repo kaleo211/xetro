@@ -6,12 +6,12 @@ import { DocumentCard, DocumentCardActivity, DocumentCardDetails, DocumentCardTi
 import { mergeStyleSets, createTheme } from '@fluentui/react/lib/Styling';
 
 import { fetchGroupActiveBoard, joinOrCreateBoard } from '../store/board/action';
-import { finishAction, deleteAction } from '../store/item/action';
+import { finishTaskThunk, deleteTask } from '../store/item/action';
 import { setFacilitator } from '../store/group/action';
 import { date } from '../../utils/tool';
 import { Keyable } from '../../types/common';
 import { ApplicationState } from '../store/types';
-import { ActionI, GroupI } from '../../types/models';
+import { TaskI, GroupI } from '../../types/models';
 
 const theme = createTheme({
   fonts: {
@@ -54,17 +54,17 @@ const classNames = mergeStyleSets({
     marginRight: 4,
     marginTop: -8,
   },
-  actions: {
+  tasks: {
     marginTop: 4,
     marginLeft: 4,
   },
-  noActionsIcon: {
+  noTasksIcon: {
     fontSize: 40,
     height: 40,
     width: 40,
     color: 'green',
   },
-  actionCard: {
+  taskCard: {
     marginRight: 4,
     width: 240,
     height: 72,
@@ -74,7 +74,7 @@ const classNames = mergeStyleSets({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  actionTitle: {
+  taskTitle: {
     fontSize: 24,
   },
   facilitatorCard: {
@@ -86,15 +86,15 @@ const classNames = mergeStyleSets({
 interface PropsI {
   group: GroupI;
 
-  deleteAction(action: ActionI): Promise<void>;
+  deleteTask(task: TaskI): Promise<void>;
   fetchGroupActiveBoard(id: string): Promise<void>;
-  finishAction(action: ActionI): Promise<void>;
+  finishTaskThunk(task: TaskI): Promise<void>;
   joinOrCreateBoard(): void;
   setFacilitator(id: string): Promise<void>;
 }
 
 interface StateI {
-  hoveredActionTD: string,
+  hoveredTaskTD: string,
   isFacilitatorHovered: boolean,
 }
 
@@ -103,7 +103,7 @@ class Group extends React.Component<PropsI, StateI> {
     super(props);
 
     this.state = {
-      hoveredActionTD: '',
+      hoveredTaskTD: '',
       isFacilitatorHovered: false,
     };
 
@@ -114,12 +114,12 @@ class Group extends React.Component<PropsI, StateI> {
     await this.props.fetchGroupActiveBoard(this.props.group.id);
   }
 
-  onHoverAction(action:ActionI) {
-    this.setState({ hoveredActionTD: action.id });
+  onHoverTask(task:TaskI) {
+    this.setState({ hoveredTaskTD: task.id });
   }
 
-  onLeaveHoveredAction() {
-    this.setState({ hoveredActionTD: '' });
+  onLeaveHoveredTask() {
+    this.setState({ hoveredTaskTD: '' });
   }
 
   onHoverFacilitator() {
@@ -130,12 +130,12 @@ class Group extends React.Component<PropsI, StateI> {
     this.setState({ isFacilitatorHovered: false });
   }
 
-  async onFinishAction(action:ActionI) {
-    await this.props.finishAction(action);
+  async onfinishTaskThunk(task:TaskI) {
+    await this.props.finishTaskThunk(task);
   }
 
-  async onRemoveAction(action:ActionI) {
-    await this.props.deleteAction(action);
+  async onRemoveTask(task:TaskI) {
+    await this.props.deleteTask(task);
   }
 
   async onSetFacilitator(evt:any, facilitator: Keyable) {
@@ -149,9 +149,9 @@ class Group extends React.Component<PropsI, StateI> {
 
   render() {
     const { group } = this.props;
-    const { hoveredActionTD } = this.state;
+    const { hoveredTaskTD } = this.state;
 
-    const actions = group.actions;
+    const tasks = group.tasks;
     const finishIcon = {
       iconName: 'BoxCheckmarkSolid',
       style: {
@@ -170,9 +170,9 @@ class Group extends React.Component<PropsI, StateI> {
     const members = group.members.map(member => ({key: member.id, text: member.name}));
 
     return (
-      <div className={classNames.actions}>
+      <div className={classNames.tasks}>
         <div style={{display:'flex'}}>
-          <DocumentCard className={classNames.actionCard}
+          <DocumentCard className={classNames.taskCard}
               onMouseOver={this.onHoverFacilitator.bind(this)}
               onMouseLeave={this.onLeaveHoveredFacilitator.bind(this)}
           >
@@ -185,40 +185,40 @@ class Group extends React.Component<PropsI, StateI> {
               />
             </div>
           </DocumentCard>
-          <DocumentCard className={classNames.actionCard} onClick={this.onJoinOrCreateBoard.bind(this)}>
-            <div className={classNames.actionTitle}>
+          <DocumentCard className={classNames.taskCard} onClick={this.onJoinOrCreateBoard.bind(this)}>
+            <div className={classNames.taskTitle}>
               Open Board
             </div>
           </DocumentCard>
         </div>
-        <Separator theme={theme} styles={{content: {backgroundColor: 'rgba(0,0,0,0)'}}}>Action Items</Separator>
+        <Separator theme={theme} styles={{content: {backgroundColor: 'rgba(0,0,0,0)'}}}>Task Items</Separator>
         <Stack horizontal wrap>
-          {actions && actions.map(action => (
-            <Stack.Item key={action.id} align="auto">
+          {tasks && tasks.map(task => (
+            <Stack.Item key={task.id} align="auto">
               <DocumentCard
                   className={classNames.group}
-                  onMouseOver={this.onHoverAction.bind(this, action)}
-                  onMouseLeave={this.onLeaveHoveredAction.bind(this)}
+                  onMouseOver={this.onHoverTask.bind(this, task)}
+                  onMouseLeave={this.onLeaveHoveredTask.bind(this)}
               >
                 <DocumentCardDetails>
-                  <DocumentCardTitle title={action.title} />
-                  <DocumentCardActivity activity={date(action.createdAt)} people={[{ ...action.owner, profileImageSrc: '', name: action.owner.name }]} />
+                  <DocumentCardTitle title={task.title} />
+                  <DocumentCardActivity activity={date(task.createdAt)} people={[{ ...task.owner, profileImageSrc: '', name: task.owner.name }]} />
                 </DocumentCardDetails>
-                {hoveredActionTD === action.id &&
+                {hoveredTaskTD === task.id &&
                   <Overlay>
                     <div className={classNames.overlay}>
                       <div>
                         <IconButton
                             className={classNames.cancel}
                             iconProps={removeIcon}
-                            onClick={this.onRemoveAction.bind(this, action)}
+                            onClick={this.onRemoveTask.bind(this, task)}
                         />
                       </div>
                       <div>
                         <IconButton
                             className={classNames.icon}
                             iconProps={finishIcon}
-                            onClick={this.onFinishAction.bind(this, action)}
+                            onClick={this.onfinishTaskThunk.bind(this, task)}
                         />
                       </div>
                     </div>
@@ -227,12 +227,12 @@ class Group extends React.Component<PropsI, StateI> {
               </DocumentCard>
             </Stack.Item>
           ))}
-          {actions && actions.length === 0 &&
+          {tasks && tasks.length === 0 &&
             <Stack.Item>
               <DocumentCard className={classNames.group}>
-                <DocumentCardTitle title="No Actions" />
+                <DocumentCardTitle title="No Tasks" />
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <FontIcon iconName="SkypeCircleCheck" className={classNames.noActionsIcon} />
+                  <FontIcon iconName="SkypeCircleCheck" className={classNames.noTasksIcon} />
                 </div>
               </DocumentCard>
             </Stack.Item>
@@ -247,7 +247,7 @@ const mapStateToProps = (state: ApplicationState) => ({
   group: state.group.group,
   me: state.user.me,
 });
-const mapDispatchToProps = { deleteAction, fetchGroupActiveBoard, finishAction, joinOrCreateBoard, setFacilitator };
+const mapDispatchToProps = { deleteTask, fetchGroupActiveBoard, finishTaskThunk, joinOrCreateBoard, setFacilitator };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

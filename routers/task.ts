@@ -1,7 +1,7 @@
 import * as express from 'express';
 import { Service } from '../services';
 
-export class ActionRouter {
+export class TaskRouter {
   public router: express.Router;
 
   constructor(service: Service) {
@@ -9,29 +9,29 @@ export class ActionRouter {
 
     // Finish
     this.router.get('/:id/finish', async (req, res) => {
-      await updateAction(res, req.params.id, { stage: 'done' });
+      await updateTask(res, req.params.id, { stage: 'done' });
     });
 
     // Start
     this.router.get('/:id/start', async (req, res) => {
       const now = new Date();
       now.setMinutes(now.getMinutes() + 5);
-      await updateAction(res, req.params.id, { stage: 'active', end: new Date(now) });
+      await updateTask(res, req.params.id, { stage: 'active', end: new Date(now) });
     });
 
-    // Group Active Actions
+    // Group Active Tasks
     this.router.get('/group/:id', async (req, res) => {
       const query = { groupID: req.params.id };
-      await respondWithActions(res, query);
+      await respondWithTasks(res, query);
     });
 
     // Delete
     this.router.delete('/:id', async (req, res) => {
       try {
-        await service.action.remove(req.params.id);
+        await service.task.remove(req.params.id);
         res.sendStatus(204);
       } catch (err) {
-        console.error('error delete action', err);
+        console.error('error delete task', err);
         res.sendStatus(500);
       }
     });
@@ -40,10 +40,10 @@ export class ActionRouter {
     this.router.post('/', async (req, res) => {
       const { title, ownerID, groupID, boardID, itemID } = req.body;
       try {
-        const newAction = await service.action.create(title, ownerID, groupID, boardID, itemID);
-        await respondWithAction(res, newAction.id);
+        const newTask = await service.task.create(title, ownerID, groupID, boardID, itemID);
+        await respondWithTask(res, newTask.id);
       } catch (err) {
-        console.error('error post action:', err);
+        console.error('error post task:', err);
         res.sendStatus(500);
       }
     });
@@ -51,54 +51,54 @@ export class ActionRouter {
     // Update
     this.router.patch('/:id', async (req, res) => {
       try {
-        const action = await service.action.findOne({id: req.params.id});
-        if (action) {
-          action.setOwner(req.body.ownerID);
+        const task = await service.task.findOne({id: req.params.id});
+        if (task) {
+          task.setOwner(req.body.ownerID);
         } else {
           res.sendStatus(404);
         }
-        await respondWithAction(res, req.params.id);
+        await respondWithTask(res, req.params.id);
       } catch (err) {
-        console.error('error patch action:', err);
+        console.error('error patch task:', err);
         res.sendStatus(500);
       }
     });
 
-    const respondWithAction = async (res: express.Response, id: string) => {
+    const respondWithTask = async (res: express.Response, id: string) => {
       try {
-        const action = await service.action.findOne({id});
-        if (action) {
-          res.json(action);
+        const task = await service.task.findOne({id});
+        if (task) {
+          res.json(task);
         } else {
           res.sendStatus(404);
         }
       } catch (err) {
-        console.error('error get action', err);
+        console.error('error get task', err);
         res.sendStatus(500);
       }
     };
 
-    const respondWithActions = async (res: express.Response, query: object) => {
+    const respondWithTasks = async (res: express.Response, query: object) => {
       try {
-        const actions = await service.action.findAll({
+        const tasks = await service.task.findAll({
           ...query,
           stage: ['created', 'started'],
         });
-        if (actions) {
-          res.json(actions);
+        if (tasks) {
+          res.json(tasks);
         } else {
           res.sendStatus(404);
         }
       } catch (err) {
-        console.error('error get active actions', err);
+        console.error('error get active tasks', err);
         res.sendStatus(500);
       }
     };
 
-    const updateAction = async (res: express.Response, id: string, fields: object) => {
+    const updateTask = async (res: express.Response, id: string, fields: object) => {
       try {
-        await service.action.update(id, fields);
-        await respondWithAction(res, id);
+        await service.task.update(id, fields);
+        await respondWithTask(res, id);
       } catch (err) {
         console.error('error update board', err);
         res.sendStatus(500);

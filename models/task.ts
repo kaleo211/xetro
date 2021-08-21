@@ -4,9 +4,9 @@ import { User } from './user';
 import { Group } from './group';
 import { Board } from './board';
 import { Item } from './item';
-import { ActionI } from '../types/models';
+import { TaskI } from '../types/models';
 
-export class Action extends Model<ActionI> {
+export class Task extends Model<TaskI> {
   id: string;
   title: string;
   stage: string;
@@ -17,10 +17,10 @@ export class Action extends Model<ActionI> {
   public setItem!: BelongsToSetAssociationMixin<Item, string>;
 }
 
-export type ActionStatic = typeof Model & (new (values?: object, options?: BuildOptions) => Action);
+export type TaskStatic = typeof Model & (new (values?: object, options?: BuildOptions) => Task);
 
-export function ActionFactory(sequelize: Sequelize): ActionStatic {
-  return sequelize.define("Action", {
+export function TaskFactory(sequelize: Sequelize): TaskStatic {
+  return sequelize.define("Task", {
     id: {
       allowNull: false,
       primaryKey: true,
@@ -34,5 +34,5 @@ export function ActionFactory(sequelize: Sequelize): ActionStatic {
       type: STRING,
       defaultValue: 'created',
     },
-  }) as ActionStatic;
+  }) as TaskStatic;
 }

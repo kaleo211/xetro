@@ -1,10 +1,10 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { SET_BOARDS } from '../../../actions/types';
+import { SET_BOARDS } from '../../../tasks/types';
 import fetchMock from 'fetch-mock';
 import { JSDOM } from 'jsdom';
 
-import * as actions from '../../../actions/boardActions';
+import * as tasks from '../../../tasks/boardTasks';
 
 describe("setBoards", () => {
   afterEach(() => {
@@ -16,7 +16,7 @@ describe("setBoards", () => {
     const store = mockStore();
     let fakeBoards = [{ name: "fakeBoard", id: 0 }];
 
-    const expectedActions = [{
+    const expectedTasks = [{
       'boards': fakeBoards,
       'type': SET_BOARDS,
     }];
@@ -27,8 +27,8 @@ describe("setBoards", () => {
 
     fetchMock.getOnce('http://test:8080/api/boards', { _embedded: { boards: fakeBoards } });
 
-    store.dispatch(actions.setBoards()).then(() => {
-      expect(store.getActions()).toEqual(expectedActions);
+    store.dispatch(tasks.setBoards()).then(() => {
+      expect(store.getTasks()).toEqual(expectedTasks);
     });
   });
 });

@@ -15,7 +15,13 @@ export class ItemRouter {
 
     // Like
     this.router.get('/:id/like', async (req, res) => {
-      updateItem(res, req.params.id, { likes: sequelize.literal('likes + 1') });
+      try {
+        const { id } = req.params;
+        await service.item.like(id);
+        res.sendStatus(200);
+      } catch (err) {
+        res.sendStatus(500);
+      }
     });
 
     // Finish

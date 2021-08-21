@@ -66,7 +66,7 @@ app.use(cookieParser());
 
 app.use('/dell', routers.dell.router);
 app.use('/socket.io', isAuthenticated, routers.socket.router);
-app.use('/actions', isAuthenticated, routers.action.router);
+app.use('/tasks', isAuthenticated, routers.task.router);
 app.use('/boards', isAuthenticated, routers.board.router);
 app.use('/groups', isAuthenticated, routers.group.router);
 app.use('/items', isAuthenticated, routers.item.router);

@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { DocumentCard, Text, TextField, Modal, Image } from '@fluentui/react';
 
-import { postItem } from '../store/item/action';
+import { postItemThunk } from '../store/item/action';
 import { patchPillar, postPillar, deletePillar } from '../store/pillar/action';
 import { setELMO } from '../store/local/action';
 import Pillar from './Pillar';
@@ -45,13 +45,14 @@ const classNames = mergeStyleSets({
 });
 
 interface PropsI {
+  elmo: boolean
+
   board: BoardI
   group: GroupI
-  elmo: boolean
 
   deletePillar(pillar: PillarI): Promise<void>
   patchPillar(pillar: PillarI): Promise<void>
-  postItem(item:ItemI): Promise<void>
+  postItemThunk(item:ItemI): Promise<void>
   postPillar(pillar: PillarI): Promise<void>
   setELMO(val: boolean): void
 }
@@ -103,21 +104,23 @@ class Board extends React.Component<PropsI, StateI> {
     });
   }
 
-  onAddItem(pillarID: string, event: React.KeyboardEvent<HTMLInputElement>) {
+  onAddItem(pillarID: string, evt: React.KeyboardEvent<HTMLInputElement>) {
     const newItemTitle = this.state.newItemTnPillar[pillarID];
-    if (event && event.key === 'Enter' && newItemTitle !== '') {
+    console.log("add event:", evt.key);
+    if (evt && evt.key === 'Enter' && newItemTitle !== '') {
       const newItem:ItemI = {
         pillarID,
         title: newItemTitle,
         boardID: this.props.board.id,
         groupID: this.props.group.id,
       };
-      this.props.postItem(newItem);
+      this.props.postItemThunk(newItem);
       this.changeItemTitle(pillarID, '');
     }
   }
 
   onChangeNewItemTitle(pillarID: string, evt: React.ChangeEvent<HTMLInputElement>) {
+    console.log("change event:", evt.target.value);
     this.changeItemTitle(pillarID, evt.target.value);
   }
 
@@ -163,6 +166,8 @@ class Board extends React.Component<PropsI, StateI> {
 
     const pillars = board.pillars;
     const enabled = (board.stage !== 'archived' && !board.locked);
+
+    console.log("render:", newItemTnPillar, titleOfPillar);
 
     return (
       <div className={classNames.board}>
@@ -218,7 +223,7 @@ const mapStateToProps = (state:ApplicationState) => ({
   board: state.board.board,
   group: state.group.group,
 });
-const mapDispatchToProps = { deletePillar, patchPillar, postItem, postPillar, setELMO };
+const mapDispatchToProps = { deletePillar, patchPillar, postItemThunk, postPillar, setELMO };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

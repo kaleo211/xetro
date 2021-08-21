@@ -35,8 +35,8 @@ export class UserService implements UserServiceI {
       include: [
         { model: this.db.group, as: 'groups', through: {} },
         {
-          model: this.db.action,
-          as: 'actions',
+          model: this.db.task,
+          as: 'tasks',
           where: {
             stage: {
               [Op.ne]: 'done',

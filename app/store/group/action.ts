@@ -1,15 +1,16 @@
-import { ApplicationState, AppThunk, GroupActionTypes } from '../types';
-import { getMeRaw } from '../user/action';
-import Utils from '../../utils';
-import { Keyable } from '../../../types/common';
 import { AnyAction, Dispatch } from 'redux';
+
+import { ApplicationState, AppThunk, GroupTaskTypes } from '../types';
+import { getMeRaw } from '../user/action';
+import { Keyable } from '../../../types/common';
+import { getReq, postReq } from '../../utils';
 
 export const searchGroups = (query:Keyable): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
-    const groups = await Utils.post('groups/search', query || {});
+    const groups = await postReq('groups/search', query || {});
     if (groups) {
       dispatch({
-        type: GroupActionTypes.SET_GROUPS,
+        type: GroupTaskTypes.SET_GROUPS,
         groups,
       });
     } else {
@@ -20,22 +21,22 @@ export const searchGroups = (query:Keyable): AppThunk => {
 
 export const postGroup = (newGroup:Keyable): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
-    const resp: Keyable = await Utils.post('groups', newGroup);
+    const resp: Keyable = await postReq('groups', newGroup);
     if (resp) {
-      const groups = await Utils.post('groups/search', {});
+      const groups = await postReq('groups/search', {});
       if (groups) {
         dispatch({
-          type: GroupActionTypes.SET_GROUPS,
+          type: GroupTaskTypes.SET_GROUPS,
           groups,
         });
       } else {
         console.error('error fetching groups after posting group', groups);
       }
 
-      const group = await Utils.get('groups', resp.id);
+      const group = await getReq('groups', resp.id);
       if (group) {
         dispatch({
-          type: GroupActionTypes.SET_GROUP,
+          type: GroupTaskTypes.SET_GROUP,
           group,
         });
       } else {
@@ -49,22 +50,22 @@ export const postGroup = (newGroup:Keyable): AppThunk => {
 export const setGroupRaw = async (groupID: string): Promise<AnyAction> => {
   if (groupID == null) {
     return {
-      type: GroupActionTypes.SET_GROUP,
+      type: GroupTaskTypes.SET_GROUP,
       group: null,
     };
   }
 
-  const group = await Utils.get('groups', groupID);
+  const group = await getReq('groups', groupID);
   if (group) {
     // await fetchGroupActiveBoardRaw(groupID);
     return {
-      type: GroupActionTypes.SET_GROUP,
+      type: GroupTaskTypes.SET_GROUP,
       group,
     };
   }
 
   return {
-    type: GroupActionTypes.FAILED,
+    type: GroupTaskTypes.FAILED,
     error: 'error fetching group for setting group',
   }
 }
@@ -77,10 +78,10 @@ export const setGroup = (groupID:string): AppThunk => {
 
 export const addUserToGroup = (userID: string, groupID: string): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
-    const returnedGroup = await Utils.post('groups/member', { userID, groupID });
+    const returnedGroup = await postReq('groups/member', { userID, groupID });
     if (returnedGroup) {
       dispatch({
-        type: GroupActionTypes.SET_GROUP,
+        type: GroupTaskTypes.SET_GROUP,
         group: returnedGroup,
       });
     } else {
@@ -93,10 +94,10 @@ export const setFacilitator = (facilitatorID: string): AppThunk => {
   return async (dispatch:Dispatch, getState:()=>ApplicationState) => {
     const { group } = getState().group;
     const body = { facilitatorID, groupID: group.id }
-    const returnedGroup = await Utils.post('groups/facilitator', body);
+    const returnedGroup = await postReq('groups/facilitator', body);
     if (returnedGroup) {
       dispatch({
-        type: GroupActionTypes.SET_GROUP,
+        type: GroupTaskTypes.SET_GROUP,
         group: returnedGroup
       });
     } else {

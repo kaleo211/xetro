@@ -9,7 +9,7 @@ import { Link, Icon } from '@fluentui/react';
 
 import { setPage } from '../store/local/action';
 import { joinOrCreateBoard } from '../store/board/action';
-import ActionBar from './ActionBar';
+import ToolBar from './ToolBar';
 import { BoardI, GroupI, UserI } from '../../types/models';
 import { ApplicationState } from '../store/types';
 import { Keyable } from '../../types/common';
@@ -68,8 +68,8 @@ class Menu extends React.Component<PropsI, StateI> {
   }
 
   onRenderItem(item:Keyable) {
-    return item.key === 'action' ?
-      <ActionBar /> :
+    return item.key === 'task' ?
+      <ToolBar /> :
       <Link onClick={item.onClick}>
         <Text
             // className={classNames(classNames.text, { [classNames.underline]: item.key == this.props.page })}
@@ -89,7 +89,7 @@ class Menu extends React.Component<PropsI, StateI> {
       bread.push({ text: 'Board', key: 'board', onClick: this.onJoinOrCreateBoard.bind(this) });
     }
     if (board && page === 'board') {
-      bread.push({ text: '', key: 'action' });
+      bread.push({ text: '', key: 'task' });
     }
 
     return (

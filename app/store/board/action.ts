@@ -1,21 +1,21 @@
 import { AnyAction, Dispatch } from 'redux';
 
-import { BoardActionTypes, ApplicationState, AppThunk } from '../types';
-import Utils from '../../utils';
+import { BoardTaskTypes, ApplicationState, AppThunk } from '../types';
 import { setPage } from '../local/action';
 import { Keyable } from '../../../types/common';
+import { fetchReq, getReq, postReq } from 'app/utils';
 
 export const fetchGroupActiveBoardRaw = async (groupID: string): Promise<AnyAction> => {
-  const board = await Utils.fetch(`/boards/active/${groupID}`);
+  const board = await fetchReq(`/boards/active/${groupID}`);
   if (!board) {
     return {
-      type: BoardActionTypes.FAILED,
+      type: BoardTaskTypes.FAILED,
       error: 'error fetching active board',
     }
   }
 
   return {
-    type: BoardActionTypes.SET_BOARD,
+    type: BoardTaskTypes.SET_BOARD,
     board,
   };
 }
@@ -63,16 +63,16 @@ export const refreshBoard = (): AppThunk => {
 }
 
 export const postBoardRaw = async (newBoard: Keyable): Promise<AnyAction> => {
-  const board = await Utils.post('boards', newBoard);
+  const board = await postReq('boards', newBoard);
   if (board) {
     return {
-      type: BoardActionTypes.SET_BOARD,
+      type: BoardTaskTypes.SET_BOARD,
       board,
     };
   }
 
   return {
-    type: BoardActionTypes.FAILED,
+    type: BoardTaskTypes.FAILED,
   };
 }
 
@@ -85,16 +85,16 @@ export const postBoard = (newBoard:Keyable): AppThunk => {
 
 export const listBoards = (groupID: string):AppThunk => {
   return async (dispatch:Dispatch): Promise<AnyAction> => {
-    const boards = await Utils.fetch(`/boards/group/${groupID}`);
+    const boards = await fetchReq(`/boards/group/${groupID}`);
     if (boards) {
       return dispatch({
-        type: BoardActionTypes.FAILED,
+        type: BoardTaskTypes.FAILED,
         error: 'error listing boards',
       });
     }
 
     return dispatch({
-      type: BoardActionTypes.SET_HISTORY_BOARDS,
+      type: BoardTaskTypes.SET_HISTORY_BOARDS,
       historyBoards: boards,
     });
   }
@@ -102,10 +102,10 @@ export const listBoards = (groupID: string):AppThunk => {
 
 export const setBoards = ():AppThunk => {
   return async (dispatch:Dispatch): Promise<AnyAction> => {
-    const boards = await Utils.fetch('boards');
+    const boards = await fetchReq('boards');
     if (boards) {
       return dispatch({
-        type: BoardActionTypes.SET_BOARDS,
+        type: BoardTaskTypes.SET_BOARDS,
         boards,
       });
     }
@@ -115,21 +115,21 @@ export const setBoards = ():AppThunk => {
 export const setBoardRaw = async (boardID: string): Promise<AnyAction> => {
   if (boardID == null || boardID === '') {
     return {
-      type: BoardActionTypes.SET_BOARD,
+      type: BoardTaskTypes.SET_BOARD,
       board: null,
     };
   }
 
-  const board = await Utils.get('boards', boardID);
+  const board = await getReq('boards', boardID);
   if (!board) {
     console.error('error getting board');
     return {
-      type: BoardActionTypes.FAILED,
+      type: BoardTaskTypes.FAILED,
     };
   }
 
   return {
-    type: BoardActionTypes.SET_BOARD,
+    type: BoardTaskTypes.SET_BOARD,
     board,
   };
 }
@@ -143,7 +143,7 @@ export const setBoard = (boardID: string): AppThunk => {
 
 export const archiveBoard = (boardID: string):AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
-    await Utils.fetch(`/boards/${boardID}/archive`);
+    await fetchReq(`/boards/${boardID}/archive`);
     dispatch(setPage('group'));
   }
 };
@@ -151,7 +151,7 @@ export const archiveBoard = (boardID: string):AppThunk => {
 
 export const lockBoard = (boardID: string):AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
-    await Utils.fetch(`/boards/${boardID}/lock`);
+    await fetchReq(`/boards/${boardID}/lock`);
     dispatch(await setBoardRaw(boardID));
   }
 };
@@ -159,7 +159,7 @@ export const lockBoard = (boardID: string):AppThunk => {
 
 export const unlockBoard = (boardID:string): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
-    await Utils.fetch(`/boards/${boardID}/unlock`);
+    await fetchReq(`/boards/${boardID}/unlock`);
     dispatch(await setBoardRaw(boardID));
   }
 };

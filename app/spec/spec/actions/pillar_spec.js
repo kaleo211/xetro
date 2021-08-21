@@ -3,11 +3,11 @@ import thunk from 'redux-thunk';
 import fetchMock from 'fetch-mock';
 import { JSDOM } from 'jsdom';
 
-import * as actions from '../../../actions/pillarActions';
+import * as tasks from '../../../tasks/pillarTasks';
 
-import { POST_PILLAR, SET_BOARD } from '../../../actions/types';
+import { POST_PILLAR, SET_BOARD } from '../../../tasks/types';
 
-describe("pillarActions", () => {
+describe("pillarTasks", () => {
   afterEach(() => {
     fetchMock.reset();
   });
@@ -17,7 +17,7 @@ describe("pillarActions", () => {
       const mockStore = configureStore([thunk]);
       const store = mockStore();
 
-      const expectedActions = [{
+      const expectedTasks = [{
         'pillar': {},
         'type': POST_PILLAR,
       }, {
@@ -31,8 +31,8 @@ describe("pillarActions", () => {
 
       fetchMock.postOnce('http://test:8080/api/pillars', {});
 
-      store.dispatch(actions.postPillar({}, null)).then(() => {
-        expect(store.getActions()).toEqual(expectedActions);
+      store.dispatch(tasks.postPillar({}, null)).then(() => {
+        expect(store.getTasks()).toEqual(expectedTasks);
       });
     });
   });

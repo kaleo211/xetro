@@ -35,8 +35,8 @@ export class GroupService implements GroupServiceI {
           as: 'members',
           include: [
             {
-              model: this.db.action,
-              as: 'actions',
+              model: this.db.task,
+              as: 'tasks',
               where: {
                 stage: {
                   [Op.ne]: 'done',
@@ -55,8 +55,8 @@ export class GroupService implements GroupServiceI {
           as: 'boards',
         },
         {
-          model: this.db.action,
-          as: 'actions',
+          model: this.db.task,
+          as: 'tasks',
           where: {
             stage: {
               [Op.ne]: 'done',

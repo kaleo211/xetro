@@ -8,7 +8,7 @@ import { IconButton } from '@fluentui/react';
 import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard, refreshBoard } from '../store/board/action';
 import { setGroup } from '../store/group/action';
 import { setPage } from '../store/local/action';
-import { finishItem } from '../store/item/action';
+import { finishItemThunk } from '../store/item/action';
 import { BoardI, GroupI, UserI } from '../../types/models';
 import { ApplicationState } from '../store/types';
 
@@ -33,7 +33,7 @@ interface PropI {
   me: UserI;
 
   archiveBoard(id: string): Promise<void>;
-  finishItem(): Promise<void>;
+  finishItemThunk(): Promise<void>;
   lockBoard(id:string): Promise<void>;
   refreshBoard(): Promise<void>;
   setBoard(id: string): Promise<void>;
@@ -45,7 +45,7 @@ interface PropI {
 
 interface StateI {}
 
-class ActionBar extends React.Component<PropI, StateI> {
+class ToolBar extends React.Component<PropI, StateI> {
   constructor(props: any) {
     super(props);
 
@@ -129,8 +129,8 @@ const mapStateToProps = (state:ApplicationState) => ({
   page: state.local.page,
   me: state.user.me,
 });
-const mapDispatchToProps = { archiveBoard, finishItem, lockBoard, setBoard, setBoards, setGroup, setPage, unlockBoard, refreshBoard };
+const mapDispatchToProps = { archiveBoard, finishItemThunk, lockBoard, setBoard, setBoards, setGroup, setPage, unlockBoard, refreshBoard };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-)(ActionBar);
+)(ToolBar);

@@ -1,5 +1,5 @@
 import { Database } from "../models/index";
-import { ActionService, ActionServiceI } from "./action";
+import { TaskService, TaskServiceI } from "./task";
 import { BoardService, BoardServiceI } from "./board";
 import { GroupService, GroupServiceI } from "./group";
 import { ItemService, ItemServiceI } from "./item";
@@ -7,7 +7,7 @@ import { PillarService, PillarServiceI } from "./pillar";
 import { UserService, UserServiceI } from "./user";
 
 export interface ServiceI {
-	action: ActionServiceI;
+	task: TaskServiceI;
 	board: BoardServiceI;
 	group: GroupServiceI;
 	item: ItemServiceI;
@@ -16,7 +16,7 @@ export interface ServiceI {
 }
 
 export class Service implements ServiceI {
-	action: ActionServiceI;
+	task: TaskServiceI;
 	board: BoardServiceI;
 	group: GroupServiceI;
 	item: ItemServiceI;
@@ -24,7 +24,7 @@ export class Service implements ServiceI {
 	user: UserServiceI;
 
 	constructor(database: Database) {
-		this.action = new ActionService(database);
+		this.task = new TaskService(database);
 		this.group = new GroupService(database);
 		this.item = new ItemService(database);
 		this.pillar = new PillarService(database);

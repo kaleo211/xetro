@@ -1,24 +1,24 @@
 import { Reducer } from "redux";
 
-import { UserActionTypes, UserStateI } from '../types';
+import { UserTaskTypes, UserStateI } from '../types';
 
 const initialState: UserStateI = {
   users: [],
   me: null,
 };
 
-const reducer: Reducer<UserStateI> = (state = initialState, action) => {
-  switch (action.type) {
-    case UserActionTypes.SET_USERS:
+const reducer: Reducer<UserStateI> = (state = initialState, task) => {
+  switch (task.type) {
+    case UserTaskTypes.SET_USERS:
       return {
         ...state,
-        users: action.users,
+        users: task.users,
       };
 
-    case UserActionTypes.SET_ME:
+    case UserTaskTypes.SET_ME:
       return {
         ...state,
-        me: action.me,
+        me: task.me,
       }
 
     default:

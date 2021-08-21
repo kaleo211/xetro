@@ -1,16 +1,16 @@
 import { Database } from "../models/index";
-import { Action } from "../models/action";
+import { Task } from "../models/task";
 import { Keyable } from "../types/common";
 
-export interface ActionServiceI {
-  create(title:string, ownerID:string, groupID:string, boardID:string, itemID:string): Promise<Action>,
+export interface TaskServiceI {
+  create(title:string, ownerID:string, groupID:string, boardID:string, itemID:string): Promise<Task>,
   remove(id:string): Promise<void>,
-  findAll(whereCl:Keyable): Promise<Action[]>,
-  findOne(whereCl:Keyable): Promise<Action>,
+  findAll(whereCl:Keyable): Promise<Task[]>,
+  findOne(whereCl:Keyable): Promise<Task>,
   update(id:string, fields:Keyable): Promise<void>,
 }
 
-export class ActionService implements ActionServiceI {
+export class TaskService implements TaskServiceI {
   db: Database;
 
   constructor(database: Database) {
@@ -18,24 +18,24 @@ export class ActionService implements ActionServiceI {
   }
 
   public create = async (title: string, ownerID: string, groupID: string, boardID: string, itemID: string) => {
-    const newAction = await this.db.action.create({title});
+    const newTask = await this.db.task.create({title});
 
-    await newAction.setOwner(ownerID);
-    await newAction.setGroup(groupID);
-    await newAction.setBoard(boardID);
-    await newAction.setItem(itemID);
+    await newTask.setOwner(ownerID);
+    await newTask.setGroup(groupID);
+    await newTask.setBoard(boardID);
+    await newTask.setItem(itemID);
 
-    return newAction;
+    return newTask;
   };
 
   public remove = async (id: string) => {
-    await this.db.action.destroy({
+    await this.db.task.destroy({
       where: { id },
     });
   }
 
   public findAll = async (whereCl: Keyable) => {
-    const actions = await this.db.action.findAll({
+    const tasks = await this.db.task.findAll({
       include: [
         { model: this.db.user, as: 'owner' },
         { model: this.db.group, as: 'group' },
@@ -45,11 +45,11 @@ export class ActionService implements ActionServiceI {
       order: [['createdAt', 'DESC']],
     });
 
-    return actions;
+    return tasks;
   }
 
   public findOne = async (whereCl: Keyable) => {
-    const action = await this.db.action.findOne({
+    const task = await this.db.task.findOne({
       include: [
         { model: this.db.user, as: 'owner' },
         { model: this.db.group, as: 'group' },
@@ -58,11 +58,11 @@ export class ActionService implements ActionServiceI {
       where: whereCl,
     });
 
-    return action;
+    return task;
   }
 
   public update = async (id: string, fields: Keyable) => {
-    await this.db.action.update(
+    await this.db.task.update(
       fields,
       { where: { id } },
     );

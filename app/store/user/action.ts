@@ -1,18 +1,18 @@
 import { AnyAction, Dispatch } from 'redux';
 
-import { AppThunk, UserActionTypes } from '../types';
-import Utils from '../../utils';
+import { AppThunk, UserTaskTypes } from '../types';
+import { fetchReq, listReq } from '../../utils';
 
 export const getMeRaw = async (): Promise<AnyAction> => {
-  const me = await Utils.fetch('/users/me');
+  const me = await fetchReq('/users/me');
   if (!me) {
     return {
-      type: UserActionTypes.FAILED,
+      type: UserTaskTypes.FAILED,
       error: 'error getting me',
     }
   }
   return {
-    type: UserActionTypes.SET_ME,
+    type: UserTaskTypes.SET_ME,
     me,
   };
 }
@@ -24,10 +24,10 @@ export const getMe = (): AppThunk => {
 };
 
 export const fetchUsers = (): AppThunk => async (dispatch:Dispatch) => {
-  const users = await Utils.list('users');
+  const users = await listReq('users');
   if (users) {
     dispatch({
-      type: UserActionTypes.SET_USERS,
+      type: UserTaskTypes.SET_USERS,
       users,
     });
   }

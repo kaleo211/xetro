@@ -1,6 +1,6 @@
 import { Reducer } from "redux";
 
-import { BoardActionTypes, BoardStateI } from '../types';
+import { BoardTaskTypes, BoardStateI } from '../types';
 
 const initialState: BoardStateI = {
   boards: [],
@@ -8,22 +8,22 @@ const initialState: BoardStateI = {
   historyBoards: [],
 };
 
-const reducer: Reducer<BoardStateI> = (state = initialState, action) => {
-  switch (action.type) {
-    case BoardActionTypes.SET_BOARDS:
-      return { ...state, boards: action.boards};
+const reducer: Reducer<BoardStateI> = (state = initialState, task) => {
+  switch (task.type) {
+    case BoardTaskTypes.SET_BOARDS:
+      return { ...state, boards: task.boards};
 
-    case BoardActionTypes.SET_BOARD:
-      return { ...state, board: action.board };
+    case BoardTaskTypes.SET_BOARD:
+      return { ...state, board: task.board };
 
-    case BoardActionTypes.SET_PILLARS:
-      return { ...state, pillars: action.pillars };
+    case BoardTaskTypes.SET_PILLARS:
+      return { ...state, pillars: task.pillars };
 
-    case BoardActionTypes.SET_HISTORY_BOARDS:
-      return { ...state, historyBoards: action.historyBoards };
+    case BoardTaskTypes.SET_HISTORY_BOARDS:
+      return { ...state, historyBoards: task.historyBoards };
 
-    case BoardActionTypes.FAILED:
-      console.error(action.error);
+    case BoardTaskTypes.FAILED:
+      console.error(task.error);
 
     default:
       return state;

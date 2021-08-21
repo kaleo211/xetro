@@ -1,20 +1,17 @@
 import { Socket } from "socket.io";
-import { BoardI, GroupI, ItemI, UserI } from "types/models";
-import { Keyable } from "types/common";
 import { ThunkAction } from "redux-thunk";
 import { Action } from "redux";
 
-export enum LocalActionTypes {
+import { BoardI, GroupI, ItemI, UserI } from "../../types/models";
+import { Keyable } from "../../types/common";
+
+export enum LocalTaskTypes {
   SET_PAGE = 0,
   SET_ELMO,
   SET_ITEM,
   SET_HOVER_ITEM,
-  SET_ELMOSET_PAGE,
   UPDATE_SHOW_ACTION_MAP,
   UPDATE_SHOW_ADDING_ACTION,
-  UPDATE_SHOW_ACTION_MAPSET_PAGE,
-  UPDATE_SHOW_ADDING_ACTIONSET_PAGE,
-  SET_ACTIVE_ITEM_PROGRESSSET_PAGE,
   SET_ACTIVE_ITEM_PROGRESS,
   SET_SOCKETIO_CLIENT,
   SET_ACTIVE_ITEM_PROGRESS_TIMER,
@@ -24,16 +21,16 @@ export interface LocalStateI {
   page: string
   activeItem: ItemI
   hoveredItem: ItemI
-  showActionMap: Keyable
+  showTaskMap: Keyable
   elmo: boolean
-  addingAction: boolean
+  addingTask: boolean
   secondsPerItem: number
   socketIOClient: Socket
   activeItemProgress: number
   activeItemProgressTimer: NodeJS.Timer
 }
 
-export enum UserActionTypes {
+export enum UserTaskTypes {
   SET_USERS = 100,
   SET_ME,
   FAILED,
@@ -44,7 +41,7 @@ export interface UserStateI {
   me: UserI,
 }
 
-export enum BoardActionTypes {
+export enum BoardTaskTypes {
   SET_BOARD = 200,
   SET_BOARDS,
   SET_PILLARS,
@@ -58,7 +55,7 @@ export interface BoardStateI {
   historyBoards: BoardI[],
 }
 
-export enum GroupActionTypes {
+export enum GroupTaskTypes {
   SET_GROUP = 300,
   SET_GROUPS,
   FAILED,

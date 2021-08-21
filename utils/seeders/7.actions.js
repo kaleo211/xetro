@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     const date = '2019-10-26 02:53:15.452';
-    return queryInterface.bulkInsert('Actions', [
+    return queryInterface.bulkInsert('Tasks', [
       {
         id: '87DC40EC-6E38-4BE0-8A06-FD4657217A07',
         title: 'Finish this',

@@ -5,9 +5,9 @@ import { compose } from 'redux';
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField, Persona, PersonaSize, Text } from '@fluentui/react';
 import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 
-import { setActiveItem, hideAddingAction, showActions } from '../store/local/action';
-import { postAction } from '../store/item/action';
-import { ItemI, BoardI, GroupI, ActionI, UserI } from '../../types/models';
+import { setActiveItem, hideAddingTask, showTasks } from '../store/local/action';
+import { postTask } from '../store/item/action';
+import { ItemI, BoardI, GroupI, TaskI, UserI } from '../../types/models';
 import { ApplicationState } from '../store/types';
 
 const classNames = mergeStyleSets({
@@ -27,72 +27,72 @@ interface PropsI {
   group: GroupI;
   board: BoardI;
   activeItem: ItemI;
-  addingAction: boolean;
+  addingTask: boolean;
 
-  hideAddingAction(): void;
-  postAction(item: ActionI): void;
+  hideAddingTask(): void;
+  postTask(item: TaskI): void;
   setActiveItem(item: ItemI): void;
-  showActions(id: string): void;
+  showTasks(id: string): void;
 }
 
 interface StateI {
-  newActionTitle: string;
+  newTaskTitle: string;
   noOwnerError: string;
   noTitleError: string;
   pickedOwners: UserI[];
 }
 
-class Action extends React.Component<PropsI, StateI> {
+class Task extends React.Component<PropsI, StateI> {
   constructor(props: any) {
     super(props);
 
     this.state = {
-      newActionTitle: '',
+      newTaskTitle: '',
       noOwnerError: null,
       noTitleError: null,
       pickedOwners: [],
     };
   }
 
-  onChangeNewActionTitle(evt: React.ChangeEvent<HTMLInputElement>) {
+  onChangeNewTaskTitle(evt: React.ChangeEvent<HTMLInputElement>) {
     this.setState({
-      newActionTitle: evt.target.value,
+      newTaskTitle: evt.target.value,
       noTitleError: null,
     });
   }
 
-  async onClickAddActionButton(item:ItemI) {
+  async onClickAddTaskButton(item:ItemI) {
     this.props.setActiveItem(item);
   }
 
-  async onSaveAction(item:ItemI) {
-    const { newActionTitle, pickedOwners } = this.state;
+  async onSaveTask(item:ItemI) {
+    const { newTaskTitle, pickedOwners } = this.state;
 
-    if (newActionTitle === '') {
-      this.setState({ noTitleError: 'Action title cannot be empty.' });
+    if (newTaskTitle === '') {
+      this.setState({ noTitleError: 'Task title cannot be empty.' });
       return;
     }
 
     if (pickedOwners == null) {
-      this.setState({ noOwnerError: 'Action owner cannot be empty.' });
+      this.setState({ noOwnerError: 'Task owner cannot be empty.' });
       return;
     }
 
     pickedOwners.map(async owner => {
-      const newAction: ActionI = {
-        title: newActionTitle,
+      const newTask: TaskI = {
+        title: newTaskTitle,
         itemID: item.id,
         ownerID: owner.id,
         groupID: this.props.group.id,
         boardID: this.props.board.id,
       };
-      await this.props.postAction(newAction);
+      await this.props.postTask(newTask);
     });
 
-    this.props.showActions(item.id);
-    this.props.hideAddingAction();
+    this.props.showTasks(item.id);
+    this.props.hideAddingTask();
     this.setState({
-      newActionTitle: '',
+      newTaskTitle: '',
       pickedOwners: [],
     });
   }
@@ -113,12 +113,12 @@ class Action extends React.Component<PropsI, StateI> {
     }
   }
 
-  onDismissAddingAction() {
-    this.props.hideAddingAction();
+  onDismissAddingTask() {
+    this.props.hideAddingTask();
   }
 
   render() {
-    const { activeItem, group, addingAction } = this.props;
+    const { activeItem, group, addingTask } = this.props;
     const { pickedOwners, noTitleError, noOwnerError } = this.state;
 
     const isOwner = (member:UserI) => {
@@ -129,8 +129,8 @@ class Action extends React.Component<PropsI, StateI> {
     return (
       <Dialog
           isDarkOverlay
-          hidden={!addingAction}
-          dialogContentProps={{ title: 'New Action' }}
+          hidden={!addingTask}
+          dialogContentProps={{ title: 'New Task' }}
           minWidth={480}
           className={classNames.dialog}
       >
@@ -140,7 +140,7 @@ class Action extends React.Component<PropsI, StateI> {
                 validateOnFocusOut
                 validateOnLoad={false}
                 errorMessage={noTitleError}
-                onChange={this.onChangeNewActionTitle.bind(this)}
+                onChange={this.onChangeNewTaskTitle.bind(this)}
             />
           </div>
           <div style={{ marginLeft: 4, marginTop: 8, display: 'flex', flexDirection: 'row' }}>
@@ -162,11 +162,11 @@ class Action extends React.Component<PropsI, StateI> {
         <DialogFooter>
           <PrimaryButton
               text="Add"
-              onClick={this.onSaveAction.bind(this, activeItem)}
+              onClick={this.onSaveTask.bind(this, activeItem)}
           />
           <DefaultButton
               text="Cancel"
-              onClick={this.onDismissAddingAction.bind(this)}
+              onClick={this.onDismissAddingTask.bind(this)}
           />
         </DialogFooter>
       </Dialog>
@@ -178,11 +178,11 @@ const mapStateToProps = (state:ApplicationState) => ({
   board: state.board.board,
   group: state.group.group,
   activeItem: state.local.activeItem,
-  addingAction: state.local.addingAction,
+  addingTask: state.local.addingTask,
 });
 
-const mapDispatchToProps = { hideAddingAction, postAction, setActiveItem, showActions };
+const mapDispatchToProps = { hideAddingTask, postTask, setActiveItem, showTasks };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-)(Action);
+)(Task);

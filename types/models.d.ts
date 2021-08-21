@@ -10,7 +10,7 @@ export interface UserI {
   accessToken?: string;
 }
 
-export interface ActionI {
+export interface TaskI {
   id?: string;
   title: string;
   stage?: string;
@@ -39,7 +39,7 @@ export interface GroupI {
   id?: string;
   name: string;
 
-  actions?: ActionI[];
+  tasks?: TaskI[];
   members?: UserI[];
   facilitatorID?: string;
   boards?: BoardI[];
@@ -52,7 +52,7 @@ export interface ItemI {
   stage?: string;
   end?: Date;
 
-  actions?: ActionI[];
+  tasks?: TaskI[];
   pillarID?: string;
   boardID?: string;
   groupID?: string;
