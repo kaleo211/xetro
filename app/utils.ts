@@ -12,31 +12,37 @@ export const createdAt = () => {
   };
 };
 
-
 export const makeRequest = async (url: string, method: string, body: Keyable, expectingStatus: number, expectingJSON: boolean): Promise<Keyable> => {
   try {
-    const resp = await fetch(url, {
+    let options: any = {
       method,
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-      body: JSON.stringify(body),
-    });
+    }
 
-    if (resp.status != expectingStatus) {
+    if (body) {
+      options = {
+        ...options,
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+        body: JSON.stringify(body),
+      }
+    }
+
+    const resp = await fetch(url, options);
+    if (resp.status !== expectingStatus) {
       console.error('error receiving unexpected status code:', resp.status);
-      return {};
+      return null;
     }
 
     if (expectingJSON) {
       return await resp.json();
     }
 
-    return {};
+    return null;
 
   } catch (err) {
-    console.log('error making request to backend:', err);
-    return {};
+    console.error('error making request to backend:', err);
+    return null;
   }
 }
 
@@ -48,6 +54,10 @@ export const searchReq = async (type:string, body:Keyable): Promise<Keyable> => 
 export const fetchReq = async (url: string): Promise<Keyable> => {
   const receivedBody = await makeRequest(url, 'GET', null, 200, true);
   return receivedBody;
+};
+
+export const touchReq = async (url: string): Promise<void> => {
+  await makeRequest(url, 'GET', null, 200, false);
 };
 
 export const getReq = async (resource: string, id: string): Promise<Keyable> => {
@@ -70,7 +80,6 @@ export const patchReq = async (resource: string, body: Keyable): Promise<Keyable
   return receivedBody;
 };
 
-export const deleteReq = async (resource: string, id: string): Promise<Keyable> => {
-  const receivedBody = await makeRequest(`/${resource}/${id}`, 'PATCH', null, 200, true);
-  return receivedBody;
+export const deleteReq = async (resource: string, id: string): Promise<void> => {
+  await makeRequest(`/${resource}/${id}`, 'PATCH', null, 200, false);
 };

@@ -5,18 +5,18 @@ import { setActiveItem } from '../local/action';
 import { getMeRaw } from '../user/action';
 import { ApplicationState, AppThunk } from '../types';
 import { setBoardRaw } from '../board/action';
-import { deleteReq, fetchReq, postReq } from '../../utils';
+import { deleteReq, fetchReq, postReq, touchReq } from '../../utils';
 
 
 export const likeItemThunk = (item: ItemI): AppThunk => {
   return async (dispatch: Dispatch, getState: ()=>ApplicationState) => {
-    await fetchReq(`/items/${item.id}/like`);
+    await touchReq(`/items/${item.id}/like`);
     dispatch(await setBoardRaw(getState().board.board.id));
   }
 };
 
 export const finishItemAction = async (item: ItemI): Promise<void> => {
-  await fetchReq(`/items/${item.id}/finish`);
+  await touchReq(`/items/${item.id}/finish`);
 }
 
 export const finishItemThunk = (item: ItemI): AppThunk => {

@@ -240,7 +240,7 @@ class Pillar extends React.Component<PropsI, StateI> {
             </div>
           </div>
           {showAddTask(item) && <Task />}
-          {board.locked && item.id === activeItem.id && item.stage === 'active' &&
+          {board.locked && activeItem && item.id === activeItem.id && item.stage === 'active' &&
             <Overlay className={classes.progress}>
               <ProgressIndicator percentComplete={1 - activeItemProgress} barHeight={6} />
             </Overlay>

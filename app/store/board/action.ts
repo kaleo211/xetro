@@ -3,7 +3,7 @@ import { AnyAction, Dispatch } from 'redux';
 import { BoardTaskTypes, ApplicationState, AppThunk } from '../types';
 import { setPage } from '../local/action';
 import { Keyable } from '../../../types/common';
-import { fetchReq, getReq, postReq } from 'app/utils';
+import { fetchReq, getReq, postReq } from '../../utils';
 
 export const fetchGroupActiveBoardRaw = async (groupID: string): Promise<AnyAction> => {
   const board = await fetchReq(`/boards/active/${groupID}`);
