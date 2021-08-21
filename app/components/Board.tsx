@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { compose, Dispatch } from 'redux';
+import { compose } from 'redux';
 
 import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { DocumentCard, Text, TextField, Modal, Image } from '@fluentui/react';
@@ -49,11 +49,11 @@ interface PropsI {
   group: GroupI
   elmo: boolean
 
-  postPillar(pillar: PillarI): Promise<void>
+  deletePillar(pillar: PillarI): Promise<void>
   patchPillar(pillar: PillarI): Promise<void>
   postItem(item:ItemI): Promise<void>
+  postPillar(pillar: PillarI): Promise<void>
   setELMO(val: boolean): void
-  deletePillar(pillar: PillarI): Promise<void>
 }
 
 interface StateI {
@@ -218,14 +218,7 @@ const mapStateToProps = (state:ApplicationState) => ({
   board: state.board.board,
   group: state.group.group,
 });
-
-const mapDispatchToProps = {
-  deletePillar,
-  patchPillar,
-  postItem,
-  postPillar,
-  setELMO,
-};
+const mapDispatchToProps = { deletePillar, patchPillar, postItem, postPillar, setELMO };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

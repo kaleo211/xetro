@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { compose, Dispatch } from 'redux';
+import { compose } from 'redux';
 
 import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { IconButton } from '@fluentui/react';
@@ -9,7 +9,7 @@ import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard, refreshBoard
 import { setGroup } from '../store/group/action';
 import { setPage } from '../store/local/action';
 import { finishItem } from '../store/item/action';
-import { BoardI, GroupI, ItemI, UserI } from '../../types/models';
+import { BoardI, GroupI, UserI } from '../../types/models';
 import { ApplicationState } from '../store/types';
 
 const iconStyle = {
@@ -32,19 +32,18 @@ interface PropI {
   page: string;
   me: UserI;
 
-  setBoards(): Promise<void>;
-  setBoard(id: string): Promise<void>;
-  refreshBoard(): Promise<void>;
   archiveBoard(id: string): Promise<void>;
-  setGroup(id: string): Promise<void>;
   finishItem(): Promise<void>;
-  setPage(page: string): void;
   lockBoard(id:string): Promise<void>;
+  refreshBoard(): Promise<void>;
+  setBoard(id: string): Promise<void>;
+  setBoards(): Promise<void>;
+  setGroup(id: string): Promise<void>;
+  setPage(page: string): void;
   unlockBoard(id:string): Promise<void>;
 }
 
-interface StateI {
-}
+interface StateI {}
 
 class ActionBar extends React.Component<PropI, StateI> {
   constructor(props: any) {
@@ -60,11 +59,6 @@ class ActionBar extends React.Component<PropI, StateI> {
 
   onRefreshBoard() {
     this.props.refreshBoard();
-  }
-
-  onViewHistory() {
-    this.props.setBoards();
-    this.props.setPage('boardList');
   }
 
   async onArchiveBoard() {
@@ -135,18 +129,7 @@ const mapStateToProps = (state:ApplicationState) => ({
   page: state.local.page,
   me: state.user.me,
 });
-
-const mapDispatchToProps = {
-  archiveBoard,
-  finishItem,
-  lockBoard,
-  setBoard,
-  setBoards,
-  setGroup,
-  setPage,
-  unlockBoard,
-  refreshBoard,
-};
+const mapDispatchToProps = { archiveBoard, finishItem, lockBoard, setBoard, setBoards, setGroup, setPage, unlockBoard, refreshBoard };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

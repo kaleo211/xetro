@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { compose, Dispatch } from 'redux';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 
-import { DocumentCard, DocumentCardActivity, DocumentCardDetails, DocumentCardTitle, FontIcon, IconButton, Overlay, Stack, Separator, Dropdown, IDocumentCardActivityPerson } from '@fluentui/react';
+import { DocumentCard, DocumentCardActivity, DocumentCardDetails, DocumentCardTitle, FontIcon, IconButton, Overlay, Stack, Separator, Dropdown } from '@fluentui/react';
 import { mergeStyleSets, createTheme } from '@fluentui/react/lib/Styling';
 
 import { fetchGroupActiveBoard, joinOrCreateBoard } from '../store/board/action';
@@ -86,11 +86,11 @@ const classNames = mergeStyleSets({
 interface PropsI {
   group: GroupI;
 
+  deleteAction(action: ActionI): Promise<void>;
   fetchGroupActiveBoard(id: string): Promise<void>;
   finishAction(action: ActionI): Promise<void>;
-  deleteAction(action: ActionI): Promise<void>;
-  setFacilitator(id: string): Promise<void>;
   joinOrCreateBoard(): void;
+  setFacilitator(id: string): Promise<void>;
 }
 
 interface StateI {
@@ -247,13 +247,7 @@ const mapStateToProps = (state: ApplicationState) => ({
   group: state.group.group,
   me: state.user.me,
 });
-const mapDispatchToProps = {
-  deleteAction,
-  fetchGroupActiveBoard,
-  finishAction,
-  joinOrCreateBoard,
-  setFacilitator,
-};
+const mapDispatchToProps = { deleteAction, fetchGroupActiveBoard, finishAction, joinOrCreateBoard, setFacilitator };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

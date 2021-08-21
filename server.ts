@@ -4,13 +4,12 @@ import express from 'express';
 import morgan from 'morgan';
 import * as path from 'path';
 import session from 'express-session';
-
 import { Server, Socket } from 'socket.io';
 import * as http from 'http';
+import { Sequelize } from 'sequelize';
 
 import { Database } from './models/index';
 import { User } from './models/user';
-import { Sequelize } from 'sequelize';
 import { Service } from './services/index';
 import { Routers } from './routers/index';
 
@@ -66,7 +65,7 @@ const isAuthenticated = (req: express.Request, res: express.Response, next: expr
 app.use(cookieParser());
 
 app.use('/dell', routers.dell.router);
-app.use('/socket', isAuthenticated, routers.socket.router);
+app.use('/socket.io', isAuthenticated, routers.socket.router);
 app.use('/actions', isAuthenticated, routers.action.router);
 app.use('/boards', isAuthenticated, routers.board.router);
 app.use('/groups', isAuthenticated, routers.group.router);
@@ -80,10 +79,6 @@ app.get('/', (req, res) => {
 app.use(express.static('dist'));
 
 const port = process.env.PORT || 8080;
-// server.listen(port, () => {
-//   console.warn('Xetro is listenning on port:', port);
-// });
-
 const server = http.createServer(app);
 const io = new Server(server);
 

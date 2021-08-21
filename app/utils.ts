@@ -1,4 +1,4 @@
-import { Keyable } from '../../types/common';
+import { Keyable } from '../types/common';
 
 export default {
   createdAt() {

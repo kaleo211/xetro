@@ -1,7 +1,7 @@
 import { AnyAction, Dispatch } from 'redux';
 
 import { AppThunk, UserActionTypes } from '../types';
-import Utils from '../../components/Utils';
+import Utils from '../../utils';
 
 export const getMeRaw = async (): Promise<AnyAction> => {
   const me = await Utils.fetch('/users/me');
@@ -19,7 +19,6 @@ export const getMeRaw = async (): Promise<AnyAction> => {
 
 export const getMe = (): AppThunk => {
   return async (dispatch: Dispatch) => {
-    console.log("action:", await getMeRaw());
     dispatch(await getMeRaw());
   }
 };

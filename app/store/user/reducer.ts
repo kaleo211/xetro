@@ -1,5 +1,6 @@
-import { UserActionTypes, UserStateI } from '../types';
 import { Reducer } from "redux";
+
+import { UserActionTypes, UserStateI } from '../types';
 
 const initialState: UserStateI = {
   users: [],
@@ -15,7 +16,6 @@ const reducer: Reducer<UserStateI> = (state = initialState, action) => {
       };
 
     case UserActionTypes.SET_ME:
-      console.log("reducer:", action);
       return {
         ...state,
         me: action.me,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dispatch, compose, AnyAction } from 'redux';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 
 import { initializeIcons } from '@fluentui/react/lib/Icons';
@@ -19,7 +19,7 @@ import { sleep } from '../utils/tool';
 import yay from './public/yay.png';
 import { BoardI, GroupI, UserI } from '../types/models';
 import { ApplicationState } from './store/types';
-import { Keyable } from 'types/common';
+import { Keyable } from '../types/common';
 
 initializeIcons();
 
@@ -100,11 +100,9 @@ class App extends React.Component<PropsI, StateI> {
     if (this.props.me == null) {
       window.open('/dell', '_self');
     }
-    console.log("dell:", this.props.me);
 
     while (this.props.me == null) {
       try {
-        console.log("dell:", this.props.me);
         await this.props.getMe();
       } catch (err) {
         console.error('error login Dell:', err);
@@ -122,7 +120,7 @@ class App extends React.Component<PropsI, StateI> {
   render() {
     const { page, group, board, me } = this.props;
     const { confetti } = this.state;
-    console.log("app:", me);
+
     return (me &&
       <div className={classNames.app}>
         <div className={classNames.nav}>
@@ -157,14 +155,7 @@ const mapStateToProps = (state:ApplicationState) => ({
   me: state.user.me,
   page: state.local.page,
 });
-
-const mapDispatchToProps = {
-  fetchUsers,
-  getMe,
-  searchGroups,
-  setPage,
-  setSocketIOClient,
-};
+const mapDispatchToProps = { fetchUsers, getMe, searchGroups, setPage, setSocketIOClient };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

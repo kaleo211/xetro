@@ -1,5 +1,6 @@
-import { BoardActionTypes, BoardStateI } from '../types';
 import { Reducer } from "redux";
+
+import { BoardActionTypes, BoardStateI } from '../types';
 
 const initialState: BoardStateI = {
   boards: [],
@@ -20,6 +21,9 @@ const reducer: Reducer<BoardStateI> = (state = initialState, action) => {
 
     case BoardActionTypes.SET_HISTORY_BOARDS:
       return { ...state, historyBoards: action.historyBoards };
+
+    case BoardActionTypes.FAILED:
+      console.error(action.error);
 
     default:
       return state;

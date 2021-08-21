@@ -30,9 +30,9 @@ interface PropsI {
   addingAction: boolean;
 
   hideAddingAction(): void;
+  postAction(item: ActionI): void;
   setActiveItem(item: ItemI): void;
   showActions(id: string): void;
-  postAction(item: ActionI): void;
 }
 
 interface StateI {
@@ -181,12 +181,7 @@ const mapStateToProps = (state:ApplicationState) => ({
   addingAction: state.local.addingAction,
 });
 
-const mapDispatchToProps = {
-  hideAddingAction,
-  postAction,
-  setActiveItem,
-  showActions,
-};
+const mapDispatchToProps = { hideAddingAction, postAction, setActiveItem, showActions };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

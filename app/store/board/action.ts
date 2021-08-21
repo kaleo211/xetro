@@ -1,7 +1,8 @@
-import { BoardActionTypes, ApplicationState, AppThunk } from '../types';
-import Utils from '../../components/Utils';
-import { setPage } from '../local/action';
 import { AnyAction, Dispatch } from 'redux';
+
+import { BoardActionTypes, ApplicationState, AppThunk } from '../types';
+import Utils from '../../utils';
+import { setPage } from '../local/action';
 import { Keyable } from '../../../types/common';
 
 export const fetchGroupActiveBoardRaw = async (groupID: string): Promise<AnyAction> => {
@@ -87,12 +88,15 @@ export const listBoards = (groupID: string):AppThunk => {
     const boards = await Utils.fetch(`/boards/group/${groupID}`);
     if (boards) {
       return dispatch({
-        type: BoardActionTypes.SET_HISTORY_BOARDS,
-        historyBoards: boards,
+        type: BoardActionTypes.FAILED,
+        error: 'error listing boards',
       });
-    } else {
-      console.error('error listing boards');
     }
+
+    return dispatch({
+      type: BoardActionTypes.SET_HISTORY_BOARDS,
+      historyBoards: boards,
+    });
   }
 };
 

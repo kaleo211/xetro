@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AnyAction, compose, Dispatch } from 'redux';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 
 import { DefaultButton, DocumentCard, DocumentCardTitle, Stack, Text } from '@fluentui/react';
@@ -26,11 +26,11 @@ interface PropsI {
   me: UserI;
   groups: GroupI[];
 
+  addUserToGroup(userID: string, groupID: string): Promise<void>;
+  postGroup(group: GroupI): Promise<void>;
+  searchGroups(query: Keyable): Promise<void>;
   setGroup(groupID: string): void;
   showGroupPage(): void;
-  searchGroups(query: Keyable): Promise<void>;
-  postGroup(group: GroupI): Promise<void>;
-  addUserToGroup(userID: string, groupID: string): Promise<void>;
 }
 
 interface StateI {
@@ -121,13 +121,7 @@ const mapStateToProps = (state:ApplicationState) => ({
   groups: state.group.groups,
   me: state.user.me,
 });
-const mapDispatchToProps = {
-  addUserToGroup,
-  postGroup,
-  searchGroups,
-  setGroup,
-  showGroupPage,
-};
+const mapDispatchToProps = { addUserToGroup, postGroup, searchGroups, setGroup, showGroupPage };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

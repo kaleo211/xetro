@@ -1,6 +1,6 @@
 import { AnyAction, Dispatch } from 'redux';
 import { PillarI } from '../../../types/models';
-import Utils from '../../components/Utils';
+import Utils from '../../utils';
 import { setBoardRaw } from '../board/action';
 import { AppThunk } from '../types';
 

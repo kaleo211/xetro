@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { compose, Dispatch } from 'redux';
+import { compose } from 'redux';
 
 import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { DocumentCard, DocumentCardTitle, IconButton, ProgressIndicator, Persona, PersonaSize, Text, Overlay, CommandButton } from '@fluentui/react';
@@ -79,17 +79,17 @@ interface PropsI {
   showActionMap: Keyable
   addingAction: boolean
 
+  clearActiveItemTimer(): void;
   deleteItem(item: ItemI): Promise<void>;
   finishItem(item: ItemI): Promise<void>;
-  startItem(item: ItemI): Promise<void>;
-  startActiveItemTimer(): void;
-  clearActiveItemTimer(): void;
-  setActiveItem(Item: ItemI): void;
-  likeItem(item: ItemI): Promise<void>;
-  showAddingAction(): void;
   hideActions(id: string): void;
-  showActions(id: string): void;
+  likeItem(item: ItemI): Promise<void>;
+  setActiveItem(Item: ItemI): void;
   setHoverItem(item: ItemI): void;
+  showActions(id: string): void;
+  showAddingAction(): void;
+  startActiveItemTimer(): void;
+  startItem(item: ItemI): Promise<void>;
 }
 
 interface StateI {}
@@ -265,20 +265,7 @@ const mapStateToProps = (state:ApplicationState) => ({
   showActionMap: state.local.showActionMap,
   addingAction: state.local.addingAction,
 });
-
-const mapDispatchToProps = {
-  deleteItem,
-  setActiveItem,
-  setHoverItem,
-  likeItem,
-  finishItem,
-  startItem,
-  showActions,
-  hideActions,
-  showAddingAction,
-  startActiveItemTimer,
-  clearActiveItemTimer,
-};
+const mapDispatchToProps = { deleteItem, setActiveItem, setHoverItem, likeItem, finishItem, startItem, showActions, hideActions, showAddingAction, startActiveItemTimer, clearActiveItemTimer };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

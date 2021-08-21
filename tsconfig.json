@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "esModuleInterop": true,
+    "jsx": "react",
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "outDir": "dist",
     "skipLibCheck": true,
     "target": "es6",
-    "jsx": "react",
-    "esModuleInterop": true,
     "typeRoots" : ["node_modules/@types", "types"]
   },
   "exclude": []

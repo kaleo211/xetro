@@ -1,10 +1,9 @@
-import Utils from '../../components/Utils';
-import { refreshBoard } from '../board/action';
+import { AnyAction, Dispatch } from 'redux';
+
+import Utils from '../../utils';
+import { ActionI, ItemI } from '../../../types/models';
 import { setActiveItem } from '../local/action';
 import { getMeRaw } from '../user/action';
-import { setGroup } from '../group/action';
-import { ActionI, ItemI } from '../../../types/models';
-import { AnyAction, Dispatch } from 'redux';
 import { ApplicationState, AppThunk } from '../types';
 
 export const patchItem = (item: ItemI): AppThunk => {

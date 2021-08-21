@@ -1,6 +1,6 @@
 import { ApplicationState, AppThunk, GroupActionTypes } from '../types';
 import { getMeRaw } from '../user/action';
-import Utils from '../../components/Utils';
+import Utils from '../../utils';
 import { Keyable } from '../../../types/common';
 import { AnyAction, Dispatch } from 'redux';
 

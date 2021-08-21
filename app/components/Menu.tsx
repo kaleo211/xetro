@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { compose, Dispatch } from 'redux';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 
 import { Text } from '@fluentui/react/lib/Text';
@@ -51,8 +51,8 @@ interface PropsI {
   page: string;
   me: UserI;
 
-  setPage(page: string): void;
   joinOrCreateBoard(): Promise<void>;
+  setPage(page: string): void;
 }
 
 interface StateI {}
@@ -116,10 +116,7 @@ const mapStateToProps = (state: ApplicationState) => ({
   page: state.local.page,
   me: state.user.me,
 });
-const mapDispatchToProps = {
-  setPage,
-  joinOrCreateBoard,
-};
+const mapDispatchToProps = { setPage, joinOrCreateBoard };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
