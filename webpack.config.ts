@@ -2,11 +2,14 @@ import * as webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 
 const webpackConfig: webpack.Configuration = {
-  entry: './app/index.js',
+  entry: './app/index.tsx',
   mode: 'development',
   output: {
-    path: __dirname + '/dist/app',
+    path: __dirname + '/dist',
     filename: 'bundle.js',
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js']
   },
   module: {
     rules: [

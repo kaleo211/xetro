@@ -77,7 +77,7 @@ app.use('/users', isAuthenticated, routers.user.router);
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
-app.use(express.static('dist/app'));
+app.use(express.static('dist'));
 
 const port = process.env.PORT || 8080;
 // server.listen(port, () => {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { compose, Dispatch } from 'redux';
+import { compose } from 'redux';
 
 import { DefaultButton, Dialog, DialogFooter, PrimaryButton, TextField, Persona, PersonaSize, Text } from '@fluentui/react';
 import { mergeStyleSets } from '@fluentui/react/lib/Styling';
@@ -181,12 +181,12 @@ const mapStateToProps = (state:ApplicationState) => ({
   addingAction: state.local.addingAction,
 });
 
-const mapDispatchToProps = (dispatch:Dispatch) => ({
-  hideAddingAction: () => dispatch(hideAddingAction()),
-  postAction: (action:ActionI) => dispatch(postAction(action)),
-  setActiveItem: (item:ItemI) => dispatch(setActiveItem(item)),
-  showActions: (id:string) => dispatch(showActions(id)),
-});
+const mapDispatchToProps = {
+  hideAddingAction,
+  postAction,
+  setActiveItem,
+  showActions,
+};
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

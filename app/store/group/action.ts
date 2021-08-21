@@ -1,10 +1,8 @@
 import { ApplicationState, AppThunk, GroupActionTypes } from '../types';
-import { getMe } from '../user/action';
-import { setPage } from '../local/action';
+import { getMeRaw } from '../user/action';
 import Utils from '../../components/Utils';
-import { fetchGroupActiveBoard, setBoard } from '../board/action';
 import { Keyable } from '../../../types/common';
-import { Dispatch } from 'redux';
+import { AnyAction, Dispatch } from 'redux';
 
 export const searchGroups = (query:Keyable): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
@@ -43,33 +41,37 @@ export const postGroup = (newGroup:Keyable): AppThunk => {
       } else {
         console.error('error fetching group after posting group', group);
       }
-      dispatch(getMe());
+      dispatch(await getMeRaw());
     }
   }
 };
 
+export const setGroupRaw = async (groupID: string): Promise<AnyAction> => {
+  if (groupID == null) {
+    return {
+      type: GroupActionTypes.SET_GROUP,
+      group: null,
+    };
+  }
+
+  const group = await Utils.get('groups', groupID);
+  if (group) {
+    // await fetchGroupActiveBoardRaw(groupID);
+    return {
+      type: GroupActionTypes.SET_GROUP,
+      group,
+    };
+  }
+
+  return {
+    type: GroupActionTypes.FAILED,
+    error: 'error fetching group for setting group',
+  }
+}
+
 export const setGroup = (groupID:string): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
-    if (groupID == null) {
-      dispatch(setBoard(null));
-      dispatch(setPage(''));
-      dispatch({
-        type: GroupActionTypes.SET_GROUP,
-        group: null,
-      });
-      return;
-    }
-
-    const group = await Utils.get('groups', groupID);
-    if (group) {
-      dispatch(fetchGroupActiveBoard(groupID));
-      dispatch({
-        type: GroupActionTypes.SET_GROUP,
-        group,
-      });
-    } else {
-      console.error('error fetching group for setting group', group);
-    }
+    dispatch(await setGroupRaw(groupID));
   }
 };
 

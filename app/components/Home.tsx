@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { compose, Dispatch } from 'redux';
+import { AnyAction, compose, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import { DefaultButton, DocumentCard, DocumentCardTitle, Stack, Text } from '@fluentui/react';
@@ -92,7 +92,7 @@ class Group extends React.Component<PropsI, StateI> {
               </TooltipHost>
             </Stack.Item>
           ))}
-          {groups.length === 0 &&
+          {groups && groups.length === 0 &&
             <Stack.Item align="auto">
               <DocumentCard className={classNames.group}>
                 <div style={{ display: 'flex', flexDirection: 'column', marginTop: 56 }}>
@@ -121,13 +121,13 @@ const mapStateToProps = (state:ApplicationState) => ({
   groups: state.group.groups,
   me: state.user.me,
 });
-const mapDispatchToProps = (dispatch:Dispatch) => ({
-  addUserToGroup: (userID:string, groupID:string) => dispatch(addUserToGroup(userID, groupID)),
-  postGroup: (group:GroupI) => dispatch(postGroup(group)),
-  searchGroups: (query:Keyable) => dispatch(searchGroups(query)),
-  setGroup: (id:string) => dispatch(setGroup(id)),
-  showGroupPage: () => dispatch(showGroupPage()),
-});
+const mapDispatchToProps = {
+  addUserToGroup,
+  postGroup,
+  searchGroups,
+  setGroup,
+  showGroupPage,
+};
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

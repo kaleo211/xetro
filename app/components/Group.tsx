@@ -247,13 +247,13 @@ const mapStateToProps = (state: ApplicationState) => ({
   group: state.group.group,
   me: state.user.me,
 });
-const mapDispatchToProps = (dispatch:Dispatch) => ({
-  deleteAction: (action:ActionI) => dispatch(deleteAction(action)),
-  fetchGroupActiveBoard: (id:string) => dispatch(fetchGroupActiveBoard(id)),
-  finishAction: (action:ActionI) => dispatch(finishAction(action)),
-  joinOrCreateBoard: () => dispatch(joinOrCreateBoard()),
-  setFacilitator: (id:string) => dispatch(setFacilitator(id)),
-});
+const mapDispatchToProps = {
+  deleteAction,
+  fetchGroupActiveBoard,
+  finishAction,
+  joinOrCreateBoard,
+  setFacilitator,
+};
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

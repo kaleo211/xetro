@@ -1,5 +1,5 @@
 import { ApplicationState, AppThunk, LocalActionTypes } from '../types';
-import { finishItem } from '../item/action';
+import { finishItem, finishItemRaw } from '../item/action';
 import { Socket } from 'socket.io-client';
 import { ItemI } from '../../../types/models';
 import { Dispatch } from 'redux';
@@ -57,17 +57,17 @@ export const setELMO = (elmo:boolean) => ({
 });
 
 export const startActiveItemTimer = ():AppThunk => {
-  return (dispatch: Dispatch, getState: () => ApplicationState) => {
+  return async (dispatch: Dispatch, getState: () => ApplicationState) => {
     const { activeItem, secondsPerItem } = getState().local;
     if (activeItem && activeItem.end) {
-      const timer = setInterval(() => {
+      const timer = setInterval(async () => {
         const difference = (new Date(activeItem.end).getTime() - new Date().getTime()) / 1000;
         let progress = 1;
         if (difference > 0 && difference < secondsPerItem) {
           progress = (secondsPerItem - difference) / secondsPerItem;
         } else {
           clearInterval(timer);
-          dispatch(finishItem(activeItem));
+          dispatch(await finishItemRaw(activeItem));
           dispatch(setELMO(true));
         }
         dispatch({

@@ -266,19 +266,19 @@ const mapStateToProps = (state:ApplicationState) => ({
   addingAction: state.local.addingAction,
 });
 
-const mapDispatchToProps = (dispatch:Dispatch) => ({
-  deleteItem: (item:ItemI) => dispatch(deleteItem(item)),
-  setActiveItem: (item:ItemI) => dispatch(setActiveItem(item)),
-  setHoverItem: (item:ItemI) => dispatch(setHoverItem(item)),
-  likeItem: (item:ItemI) => dispatch(likeItem(item)),
-  finishItem: (item:ItemI) => dispatch(finishItem(item)),
-  startItem: (item:ItemI) => dispatch(startItem(item)),
-  showActions: (id:string) => dispatch(showActions(id)),
-  hideActions: (id:string) => dispatch(hideActions(id)),
-  showAddingAction: () => dispatch(showAddingAction()),
-  startActiveItemTimer: () => dispatch(startActiveItemTimer()),
-  clearActiveItemTimer: () => dispatch(clearActiveItemTimer()),
-});
+const mapDispatchToProps = {
+  deleteItem,
+  setActiveItem,
+  setHoverItem,
+  likeItem,
+  finishItem,
+  startItem,
+  showActions,
+  hideActions,
+  showAddingAction,
+  startActiveItemTimer,
+  clearActiveItemTimer,
+};
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

@@ -136,17 +136,17 @@ const mapStateToProps = (state:ApplicationState) => ({
   me: state.user.me,
 });
 
-const mapDispatchToProps = (dispatch:Dispatch) => ({
-  archiveBoard: (id:string) => dispatch(archiveBoard(id)),
-  finishItem: (item:ItemI) => dispatch(finishItem(item)),
-  lockBoard: (id:string) => dispatch(lockBoard(id)),
-  setBoard: (id:string) => dispatch(setBoard(id)),
-  setBoards: () => dispatch(setBoards()),
-  setGroup: (id:string) => dispatch(setGroup(id)),
-  setPage: (page:string) => dispatch(setPage(page)),
-  unlockBoard: (id:string) => dispatch(unlockBoard(id)),
-  refreshBoard: () => dispatch(refreshBoard()),
-});
+const mapDispatchToProps = {
+  archiveBoard,
+  finishItem,
+  lockBoard,
+  setBoard,
+  setBoards,
+  setGroup,
+  setPage,
+  unlockBoard,
+  refreshBoard,
+};
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

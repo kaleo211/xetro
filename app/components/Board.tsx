@@ -219,13 +219,13 @@ const mapStateToProps = (state:ApplicationState) => ({
   group: state.group.group,
 });
 
-const mapDispatchToProps = (dispatch:Dispatch) => ({
-  deletePillar: (pillar:PillarI) => dispatch(deletePillar(pillar)),
-  patchPillar: (pillar:PillarI) => dispatch(patchPillar(pillar)),
-  postItem: (item:ItemI) => dispatch(postItem(item)),
-  postPillar: (pillar:PillarI) => dispatch(postPillar(pillar)),
-  setELMO: (on:boolean) => dispatch(setELMO(on)),
-});
+const mapDispatchToProps = {
+  deletePillar,
+  patchPillar,
+  postItem,
+  postPillar,
+  setELMO,
+};
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

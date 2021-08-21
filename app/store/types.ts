@@ -1,9 +1,11 @@
 import { Socket } from "socket.io";
 import { BoardI, GroupI, ItemI, UserI } from "types/models";
-import { Keyable } from "utils/tool";
+import { Keyable } from "types/common";
+import { ThunkAction } from "redux-thunk";
+import { Action } from "redux";
 
 export enum LocalActionTypes {
-  SET_PAGE = 1,
+  SET_PAGE = 0,
   SET_ELMO,
   SET_ITEM,
   SET_HOVER_ITEM,
@@ -32,8 +34,9 @@ export interface LocalStateI {
 }
 
 export enum UserActionTypes {
-  SET_USERS = 1,
+  SET_USERS = 100,
   SET_ME,
+  FAILED,
 }
 
 export interface UserStateI {
@@ -42,10 +45,11 @@ export interface UserStateI {
 }
 
 export enum BoardActionTypes {
-  SET_BOARD = 1,
+  SET_BOARD = 200,
   SET_BOARDS,
   SET_PILLARS,
   SET_HISTORY_BOARDS,
+  FAILED,
 }
 
 export interface BoardStateI {
@@ -55,8 +59,9 @@ export interface BoardStateI {
 }
 
 export enum GroupActionTypes {
-  SET_GROUP = 1,
+  SET_GROUP = 300,
   SET_GROUPS,
+  FAILED,
 }
 
 export interface GroupStateI {

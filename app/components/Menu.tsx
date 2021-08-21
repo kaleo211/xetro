@@ -116,10 +116,10 @@ const mapStateToProps = (state: ApplicationState) => ({
   page: state.local.page,
   me: state.user.me,
 });
-const mapDispatchToProps = (dispatch:Dispatch) => ({
-  setPage: (page:string) => dispatch(setPage(page)),
-  joinOrCreateBoard: () => dispatch(joinOrCreateBoard()),
-});
+const mapDispatchToProps = {
+  setPage,
+  joinOrCreateBoard,
+};
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

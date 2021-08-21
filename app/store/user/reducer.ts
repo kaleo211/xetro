@@ -15,6 +15,7 @@ const reducer: Reducer<UserStateI> = (state = initialState, action) => {
       };
 
     case UserActionTypes.SET_ME:
+      console.log("reducer:", action);
       return {
         ...state,
         me: action.me,
