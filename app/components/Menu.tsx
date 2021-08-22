@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { RouteComponentProps, withRouter } from 'react-router';
 
 import { Text } from '@fluentui/react/lib/Text';
 import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { Breadcrumb, IBreadcrumbItem } from '@fluentui/react/lib/Breadcrumb';
 import { Link, Icon } from '@fluentui/react';
 
-import { setPage } from '../store/local/action';
 import { joinOrCreateBoard } from '../store/board/action';
 import ToolBar from './ToolBar';
 import { BoardI, GroupI, UserI } from '../../types/models';
@@ -45,26 +45,25 @@ const classNames = mergeStyleSets({
 });
 
 
-interface PropsI {
+interface PropsI extends RouteComponentProps {
   group: GroupI;
   board: BoardI;
-  page: string;
   me: UserI;
 
   joinOrCreateBoard(): Promise<void>;
-  setPage(page: string): void;
 }
 
-interface StateI {}
+interface StateI { }
 
 class Menu extends React.Component<PropsI, StateI> {
-  constructor(props:any) {
+  constructor(props: any) {
     super(props);
-    this.state = {};
+    this.state = { };
   }
 
-  onJoinOrCreateBoard() {
-    this.props.joinOrCreateBoard();
+  async onJoinOrCreateBoard() {
+    await this.props.joinOrCreateBoard();
+    this.props.history.push('/board');
   }
 
   onRenderItem(item:Keyable) {
@@ -81,15 +80,12 @@ class Menu extends React.Component<PropsI, StateI> {
   }
 
   render() {
-    const { group, board, page, me } = this.props;
+    const { group, history, me } = this.props;
 
-    const bread:IBreadcrumbItem[] = [{ text: 'Xetro', key: 'home', onClick: () => this.props.setPage('home') }];
+    const bread: IBreadcrumbItem[] = [{ text: 'Xetro', key: 'home', onClick: () => history.push('/') }];
     if (group) {
-      bread.push({ text: group.name, key: 'group', onClick: () => this.props.setPage('group') });
+      bread.push({ text: group.name, key: 'group', onClick: () => history.push('/group') });
       bread.push({ text: 'Board', key: 'board', onClick: this.onJoinOrCreateBoard.bind(this) });
-    }
-    if (board && page === 'board') {
-      bread.push({ text: '', key: 'task' });
     }
 
     return (
@@ -113,11 +109,10 @@ class Menu extends React.Component<PropsI, StateI> {
 const mapStateToProps = (state: ApplicationState) => ({
   group: state.group.group,
   board: state.board.board,
-  page: state.local.page,
   me: state.user.me,
 });
-const mapDispatchToProps = { setPage, joinOrCreateBoard };
+const mapDispatchToProps = { joinOrCreateBoard };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-)(Menu);
+)(withRouter(Menu));

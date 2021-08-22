@@ -1,7 +1,6 @@
 import { AnyAction, Dispatch } from 'redux';
 
 import { BoardTaskTypes, ApplicationState, AppThunk } from '../types';
-import { setPage } from '../local/action';
 import { Keyable } from '../../../types/common';
 import { fetchReq, getReq, postReq } from '../../utils';
 
@@ -45,8 +44,6 @@ export const joinOrCreateBoard = (): AppThunk => {
       };
       dispatch(await postBoardRaw(newBoard));
     }
-
-    dispatch(setPage('board'));
   }
 }
 
@@ -79,24 +76,6 @@ export const postBoardRaw = async (newBoard: Keyable): Promise<AnyAction> => {
 export const postBoard = (newBoard:Keyable): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
     dispatch(await postBoardRaw(newBoard));
-  }
-};
-
-
-export const listBoards = (groupID: string):AppThunk => {
-  return async (dispatch:Dispatch): Promise<AnyAction> => {
-    const boards = await fetchReq(`/boards/group/${groupID}`);
-    if (boards) {
-      return dispatch({
-        type: BoardTaskTypes.FAILED,
-        error: 'error listing boards',
-      });
-    }
-
-    return dispatch({
-      type: BoardTaskTypes.SET_HISTORY_BOARDS,
-      historyBoards: boards,
-    });
   }
 };
 
@@ -144,7 +123,6 @@ export const setBoard = (boardID: string): AppThunk => {
 export const archiveBoard = (boardID: string):AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
     await fetchReq(`/boards/${boardID}/archive`);
-    dispatch(setPage('group'));
   }
 };
 

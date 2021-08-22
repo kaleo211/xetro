@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { Route, Switch } from 'react-router-dom';
 
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { mergeStyleSets, loadTheme } from '@fluentui/react/lib/Styling';
@@ -13,7 +14,7 @@ import Group from './components/Group';
 import Home from './components/Home';
 import Menu from './components/Menu';
 import { searchGroups } from './store/group/action';
-import { setPage, setSocketIOClient } from './store/local/action';
+import { setSocketIOClient } from './store/local/action';
 import { fetchUsers, getMe } from './store/user/action';
 import { sleep } from '../utils/tool';
 import yay from './public/yay.png';
@@ -61,7 +62,6 @@ const classNames = mergeStyleSets({
 
 
 interface PropsI {
-  page: string;
   me: UserI;
   group: GroupI;
   board: BoardI;
@@ -118,7 +118,7 @@ class App extends React.Component<PropsI, StateI> {
   }
 
   render() {
-    const { page, group, board, me } = this.props;
+    const { group, board, me } = this.props;
     const { confetti } = this.state;
 
     return (me &&
@@ -127,22 +127,20 @@ class App extends React.Component<PropsI, StateI> {
           <Menu />
         </div>
         <main className={classNames.content}>
-          {page === 'home' && <Home />}
-          {page === 'group' && group && <Group />}
-          {page === 'board' && board &&
-            <div>
-              <Board />
-              <div className={classNames.float}>
-                <Image
-                  height={48}
-                  width={48}
-                  src={yay}
-                  onClick={this.onConfetti.bind(this)}
-                />
-                <Confetti active={confetti} config={{ angle: 120, dragFriction: 0.12, startVelocity: 120, elementCount: 200 }} />
-              </div>
-            </div>
-          }
+          <Switch>
+            <Route path='/' component={Home} exact />
+            <Route path='/group' component={Group} />
+            <Route path='/board' component={Board} />
+                {/* <div className={classNames.float}>
+                  <Image
+                    height={48}
+                    width={48}
+                    src={yay}
+                    onClick={this.onConfetti.bind(this)}
+                  />
+                  <Confetti active={confetti} config={{ angle: 120, dragFriction: 0.12, startVelocity: 120, elementCount: 200 }} />
+                </div> */}
+          </Switch>
         </main>
       </div>
     );
@@ -153,9 +151,8 @@ const mapStateToProps = (state:ApplicationState) => ({
   board: state.board.board,
   group: state.group.group,
   me: state.user.me,
-  page: state.local.page,
 });
-const mapDispatchToProps = { fetchUsers, getMe, searchGroups, setPage, setSocketIOClient };
+const mapDispatchToProps = { fetchUsers, getMe, searchGroups, setSocketIOClient };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

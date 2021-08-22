@@ -10,11 +10,6 @@ export const setSocketIOClient = (socketIOClient: Socket) => ({
   socketIOClient,
 });
 
-export const setPage = (page:string) => ({
-  type: LocalTaskTypes.SET_PAGE,
-  page,
-});
-
 export const setActiveItem = (item:ItemI) => ({
   type: LocalTaskTypes.SET_ITEM,
   activeItem: item,
@@ -35,11 +30,6 @@ export const hideTasks = (itemID:string) => ({
   type: LocalTaskTypes.UPDATE_SHOW_ACTION_MAP,
   itemID,
   show: false,
-});
-
-export const showGroupPage = () => ({
-  type: LocalTaskTypes.SET_PAGE,
-  page: 'group',
 });
 
 export const showAddingTask = () => ({

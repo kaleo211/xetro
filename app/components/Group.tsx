@@ -12,6 +12,7 @@ import { date } from '../../utils/tool';
 import { Keyable } from '../../types/common';
 import { ApplicationState } from '../store/types';
 import { TaskI, GroupI } from '../../types/models';
+import { Link } from 'react-router-dom';
 
 const theme = createTheme({
   fonts: {
@@ -94,7 +95,7 @@ interface PropsI {
 }
 
 interface StateI {
-  hoveredTaskTD: string,
+  hoveredTaskID: string,
   isFacilitatorHovered: boolean,
 }
 
@@ -103,7 +104,7 @@ class Group extends React.Component<PropsI, StateI> {
     super(props);
 
     this.state = {
-      hoveredTaskTD: '',
+      hoveredTaskID: '',
       isFacilitatorHovered: false,
     };
 
@@ -115,11 +116,11 @@ class Group extends React.Component<PropsI, StateI> {
   }
 
   onHoverTask(task:TaskI) {
-    this.setState({ hoveredTaskTD: task.id });
+    this.setState({ hoveredTaskID: task.id });
   }
 
   onLeaveHoveredTask() {
-    this.setState({ hoveredTaskTD: '' });
+    this.setState({ hoveredTaskID: '' });
   }
 
   onHoverFacilitator() {
@@ -149,9 +150,8 @@ class Group extends React.Component<PropsI, StateI> {
 
   render() {
     const { group } = this.props;
-    const { hoveredTaskTD } = this.state;
+    const { hoveredTaskID } = this.state;
 
-    const tasks = group.tasks;
     const finishIcon = {
       iconName: 'BoxCheckmarkSolid',
       style: {
@@ -169,7 +169,7 @@ class Group extends React.Component<PropsI, StateI> {
 
     const members = group.members.map(member => ({key: member.id, text: member.name}));
 
-    return (
+    return (group &&
       <div className={classNames.tasks}>
         <div style={{display:'flex'}}>
           <DocumentCard className={classNames.taskCard}
@@ -185,15 +185,17 @@ class Group extends React.Component<PropsI, StateI> {
               />
             </div>
           </DocumentCard>
-          <DocumentCard className={classNames.taskCard} onClick={this.onJoinOrCreateBoard.bind(this)}>
-            <div className={classNames.taskTitle}>
-              Open Board
-            </div>
-          </DocumentCard>
+          <Link to='/board'>
+            <DocumentCard className={classNames.taskCard} onClick={this.onJoinOrCreateBoard.bind(this)}>
+              <div className={classNames.taskTitle}>
+                Open Board
+              </div>
+            </DocumentCard>
+          </Link>
         </div>
         <Separator theme={theme} styles={{content: {backgroundColor: 'rgba(0,0,0,0)'}}}>Task Items</Separator>
         <Stack horizontal wrap>
-          {tasks && tasks.map(task => (
+          {group.tasks && group.tasks.map(task => (
             <Stack.Item key={task.id} align="auto">
               <DocumentCard
                   className={classNames.group}
@@ -204,7 +206,7 @@ class Group extends React.Component<PropsI, StateI> {
                   <DocumentCardTitle title={task.title} />
                   <DocumentCardActivity activity={date(task.createdAt)} people={[{ ...task.owner, profileImageSrc: '', name: task.owner.name }]} />
                 </DocumentCardDetails>
-                {hoveredTaskTD === task.id &&
+                {hoveredTaskID === task.id &&
                   <Overlay>
                     <div className={classNames.overlay}>
                       <div>
@@ -227,7 +229,7 @@ class Group extends React.Component<PropsI, StateI> {
               </DocumentCard>
             </Stack.Item>
           ))}
-          {tasks && tasks.length === 0 &&
+          {group.tasks && group.tasks.length === 0 &&
             <Stack.Item>
               <DocumentCard className={classNames.group}>
                 <DocumentCardTitle title="No Tasks" />

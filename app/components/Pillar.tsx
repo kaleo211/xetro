@@ -23,9 +23,9 @@ const classes = mergeStyleSets({
     maxWidth: '33vw',
     minWidth: 320,
     marginTop: 4,
-  },
-  hovered: {
-    boxShadow: Depths.depth8,
+    ':hover': {
+      boxShadow: Depths.depth8,
+    },
   },
   taskCard: {
     maxWidth: '33vw',
@@ -101,8 +101,8 @@ class Pillar extends React.Component<PropsI, StateI> {
     this.state = {};
   }
 
-  ondeleteItemThunk(item:ItemI) {
-    this.props.deleteItemThunk(item);
+  async ondeleteItem(item:ItemI) {
+    await this.props.deleteItemThunk(item);
   }
 
   async onstartItemThunk(item:ItemI, evt:React.MouseEvent) {
@@ -171,7 +171,7 @@ class Pillar extends React.Component<PropsI, StateI> {
       <div key={item.id}>
         <DocumentCard
             key={item.id}
-            // className={cx({card: true, hovered: hoveredItem.id===item.id})}
+            className={classes.card}
             onMouseOver={this.onHoverItem.bind(this, item)}
             onMouseLeave={this.onLeaveHoveredItem.bind(this)}
         >
@@ -180,7 +180,7 @@ class Pillar extends React.Component<PropsI, StateI> {
                 primary
                 className={classes.deleteButton}
                 iconProps={{ iconName: 'Cancel', style: {fontSize: 12, color: 'red'} }}
-                onClick={this.ondeleteItemThunk.bind(this, item)}
+                onClick={this.ondeleteItem.bind(this, item)}
             />
           }
           <div className={classes.title}>

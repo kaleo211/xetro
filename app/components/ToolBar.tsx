@@ -7,10 +7,10 @@ import { IconButton } from '@fluentui/react';
 
 import { setBoard, setBoards, archiveBoard, lockBoard, unlockBoard, refreshBoard } from '../store/board/action';
 import { setGroup } from '../store/group/action';
-import { setPage } from '../store/local/action';
 import { finishItemThunk } from '../store/item/action';
 import { BoardI, GroupI, UserI } from '../../types/models';
 import { ApplicationState } from '../store/types';
+import { useLocation } from 'react-router-dom';
 
 const iconStyle = {
   fontSize: 20,
@@ -29,7 +29,6 @@ const classNames = mergeStyleSets({
 interface PropI {
   group: GroupI;
   board: BoardI;
-  page: string;
   me: UserI;
 
   archiveBoard(id: string): Promise<void>;
@@ -39,17 +38,19 @@ interface PropI {
   setBoard(id: string): Promise<void>;
   setBoards(): Promise<void>;
   setGroup(id: string): Promise<void>;
-  setPage(page: string): void;
   unlockBoard(id:string): Promise<void>;
 }
 
-interface StateI {}
+interface StateI {
+  path: string
+}
 
 class ToolBar extends React.Component<PropI, StateI> {
   constructor(props: any) {
     super(props);
-
-    this.state = {};
+    this.state = {
+      path: useLocation().pathname
+    };
   }
 
   onVideoOpen(url:string) {
@@ -76,11 +77,12 @@ class ToolBar extends React.Component<PropI, StateI> {
   }
 
   render() {
-    const { board, page, me, group } = this.props;
+    const { board, me, group } = this.props;
+    const { path } = this.state;
 
     const isFacilitator = me.id === group.facilitatorID;
 
-    return page === 'board' && board && board.stage !== 'archived' &&
+    return path ==='/board' && board && board.stage !== 'archived' &&
       <div style={{ marginLeft: 8 }}>
         <IconButton
             primary
@@ -126,10 +128,9 @@ class ToolBar extends React.Component<PropI, StateI> {
 const mapStateToProps = (state:ApplicationState) => ({
   group: state.group.group,
   board: state.board.board,
-  page: state.local.page,
   me: state.user.me,
 });
-const mapDispatchToProps = { archiveBoard, finishItemThunk, lockBoard, setBoard, setBoards, setGroup, setPage, unlockBoard, refreshBoard };
+const mapDispatchToProps = { archiveBoard, finishItemThunk, lockBoard, setBoard, setBoards, setGroup, unlockBoard, refreshBoard };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

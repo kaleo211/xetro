@@ -72,17 +72,17 @@ class Board extends React.Component<PropsI, StateI> {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.initTitleOfPillar(this.props.board);
   }
 
-  componentWillReceiveProps(props: PropsI) {
-    this.initTitleOfPillar(props.board);
-  }
+  // componentWillReceiveProps(props: PropsI) {
+  //   this.initTitleOfPillar(props.board);
+  // }
 
   initTitleOfPillar(board: BoardI) {
     const titleOfPillar:Keyable = {};
-    board.pillars.map(pillar => {
+    board && board.pillars.map(pillar => {
       titleOfPillar[pillar.id] = pillar.title;
     });
     this.setState({titleOfPillar});
@@ -164,14 +164,13 @@ class Board extends React.Component<PropsI, StateI> {
     const { board, elmo } = this.props;
     const { newItemTnPillar, titleOfPillar } = this.state;
 
-    const pillars = board.pillars;
-    const enabled = (board.stage !== 'archived' && !board.locked);
+    const enabled = (board: BoardI) => {
+      return board.stage !== 'archived' && !board.locked;
+    }
 
-    console.log("render:", newItemTnPillar, titleOfPillar);
-
-    return (
+    return (board &&
       <div className={classNames.board}>
-        {pillars && pillars.map(pillar => (
+        {board.pillars && board.pillars.map(pillar => (
           <div key={pillar.id} className={classNames.pillar}>
             <DocumentCard className={classNames.card}>
               {enabled &&

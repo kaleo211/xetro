@@ -12,7 +12,6 @@ import { Reducer } from 'redux';
 // };
 
 const initialState: LocalStateI = {
-  page: 'home',
   activeItem: null,
   hoveredItem: null,
   showTaskMap: {},
@@ -26,12 +25,6 @@ const initialState: LocalStateI = {
 
 const reducer: Reducer<LocalStateI> = (state = initialState, task) => {
   switch (task.type) {
-    case LocalTaskTypes.SET_PAGE:
-      return {
-        ...state,
-        page: task.page,
-      };
-
     case LocalTaskTypes.SET_ITEM:
       return {
         ...state,

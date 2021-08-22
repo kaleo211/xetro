@@ -6,7 +6,6 @@ import { BoardI, GroupI, ItemI, UserI } from "../../types/models";
 import { Keyable } from "../../types/common";
 
 export enum LocalTaskTypes {
-  SET_PAGE = 0,
   SET_ELMO,
   SET_ITEM,
   SET_HOVER_ITEM,
@@ -18,16 +17,15 @@ export enum LocalTaskTypes {
 }
 
 export interface LocalStateI {
-  page: string
   activeItem: ItemI
-  hoveredItem: ItemI
-  showTaskMap: Keyable
-  elmo: boolean
-  addingTask: boolean
-  secondsPerItem: number
-  socketIOClient: Socket
   activeItemProgress: number
   activeItemProgressTimer: NodeJS.Timer
+  addingTask: boolean
+  elmo: boolean
+  hoveredItem: ItemI
+  secondsPerItem: number
+  showTaskMap: Keyable
+  socketIOClient: Socket
 }
 
 export enum UserTaskTypes {
@@ -45,14 +43,12 @@ export enum BoardTaskTypes {
   SET_BOARD = 200,
   SET_BOARDS,
   SET_PILLARS,
-  SET_HISTORY_BOARDS,
   FAILED,
 }
 
 export interface BoardStateI {
   boards: BoardI[],
   board: BoardI,
-  historyBoards: BoardI[],
 }
 
 export enum GroupTaskTypes {

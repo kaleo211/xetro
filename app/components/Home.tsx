@@ -8,10 +8,10 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { mergeStyleSets } from '@fluentui/react/lib/Styling';
 
 import { setGroup, searchGroups, addUserToGroup, postGroup } from '../store/group/action';
-import { showGroupPage } from '../store/local/action';
 import { GroupI, UserI } from '../../types/models';
 import { Keyable } from '../../types/common';
 import { ApplicationState } from '../store/types';
+import { Link } from 'react-router-dom';
 
 const classNames = mergeStyleSets({
   group: {
@@ -30,7 +30,6 @@ interface PropsI {
   postGroup(group: GroupI): Promise<void>;
   searchGroups(query: Keyable): Promise<void>;
   setGroup(groupID: string): void;
-  showGroupPage(): void;
 }
 
 interface StateI {
@@ -51,7 +50,6 @@ class Group extends React.Component<PropsI, StateI> {
       await this.props.addUserToGroup(this.props.me.id, group.id);
     }
     this.props.setGroup(group.id);
-    this.props.showGroupPage();
   }
 
   async onSearchGroup(evt:React.ChangeEvent<HTMLInputElement>) {
@@ -81,14 +79,16 @@ class Group extends React.Component<PropsI, StateI> {
           {groups && groups.map(g => (
             <Stack.Item key={g.id} align="auto">
               <TooltipHost content="Click to Join Group">
-                <DocumentCard
-                    className={classNames.group}
-                    onClick={this.onSetGroup.bind(this, g)}
-                >
-                  <DocumentCardTitle title={g.name} />
-                  {/* <DocumentCardActivity people={g.members} /> */}
-                  <DocumentCardTitle title="No ongoing meeting" showAsSecondaryTitle />
-                </DocumentCard>
+                <Link to='group'>
+                  <DocumentCard
+                      className={classNames.group}
+                      onClick={this.onSetGroup.bind(this, g)}
+                  >
+                    <DocumentCardTitle title={g.name} />
+                    {/* <DocumentCardActivity people={g.members} /> */}
+                    <DocumentCardTitle title="No ongoing meeting" showAsSecondaryTitle />
+                  </DocumentCard>
+                </Link>
               </TooltipHost>
             </Stack.Item>
           ))}
@@ -121,7 +121,7 @@ const mapStateToProps = (state:ApplicationState) => ({
   groups: state.group.groups,
   me: state.user.me,
 });
-const mapDispatchToProps = { addUserToGroup, postGroup, searchGroups, setGroup, showGroupPage };
+const mapDispatchToProps = { addUserToGroup, postGroup, searchGroups, setGroup };
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),

@@ -5,7 +5,6 @@ import { BoardTaskTypes, BoardStateI } from '../types';
 const initialState: BoardStateI = {
   boards: [],
   board: null,
-  historyBoards: [],
 };
 
 const reducer: Reducer<BoardStateI> = (state = initialState, task) => {
@@ -18,9 +17,6 @@ const reducer: Reducer<BoardStateI> = (state = initialState, task) => {
 
     case BoardTaskTypes.SET_PILLARS:
       return { ...state, pillars: task.pillars };
-
-    case BoardTaskTypes.SET_HISTORY_BOARDS:
-      return { ...state, historyBoards: task.historyBoards };
 
     case BoardTaskTypes.FAILED:
       console.error(task.error);
