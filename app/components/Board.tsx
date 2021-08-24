@@ -8,7 +8,7 @@ import { DocumentCard, Text, TextField, Modal, Image } from '@fluentui/react';
 import { postItemThunk } from '../store/item/action';
 import { patchPillar, postPillar, deletePillar } from '../store/pillar/action';
 import { setELMO } from '../store/local/action';
-import Pillar from './Pillar';
+import Pillar from './Item';
 import elmoGif from '../public/elmo.gif';
 import { Keyable } from '../../types/common';
 import { BoardI, GroupI, ItemI, PillarI } from '../../types/models';
@@ -63,7 +63,7 @@ interface StateI {
 }
 
 class Board extends React.Component<PropsI, StateI> {
-  constructor(props:any) {
+  constructor(props: PropsI) {
     super(props);
 
     this.state = {
@@ -72,20 +72,12 @@ class Board extends React.Component<PropsI, StateI> {
     };
   }
 
-  componentDidMount() {
-    this.initTitleOfPillar(this.props.board);
-  }
-
-  // componentWillReceiveProps(props: PropsI) {
-  //   this.initTitleOfPillar(props.board);
-  // }
-
-  initTitleOfPillar(board: BoardI) {
+  static getDerivedStateFromProps(props: PropsI, state: StateI) {
     const titleOfPillar:Keyable = {};
-    board && board.pillars.map(pillar => {
+    props.board && props.board.pillars.map(pillar => {
       titleOfPillar[pillar.id] = pillar.title;
     });
-    this.setState({titleOfPillar});
+    return { titleOfPillar };
   }
 
   changePillarTitle(id: string, title:string) {
@@ -106,7 +98,7 @@ class Board extends React.Component<PropsI, StateI> {
 
   onAddItem(pillarID: string, evt: React.KeyboardEvent<HTMLInputElement>) {
     const newItemTitle = this.state.newItemTnPillar[pillarID];
-    console.log("add event:", evt.key);
+
     if (evt && evt.key === 'Enter' && newItemTitle !== '') {
       const newItem:ItemI = {
         pillarID,
@@ -120,7 +112,6 @@ class Board extends React.Component<PropsI, StateI> {
   }
 
   onChangeNewItemTitle(pillarID: string, evt: React.ChangeEvent<HTMLInputElement>) {
-    console.log("change event:", evt.target.value);
     this.changeItemTitle(pillarID, evt.target.value);
   }
 
@@ -140,11 +131,11 @@ class Board extends React.Component<PropsI, StateI> {
     this.changePillarTitle(pillar.id, evt.target.value);
   }
 
-  onSetPillarTitle(pillar:PillarI, evt:React.KeyboardEvent<HTMLInputElement>) {
+  async onSetPillarTitle(pillar:PillarI, evt:React.KeyboardEvent<HTMLInputElement>) {
     if (evt) {
       if (evt.key === 'Enter') {
         if (this.state.titleOfPillar[pillar.id] !== '') {
-          this.props.patchPillar(pillar);
+          await this.props.patchPillar(pillar);
         }
       } else {
         this.changePillarTitle(pillar.id, pillar.title);
@@ -173,7 +164,7 @@ class Board extends React.Component<PropsI, StateI> {
         {board.pillars && board.pillars.map(pillar => (
           <div key={pillar.id} className={classNames.pillar}>
             <DocumentCard className={classNames.card}>
-              {enabled &&
+              {enabled(board) &&
                 <div className={classNames.title}>
                   <TextField
                       borderless
@@ -186,7 +177,7 @@ class Board extends React.Component<PropsI, StateI> {
                   />
                 </div>
               }
-              {enabled &&
+              {enabled(board) &&
                 <div className={classNames.input}>
                   <TextField
                       underlined
@@ -198,7 +189,7 @@ class Board extends React.Component<PropsI, StateI> {
                   />
                 </div>
               }
-              {!enabled &&
+              {!enabled(board) &&
                 <div className={classNames.lockedTitle}>
                   <Text variant="xxLarge">
                     {pillar.title}

@@ -167,7 +167,9 @@ class Group extends React.Component<PropsI, StateI> {
       },
     };
 
-    const members = group.members.map(member => ({key: member.id, text: member.name}));
+    const formattedMembers = (group: GroupI) => {
+      return group.members.map(member => ({ key: member.id, text: member.name }));
+    }
 
     return (group &&
       <div className={classNames.tasks}>
@@ -179,7 +181,7 @@ class Group extends React.Component<PropsI, StateI> {
             <div className={classNames.facilitatorCard}>
               <Dropdown
                   label="Facilitator of the Week"
-                  options={members}
+                  options={formattedMembers(group)}
                   selectedKey={group.facilitatorID}
                   onChange={(evt, facilitator) => this.onSetFacilitator(evt, facilitator)}
               />

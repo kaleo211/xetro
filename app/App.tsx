@@ -79,29 +79,21 @@ interface StateI {
 class App extends React.Component<PropsI, StateI> {
   constructor(props: any) {
     super(props);
+    document.body.style.margin = '0';
 
     this.state = {
       confetti: false,
     };
   }
 
-  async componentWillMount() {
-    document.body.style.margin = '0';
-    await this.handleDellLogin();
-    // await this.handleMicrosoftLogin();
-    this.props.fetchUsers();
-    await this.props.searchGroups({});
-
-    this.props.setSocketIOClient(io());
-  }
-
-  async handleDellLogin() {
+  async componentDidMount() {
     await this.props.getMe();
     if (this.props.me == null) {
       window.open('/dell', '_self');
     }
 
     while (this.props.me == null) {
+      console.log('we were here');
       try {
         await this.props.getMe();
       } catch (err) {
@@ -109,6 +101,10 @@ class App extends React.Component<PropsI, StateI> {
       }
       await sleep(1000);
     }
+    await this.props.fetchUsers();
+    await this.props.searchGroups({});
+
+    this.props.setSocketIOClient(io());
   }
 
   async onConfetti() {
@@ -118,7 +114,7 @@ class App extends React.Component<PropsI, StateI> {
   }
 
   render() {
-    const { group, board, me } = this.props;
+    const { me } = this.props;
     const { confetti } = this.state;
 
     return (me &&
@@ -131,17 +127,12 @@ class App extends React.Component<PropsI, StateI> {
             <Route path='/' component={Home} exact />
             <Route path='/group' component={Group} />
             <Route path='/board' component={Board} />
-                {/* <div className={classNames.float}>
-                  <Image
-                    height={48}
-                    width={48}
-                    src={yay}
-                    onClick={this.onConfetti.bind(this)}
-                  />
-                  <Confetti active={confetti} config={{ angle: 120, dragFriction: 0.12, startVelocity: 120, elementCount: 200 }} />
-                </div> */}
           </Switch>
-        </main>
+          <div className={classNames.float}>
+            <Image height={48} width={48} src={yay} onClick={this.onConfetti.bind(this)} />
+            <Confetti active={confetti} config={{ angle: 120, dragFriction: 0.12, startVelocity: 120, elementCount: 200 }} />
+          </div>
+      </main>
       </div>
     );
   }

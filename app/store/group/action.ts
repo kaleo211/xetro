@@ -8,7 +8,6 @@ import { getReq, postReq } from '../../utils';
 export const searchGroups = (query:Keyable): AppThunk => {
   return async (dispatch:Dispatch): Promise<void> => {
     const groups = await postReq('groups/search', query || {});
-    console.log('groups:', groups);
     if (groups) {
       dispatch({
         type: GroupTaskTypes.SET_GROUPS,

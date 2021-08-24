@@ -58,8 +58,8 @@ class ToolBar extends React.Component<PropI, StateI> {
     win.focus();
   }
 
-  onRefreshBoard() {
-    this.props.refreshBoard();
+  async onRefreshBoard() {
+    await this.props.refreshBoard();
   }
 
   async onArchiveBoard() {

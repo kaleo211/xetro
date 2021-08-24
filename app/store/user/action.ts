@@ -4,12 +4,9 @@ import { AppThunk, UserTaskTypes } from '../types';
 import { fetchReq, listReq } from '../../utils';
 
 export const getMeRaw = async (): Promise<AnyAction> => {
-  const me = await fetchReq('/users/me');
+  let me = await fetchReq('/users/me');
   if (!me) {
-    return {
-      type: UserTaskTypes.FAILED,
-      error: 'error getting me',
-    }
+    me = null;
   }
   return {
     type: UserTaskTypes.SET_ME,
