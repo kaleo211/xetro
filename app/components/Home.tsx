@@ -36,7 +36,7 @@ interface StateI {
   newGroupName: string,
 }
 
-class Group extends React.Component<PropsI, StateI> {
+class Home extends React.Component<PropsI, StateI> {
   constructor(props:any) {
     super(props);
     this.state = {
@@ -85,8 +85,6 @@ class Group extends React.Component<PropsI, StateI> {
                       onClick={this.onSetGroup.bind(this, g)}
                   >
                     <DocumentCardTitle title={g.name} />
-                    {/* <DocumentCardActivity people={g.members} /> */}
-                    <DocumentCardTitle title="No ongoing meeting" showAsSecondaryTitle />
                   </DocumentCard>
                 </Link>
               </TooltipHost>
@@ -125,4 +123,4 @@ const mapDispatchToProps = { addUserToGroup, postGroup, searchGroups, setGroup }
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-)(Group);
+)(Home);

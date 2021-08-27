@@ -21,7 +21,9 @@ const classNames = mergeStyleSets({
     marginLeft: 32,
   },
   bread: {
+    display: 'flex',
     flexGrow: 4,
+    flexDirection: 'column',
   },
   profile: {
     flexGrow: 2,
@@ -67,8 +69,7 @@ class Menu extends React.Component<PropsI, StateI> {
   }
 
   onRenderItem(item:Keyable) {
-    return item.key === 'task' ?
-      <ToolBar /> :
+    return <>
       <Link onClick={item.onClick}>
         <Text
             // className={classNames(classNames.text, { [classNames.underline]: item.key == this.props.page })}
@@ -76,7 +77,8 @@ class Menu extends React.Component<PropsI, StateI> {
         >
           {item.text}
         </Text>
-      </Link>;
+      </Link>
+    </>;
   }
 
   render() {
@@ -97,6 +99,7 @@ class Menu extends React.Component<PropsI, StateI> {
               onRenderItem={this.onRenderItem.bind(this)}
               dividerAs={() => <Icon iconName="ChevronRightSmall" className={classNames.divider} />}
           />
+          <ToolBar />
         </div>
         <div className={classNames.profile}>
           <Text className={classNames.text} variant="xLarge">{me.firstName}</Text>

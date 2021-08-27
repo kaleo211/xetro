@@ -104,7 +104,7 @@ class App extends React.Component<PropsI, StateI> {
     await this.props.fetchUsers();
     await this.props.searchGroups({});
 
-    this.props.setSocketIOClient(io());
+    // this.props.setSocketIOClient(io());
   }
 
   async onConfetti() {

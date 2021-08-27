@@ -10,7 +10,7 @@ import { setGroup } from '../store/group/action';
 import { finishItemThunk } from '../store/item/action';
 import { BoardI, GroupI, UserI } from '../../types/models';
 import { ApplicationState } from '../store/types';
-import { useLocation } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 const iconStyle = {
   fontSize: 20,
@@ -26,7 +26,7 @@ const classNames = mergeStyleSets({
   },
 });
 
-interface PropI {
+interface PropI extends RouteComponentProps{
   group: GroupI;
   board: BoardI;
   me: UserI;
@@ -41,16 +41,12 @@ interface PropI {
   unlockBoard(id:string): Promise<void>;
 }
 
-interface StateI {
-  path: string
-}
+interface StateI { }
 
 class ToolBar extends React.Component<PropI, StateI> {
   constructor(props: any) {
     super(props);
-    this.state = {
-      path: useLocation().pathname
-    };
+    this.state = {};
   }
 
   onVideoOpen(url:string) {
@@ -77,12 +73,13 @@ class ToolBar extends React.Component<PropI, StateI> {
   }
 
   render() {
-    const { board, me, group } = this.props;
-    const { path } = this.state;
+    const { board, me, group, location } = this.props;
 
-    const isFacilitator = me.id === group.facilitatorID;
+    const isFacilitator = (me: UserI, group:GroupI) => {
+      return me.id === group.facilitatorID;
+    }
 
-    return path ==='/board' && board && board.stage !== 'archived' &&
+    return location.pathname ==='/board' && group && board && board.stage !== 'archived' &&
       <div style={{ marginLeft: 8 }}>
         <IconButton
             primary
@@ -90,22 +87,32 @@ class ToolBar extends React.Component<PropI, StateI> {
             iconProps={{iconName: 'Refresh', style: iconStyle}}
             onClick={this.onRefreshBoard.bind(this)}
         />
-        {board.locked && isFacilitator &&
-          <IconButton
-              primary
-              className={classNames.iconButton}
-              iconProps={{iconName: 'Permissions', style: iconStyle}}
-              onClick={this.onUnlockBoard.bind(this)}
-          />
-        }
-        {!board.locked && isFacilitator &&
-          <IconButton
-              primary
-              className={classNames.iconButton}
-              iconProps={{iconName: 'Lock', style: iconStyle}}
-              onClick={this.onLockBoard.bind(this)}
-          />
-        }
+        {isFacilitator(me, group) && <>
+          {board.locked &&
+            <IconButton
+                primary
+                className={classNames.iconButton}
+                iconProps={{iconName: 'Permissions', style: iconStyle}}
+                onClick={this.onUnlockBoard.bind(this)}
+            />
+          }
+          {!board.locked &&
+            <IconButton
+                primary
+                className={classNames.iconButton}
+                iconProps={{iconName: 'Lock', style: iconStyle}}
+                onClick={this.onLockBoard.bind(this)}
+            />
+          }
+          {board.stage === 'created' &&
+            <IconButton
+                primary
+                className={classNames.iconButton}
+                iconProps={{iconName: 'archive', style: iconStyle}}
+                onClick={this.onArchiveBoard.bind(this)}
+            />
+          }
+        </>}
         {/* {board.video &&
           <IconButton
               primary
@@ -113,14 +120,6 @@ class ToolBar extends React.Component<PropI, StateI> {
               iconProps={{iconName: 'PresenceChickletVideo', style: iconStyle}}
           />
         } */}
-        {board.stage === 'created' && isFacilitator &&
-          <IconButton
-              primary
-              className={classNames.iconButton}
-              iconProps={{iconName: 'archive', style: iconStyle}}
-              onClick={this.onArchiveBoard.bind(this)}
-          />
-        }
       </div>;
   }
 }
@@ -134,4 +133,4 @@ const mapDispatchToProps = { archiveBoard, finishItemThunk, lockBoard, setBoard,
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-)(ToolBar);
+)(withRouter(ToolBar));
