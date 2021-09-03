@@ -4,7 +4,7 @@ applications:
   memory: 1G
   instances: 1
   buildpacks: [dicf_nodejs_buildpack_latest]
-  command: yarn run build && yarn run start
+  command: yarn build && yarn build:front && yarn start
   health-check-timeout: 180
   env:
     CF_STARTUP_TIMEOUT: 5
