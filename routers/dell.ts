@@ -34,7 +34,7 @@ export class DellRouter {
       const oauth2Code = new oauth.AuthorizationCode(credentials);
       const authorizationUri = oauth2Code.authorizeURL({
         redirect_uri: selfAddress + '/dell/callback',
-        scope: ['openid', 'uaa.resource', 'user_attributes', 'uaa.user', 'user.read'],
+        scope: ['openid', 'uaa.resource', 'user_attributes', 'user.read', 'profile'],
       });
       res.redirect(authorizationUri);
     });
@@ -44,7 +44,7 @@ export class DellRouter {
       const options = {
         code: authCode,
         redirect_uri: selfAddress + '/dell/callback',
-        scope: ['openid', 'uaa.resource', 'user_attributes', 'uaa.user', 'user.read'],
+        scope: ['openid', 'uaa.resource', 'user_attributes', 'user.read', 'profile'],
       };
 
       try {
