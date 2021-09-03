@@ -40,6 +40,7 @@ const classNames = mergeStyleSets({
   },
   nav: {
     height: 48,
+    display: 'flex',
     alignItems: 'center',
     backgroundColor: 'white',
     paddingBottom: 4,
@@ -93,7 +94,6 @@ class App extends React.Component<PropsI, StateI> {
     }
 
     while (this.props.me == null) {
-      console.log('we were here');
       try {
         await this.props.getMe();
       } catch (err) {

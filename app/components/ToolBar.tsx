@@ -18,6 +18,12 @@ const iconStyle = {
 };
 
 const classNames = mergeStyleSets({
+  bar: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
   iconButton: {
     fontSize: 24,
     height: 24,
@@ -80,7 +86,7 @@ class ToolBar extends React.Component<PropI, StateI> {
     }
 
     return location.pathname ==='/board' && group && board && board.stage !== 'archived' &&
-      <div style={{ marginLeft: 8 }}>
+      <div className={classNames.bar}>
         <IconButton
             primary
             className={classNames.iconButton}

@@ -14,7 +14,7 @@ import persistStore from "redux-persist/es/persistStore";
 
 const userPersistConfig = {
   key: 'user',
-  storage: storage,
+  storage,
   blacklist: ['somethingTemporary']
 }
 

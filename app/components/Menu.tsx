@@ -17,13 +17,14 @@ import { Keyable } from '../../types/common';
 const classNames = mergeStyleSets({
   root: {
     display: 'flex',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     marginLeft: 32,
+    width: '100%',
   },
   bread: {
     display: 'flex',
     flexGrow: 4,
-    flexDirection: 'column',
+    flexDirection: 'row',
   },
   profile: {
     flexGrow: 2,
@@ -31,7 +32,6 @@ const classNames = mergeStyleSets({
     justifyContent: 'flex-end',
     alignItems: 'center',
     marginRight: 24,
-    marginTop: 8,
   },
   text: {
     color: '#222222',
@@ -93,12 +93,14 @@ class Menu extends React.Component<PropsI, StateI> {
     return (
       <div className={classNames.root}>
         <div className={classNames.bread}>
-          <Breadcrumb
+          <div>
+            <Breadcrumb
               items={bread}
-              maxDisplayedItems={10}
-              onRenderItem={this.onRenderItem.bind(this)}
-              dividerAs={() => <Icon iconName="ChevronRightSmall" className={classNames.divider} />}
-          />
+                maxDisplayedItems={10}
+                onRenderItem={this.onRenderItem.bind(this)}
+                dividerAs={() => <Icon iconName="ChevronRightSmall" className={classNames.divider} />}
+            />
+          </div>
           <ToolBar />
         </div>
         <div className={classNames.profile}>

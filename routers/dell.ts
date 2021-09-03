@@ -34,29 +34,26 @@ export class DellRouter {
       const oauth2Code = new oauth.AuthorizationCode(credentials);
       const authorizationUri = oauth2Code.authorizeURL({
         redirect_uri: selfAddress + '/dell/callback',
-        scope: ['openid', 'roles', 'uaa.resource', 'user_attributes'],
+        scope: ['openid', 'uaa.resource', 'user_attributes', 'uaa.user', 'user.read'],
       });
       res.redirect(authorizationUri);
     });
-
 
     this.router.get('/callback', async (req: express.Request, res: express.Response) => {
       const authCode = req.query.code as string;
       const options = {
         code: authCode,
         redirect_uri: selfAddress + '/dell/callback',
-        scope: ['openid', 'roles', 'uaa.resource', 'user_attributes'],
+        scope: ['openid', 'uaa.resource', 'user_attributes', 'uaa.user', 'user.read'],
       };
 
       try {
         const oauth2Code = new oauth.AuthorizationCode(credentials);
-        const result = await oauth2Code.getToken(options);
-        const token = oauth2Code.createToken(result);
-
+        const token = await oauth2Code.getToken(options);
         const userInfoRequest = {
           method: 'GET',
           headers: {
-            Authorization: 'Bearer' + token.token.access_token,
+            Authorization: 'Bearer ' + token.token.access_token,
           },
         };
 

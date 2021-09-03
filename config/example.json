@@ -15,7 +15,7 @@
   },
   "database": {
     "username": "postgres",
-    "password": "postgres",
+    "password": "password",
     "host": "localhost",
     "database": "xetro",
     "dialect": "postgres",

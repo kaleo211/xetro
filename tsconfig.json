@@ -11,5 +11,5 @@
     "target": "es6",
     "typeRoots" : ["node_modules/@types", "types"]
   },
-  "exclude": []
+  "exclude": ["tmp"]
 }
