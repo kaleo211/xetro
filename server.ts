@@ -1,4 +1,4 @@
-import config from 'config';
+import { Config } from './config';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import morgan from 'morgan';
@@ -6,26 +6,19 @@ import * as path from 'path';
 import session from 'express-session';
 import { Server, Socket } from 'socket.io';
 import * as http from 'http';
-import { Sequelize } from 'sequelize';
+import { Dialect, Sequelize } from 'sequelize';
 
 import { Database } from './models/index';
 import { User } from './models/user';
 import { Service } from './services/index';
 import { Routers } from './routers/index';
 
-let dbCreds;
-try {
-  dbCreds = JSON.parse(process.env.VCAP_SERVICES)['p.mysql'][0].credentials;
-} catch (err) {
-  console.error('error parsing database creds from VCAP_SERVICES');
-  dbCreds = config.get('database');
-}
-
-const sequelize = new Sequelize(dbCreds.name || dbCreds.database, dbCreds.username, dbCreds.password, {
-  host: dbCreds.hostname,
-  dialect: dbCreds.dialect || 'mysql',
-  port: dbCreds.port || 3306,
-  logging: dbCreds.logging || false,
+const dbConfig = Config.get().database;
+const sequelize = new Sequelize(dbConfig.database || dbConfig.database, dbConfig.username, dbConfig.password, {
+  host: dbConfig.host,
+  dialect: dbConfig.dialect as Dialect,
+  port: dbConfig.port || 3306,
+  logging: dbConfig.logging,
 });
 const database = new Database(sequelize);
 export const service = new Service(database);
@@ -36,7 +29,7 @@ app.use(express.json());
 app.use(morgan(':method :status :url :response-time'));
 
 app.use(session({
-  secret: config.get('server.sessionSecret'),
+  secret: Config.get().app.sessionSecret,
   resave: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,

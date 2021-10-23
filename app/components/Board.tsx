@@ -73,10 +73,12 @@ class Board extends React.Component<PropsI, StateI> {
   }
 
   static getDerivedStateFromProps(props: PropsI, state: StateI) {
-    const titleOfPillar:Keyable = {};
-    props.board && props.board.pillars.map(pillar => {
-      titleOfPillar[pillar.id] = pillar.title;
-    });
+    const titleOfPillar: Keyable = {};
+    if (props.board) {
+      props.board.pillars.map(pillar => {
+        titleOfPillar[pillar.id] = pillar.title;
+      });
+    }
     return { titleOfPillar };
   }
 
@@ -155,8 +157,8 @@ class Board extends React.Component<PropsI, StateI> {
     const { board, elmo } = this.props;
     const { newItemTnPillar, titleOfPillar } = this.state;
 
-    const enabled = (board: BoardI) => {
-      return board.stage !== 'archived' && !board.locked;
+    const enabled = (b: BoardI) => {
+      return b.stage !== 'archived' && !b.locked;
     }
 
     return (board &&

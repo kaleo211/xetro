@@ -1,7 +1,7 @@
+start_sso: export NODE_ENV=dev
 start_sso:
 	-kill -9 $$(lsof -i :8888 | awk 'FNR==2 {print $$2}')
-	node ./utils/dummy-sso-server.js &
-	./node_modules/.bin/webpack --watch
+	./node_modules/.bin/ts-node ./utils/dummy-sso-server.ts &
 
 init_dev: export NODE_ENV=dev
 init_dev:

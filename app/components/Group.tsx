@@ -167,8 +167,8 @@ class Group extends React.Component<PropsI, StateI> {
       },
     };
 
-    const formattedMembers = (group: GroupI) => {
-      return group.members.map(member => ({ key: member.id, text: member.name }));
+    const formattedMembers = (g: GroupI) => {
+      return g.members.map(member => ({ key: member.id, text: member.name }));
     }
 
     return (group &&

@@ -1,7 +1,8 @@
-const app = require('express')();
-const config = require('config');
+import express from 'express';
+import { Config } from '../config';
 
-const serverAddr = config.get('server.address');
+const serverAddr = Config.get().app.address;
+const app = express();
 
 // Microsoft
 app.get('/tenantID/oauth2/authorize', (req, res) => {

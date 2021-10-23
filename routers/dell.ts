@@ -1,10 +1,10 @@
-import config from 'config';
 import * as express from 'express';
 import * as oauth from 'simple-oauth2';
-
-import { UserI } from '../types/models';
 import fetch from 'node-fetch';
-import { Service } from '../services';
+
+import { Service } from 'services';
+import { UserI } from 'types/models';
+import { Config } from '../config';
 
 export class DellRouter {
   public router: express.Router;
@@ -12,23 +12,19 @@ export class DellRouter {
   constructor(service: Service) {
     this.router = express.Router();
 
-    const ssoClientID: string = config.get('sso.dell.clientID');
-    const ssoClientSecret: string = config.get('sso.dell.clientSecret');
-    const ssoAuthDomain: string = config.get('sso.dell.authDomain');
-    const ssoUserinfo: string = config.get('sso.dell.userinfo');
-
+    const dellConfig = Config.get().dell;
     const credentials: oauth.ModuleOptions = {
       client: {
-        id: ssoClientID,
-        secret: ssoClientSecret,
+        id: dellConfig.clientID,
+        secret: dellConfig.clientSecret,
       },
       auth: {
-        tokenHost: ssoAuthDomain,
+        tokenHost: dellConfig.authDomain,
         tokenPath: '/oauth/token',
         authorizePath: '/oauth/authorize',
       },
     };
-    const selfAddress = config.get('server.address');
+    const selfAddress = Config.get().app.address;
 
     this.router.get('/', (req, res) => {
       const oauth2Code = new oauth.AuthorizationCode(credentials);
@@ -57,7 +53,7 @@ export class DellRouter {
           },
         };
 
-        const resp = await fetch(ssoUserinfo, userInfoRequest);
+        const resp = await fetch(dellConfig.userinfo, userInfoRequest);
         const meFromSSO = await resp.json();
 
         await service.user.findAll();

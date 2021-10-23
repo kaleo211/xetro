@@ -81,8 +81,8 @@ class ToolBar extends React.Component<PropI, StateI> {
   render() {
     const { board, me, group, location } = this.props;
 
-    const isFacilitator = (me: UserI, group:GroupI) => {
-      return me.id === group.facilitatorID;
+    const isFacilitator = (u: UserI, g:GroupI) => {
+      return u.id === g.facilitatorID;
     }
 
     return location.pathname ==='/board' && group && board && board.stage !== 'archived' &&
